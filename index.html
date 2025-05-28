@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>CPVBCDD2025 - Aula 15 - Revisão</title>
+
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/night.css" />
+    <link rel="stylesheet" href="dist/custom.css" />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="dist/highlight/panda-syntax-dark.min.css" />
+    <!-- <link rel="stylesheet" href="dist/highlight/dracula.css"> -->
+  </head>
+
+  <body>
+    <div id="app" class="reveal">
+      <div class="slides">
+        <section data-auto-animate>
+          <header1 aula="15" title-size="30" title="Revisão de Banco de Dados e Preparação para Concursos">
+            <img src="https://i.imgur.com/0VPelzn.png" alt="Imagem de banco de dados">
+            <div class="mermaid" data-id="erd">
+              <pre>
+                graph LR
+                  Cliente ---|1| FazPedido{faz} ---|n| Pedido 
+                
+                  Cliente --> id((id))
+                  Cliente --> name((name))
+                  Pedido --> id2((id))
+                  Pedido --> idproduto((id_produto))
+                
+                  class name name-class
+                  class idproduto name-class
+            </div>
+          </header1>
+        </section>
+
+        
+        <section data-auto-animate>
+        <h2>Modelagem de Dados: Conceitual</h2>        
+          <div class="mermaid" data-id="erd"> 
+            <pre>
+graph LR
+  Cliente ---|1| FazPedido{faz} ---|n| Pedido 
+
+  Cliente --> id((id))
+  Cliente --> name((name))
+  Pedido --> id2((id))
+  Pedido --> idproduto((id_produto))
+
+  class name name-class
+  class idproduto name-class
+            </pre>
+          </div>
+        </section>
+        
+<section data-auto-animate>
+  <h2>Modelagem de Dados: Conceitual</h2>        
+    <li><b style="color: yellow">Entidades</b>: Objetos do mundo real sobre os quais queremos armazenar informações (ex: Cliente, Produto, Pedido).</li>
+    <li><b style="color: cyan">Atributos:</b> Propriedades das entidades (ex: Nome do Cliente, Preço do Produto, Data do Pedido)."</li>
+    <li><b style="color: tomato">Relacionamentos</b>: Associações entre entidades (ex: Cliente &lt;faz&gt; Pedido)"</li>
+    <li>Cardinalidade: 1:1, 1:N, N:M."</li>
+    <div class="mermaid" data-id="erd" style="max-width: 500px; margin: auto"> 
+      <pre> 
+graph LR
+Cliente ---|1| FazPedido{faz} ---|n| Pedido 
+
+Cliente --> id((id))
+Cliente --> name((name))
+Pedido --> id2((id))
+Pedido --> idproduto((id_produto))
+
+style Cliente fill:#FFFF00,stroke:#333,stroke-width:2px
+style Pedido fill:#FFFF00,stroke:#333,stroke-width:2px
+style FazPedido fill:tomato,color:white
+classDef attribute fill:cyan
+class name name-class
+class idproduto name-class
+class id attribute
+class name attribute
+class id2 attribute
+class idproduto attribute
+      </pre>
+    </div>
+</section>
+
+<section>
+  <h2>Modelagem de Dados: Lógica</h2>      
+  <li>Os nomes não precisam ser exatamente iguais ao modelo conceitual</li>
+  <li>Aliás, é comum que não seja, pois agora estamos modelando mais próximo a uma tecnologia</li>
+  <li>Removemos espaços, acentos, etc.</li>
+  <center>
+    <div class="mermaid" data-id="erd"> 
+      <pre> 
+        erDiagram
+
+        cliente {
+            id_cliente INT PK
+            name VARCHAR(100) 
+        }
+    
+        pedido {
+          id_pedido INT PK
+          id_produto  INT 
+          id_cliente  INT  FK
+        }
+    
+        cliente ||--o{ pedido : "faz"
+      </pre>
+    </div>
+  </center>
+</section>
+
+        <section>
+        <div style="display:flex"><h3>Conceitos do modelo relacional (tabelas)</h3><img src="https://i.imgur.com/hXywENO.png" height="120"></div>
+        <ul>
+          <li class="fragment">
+            <strong>Tabelas:</strong> Estruturas bidimensionais que armazenam os dados.
+            <ul>
+              <li>Linhas (Tuplas): Representam as instâncias das entidades.</li>
+              <li>Colunas (Atributos): Representam as propriedades das entidades.</li>
+            </ul>
+          </li>
+          <li class="fragment">
+            <strong>Chaves Primárias (Primary Keys):</strong> Atributo(s) que identificam unicamente cada linha de uma tabela.
+          </li>
+          <li class="fragment">
+            <strong>Chaves Estrangeiras (Foreign Keys):</strong> Atributo(s) de uma tabela que referenciam a chave primária de outra tabela, estabelecendo relacionamentos.
+          </li>
+          <li class="fragment">
+            <strong>Integridade Referencial:</strong> Garante a validade dos relacionamentos entre tabelas.
+          </li>
+        </ul>
+        </section>
+
+
+        
+          <section>
+            <h2>Linguagem SQL: Structured Query Language</h2>
+            <div style="display:flex;justify-content:space-between;">
+              <div style="border-right:1px solid white; margin: 0 30px">
+                <p style="font-weight: bold">DDL (Data Definition Language):</p>
+                  <pre style="margin: 0; width: fit-content"><code data-trim>
+                  CREATE &lt;TABLE|DATABASE|...&gt;
+                  ALTER ...
+                  DROP ...</code></pre>
+              </div>
+              <div style="margin: 0 50px">
+                <p style="font-weight: bold">DML (Data Manipulation Language):</p>
+                <pre style="text-align: left;margin:0;"><code data-trim class="sql">
+    SELECT ...
+    INSERT ...
+    UPDATE ...
+    DELETE ...
+                </code></pre>
+              </div>
+            </div>
+        </section>
+  <section>
+        <section>
+          <h3>Comandos SELECT: A Essência da Consulta</h3>
+          <ul>
+            <li><pre class="sql" style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">SELECT</code></pre>: Especifica as colunas a serem exibidas.</li>
+            <li><pre class="sql" style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">FROM</code></pre>: Especifica a(s) tabela(s) de onde os dados ser o recuperados.</li>
+            <li><pre class="sql" style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">WHERE</code></pre>: Filtra as linhas com base em uma condi o.</li>
+            <li><pre class="sql" style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">ORDER BY</code></pre>: Ordena o resultado da consulta.</li>
+            <li><pre class="sql" style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">GROUP BY</code></pre>: Agrupa linhas com valores semelhantes em uma ou mais colunas.</li>
+            <li><pre class="sql" style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">HAVING</code></pre>: Filtra grupos com base em uma condi o (usada com <strong>GROUP BY</strong>).</li>
+          </ul>
+        </section>
+
+<section data-auto-animate>
+  <h2>Tabela de livros</h2>
+  <div style="max-width: 900px">
+    <table  data-id="livro" class="tg" style="font-size:21px">
+      <thead>
+        <tr>
+          <th class="tg-bf9e">id</th>
+          <th class="tg-bf9e">titulo</th>
+          <th class="tg-bf9e">autor</th>
+          <th class="tg-bf9e">ano_publicacao</th>
+          <th class="tg-bf9e">genero</th>
+          <th class="tg-bf9e">preco</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tg-0lax">1</td>
+          <td class="tg-0lax">O Pequeno Príncipe</td>
+          <td class="tg-0lax">Antoine de Saint-Exupéry</td>
+          <td class="tg-0lax">1943</td>
+          <td class="tg-0lax">Infantil</td>
+          <td class="tg-0lax">25.50</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">2</td>
+          <td class="tg-0lax">1984</td>
+          <td class="tg-0lax">George Orwell</td>
+          <td class="tg-0lax">1949</td>
+          <td class="tg-0lax">Distopia</td>
+          <td class="tg-0lax">39.90</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">3</td>
+          <td class="tg-0lax">Dom Casmurro</td>
+          <td class="tg-0lax">Machado de Assis</td>
+          <td class="tg-0lax">1899</td>
+          <td class="tg-0lax">Romance</td>
+          <td class="tg-0lax">32.00</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">4</td>
+          <td class="tg-0lax">Admirável Mundo Novo</td>
+          <td class="tg-0lax">Aldous Huxley</td>
+          <td class="tg-0lax">1932</td>
+          <td class="tg-0lax">Distopia</td>
+          <td class="tg-0lax">45.00</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">5</td>
+          <td class="tg-0lax">A Revolução dos Bichos</td>
+          <td class="tg-0lax">George Orwell</td>
+          <td class="tg-0lax">1945</td>
+          <td class="tg-0lax">Fábula</td>
+          <td class="tg-0lax">28.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section data-auto-animate>
+  <div class="row" style="justify-content: start; gap: 50px;">
+  <h2>Tabela de livros</h2>
+  <div style="min-width:320px;">
+    <table data-id="livro" class="tg" style="font-size:12px">
+      <thead>
+        <tr>
+          <th class="tg-bf9e" style="font-size:12px">titulo</th>
+          <th class="tg-bf9e" style="font-size:12px">autor</th>
+          <th class="tg-bf9e" style="font-size:12px">preco</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tg-0lax" style="font-size:12px">1984</td>
+          <td class="tg-0lax" style="font-size:12px">George Orwell</td>
+          <td class="tg-0lax" style="font-size:12px">39.90</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax" style="font-size:12px">Admirável Mundo Novo</td>
+          <td class="tg-0lax" style="font-size:12px">Aldous Huxley</td>
+          <td class="tg-0lax" style="font-size:12px">45.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+  
+  <pre>
+    <code class="language-sql" data-line-numbers="|1|2|3|4" data-fragment-index="1" data-trim>
+SELECT titulo, autor, preco
+FROM livros
+WHERE ano_publicacao > 1900 AND genero = 'Distopia'
+ORDER BY preco DESC;
+    </code>
+  </pre>
+  <div class="fragment" data-fragment-index="1">
+    <p style="font-size:24pt">
+      <strong>Linha 1:</strong> Seleciona as colunas <code>titulo</code>, <code>autor</code> e <code>preco</code> para exibir no resultado.
+    </p>
+  </div>
+  <div class="fragment" data-fragment-index="2">
+    <p style="font-size:24pt">
+      <strong>Linha 2:</strong> Especifica que os dados devem ser obtidos da tabela <code>livros</code>.
+    </p>
+  </div>
+  <div class="fragment" data-fragment-index="3">
+    <p style="font-size:24pt">
+      <strong>Linha 3:</strong> Aplica filtro para obter livros publicados após 1900 e do gênero 'Distopia'.
+    </p>
+  </div>
+  <div class="fragment" data-fragment-index="4" style="text-align: left; margin-top: -10px">
+    <span style="font-size:24pt;">
+    <strong>Linha 4:</strong> Ordena os resultados por <pre style="margin: 0; width: min-content; display: inline-block"><code style="padding:0">preco</code></pre> em ordem decrescente.
+    </span>
+  </div>
+</section>
+
+
+        </section>
+        
+        
+        
+</section>
+
+
+      <section>
+        <section data-auto-animate>
+          <md md="
+        ## Funções de Agregação
+        
+        - `COUNT()`: Retorna o número de linhas.
+        - `SUM()`: Retorna a soma dos valores de uma coluna.
+        - `AVG()`: Retorna a média dos valores de uma coluna.
+        - `MIN()`: Retorna o menor valor de uma coluna.
+        - `MAX()`: Retorna o maior valor de uma coluna.
+        
+        **Exemplo:**
+        "></md>
+        <pre data-id="code" style="width: min-content;"><code style="padding: 10px" data-trim>
+          SELECT COUNT(*) AS total_clientes 
+          FROM Clientes;
+
+          SELECT AVG(preco) AS preco_medio 
+          FROM Produtos 
+          GROUP BY categoria;
+        </code></pre>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Clientes</h2>
+          <table data-id="tabela" class="tg" style="font-size:21px;width:100%">
+            <thead>
+              <tr>
+                <th class="tg-bf9e">id_cliente</th>
+                <th class="tg-bf9e">nome_cliente</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-bf9e">1</td>
+                <td class="tg-bf9e">João</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">2</td>
+                <td class="tg-bf9e">Maria</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">3</td>
+                <td class="tg-bf9e">Pedro</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2>Consulta</h2>
+          <pre data-id="code" style="width: min-content;margin: 10px 20px;"><code style="padding: 10px" data-trim>
+            SELECT COUNT(*) AS total_clientes 
+            FROM Clientes;
+          </code></pre>
+          <h2>Resultado</h2>
+            <table class="tg" style="font-size:21px;max-width: 200px">
+              <thead>
+                <tr>
+                  <th class="tg-bf9e">total_clientes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="tg-bf9e">3</td>
+                </tr>
+              </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Produtos</h2>
+          <table data-id="tabela" class="tg" style="font-size:21px;width:100%">
+            <thead>
+              <tr>
+                <th class="tg-bf9e">id_produto</th>
+                <th class="tg-bf9e">nome_produto</th>
+                <th class="tg-bf9e">categoria</th>
+                <th class="tg-bf9e">preco</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-bf9e">101</td>
+                <td class="tg-bf9e">Smartphone X</td>
+                <td class="tg-bf9e">Eletrônicos</td>
+                <td class="tg-bf9e">1500.00</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">102</td>
+                <td class="tg-bf9e">TV LED 4K</td>
+                <td class="tg-bf9e">Eletrônicos</td>
+                <td class="tg-bf9e">3000.00</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">103</td>
+                <td class="tg-bf9e">Fone de Ouvido</td>
+                <td class="tg-bf9e">Eletrônicos</td>
+                <td class="tg-bf9e">300.00</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">104</td>
+                <td class="tg-bf9e">Liquidificador</td>
+                <td class="tg-bf9e">Eletrodomésticos</td>
+                <td class="tg-bf9e">200.00</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">105</td>
+                <td class="tg-bf9e">Geladeira</td>
+                <td class="tg-bf9e">Eletrodomésticos</td>
+                <td class="tg-bf9e">2500.00</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2>Consulta</h2>
+          <pre data-id="code" style="width: min-content;margin: 10px 20px;"><code style="padding: 10px" data-trim>
+            SELECT AVG(preco) AS preco_medio 
+            FROM Produtos 
+            GROUP BY categoria;
+          </code></pre>
+          <h2>Resultado</h2>
+          <table class="tg" style="font-size:21px;max-width: 300px">
+            <thead>
+              <tr>
+                <th class="tg-bf9e">categoria</th>
+                <th class="tg-bf9e">preco_medio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-bf9e">Eletrônicos</td>
+                <td class="tg-bf9e">1600.00</td>
+              </tr>
+              <tr>
+                <td class="tg-bf9e">Eletrodomésticos</td>
+                <td class="tg-bf9e">1350.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2>JOIN</h2>
+          <div class="row-around" style="align-items: center;">
+            <div>
+              <h4>Cliente</h4>
+            <md data-id="cliente" md="
+            | cliente_id | nome            |
+            |------------|-----------------|
+            | 1          | Ana Silva       |
+            | 2          | Bruno Costa     |
+            | 3          | Carla Mendes    |
+            | 4          | Daniel Oliveira |
+                      "></md>
+                    </div>
+                      <span style="font-size: 40pt">+</span>
+                      <div>
+                      <h4 data-id="label">Pedido</h4>
+                      <md data-id="tabela" md="
+                      | pedido_id | cliente_id | nome_produto        |
+                      |-----------|------------|---------------------|
+                      | 101       | 1          | Notebook            |
+                      | 102       | 3          | Smartphone          |
+                      | 103       | 1          | Monitor             |
+                      | 104       | 2          | Teclado             |
+                      | 105       | 3          | Mouse               |
+                                "></md>
+                              </div>
+          </div>
+        </section>
+        
+        <section data-auto-animate>
+          <h2>JOIN</h2>
+          <h4 data-id="label">Cliente + Pedido</h4>
+          <div>
+            <h4 style="position: absolute; opacity:0;left: 200px; top: 110px">Cliente</h4>
+          <md data-id="cliente" style="position: absolute;max-height:0px;opacity:0;max-width:300px;top:150px;margin-left:200px" md="
+            | cliente_id | nome            |
+            |------------|-----------------|
+            | 1          | Ana Silva       |
+            | 2          | Bruno Costa     |
+            | 3          | Carla Mendes    |
+            | 4          | Daniel Oliveira |
+                      "></md>
+                    </div>
+          <md data-id="tabela" style="max-width:600px" md="
+                      | pedido_id | cliente_id | nome            | nome_produto        |
+                      |-----------|------------|-----------------|---------------------|
+                      | 101       | 1          | Ana Silva       | Notebook            |
+                      | 102       | 3          | Carla Mendes    | Smartphone          |
+                      | 103       | 1          | Ana Silva       | Monitor             |
+                      | 104       | 2          | Bruno Costa     | Teclado             |
+                      | 105       | 3          | Carla Mendes    | Mouse               |
+                      "></md>
+        </section>
+
+        <section>
+          <md md="
+          ## Junções (JOINs)
+          
+          - **`INNER JOIN` (ou apenas JOIN):** Retorna apenas as linhas que possuem correspondência em ambas as tabelas.
+          - **`LEFT JOIN` (`LEFT OUTER JOIN`):** Retorna todas as linhas da tabela da esquerda e as linhas correspondentes da tabela da direita (se houver). Se não houver correspondência, os valores da direita serão `NULL`.
+          - **`RIGHT JOIN` (`RIGHT OUTER JOIN`):** Retorna todas as linhas da tabela da direita e as linhas correspondentes da tabela da esquerda (se houver). Se não houver correspondência, os valores da esquerda serão `NULL`.
+          - **`FULL JOIN` (`FULL OUTER JOIN`):** Retorna todas as linhas de ambas as tabelas. Se não houver correspondência, os valores da tabela oposta serão `NULL`
+          (MySQL não suporta).
+          "></md>
+        </section>
+        
+        <section data-auto-animate>
+          <h2>As tabelas</h2>
+          <div data-id="tabelas" class="row-around" style="align-items: center;">
+            <div>
+            <h4>Clientes</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>cliente_id</th>
+                  <th>nome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Ana Silva</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Bruno Costa</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Carla Mendes</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Daniel Oliveira</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+            <span style="font-size: 40pt">+</span>
+            <div>
+            <h4>Pedidos</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>pedido_id</th>
+                  <th>cliente_id</th>
+                  <th>nome_produto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>101</td>
+                  <td>1</td>
+                  <td>Notebook</td>
+                </tr>
+                <tr>
+                  <td>102</td>
+                  <td>3</td>
+                  <td>Smartphone</td>
+                </tr>
+                <tr>
+                  <td>103</td>
+                  <td>1</td>
+                  <td>Monitor</td>
+                </tr>
+                <tr>
+                  <td>104</td>
+                  <td>2</td>
+                  <td>Teclado</td>
+                </tr>
+                <tr>
+                  <td>105</td>
+                  <td>3</td>
+                  <td>Mouse</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+      </section>
+
+      <section data-auto-animate>
+          <h2>O Código SQL</h2>
+          <div data-id="tabelas" class="row-around" style="align-items: center;">
+            <div>
+            <h4>Clientes</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>cliente_id</th>
+                  <th>nome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Ana Silva</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Bruno Costa</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Carla Mendes</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Daniel Oliveira</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+            <span style="font-size: 40pt">+</span>
+            <div>
+            <h4>Pedidos</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>pedido_id</th>
+                  <th>cliente_id</th>
+                  <th>nome_produto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>101</td>
+                  <td>1</td>
+                  <td>Notebook</td>
+                </tr>
+                <tr>
+                  <td>102</td>
+                  <td>3</td>
+                  <td>Smartphone</td>
+                </tr>
+                <tr>
+                  <td>103</td>
+                  <td>1</td>
+                  <td>Monitor</td>
+                </tr>
+                <tr>
+                  <td>104</td>
+                  <td>2</td>
+                  <td>Teclado</td>
+                </tr>
+                <tr>
+                  <td>105</td>
+                  <td>3</td>
+                  <td>Mouse</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+          <p>Queremos saber o nome do cliente e qual produto ele pediu.</p>
+          <pre><code class="lang-sql" data-line-numbers="1-4" data-trim>
+SELECT c.nome, p.nome_produto
+FROM Clientes c
+JOIN Pedidos p 
+  ON c.cliente_id = p.cliente_id;
+          </code></pre>
+      </section>
+
+      <section data-auto-animate>
+          <h2>Explicando o Código</h2>
+          <pre><code class="lang-sql" data-line-numbers="1" data-trim>
+SELECT c.nome, p.nome_produto
+FROM Clientes c
+JOIN Pedidos p 
+  ON c.cliente_id = p.cliente_id;
+          </code></pre>
+          <p data-markdown>
+          <textarea class="fragment fade-in" data-template>
+            Seleciona as colunas:
+            - `nome`: tabela `Clientes` (apelidada de `c`) 
+            - `nome_produto`: tabela `Pedidos` (apelidada de `p`).</textarea>
+          </p>
+      </section>
+
+      <section data-auto-animate>
+          <h2>Explicando o Código</h2>
+          <pre><code class="lang-sql" data-line-numbers="2" data-trim>
+SELECT c.nome, p.nome_produto
+FROM Clientes c
+JOIN Pedidos p 
+  ON c.cliente_id = p.cliente_id;
+          </code></pre>
+          <md md="
+          Indica a tabela principal de onde vamos buscar os dados:
+           - `Clientes`, e damos a ela um apelido curto, `c`
+          
+          "></md>
+          
+          <pre class="fragment fade-in"><code class="lang-sql" data-line-numbers="2" data-trim>
+-- Começamos com a tabela Clientes
+FROM Clientes c
+          </code></pre>
+      </section>
+
+      <section data-auto-animate>
+          <h2>Explicando o Código</h2>
+          <pre><code class="lang-sql" data-line-numbers="3" data-trim>
+SELECT c.nome, p.nome_produto
+FROM Clientes c
+JOIN Pedidos p 
+  ON c.cliente_id = p.cliente_id;
+          </code></pre>
+          <md md="
+          Usa o `JOIN` para combinar:
+           - `Clientes` + `Pedidos` (apelidamos de `p`).
+          "></md>
+          <pre class="fragment fade-in"><code class="lang-sql" data-line-numbers="3" data-trim>
+-- Combinamos com Pedidos
+JOIN Pedidos p
+          </code></pre>
+      </section>
+
+      <section data-auto-animate>
+          <h2>Explicando o Código</h2>
+          <pre><code class="lang-sql" data-line-numbers="4" data-trim>
+SELECT c.nome, p.nome_produto
+FROM Clientes c
+JOIN Pedidos p 
+  ON c.cliente_id = p.cliente_id;
+          </code></pre>
+          <md md="
+          Define a condição para o `JOIN` quando forem iguais: 
+          - `c.cliente_id`: cliente_id na tabela `Clientes`.
+          
+<div style=&quot;width:min-content;margin-left:120px;transform: rotate(90deg)&quot;>=</div>
+          
+- `p.cliente_id`: cliente_id na tabela `Pedidos`.
+          "></md>
+          <pre><code class="lang-sql" data-line-numbers="2" data-trim>
+-- A condição para a junção
+ON c.cliente_id = p.cliente_id;
+          </code></pre>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Consulta</h2>
+        <pre><code class="lang-sql" data-trim>
+          SELECT c.nome, p.nome_produto
+          FROM Clientes c
+          JOIN Pedidos p 
+            ON c.cliente_id = p.cliente_id;
+        </code></pre>
+          <h2>O Resultado</h2>
+          <p>Ao executar a query, teremos:</p>
+         <md md="
+| nome            | nome_produto        |
+|-----------------|---------------------|
+| Ana Silva       | Notebook            |
+| Carla Mendes    | Smartphone          |
+| Ana Silva       | Monitor             |
+| Bruno Costa     | Teclado             |
+| Carla Mendes    | Mouse               |
+"></md>
+      </section>
+
+      <section>
+          <h2>Em Resumo</h2>
+          <div class="row-around" style="align-items: center;">
+            <md md="
+            #### Cliente
+            | cliente_id | nome            |
+            |------------|-----------------|
+            | 1          | Ana Silva       |
+            | 2          | Bruno Costa     |
+            | 3          | Carla Mendes    |
+            | 4          | Daniel Oliveira |
+                      "></md>
+                      <span style="font-size: 40pt">+</span>
+                      <md md="
+                      #### Pedido
+                      | pedido_id | cliente_id | nome_produto        |
+                      |-----------|------------|---------------------|
+                      | 101       | 1          | Notebook            |
+                      | 102       | 3          | Smartphone          |
+                      | 103       | 1          | Monitor             |
+                      | 104       | 2          | Teclado             |
+                      | 105       | 3          | Mouse               |
+                                "></md>
+          </div>
+          <div class="row" style="align-items: center;">
+            <pre style="width:min-content;height:min-content"><code class="lang-sql" data-line-numbers data-trim>
+              SELECT c.nome, p.nome_produto
+              FROM Clientes c
+              JOIN Pedidos p 
+                ON c.cliente_id = p.cliente_id;
+                        </code></pre>
+            <ul>
+            <li style="font-size:20pt"><code-inline size="16">SELECT</code-inline>: coluna(s) você quer ver.</li>
+            <li style="font-size:20pt"><code-inline size="16">FROM</code-inline>: tabela de onde vem os dados.</li>
+            <li style="font-size:20pt"><code-inline size="16">JOIN</code-inline>: tabela para conectar.</li>
+            <li style="font-size:20pt"><code-inline size="16">ON</code-inline>: condição para fazer a conexão.</li>
+        </ul></div>
+          
+                      <md md="
+                      | nome            | nome_produto        |
+                      |-----------------|---------------------|
+                      | Ana Silva       | Notebook            |
+                      | Carla Mendes    | Smartphone          |
+                      | Ana Silva       | Monitor             |
+                      | Bruno Costa     | Teclado             |
+                      "></md>
+
+          
+      </section>
+      </section>
+        
+        <section>
+          <md md="
+        ## Subconsultas (Subqueries)
+        
+        - Uma consulta aninhada dentro de outra consulta.
+        - Podem aparecer nas cláusulas `SELECT`, `FROM`, `WHERE` e `HAVING`.
+        
+        **Exemplo:**
+        ```sql
+        SELECT nome_produto
+        FROM Produtos
+        WHERE preco > (SELECT AVG(preco) FROM Produtos WHERE categoria = 'Livros');
+        ```
+          "></md>
+        </section>
+        
+        <section>
+          <md md="
+        ## Normalização de Banco de Dados
+        
+        - Processo de organização dos dados em tabelas de forma a reduzir a redundância e melhorar a integridade.
+        - Formas Normais (FN):
+            - **1ª FN:** Eliminar grupos repetidos.
+            - **2ª FN:** Eliminar dependências parciais da chave primária.
+            - **3ª FN:** Eliminar dependências transitivas.
+            - Formas Normais Superiores (BCNF, 4ª FN, 5ª FN): Casos mais específicos de dependências.
+        - **Desnormalização:** Em alguns casos, pode ser aplicada para melhorar o desempenho de leitura, introduzindo redundância controlada.
+          "></md>
+        </section>
+        
+        <section>
+          <md md="
+        ## Transações e ACID
+        
+        - **Transação:** Uma sequência de operações que são tratadas como uma única unidade lógica de trabalho.
+        - **ACID:** Propriedades que garantem a confiabilidade das transações:
+            - **Atomicidade (Atomicity):** Tudo ou nada, ou todas operações são concluídas com sucesso ou nenhuma é.
+            - **Consistência (Consistency):** O resultado final das operações deve ser consistente ou vai gerar um erro.
+            - **Isolamento (Isolation):** Transações concorrentes (ao mesmo tempo) devem operar de forma isolada, como se fossem executadas sequencialmente.
+            - **Durabilidade (Durability):** Se uma transação terminar com sucesso, as alterações são permanentes (gravadas no disco).
+          "></md>
+        </section>
+
+        
+        
+        <section data-markdown data-background-image="https://i.imgur.com/DOhHyzg.png" data-background-opacity="0.09">
+          <textarea data-template>
+        ## Questões de Concurso
+        
+        **1. (FCC) Em um modelo relacional, a garantia de que um valor de chave estrangeira em uma tabela sempre referencia um valor existente de chave primária em outra tabela é denominada:**
+  
+        (A) Integridade de domínio
+  
+        (B) Integridade referencial
+  
+        (C) Integridade de entidade
+  
+        (D) Dependência funcional
+  
+        (E) Normalização
+
+---
+        
+        **2. (CESPE/CEBRASPE) A cláusula SQL utilizada para restringir as linhas retornadas por uma consulta é a cláusula:**
+  
+        (A) SELECT
+  
+        (B) FROM
+  
+        (C) WHERE
+  
+        (D) GROUP BY
+  
+        (E) ORDER BY
+        
+---
+
+        **3. (FGV) Qual das seguintes formas normais exige que todos os atributos não chave sejam totalmente dependentes da chave primária?**
+  
+        (A) Primeira Forma Normal (1FN)
+  
+        (B) Segunda Forma Normal (2FN)
+
+        (C) Terceira Forma Normal (3FN)
+
+        (D) Forma Normal de Boyce-Codd (FNBC)
+
+        (E) Quinta Forma Normal (5FN)
+          ">
+          </textarea>
+        </section>
+        
+        <section data-background-image="https://i.imgur.com/DOhHyzg.png" data-background-opacity="0.09">
+          <md md="
+        ## Dicas Finais para Concursos
+        
+        - **Entenda os fundamentos:** Modelagem de dados, SQL (DDL, DML), normalização, transações e ACID são cruciais.
+        - **Pratique com questões:** Resolva diversas questões de concursos anteriores para se familiarizar com o estilo das perguntas.
+        - **Conheça os SGBDs:** Embora SQL seja padrão, as implementações e recursos podem variar entre os diferentes sistemas (MySQL, PostgreSQL, Oracle, SQL Server, etc.).
+        - **Atenção aos detalhes:** Leia atentamente os enunciados e as opções de resposta.
+        - **Simulados:** Faça simulados para testar seus conhecimentos e o tempo de resolução.
+          "></md>
+        </section>
+        
+        <section data-background-image="https://i.imgur.com/llFKXZq.png" data-background-opacity="0.3">
+          <h1>Bons Estudos!</h1>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.4.1/plugin/mermaid/mermaid.js"></script>
+    <script src="dist/vue.js"></script>
+
+    <script>
+      window.app = Vue.createApp({
+        setup() {
+          Vue.onMounted(() => {
+            initializeReveal();
+          });
+
+          return {};
+        },
+      });
+    </script>
+    <script src="plugin/leader-line.min.js"></script>
+    <script src="slides_template/header1.js"></script>
+    <script src="components/md.js"></script>
+    <script src="components/code-inline.js"></script>
+
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      function initializeReveal() {
+        var deck1 = new Reveal(document.querySelector(".reveal"), {
+          controls: true,
+          controlsLayout: 'edges', 
+          hash: true,
+          respondToHashChanges: true,
+          history:true, 
+          keyboardCondition: "focused", // only react to keys when focused
+          theme: "dracula",
+          slideNumber: "h.v",
+          navigationMode: "linear",
+
+          // Learn about plugins: https://revealjs.com/plugins/
+          plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+          // dependencies: [
+          // 	{ src: 'plugin/myhighlight/highlight.min.js' },
+          // 	{
+          // 		src: 'node_modules/reveal-code-focus/reveal-code-focus.js',
+          // 		async: true,
+          // 		callback: function () {
+          // 			RevealCodeFocus();
+          // 		}
+          // 	}
+          // ]
+        });
+
+        deck1.initialize();
+        let line = null;
+
+        deck1.on("fragmentshown", (event) => {
+          console.log(event);
+          if (event.fragment.id === "start-highlight") {
+            if (line === null) {
+              line = new LeaderLine(
+                document.getElementById("start-highlight"),
+                document.getElementById("end-highlight"),
+                {
+                  color: "#359830",
+                  path: "arc",
+                  hide: true,
+                }
+              );
+            }
+            line.show("draw", {
+              duration: 500,
+              timing: [0.58, 0, 0.42, 1],
+              loop: true,
+            });
+
+            console.log(line);
+          }
+        });
+        deck1.on("fragmenthidden", (event) => {
+          if (event.fragment.id === "start-highlight") {
+            line.hide("draw");
+          }
+        });
+
+        deck1.on("slidechanged", (event) => {
+          console.log(event);
+          location.href =
+            location.href.replace(/#*.*$/, "") + "#" + event.indexh;
+          if (line !== null) {
+            line.remove();
+            line = null;
+          }
+        });
+      }
+
+      window.app.mount("#app");
+
+      // initializeReveal();
+    </script>
+  </body>
+</html>

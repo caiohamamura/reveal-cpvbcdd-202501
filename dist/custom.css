@@ -1,0 +1,128 @@
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.row-around {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.leader-line {
+    z-index: 999;
+}
+
+h1, h2, h3, h4, h5 {
+    text-align: left;
+}
+
+
+h2 {
+    font-size: 36pt !important;
+}
+
+h3 {
+    font-size: 32pt;
+}
+
+p, ul>li, ol>li, li {
+    font-size: 22pt;
+    text-align: left;
+    margin: 5px 40px;
+}
+
+img {
+    font-size: 16pt
+}
+
+
+
+.line { 
+    display: block;
+    opacity: 0.3;
+    transition: opacity ease 0.5s;
+ }
+.line.focus { 
+    opacity: 1;
+ }
+
+
+.referencias {
+    font-size:large;text-align: right;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 0 auto 20px auto; /* Centraliza a tabela e adiciona margem inferior */
+    width: 100%; /* Ajusta a largura */
+    font-size: 0.8em;
+  }
+  table td {
+    border-color: #333; /* Cor da borda da célula */
+    border-style: solid;
+    border-width: 1px;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    overflow: hidden;
+    padding: 10px 5px;
+    word-break: normal;
+    color: #eee; /* Cor do texto da célula */
+  }
+  table th {
+    border-color: #333; /* Cor da borda do cabeçalho */
+    border-style: solid;
+    border-width: 1px;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    font-weight: normal;
+    overflow: hidden;
+    padding: 10px 5px;
+    word-break: normal;
+    color: #fff; /* Cor do texto do cabeçalho */
+    background-color: #555; /* Cor de fundo do cabeçalho */
+  }
+  table .tg-bf9e {
+    text-align: center;
+    vertical-align: top;
+  }
+  .tg .tg-0lax {
+    text-align: left;
+    vertical-align: top;
+  }
+
+.name-class circle {
+    transform: scaleY(0.5);
+    transform-origin: left;
+    transform-box: fill-box;
+}
+
+.attribute {
+    background-color: cyan;
+}
+
+pre.code-inline {
+    display: inline-block;
+    width: min-content;
+    font-size: 20pt;
+    margin: 0;
+}
+
+pre.code-inline code {
+    padding: 2px !important;
+    margin: 0 0 0 0 !important;
+    position:relative;
+    top: 10px;
+}
+
+section {
+    text-align: start;
+}
