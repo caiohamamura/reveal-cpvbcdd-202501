@@ -500,13 +500,8 @@ ORDER BY preco DESC;
         <section>
           <md md="
           ## Junções (JOINs)
-          
-          - **`INNER JOIN` (ou apenas JOIN):** Retorna apenas as linhas que possuem correspondência em ambas as tabelas.
-          - **`LEFT JOIN` (`LEFT OUTER JOIN`):** Retorna todas as linhas da tabela da esquerda e as linhas correspondentes da tabela da direita (se houver). Se não houver correspondência, os valores da direita serão `NULL`.
-          - **`RIGHT JOIN` (`RIGHT OUTER JOIN`):** Retorna todas as linhas da tabela da direita e as linhas correspondentes da tabela da esquerda (se houver). Se não houver correspondência, os valores da esquerda serão `NULL`.
-          - **`FULL JOIN` (`FULL OUTER JOIN`):** Retorna todas as linhas de ambas as tabelas. Se não houver correspondência, os valores da tabela oposta serão `NULL`
-          (MySQL não suporta).
           "></md>
+          <img src="https://i.imgur.com/kON962a.png" alt="">
         </section>
         
         <section data-auto-animate>
@@ -843,7 +838,25 @@ ON c.cliente_id = p.cliente_id;
         - **Desnormalização:** Em alguns casos, pode ser aplicada para melhorar o desempenho de leitura, introduzindo redundância controlada.
           "></md>
         </section>
+
+        <section>
+          <h2>1ª FN</h2>
+          <p>Dependência multivalorada (colunas com múltiplos valores)</p>
+          <img src="https://i.imgur.com/lSArDMO.png" alt="Imagem demonstrando a primeira forma normal, transformando uma coluna multivalorada em coluna simples">
+        </section>
+
+        <section>
+          <h2>2ª FN: dependência parcial</h2>
+          <p>Só existe se tiver uma chave primária composta (várias colunas ou pior se não tiver chave primária)</p>
+          <img src="https://i.imgur.com/aeT371j.png" alt="">
+
+        </section>
         
+        <section>
+          <h2>3ª FN dependência transitiva</h2>
+            <img src="https://i.imgur.com/U32LDtr.png" alt="">
+        </section>
+
         <section>
           <md md="
         ## Transações e ACID
@@ -855,6 +868,50 @@ ON c.cliente_id = p.cliente_id;
             - **Isolamento (Isolation):** Transações concorrentes (ao mesmo tempo) devem operar de forma isolada, como se fossem executadas sequencialmente.
             - **Durabilidade (Durability):** Se uma transação terminar com sucesso, as alterações são permanentes (gravadas no disco).
           "></md>
+        </section>
+
+        <section>
+          <div class="row center">
+            <div>
+            <h2>Transação</h2>
+            <ul>
+              <li>Operações são feitas em blocos</li>
+            </ul>
+          </div>
+          <img src="https://i.imgur.com/6E1M3R9.png" alt="">
+          </div>
+          
+          <h2>Atomicidade</h2>
+          <ul class="center">
+            <li>É tudo ou nada, ou a operação toda termina com sucesso ou nada vai ser aplicado.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Consistência</h2>
+          <p>Se algo falhar nenhuma operação da transação vai ser realizada</p>
+          <h3>Tipos de incosistência</h3>
+            <div class="row center" style="justify-content: space-between;">
+              <div>
+                <h4>Integridade de domínio</h4>
+                <p>Tipos incompatíveis: texto <span style="font-family: monospace">-></span> inteiro</p>
+              </div>
+              <pre style="width: min-content"><code data-trim style="">
+                CREATE TABLE teste (idade INT);
+                INSERT INTO teste (idade)
+                VALUES ('16');
+              </code></pre>
+            </div>
+            <div class="row">
+              <div>
+                <h4>Integridade referencial</h4>
+                <p>Fazer referência FK a um id que não existe na tabela pai (PK)</p>
+              </div>
+            </div>
+        </section>
+
+        <section>
+
         </section>
 
         
@@ -906,6 +963,7 @@ ON c.cliente_id = p.cliente_id;
           </textarea>
         </section>
         
+        
         <section data-background-image="https://i.imgur.com/DOhHyzg.png" data-background-opacity="0.09">
           <md md="
         ## Dicas Finais para Concursos
@@ -930,7 +988,7 @@ ON c.cliente_id = p.cliente_id;
     <script src="plugin/markdown/markdown.js"></script>
     <script src="plugin/highlight/highlight.js"></script>
     <script src="plugin/zoom/zoom.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.4.1/plugin/mermaid/mermaid.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.1/plugin/mermaid/mermaid.js"></script>
     <script src="dist/vue.js"></script>
 
     <script>

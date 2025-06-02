@@ -8,6 +8,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    width: 100%;
 }
 
 .column {
@@ -25,12 +26,19 @@ h1, h2, h3, h4, h5 {
 }
 
 
-h2 {
-    font-size: 36pt !important;
+.reveal section h2 {
+    font-size: 42pt;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
-h3 {
+.reveal section h3 {
     font-size: 32pt;
+    color: #359830;
+    text-shadow: 0px 0px 2px white;
+}
+
+.reveal section h4 {
+    font-size: 24pt 
 }
 
 p, ul>li, ol>li, li {
@@ -125,4 +133,13 @@ pre.code-inline code {
 
 section {
     text-align: start;
+}
+
+.center {
+    margin: auto;
+    align-items: center;
+}
+
+.reveal .code-wrapper code {
+    min-height: unset;
 }
