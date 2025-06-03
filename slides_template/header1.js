@@ -49,7 +49,7 @@ window.app.component("header1", {
           </div>
     
           <!-- Bottom heading -->
-          <h3
+          <h2
             style="
               margin: 0 30px 60px 30px;
               align-self: end;
