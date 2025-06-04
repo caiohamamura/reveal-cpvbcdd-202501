@@ -38,7 +38,8 @@ h1, h2, h3, h4, h5 {
 }
 
 .reveal section h4 {
-    font-size: 24pt 
+    font-size: 24pt;
+    margin: 10px 0;
 }
 
 p, ul>li, ol>li, li {
@@ -142,4 +143,28 @@ section {
 
 .reveal .code-wrapper code {
     min-height: unset;
+}
+
+.mermaid > svg {
+    max-height: 100%;
+}
+
+.multi-col {
+  display: grid;
+  grid-template-columns: repeat(var(--col-count), 1fr);
+  align-items: center;
+}
+
+.multi-col p {
+    margin: 5px;
+    padding: 0;
+}
+
+.highlight-box {
+  background: rgba(189, 147, 249, 0.15);
+  border-left: 4px solid #bd93f9;
+  padding: 1rem;
+  border-radius: 0 4px 4px 0;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
 }
