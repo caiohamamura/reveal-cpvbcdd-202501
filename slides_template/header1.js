@@ -1,8 +1,10 @@
 window.app.component("header1", {
-  props: ["aula", "titleSize", "title"],
-  setup() {
+  props: ["curso", "aula", "titleSize", "title"],
+  setup(props) {
     const count = Vue.ref(0);
     const slots = Vue.useSlots().default?.();
+
+    document.title = `${props.curso} - Aula ${props.aula} - ${props.title}`;
 
     return { count, slots };
   },
@@ -31,7 +33,7 @@ window.app.component("header1", {
               margin: 30px 30px 0 30px;
             "
           >
-            <span style="font-size: 24pt"></span>
+            <span style="font-size: 24pt">{{ curso }}</span>
             <span style="font-size: 24pt">Aula {{ aula }}</span>
           </div>
           <!-- Images middle -->

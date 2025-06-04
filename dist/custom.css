@@ -21,7 +21,11 @@
     z-index: 999;
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
     text-align: left;
 }
 
@@ -42,7 +46,10 @@ h1, h2, h3, h4, h5 {
     margin: 10px 0;
 }
 
-p, ul>li, ol>li, li {
+p,
+ul>li,
+ol>li,
+li {
     font-size: 22pt;
     text-align: left;
     margin: 5px 40px;
@@ -54,29 +61,35 @@ img {
 
 
 
-.line { 
+.line {
     display: block;
     opacity: 0.3;
     transition: opacity ease 0.5s;
- }
-.line.focus { 
+}
+
+.line.focus {
     opacity: 1;
- }
+}
 
 
 .referencias {
-    font-size:large;text-align: right;
+    font-size: large;
+    text-align: right;
 }
 
 table {
     border-collapse: collapse;
     border-spacing: 0;
-    margin: 0 auto 20px auto; /* Centraliza a tabela e adiciona margem inferior */
-    width: 100%; /* Ajusta a largura */
+    margin: 0 auto 20px auto;
+    /* Centraliza a tabela e adiciona margem inferior */
+    width: 100%;
+    /* Ajusta a largura */
     font-size: 0.8em;
-  }
-  table td {
-    border-color: #333; /* Cor da borda da célula */
+}
+
+table td {
+    border-color: #333;
+    /* Cor da borda da célula */
     border-style: solid;
     border-width: 1px;
     font-family: Arial, sans-serif;
@@ -84,10 +97,13 @@ table {
     overflow: hidden;
     padding: 10px 5px;
     word-break: normal;
-    color: #eee; /* Cor do texto da célula */
-  }
-  table th {
-    border-color: #333; /* Cor da borda do cabeçalho */
+    color: #eee;
+    /* Cor do texto da célula */
+}
+
+table th {
+    border-color: #333;
+    /* Cor da borda do cabeçalho */
     border-style: solid;
     border-width: 1px;
     font-family: Arial, sans-serif;
@@ -96,17 +112,21 @@ table {
     overflow: hidden;
     padding: 10px 5px;
     word-break: normal;
-    color: #fff; /* Cor do texto do cabeçalho */
-    background-color: #555; /* Cor de fundo do cabeçalho */
-  }
-  table .tg-bf9e {
+    color: #fff;
+    /* Cor do texto do cabeçalho */
+    background-color: #555;
+    /* Cor de fundo do cabeçalho */
+}
+
+table .tg-bf9e {
     text-align: center;
     vertical-align: top;
-  }
-  .tg .tg-0lax {
+}
+
+.tg .tg-0lax {
     text-align: left;
     vertical-align: top;
-  }
+}
 
 .name-class circle {
     transform: scaleY(0.5);
@@ -128,31 +148,42 @@ pre.code-inline {
 pre.code-inline code {
     padding: 2px !important;
     margin: 0 0 0 0 !important;
-    position:relative;
+    position: relative;
     top: 10px;
 }
+
+pre.smaller, .smaller table td {
+    margin: 0;
+    padding: 0;
+    width: max-content;
+}
+
+
 
 section {
     text-align: start;
 }
 
 .center {
+    display: block;
     margin: auto;
-    align-items: center;
 }
 
 .reveal .code-wrapper code {
     min-height: unset;
 }
 
+
+
 .mermaid > svg {
-    max-height: 100%;
+    max-height: 600px;
+    overflow: auto;
 }
 
 .multi-col {
-  display: grid;
-  grid-template-columns: repeat(var(--col-count), 1fr);
-  align-items: center;
+    display: grid;
+    grid-template-columns: repeat(var(--col-count), 1fr);
+    align-items: center;
 }
 
 .multi-col p {
@@ -161,10 +192,148 @@ section {
 }
 
 .highlight-box {
-  background: rgba(189, 147, 249, 0.15);
-  border-left: 4px solid #bd93f9;
-  padding: 1rem;
-  border-radius: 0 4px 4px 0;
-  margin: 1rem 0;
-  transition: all 0.3s ease;
+    background: rgba(189, 147, 249, 0.15);
+    border-left: 4px solid #bd93f9;
+    padding: 1rem;
+    border-radius: 0 4px 4px 0;
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+:root {
+    --main-color: #bd93f9;
+    --secondary-color: #ff79c6;
+    --accent-color: #50fa7b;
+}
+
+/* Estilização de tabelas */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.styled-table thead tr {
+    background-color: var(--main-color);
+    color: #ffffff;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #44475a;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #343746;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid var(--main-color);
+}
+
+.styled-table tbody tr.active-row {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+/* Flexbox utilities */
+.row {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.col {
+    flex: 1;
+    margin: 0 10px;
+}
+
+
+pre.code-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    width: 12px;
+    height: 12px;
+    background: #ff5555;
+    border-radius: 50%;
+    box-shadow: 20px 0 0 #f1fa8c, 40px 0 0 #50fa7b;
+}
+
+/* Diagramas Mermaid */
+.mermaid-container {
+    background: #ccced1;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.architecture-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    background: #282a36;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.architecture-box {
+    background: #44475a;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 10px;
+    text-align: center;
+    min-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.architecture-arrow {
+    font-size: 2em;
+    color: var(--accent-color);
+    margin: 0 10px;
+}
+
+section.present {
+    max-height: 700px;
+}
+
+section.present .mermaid-container {
+    max-height: 600px;
+}
+
+
+section.present .mermaid-container .mermaid {
+    max-height: 600px;
+}
+
+
+div {
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    font-size: 16px;
+    top: 0px;
+    right: 0px;
+    margin-right:0px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.mr-49 {
+    margin-right:49px;
 }

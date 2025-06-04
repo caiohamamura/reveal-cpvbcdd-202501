@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="dist/reset.css" />
+  <link rel="stylesheet" href="dist/reveal.css" />
+  <link rel="stylesheet" href="dist/theme/night.css" />
+  <link rel="stylesheet" href="dist/custom.css" />
+
+  <!-- Theme used for syntax highlighted code -->
+  <link rel="stylesheet" href="dist/highlight/panda-syntax-dark.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- <link rel="stylesheet" href="dist/highlight/dracula.css"> -->
+</head>
+
+<body>
+  <div id="app" class="reveal">
+    <div class="slides">
+      <section>
+        <header1 title="Flask + MariaDB com SQLAlchemy" aula="16" curso="Banco de Dados">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Flask_logo.svg/640px-Flask_logo.svg.png"
+               alt="">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/MariaDB_colour_logo.svg/800px-MariaDB_colour_logo.svg.png"
+               alt="">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/SQLAlchemy.svg/1200px-SQLAlchemy.svg.png"
+               alt="">
+        </header1>
+      </section>
+
+      <section>
+        <h2>Arquitetura do Sistema</h2>
+        <div class="architecture-diagram">
+          <div class="architecture-box">Flask<br>(Python)</div>
+          <div class="architecture-arrow">→</div>
+          <div class="architecture-box">SQLAlchemy<br>(SQL Bruto)</div>
+          <div class="architecture-arrow">→</div>
+          <div class="architecture-box">MySQL</div>
+          <div class="architecture-arrow">→</div>
+          <div class="architecture-box">Jinja2<br>(Templates)</div>
+          <div class="architecture-arrow">→</div>
+          <div class="architecture-box">HTML<br>(Browser)</div>
+        </div>
+        <div class="fragment">
+          <p>Fluxo de dados: Python → SQL → Banco de Dados → Templates → HTML</p>
+        </div>
+      </section>
+
+      <!-- Slide 3: Configuração do projeto -->
+
+      <section>
+
+        <md md="## Estrutura do Projeto"></md>
+
+        <pre><code class="plaintext" data-trim>
+projeto/
+├── app.py
+├── templates/
+│   ├── base.html
+│   ├── usuarios.html
+│   ├── posts.html
+│   └── ...
+├── static/
+│   └── style.css
+└── requirements.txt
+</code></pre>
+
+        <div class="fragment">
+
+          <md md="### Dependências (requirements.txt)"></md>
+
+          <pre><code data-trim>
+          Flask
+          SQLAlchemy
+          pymysql
+</code></pre>
+
+        </div>
+
+      </section>
+
+      <!-- Slide 3: Diagrama do Banco de Dados -->
+      <section style="display: grid; grid-template-rows: auto 1fr auto;">
+        <h2>Modelo de Dados</h2>
+        <div class="mermaid-container center">
+          <div class="mermaid">
+            <pre>
+          erDiagram
+            direction LR
+
+              USUARIO ||--o{ POST : "possui"
+              USUARIO {
+              int id PK
+              string nome
+              string email
+              string senha
+              }
+              POST {
+              int id PK
+              string titulo
+              string conteudo
+              datetime data_criacao
+              int usuario_id FK
+              }
+              </pre>
+          </div>
+        </div>
+        <div class="fragment center">
+          <p>Relacionamento: 1 usuário → N posts</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Criando o Banco de Dados</h2>
+        <div>
+          <pre><code>
+mysql://root@localhost:3308;
+
+CREATE DATABASE IF NOT EXISTS aula16;
+
+USE aula16;
+-- Tabela usuario
+DROP TABLE IF EXISTS usuario;
+CREATE TABLE usuario (
+id INT AUTO_INCREMENT PRIMARY KEY,
+nome VARCHAR(100) NOT NULL,
+email VARCHAR(100) NOT NULL UNIQUE,
+senha VARCHAR(255) NOT NULL
+);
+
+-- Tabela post
+DROP TABLE IF EXISTS post;
+CREATE TABLE post (
+id INT AUTO_INCREMENT PRIMARY KEY,
+titulo VARCHAR(200) NOT NULL,
+conteudo TEXT NOT NULL,
+data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+usuario_id INT NOT NULL,
+FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
+);
+
+
+-- Inserindo usuários
+INSERT INTO usuario (nome, email, senha) VALUES
+('Ana Silva', 'ana@exemplo.com', 'senha123'),
+('Carlos Oliveira', 'carlos@exemplo.com', 'senha456'),
+('Mariana Santos', 'mariana@exemplo.com', 'senha789');
+
+-- Inserindo posts
+INSERT INTO post (titulo, conteudo, usuario_id) VALUES
+('Primeiro Post', 'Conteúdo do primeiro post da Ana.', 1),
+('Segundo Post', 'Conteúdo do segundo post da Ana.', 1),
+('Aprendendo Flask', 'Carlos escreve sobre Flask.', 2),
+('Dicas de SQL', 'Mariana compartilha dicas de SQL.', 3);
+        </code></pre>
+          <copy-btn class="mr-49"></copy-btn>
+        </div>
+      </section>
+
+      <!-- Slide 4: Configuração Inicial -->
+      <section>
+        <h2>Configuração Inicial</h2>
+        <div>
+          <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-3|4-6|8-10|12-15">
+                    # Importações essenciais
+                    from flask import Flask, render_template, request, redirect, url_for
+                    from sqlalchemy import create_engine, text
+
+                    # Configuração do Flask
+                    app = Flask(__name__)
+
+                    # Configuração do banco de dados
+                    DATABASE_URI = "mysql+pymysql://root@localhost:3308/nome_banco"
+                    engine = create_engine(DATABASE_URI)
+
+                    # Exemplo de conexão
+                    with engine.connect() as conn:
+                        resultado = conn.execute(text("SELECT 1")).scalar()
+                        print(f"Você selecionou: {db_version}")
+                </code></pre>
+          <copy-btn class="mr-49"></copy-btn>
+        </div>
+        <div class="fragment">
+          <p>SQLAlchemy atua como ponte para executar SQL diretamente</p>
+        </div>
+      </section>
+
+      <!-- Slide 5: Operações CRUD - Create -->
+      <section>
+        <section>
+          <h2>Operações CRUD - Create</h2>
+          <div class="row">
+            <div style="width: min-content; margin:0; padding: 0">
+              <pre class="code-wrapper" style="width: max-content;"><code class="python" data-fragment-index="1" data-trim data-line-numbers="1-2,6-7|3-4|8-11|12-17|16-17">
+                        # Rota para abrir formulário de criação
+                        @app.route('/usuarios/novo', methods=['GET'])
+                        def novo_usuario_form():
+                            return render_template('novo_usuario.html')
+
+                        # Rota para inserir usuário no banco
+                        @app.route('/usuarios/novo', methods=['POST'])
+                        def novo_usuario():
+                            nome = request.form['nome']
+                            email = request.form['email']
+                            senha = request.form['senha']  # Em produção, usar hash!
+                            
+                            with engine.begin() as conn:
+                                conn.execute(text("""
+                                    INSERT INTO usuario (nome, email, senha)
+                                    VALUES (:nome, :email, :senha)
+                                """), {'nome': nome, 'email': email, 'senha': senha})
+                            
+                            return redirect('/usuarios')
+                            
+                    </code></pre>
+              <copy-btn class="mt-5"></copy-btn>
+            </div>
+            <p class="fragment" data-fragment-index="4">Modo seguro para inserir dados</p>
+          </div>
+        </section>
+
+        <section>
+          <h3>Formulário de Criação (Jinja2)</h3>
+          <div>
+            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-3|5-10|12-15">
+                          <!-- templates/novo_usuario.html -->
+                          {% extends 'base.html' %}
+            
+                          {% block content %}
+                          &lt;form method="POST"&gt;
+                              &lt;div class="form-group"&gt;
+                                  &lt;label for="nome"&gt;Nome&lt;/label&gt;
+                                  &lt;input type="text" class="form-control" id="nome" name="nome" required&gt;
+                              &lt;/div&gt;
+            
+                              &lt;div class="form-group"&gt;
+                                  &lt;label for="email"&gt;Email&lt;/label&gt;
+                                  &lt;input type="email" class="form-control" id="email" name="email" required&gt;
+                              &lt;/div&gt;
+            
+                              &lt;button type="submit" class="btn btn-primary"&gt;Criar Usuário&lt;/button&gt;
+                          &lt;/form&gt;
+                          {% endblock %}
+                      </code></pre>
+            <copy-btn class="mr-49"></copy-btn>
+          </div>
+        </section>
+      </section>
+
+      <!-- Slide 6: Operações CRUD - Read -->
+      <section>
+        <section>
+          <h2>Operações CRUD - Read</h2>
+          <div>
+            <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1|3-9|11-13">
+                          # Listar todos os usuários
+                          @app.route('/usuarios')
+                          def listar_usuarios():
+                              with engine.connect() as conn:
+                                  result = conn.execute(text("""
+                                      SELECT id, nome, email
+                                      FROM usuario
+                                      ORDER BY nome
+                                  """))
+                                  usuarios = result.mappings().all()
+            
+                              return render_template(
+                                  'listar_usuarios.html',
+                                  usuarios=usuarios
+                              )
+                      </code></pre>
+            <copy-btn class="mr-49"></copy-btn>
+          </div>
+        </section>
+
+        <section>
+          <h2>Herança de Templates com Jinja2</h2>
+          <div class="row" style="align-items: start;">
+            <div class="col">
+              <h4>base.html</h4>
+              <div>
+                <pre class="code-wrapper smaller"><code class="html" data-trim data-fragment-index="1" data-line-numbers="1-14|4|10" v-pre>
+                              &lt;!DOCTYPE html&gt;
+                              &lt;html&gt;
+                              &lt;head&gt;
+                                  &lt;title&gt;{% block title %}{% endblock %}&lt;/title&gt;
+                                  &lt;link rel="stylesheet" href="styles.css"&gt;
+                              &lt;/head&gt;
+                              &lt;body&gt;
+                                  &lt;header&gt;Meu Blog&lt;/header&gt;
+                                  &lt;main&gt;
+                                      {% block content %}{% endblock %}
+                                  &lt;/main&gt;
+                                  &lt;footer&gt;&copy; 2023&lt;/footer&gt;
+                              &lt;/body&gt;
+                              &lt;/html&gt;
+                          </code></pre>
+                          <copy-btn></copy-btn>
+              </div>
+            </div>
+
+            <div class="col">
+              <h4>listar_usuarios.html</h4>
+              <div>
+                <pre class="code-wrapper smaller"><code class="html" data-trim data-fragment-index="1" data-line-numbers="1-10|3|5-10" v-pre>
+                              {% extends 'base.html' %}
+                
+                              {% block title %}Usuários{% endblock %}
+                
+                              {% block content %}
+                              &lt;h1&gt;Lista de Usuários&lt;/h1&gt;
+                              &lt;table&gt;
+                                  &lt;!-- Tabela de usuários --&gt;
+                              &lt;/table&gt;
+                              {% endblock %}
+                          </code></pre>
+                          <copy-btn></copy-btn>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section>
+          <h3>Template de Listagem (Jinja2)</h3>
+          <div>
+            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-19|5-14|15-24" v-pre>
+                          <!-- templates/listar_usuarios.html -->
+                          {% extends 'base.html' %}
+            
+                          {% block content %}
+                          &lt;table class="styled-table"&gt;
+                              &lt;thead&gt;
+                                  &lt;tr&gt;
+                                      &lt;th&gt;ID&lt;/th&gt;
+                                      &lt;th&gt;Nome&lt;/th&gt;
+                                      &lt;th&gt;Email&lt;/th&gt;
+                                      &lt;th&gt;Ações&lt;/th&gt;
+                                  &lt;/tr&gt;
+                              &lt;/thead&gt;
+                              &lt;tbody&gt;
+                                  {% for usuario in usuarios %}
+                                  &lt;tr&gt;
+                                      &lt;td&gt;{{ usuario.id }}&lt;/td&gt;
+                                      &lt;td&gt;{{ usuario.nome }}&lt;/td&gt;
+                                      &lt;td&gt;{{ usuario.email }}&lt;/td&gt;
+                                      &lt;td&gt;
+                                          &lt;a href="{{ url_for('editar_usuario', id=usuario.id) }}"&gt;Editar&lt;/a&gt;
+                                      &lt;/td&gt;
+                                  &lt;/tr&gt;
+                                  {% endfor %}
+                              &lt;/tbody&gt;
+                          &lt;/table&gt;
+                          {% endblock %}
+                      </code></pre>
+                      <copy-btn class="mr-49"></copy-btn>
+          </div>
+        </section>
+
+        <section>
+          <h3>Resultado Renderizado</h3>
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Ana Silva</td>
+                <td>ana@exemplo.com</td>
+                <td><a href="#" style="color: var(--accent-color);">Editar</a></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Carlos Oliveira</td>
+                <td>carlos@exemplo.com</td>
+                <td><a href="#" style="color: var(--accent-color);">Editar</a></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Mariana Santos</td>
+                <td>mariana@exemplo.com</td>
+                <td><a href="#" style="color: var(--accent-color);">Editar</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <!-- Slide 7: Operações CRUD - Update -->
+      <section>
+        <h2>Operações CRUD - Update</h2>
+        <div>
+          <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-2,14-15|4-10|16-18|20-27">
+                      # Formulario de edição
+                      @app.route('/usuarios/&lt;int:id&gt;/editar', methods=['GET'])
+                      def editar_usuario_form(id):
+                          # Buscar usuário para edição
+                          with engine.connect() as conn:
+                              result = conn.execute(text("""
+                                  SELECT id, nome, email
+                                  FROM usuario
+                                  WHERE id = :id
+                              """), {'id': id}).first()
+                              return render_template('editar_usuario.html', usuario=result)
+                      # Atualizar usuário no banco de dados
+                      @app.route('/usuarios/&lt;int:id&gt;/editar', methods=['POST'])
+                      def editar_usuario(id):
+                          nome = request.form['nome']
+                          email = request.form['email']
+          
+                          with engine.begin() as conn:
+                              conn.execute(text("""
+                                  UPDATE usuario
+                                  SET nome = :nome, email = :email
+                                  WHERE id = :id
+                              """), {'nome': nome, 'email': email, 'id': id})
+          
+                          return redirect('/usuarios')
+          
+          
+                  </code></pre>
+                  <copy-btn class="mr-49"></copy-btn>
+        </div>
+      </section>
+
+      <!-- Slide 8: Operações CRUD - Delete -->
+      <section>
+        <h2>Operações CRUD - Delete</h2>
+        <div>
+          
+          <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-2|4-9|11-15">
+                      # Excluir usuário
+                      @app.route('/usuarios/&lt;int:id&gt;/excluir', methods=['POST'])
+                      def excluir_usuario(id):
+                          with engine.begin() as conn:
+                              # Primeiro excluir posts relacionados
+                              conn.execute(text("""
+                                  DELETE FROM post
+                                  WHERE usuario_id = :id
+                              """), {'id': id})
+          
+                              # Depois excluir o usuário
+                              conn.execute(text("""
+                                  DELETE FROM usuario
+                                  WHERE id = :id
+                              """), {'id': id})
+          
+                          return redirect('/usuarios')
+                  </code></pre>
+                  <copy-btn class="mr-49"></copy-btn>
+        </div>
+        <div class="fragment">
+          <p>Importante: Usar transações para operações atômicas</p>
+        </div>
+      </section>
+
+      <!-- Slide 9: Gerenciando Relacionamentos -->
+      <section>
+        <section>
+          <h2>Relacionamento Usuário-Post</h2>
+          <div>
+            <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-3|5-15|17-21">
+                          # Criar novo post
+                          @app.route('/usuarios/&lt;int:usuario_id&gt;/posts/novo', methods=['POST'])
+                          def novo_post(usuario_id):
+                              titulo = request.form['titulo']
+                              conteudo = request.form['conteudo']
+            
+                              with engine.begin() as conn:
+                                  conn.execute(text("""
+                                      INSERT INTO post (titulo, conteudo, usuario_id)
+                                      VALUES (:titulo, :conteudo, :usuario_id)
+                                  """), {
+                                      'titulo': titulo,
+                                      'conteudo': conteudo,
+                                      'usuario_id': usuario_id
+                                  })
+            
+                              return redirect(url_for(
+                                  'detalhes_usuario',
+                                  id=usuario_id
+                              ))
+            
+                          # Buscar posts de um usuário
+                          def buscar_posts_usuario(usuario_id):
+                              with engine.connect() as conn:
+                                  result = conn.execute(text("""
+                                      SELECT * FROM post
+                                      WHERE usuario_id = :usuario_id
+                                  """), {'usuario_id': usuario_id})
+                                  return result.mappings().all()
+                      </code></pre>
+                      <copy-btn class="mr-49"></copy-btn>
+          </div>
+        </section>
+
+        <section>
+          <h3>Template de Detalhes do Usuário</h3>
+          <div>
+            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-3|5-10|12-20|22-24" v-pre>
+                          <!-- templates/detalhes_usuario.html -->
+                          {% extends 'base.html' %}
+            
+                          {% block content %}
+                          &lt;h2&gt;{{ usuario.nome }}&lt;/h2&gt;
+                          &lt;p&gt;Email: {{ usuario.email }}&lt;/p&gt;
+            
+                          &lt;h3&gt;Posts&lt;/h3&gt;
+            
+                          {% for post in usuario.posts %}
+                          &lt;div class="post"&gt;
+                              &lt;h4&gt;{{ post.titulo }}&lt;/h4&gt;
+                              &lt;p&gt;{{ post.conteudo }}&lt;/p&gt;
+                              &lt;small&gt;
+                                  {{ post.data_criacao.strftime('%d/%m/%Y %H:%M') }}
+                              &lt;/small&gt;
+                          &lt;/div&gt;
+                          {% else %}
+                          &lt;p&gt;Nenhum post encontrado.&lt;/p&gt;
+                          {% endfor %}
+            
+                          &lt;form method="POST" action="{{ url_for('novo_post', usuario_id=usuario.id) }}"&gt;
+                              &lt;!-- Campos do formulário de post --&gt;
+                          &lt;/form&gt;
+                          {% endblock %}
+                      </code></pre>
+                      <copy-btn class="mr-49"></copy-btn>
+          </div>
+        </section>
+      </section>
+
+      <!-- Slide 10: Fluxo de Dados Completo -->
+      <section>
+        <h2>Fluxo de Dados Completo</h2>
+        <div class="mermaid-container">
+          <div class="mermaid">
+            <pre>
+---
+config:
+  layout: elk
+  look: handDrawn
+  theme: forest
+  fontSize: 30
+---
+            sequenceDiagram
+            
+            participant Browser
+            participant Flask as Flask (Python)
+            participant SQLAlchemy
+            participant MySQL
+            participant Jinja
+
+            Browser ->> Flask: Requisição HTTP (GET /usuarios)
+            Flask->>SQLAlchemy: conn.execute("SELECT...")
+            SQLAlchemy->>MySQL: Executa query SQL
+            MySQL-->>SQLAlchemy: Retorna dados
+            SQLAlchemy-->>Flask: Resultados (dicionários)
+            Flask->>Jinja: render_template(usuarios.html, dados)
+            Jinja->>Jinja: Processa template
+            Jinja-->>Flask: HTML renderizado
+            Flask-->>Browser: Resposta HTTP (HTML)
+
+            </pre>
+          </div>
+        </div>
+        <div class="fragment">
+          <p>SQLAlchemy atua como ponte entre Flask e MySQL</p>
+        </div>
+      </section>
+
+      <!-- Slide 11: Herança de Templates -->
+
+      <!-- Slide 12: Melhores Práticas e Segurança -->
+      <section>
+        <h2>Melhores Práticas e Segurança</h2>
+        <ls-u>
+          <li>Sempre usar parâmetros nomeados para prevenir SQL Injection</li>
+          <li>Usar transações para operações atômicas (engine.begin())</li>
+        </ls-u>
+
+        <div class="fragment" style="margin-top: 20px;">
+          <pre class="code-wrapper"><code class="python" data-trim>
+                        # Exemplo seguro
+                        conn.execute(text("SELECT * FROM usuario WHERE id = :id"), 
+                                    {'id': user_id})
+                        
+                        # Exemplo vulnerável (NUNCA FAÇA ISSO!)
+                        conn.execute(text(f"SELECT * FROM usuario WHERE id = {user_id}"))
+                    </code></pre>
+        </div>
+      </section>
+
+      <!-- Slide 13: Conclusão -->
+      <section>
+        <h2>Conclusão</h2>
+        <ls-u>
+          <li>Lembre que o navegador não consegue acessar diretamente o BD</li>
+          <li>Flask atua como intermediário, recebendo requisições e retornando respostas</li>
+          <li>Vimos como realizar operações CRUD e gerenciar relacionamentos</li>
+        </ls-u>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/math/math.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="dist/vue.js"></script>
+
+  <script>
+    window.app = Vue.createApp({
+      setup() {
+        Vue.onMounted(() => {
+          initializeReveal();
+        });
+
+        return {};
+      },
+    });
+  </script>
+  <script src="plugin/leader-line.min.js"></script>
+  <script src="slides_template/header1.js"></script>
+  <script src="components/md.js"></script>
+  <script src="components/components.js"></script>
+
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    function initializeReveal() {
+      var deck1 = new Reveal(document.querySelector(".reveal"), {
+        controls: true,
+        controlsLayout: 'edges',
+        hash: true,
+        respondToHashChanges: true,
+        history: true,
+        keyboardCondition: "focused", // only react to keys when focused
+        theme: "dracula",
+        slideNumber: "h.v",
+        navigationMode: "linear",
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+        // dependencies: [
+        // 	{ src: 'plugin/myhighlight/highlight.min.js' },
+        // 	{
+        // 		src: 'node_modules/reveal-code-focus/reveal-code-focus.js',
+        // 		async: true,
+        // 		callback: function () {
+        // 			RevealCodeFocus();
+        // 		}
+        // 	}
+        // ]
+      });
+
+      deck1.initialize();
+      let line = null;
+
+      deck1.on("fragmentshown", (event) => {
+        console.log(event);
+        if (event.fragment.id === "start-highlight") {
+          if (line === null) {
+            line = new LeaderLine(
+              document.getElementById("start-highlight"),
+              document.getElementById("end-highlight"),
+              {
+                color: "#359830",
+                path: "arc",
+                hide: true,
+              }
+            );
+          }
+          line.show("draw", {
+            duration: 500,
+            timing: [0.58, 0, 0.42, 1],
+            loop: true,
+          });
+
+          console.log(line);
+        }
+      });
+      deck1.on("fragmenthidden", (event) => {
+        if (event.fragment.id === "start-highlight") {
+          line.hide("draw");
+        }
+      });
+
+      deck1.on("slidechanged", (event) => {
+        console.log(event);
+        location.href =
+          location.href.replace(/#*.*$/, "") + "#" + event.indexh;
+        if (line !== null) {
+          line.remove();
+          line = null;
+        }
+      });
+    }
+
+    window.app.mount("#app");
+
+    // initializeReveal();
+  </script>
+</body>
+
+</html>
