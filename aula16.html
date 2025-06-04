@@ -3,9 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
   <title></title>
 
@@ -26,26 +24,36 @@
       <section>
         <header1 title="Flask + MariaDB com SQLAlchemy" aula="16" curso="Banco de Dados">
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Flask_logo.svg/640px-Flask_logo.svg.png"
-               alt="">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/MariaDB_colour_logo.svg/800px-MariaDB_colour_logo.svg.png"
-               alt="">
+            alt="">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/MariaDB_colour_logo.svg/800px-MariaDB_colour_logo.svg.png"
+            alt="">
           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/SQLAlchemy.svg/1200px-SQLAlchemy.svg.png"
-               alt="">
+            alt="">
         </header1>
       </section>
 
       <section>
         <h2>Arquitetura do Sistema</h2>
         <div class="architecture-diagram">
-          <div class="architecture-box">Flask<br>(Python)</div>
-          <div class="architecture-arrow">→</div>
-          <div class="architecture-box">SQLAlchemy<br>(SQL Bruto)</div>
-          <div class="architecture-arrow">→</div>
-          <div class="architecture-box">MySQL</div>
-          <div class="architecture-arrow">→</div>
-          <div class="architecture-box">Jinja2<br>(Templates)</div>
-          <div class="architecture-arrow">→</div>
-          <div class="architecture-box">HTML<br>(Browser)</div>
+          <div class="grid items-center justify-center justify-items-center grid-cols-5 grid-rows-3 h-100">
+            <div class="architecture-box">Flask<br>(Python)</div>
+            <div class="architecture-arrow">→</div>
+            <div class="architecture-box">SQLAlchemy<br>(SQL Bruto)</div>
+            <div class="architecture-arrow">→</div>
+            <div class="architecture-box h-min">MySQL</div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div class="architecture-arrow rotate-90">→</div>
+            <div></div>
+            <div></div>
+            <div class="architecture-box">HTML<br>Browser</div>
+            <div class="architecture-arrow rotate-180">→</div>
+            <div class="architecture-box">Jinja2<br>(Templates)</div>
+          </div>
+
         </div>
         <div class="fragment">
           <p>Fluxo de dados: Python → SQL → Banco de Dados → Templates → HTML</p>
@@ -76,7 +84,7 @@ projeto/
           <md md="### Dependências (requirements.txt)"></md>
 
           <pre><code data-trim>
-          Flask
+          flask
           SQLAlchemy
           pymysql
 </code></pre>
@@ -99,7 +107,6 @@ projeto/
               int id PK
               string nome
               string email
-              string senha
               }
               POST {
               int id PK
@@ -130,8 +137,7 @@ DROP TABLE IF EXISTS usuario;
 CREATE TABLE usuario (
 id INT AUTO_INCREMENT PRIMARY KEY,
 nome VARCHAR(100) NOT NULL,
-email VARCHAR(100) NOT NULL UNIQUE,
-senha VARCHAR(255) NOT NULL
+email VARCHAR(100) NOT NULL UNIQUE
 );
 
 -- Tabela post
@@ -147,10 +153,10 @@ FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
 
 
 -- Inserindo usuários
-INSERT INTO usuario (nome, email, senha) VALUES
-('Ana Silva', 'ana@exemplo.com', 'senha123'),
-('Carlos Oliveira', 'carlos@exemplo.com', 'senha456'),
-('Mariana Santos', 'mariana@exemplo.com', 'senha789');
+INSERT INTO usuario (nome, email) VALUES
+('Ana Silva', 'ana@exemplo.com'),
+('Carlos Oliveira', 'carlos@exemplo.com'),
+('Mariana Santos', 'mariana@exemplo.com');
 
 -- Inserindo posts
 INSERT INTO post (titulo, conteudo, usuario_id) VALUES
@@ -208,13 +214,12 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                         def novo_usuario():
                             nome = request.form['nome']
                             email = request.form['email']
-                            senha = request.form['senha']  # Em produção, usar hash!
                             
                             with engine.begin() as conn:
                                 conn.execute(text("""
-                                    INSERT INTO usuario (nome, email, senha)
-                                    VALUES (:nome, :email, :senha)
-                                """), {'nome': nome, 'email': email, 'senha': senha})
+                                    INSERT INTO usuario (nome, email)
+                                    VALUES (:nome, :email)
+                                """), {'nome': nome, 'email': email})
                             
                             return redirect('/usuarios')
                             
@@ -228,7 +233,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
         <section>
           <h3>Formulário de Criação (Jinja2)</h3>
           <div>
-            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-3|5-10|12-15">
+            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-3|5-9|11-14">
                           <!-- templates/novo_usuario.html -->
                           {% extends 'base.html' %}
             
@@ -258,7 +263,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
         <section>
           <h2>Operações CRUD - Read</h2>
           <div>
-            <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1|3-9|11-13">
+            <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-2|3-9|11-14">
                           # Listar todos os usuários
                           @app.route('/usuarios')
                           def listar_usuarios():
@@ -268,11 +273,10 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                                       FROM usuario
                                       ORDER BY nome
                                   """))
-                                  usuarios = result.mappings().all()
             
                               return render_template(
                                   'listar_usuarios.html',
-                                  usuarios=usuarios
+                                  usuarios=result
                               )
                       </code></pre>
             <copy-btn class="mr-49"></copy-btn>
@@ -301,7 +305,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                               &lt;/body&gt;
                               &lt;/html&gt;
                           </code></pre>
-                          <copy-btn></copy-btn>
+                <copy-btn></copy-btn>
               </div>
             </div>
 
@@ -320,7 +324,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                               &lt;/table&gt;
                               {% endblock %}
                           </code></pre>
-                          <copy-btn></copy-btn>
+                <copy-btn></copy-btn>
               </div>
             </div>
           </div>
@@ -359,7 +363,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                           &lt;/table&gt;
                           {% endblock %}
                       </code></pre>
-                      <copy-btn class="mr-49"></copy-btn>
+            <copy-btn class="mr-49"></copy-btn>
           </div>
         </section>
 
@@ -402,7 +406,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
       <section>
         <h2>Operações CRUD - Update</h2>
         <div>
-          <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-2,14-15|4-10|16-18|20-27">
+          <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-2,12-13|4-10|14-16|19-27">
                       # Formulario de edição
                       @app.route('/usuarios/&lt;int:id&gt;/editar', methods=['GET'])
                       def editar_usuario_form(id):
@@ -431,7 +435,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
           
           
                   </code></pre>
-                  <copy-btn class="mr-49"></copy-btn>
+          <copy-btn class="mr-49"></copy-btn>
         </div>
       </section>
 
@@ -439,7 +443,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
       <section>
         <h2>Operações CRUD - Delete</h2>
         <div>
-          
+
           <pre class="code-wrapper"><code class="python" data-trim data-line-numbers="1-2|4-9|11-15">
                       # Excluir usuário
                       @app.route('/usuarios/&lt;int:id&gt;/excluir', methods=['POST'])
@@ -459,7 +463,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
           
                           return redirect('/usuarios')
                   </code></pre>
-                  <copy-btn class="mr-49"></copy-btn>
+          <copy-btn class="mr-49"></copy-btn>
         </div>
         <div class="fragment">
           <p>Importante: Usar transações para operações atômicas</p>
@@ -502,14 +506,14 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                                   """), {'usuario_id': usuario_id})
                                   return result.mappings().all()
                       </code></pre>
-                      <copy-btn class="mr-49"></copy-btn>
+            <copy-btn class="mr-49"></copy-btn>
           </div>
         </section>
 
         <section>
           <h3>Template de Detalhes do Usuário</h3>
           <div>
-            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-3|5-10|12-20|22-24" v-pre>
+            <pre class="code-wrapper"><code class="html" data-trim data-line-numbers="1-3|5-8|10-20|22-24" v-pre>
                           <!-- templates/detalhes_usuario.html -->
                           {% extends 'base.html' %}
             
@@ -536,7 +540,7 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                           &lt;/form&gt;
                           {% endblock %}
                       </code></pre>
-                      <copy-btn class="mr-49"></copy-btn>
+            <copy-btn class="mr-49"></copy-btn>
           </div>
         </section>
       </section>

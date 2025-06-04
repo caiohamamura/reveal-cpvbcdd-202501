@@ -291,11 +291,13 @@ pre.code-wrapper::before {
 
 .architecture-box {
     background: #44475a;
-    padding: 20px;
+    font-size:24pt;
+    padding: 10px;
     border-radius: 8px;
     margin: 10px;
     text-align: center;
     min-width: 200px;
+    height: min-content;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
