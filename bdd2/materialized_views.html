@@ -1,880 +1,880 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>CPVBCDD2025 - Aula 16 - Materialized Views</title>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+ <title>CPVBCDD2025 - Aula 16 - Materialized Views</title>
 
-    <link rel="stylesheet" href="../dist/reset.css" />
-    <link rel="stylesheet" href="../dist/reveal.css" />
-    <link rel="stylesheet" href="../dist/theme/night.css" />
-    <link rel="stylesheet" href="../dist/custom.css" />
+ <link rel="stylesheet" href="../dist/reset.css" />
+ <link rel="stylesheet" href="../dist/reveal.css" />
+ <link rel="stylesheet" href="../dist/theme/night.css" />
+ <link rel="stylesheet" href="../dist/custom.css" />
 
-    <!-- Theme used for syntax highlighted code -->
-    <link rel="stylesheet" href="../dist/highlight/panda-syntax-dark.min.css" />
-    <style>
-    .reveal h2 { text-transform: none; }
-    .reveal h3 { text-transform: none; }
-    .two-cols { display: flex; gap: 40px; }
-    .two-cols > div { flex: 1; }
-    .highlight-box { background: rgba(98, 114, 164, 0.3); border-radius: 8px; padding: 20px; margin: 10px 0; }
-    .red-box { background: rgba(255, 85, 85, 0.2); border-left: 4px solid #ff5555; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .big-number { font-size: 2.5em; font-weight: bold; color: #50fa7b; }
-    .red-number { font-size: 2.5em; font-weight: bold; color: #ff5555; }
-    .comparison-table { width: 100%; font-size: 0.75em; }
-    .comparison-table th { background: rgba(98, 114, 164, 0.4); padding: 8px 12px; text-align: left; }
-    .comparison-table td { padding: 8px 12px; border-bottom: 1px solid rgba(98, 114, 164, 0.2); }
-    .comparison-table tr:last-child td { border-bottom: none; }
-    .step-number { display: inline-block; background: #bd93f9; color: #282a36; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; margin-right: 8px; font-size: 0.85em; }
-    .emoji-icon { font-size: 1.5em; }
-  </style>
+ <!-- Theme used for syntax highlighted code -->
+ <link rel="stylesheet" href="../dist/highlight/panda-syntax-dark.min.css" />
+ <style>
+ .reveal h2 { text-transform: none; }
+ .reveal h3 { text-transform: none; }
+ .two-cols { display: flex; gap: 40px; }
+ .two-cols > div { flex: 1; }
+ .highlight-box { background: rgba(98, 114, 164, 0.3); border-radius: 8px; padding: 20px; margin: 10px 0; }
+ .red-box { background: rgba(255, 85, 85, 0.2); border-left: 4px solid #ff5555; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+ .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+ .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+ .big-number { font-size: 2.5em; font-weight: bold; color: #50fa7b; }
+ .red-number { font-size: 2.5em; font-weight: bold; color: #ff5555; }
+ .comparison-table { width: 100%; font-size: 0.75em; }
+ .comparison-table th { background: rgba(98, 114, 164, 0.4); padding: 8px 12px; text-align: left; }
+ .comparison-table td { padding: 8px 12px; border-bottom: 1px solid rgba(98, 114, 164, 0.2); }
+ .comparison-table tr:last-child td { border-bottom: none; }
+ .step-number { display: inline-block; background: #bd93f9; color: #282a36; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; margin-right: 8px; font-size: 0.85em; }
+ .emoji-icon { font-size: 1.5em; }
+ </style>
 </head>
 
 <body>
-    <div id="app" class="reveal">
-        <div class="slides">
-            
+ <div id="app" class="reveal">
+ <div class="slides">
+ 
 
 <!-- Slides de Conteúdo -->
 
 <section data-auto-animate>
-  <header1 aula="16" curso="Banco de Dados" title-size="30"
-    title="Materialized Views - Performance com Cache">
-    
-    <img src="https://i.imgur.com/Z53uKac.png" height="120">
+ <header1 aula="16" curso="Banco de Dados" title-size="30"
+ title="Materialized Views - Performance com Cache">
+ 
+ <img src="https://i.imgur.com/Z53uKac.png" height="120">
 
-    <div class="mermaid" style="width:100%; max-width:none;">
-      <pre style="font-size:22px;">
+ <div class="mermaid" style="width:100%; max-width:none;">
+ <pre style="font-size:22px;">
 graph LR
 A[Query Complexa] -->|processa| B[(Materialized View)]
 B -->|leitura rápida| C[Query Rápida]
-      </pre>
-    </div>
+ </pre>
+ </div>
 
-  </header1>
+ </header1>
 </section>
 
 
-    <!-- SLIDE 2: Agenda -->
-    <section>
-      <h2>O que falaremos</h2>
-      <ol style="font-size: 0.85em;">
-        <li>O problema: consultas lentas com volume real</li>
-        <li>Dados sintéticos no Northwind (~500 mil itens)</li>
-        <li>View Regular vs Materialized View</li>
-        <li>Criando sua primeira MV (passo a passo)</li>
-        <li>Comparação de performance real</li>
-        <li>REFRESH: mantendo os dados atualizados</li>
-        <li>Índices em Materialized Views</li>
-        <li>Quando usar (e quando não usar)</li>
-      </ol>
-      <p class="fragment fade-in" style="margin-top: 20px; color: #f1fa8c;">⏱️ Duração: ~50 minutos</p>
-    </section>
+ <!-- SLIDE 2: Agenda -->
+ <section>
+ <h2>O que falaremos</h2>
+ <ol style="font-size: 0.85em;">
+ <li>O problema: consultas lentas com volume real</li>
+ <li>Dados sintéticos no Northwind (~500 mil itens)</li>
+ <li>View Regular vs Materialized View</li>
+ <li>Criando sua primeira MV (passo a passo)</li>
+ <li>Comparação de performance real</li>
+ <li>REFRESH: mantendo os dados atualizados</li>
+ <li>Índices em Materialized Views</li>
+ <li>Quando usar (e quando não usar)</li>
+ </ol>
+ <p class="fragment fade-in" style="margin-top: 20px; color: #f1fa8c;">Duração: ~50 minutos</p>
+ </section>
 
-    <!-- SLIDE 3: O Problema -->
-    <section>
-      <h2>🐌 O Problema na Prática</h2>
-      <div class="red-box">
-        <p><strong>Cenário real:</strong> Dashboard de vendas com <strong>~500 mil itens</strong> no banco</p>
-      </div>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <!-- SLIDE 3: O Problema -->
+ <section>
+ <h2>O Problema na Prática</h2>
+ <div class="red-box">
+ <p><strong>Cenário real:</strong> Dashboard de vendas com <strong>~500 mil itens</strong> no banco</p>
+ </div>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Relatório de vendas por categoria
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
-      </code></pre>
-      <div class="fragment fade-in">
-        <p class="red-number" style="text-align: center;">⏱ 3-8 segundos</p>
-        <p style="text-align: center; font-size: 0.8em;">A diretoria espera 2 segundos. A cada acesso, a query roda do zero.</p>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <p class="red-number" style="text-align: center;"> 3-8 segundos</p>
+ <p style="text-align: center; font-size: 0.8em;">A diretoria espera 2 segundos. A cada acesso, a query roda do zero.</p>
+ </div>
+ </section>
 
-    <!-- SLIDE 4: O Volume dos Dados -->
-    <section>
-      <h2>📊 O Volume dos Nossos Dados</h2>
-      <p>Geramos dados sintéticos sobre o <strong>Northwind</strong> para simular um cenário real:</p>
-      <table class="comparison-table">
-        <thead>
-          <tr><th>Tabela</th><th>Original</th><th>Sintético</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>orders (pedidos)</td><td>830</td><td style="color: #50fa7b;"><strong>~100.000</strong></td></tr>
-          <tr><td>order_details (itens)</td><td>2.155</td><td style="color: #50fa7b;"><strong>~500.000</strong></td></tr>
-          <tr><td>customers (clientes)</td><td>91</td><td style="color: #50fa7b;"><strong>~5.000</strong></td></tr>
-          <tr><td>products / categories</td><td>77 / 8</td><td>77 / 8</td></tr>
-        </tbody>
-      </table>
-      <div class="fragment fade-in" style="margin-top: 10px;">
-        <div class="yellow-box">
-          <p><strong>💡 Script:</strong> <code>scripts/northwind_synthetic_data.sql</code> — execute antes da aula!</p>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE 4: O Volume dos Dados -->
+ <section>
+ <h2>O Volume dos Nossos Dados</h2>
+ <p>Geramos dados sintéticos sobre o <strong>Northwind</strong> para simular um cenário real:</p>
+ <table class="comparison-table">
+ <thead>
+ <tr><th>Tabela</th><th>Original</th><th>Sintético</th></tr>
+ </thead>
+ <tbody>
+ <tr><td>orders (pedidos)</td><td>830</td><td style="color: #50fa7b;"><strong>~100.000</strong></td></tr>
+ <tr><td>order_details (itens)</td><td>2.155</td><td style="color: #50fa7b;"><strong>~500.000</strong></td></tr>
+ <tr><td>customers (clientes)</td><td>91</td><td style="color: #50fa7b;"><strong>~5.000</strong></td></tr>
+ <tr><td>products / categories</td><td>77 / 8</td><td>77 / 8</td></tr>
+ </tbody>
+ </table>
+ <div class="fragment fade-in" style="margin-top: 10px;">
+ <div class="yellow-box">
+ <p><strong>Script:</strong> <code>scripts/northwind_synthetic_data.sql</code> — execute antes da aula!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 4: Por que é lento? (animação linha a linha) -->
-    <section data-auto-animate>
-      <h2>Por que essa query é lenta?</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="3-6" data-trim>
+ <!-- SLIDE 4: Por que é lento? (animação linha a linha) -->
+ <section data-auto-animate>
+ <h2>Por que essa query é lenta?</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="3-6" data-trim>
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **3 JOINs** — cada junção percorre tabelas inteiras
 - `order_details` → `products` (via product_id)
 - `products` → `categories` (via category_id)
 - `order_details` → `orders` (via order_id)
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Por que essa query é lenta?</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="2-3" data-trim>
+ <section data-auto-animate>
+ <h2>Por que essa query é lenta?</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="2-3" data-trim>
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **2 Agregações pesadas** — recalculadas a cada execução
 - `SUM()`: soma de preço × quantidade para TODOS os itens
 - `COUNT(DISTINCT)`: contagem única de pedidos — ainda mais custoso
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Por que essa query é lenta?</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="1-8" data-trim>
+ <section data-auto-animate>
+ <h2>Por que essa query é lenta?</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="1-8" data-trim>
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **E se pudéssemos rodar essa query UMA VEZ e guardar o resultado?**
 → É exatamente isso que uma **Materialized View** faz!
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <!-- SLIDE 5: View Regular (conceito) -->
-    <section>
-      <h2>📝 View Regular — Como funciona</h2>
-      <div class="highlight-box">
-        <p>Uma <strong>View</strong> é apenas uma <strong>consulta nomeada</strong> — ela não armazena dados.</p>
-      </div>
-      <pre><code class="code-wrapper lang-sql" data-trim>
+ <!-- SLIDE 5: View Regular (conceito) -->
+ <section>
+ <h2>View Regular — Como funciona</h2>
+ <div class="highlight-box">
+ <p>Uma <strong>View</strong> é apenas uma <strong>consulta nomeada</strong> — ela não armazena dados.</p>
+ </div>
+ <pre><code class="code-wrapper lang-sql" data-trim>
 CREATE VIEW vw_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="yellow-box">
-          <p><strong>⚠️ Toda vez</strong> que alguém faz <code>SELECT * FROM vw_vendas_categoria</code>, a query inteira roda de novo.</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="yellow-box">
+ <p><strong>Toda vez</strong> que alguém faz <code>SELECT * FROM vw_vendas_categoria</code>, a query inteira roda de novo.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 6: Materialized View (conceito) -->
-    <section>
-      <h2>🗄️ Materialized View — Como funciona</h2>
-      <div class="highlight-box">
-        <p>Uma <strong>Materialized View</strong> executa a query <strong>uma vez</strong> e <strong>armazena o resultado</strong> fisicamente.</p>
-      </div>
-      <pre><code class="code-wrapper lang-sql" data-trim>
+ <!-- SLIDE 6: Materialized View (conceito) -->
+ <section>
+ <h2>Materialized View — Como funciona</h2>
+ <div class="highlight-box">
+ <p>Uma <strong>Materialized View</strong> executa a query <strong>uma vez</strong> e <strong>armazena o resultado</strong> fisicamente.</p>
+ </div>
+ <pre><code class="code-wrapper lang-sql" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="green-box">
-          <p><strong>✅</strong> <code>SELECT * FROM mv_vendas_categoria</code> lê os dados pré-computados — <strong>como uma tabela comum</strong>.</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="green-box">
+ <p><strong></strong> <code>SELECT * FROM mv_vendas_categoria</code> lê os dados pré-computados — <strong>como uma tabela comum</strong>.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 7: Analogia -->
-    <section>
-      <h2>🍔 Analogia: Restaurante</h2>
-      <div class="two-cols">
-        <div>
-          <div class="red-box">
-            <h3>View Regular</h3>
-            <p><strong>🍳 Menu à la carte</strong></p>
-            <p style="font-size: 0.8em;">Cada pedido é preparado do zero. Sempre fresco, mas demora.</p>
-          </div>
-          <p class="fragment fade-in" style="text-align: center;">⏱ 3-8 segundos</p>
-        </div>
-        <div>
-          <div class="green-box">
-            <h3>Materialized View</h3>
-            <p><strong>🍽️ Buffet pronto</strong></p>
-            <p style="font-size: 0.8em;">Comida já preparada e servida. Rápido, mas precisa ser reposta.</p>
-          </div>
-          <p class="fragment fade-in" style="text-align: center;">⚡ 0,02 segundos</p>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE 7: Analogia -->
+ <section>
+ <h2>Analogia: Restaurante</h2>
+ <div class="two-cols">
+ <div>
+ <div class="red-box">
+ <h3>View Regular</h3>
+ <p><strong>Menu à la carte</strong></p>
+ <p style="font-size: 0.8em;">Cada pedido é preparado do zero. Sempre fresco, mas demora.</p>
+ </div>
+ <p class="fragment fade-in" style="text-align: center;"> 3-8 segundos</p>
+ </div>
+ <div>
+ <div class="green-box">
+ <h3>Materialized View</h3>
+ <p><strong>Buffet pronto</strong></p>
+ <p style="font-size: 0.8em;">Comida já preparada e servida. Rápido, mas precisa ser reposta.</p>
+ </div>
+ <p class="fragment fade-in" style="text-align: center;"> 0,02 segundos</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 8: Comparação lado a lado -->
-    <section>
-      <h2>📊 View Regular vs Materialized View</h2>
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Característica</th>
-            <th>View Regular</th>
-            <th>Materialized View</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Armazenamento</td><td>Apenas a definição SQL</td><td><strong>Dados físicos</strong> (como tabela)</td></tr>
-          <tr><td>Performance</td><td style="color: #ff5555;">Lenta (reexecuta query)</td><td style="color: #50fa7b;"><strong>Rápida</strong> (dados prontos)</td></tr>
-          <tr><td>Atualização</td><td style="color: #50fa7b;">Automática (sempre atual)</td><td style="color: #f1fa8c;">Manual (REFRESH)</td></tr>
-          <tr><td>Índices próprios</td><td>Não</td><td style="color: #50fa7b;"><strong>Sim</strong></td></tr>
-          <tr><td>Espaço em disco</td><td style="color: #50fa7b;">Quase zero</td><td style="color: #f1fa8c;">Ocupa espaço</td></tr>
-          <tr><td>Cenário ideal</td><td>Dados em tempo real</td><td>Relatórios, BI, dashboards</td></tr>
-        </tbody>
-      </table>
-    </section>
+ <!-- SLIDE 8: Comparação lado a lado -->
+ <section>
+ <h2>View Regular vs Materialized View</h2>
+ <table class="comparison-table">
+ <thead>
+ <tr>
+ <th>Característica</th>
+ <th>View Regular</th>
+ <th>Materialized View</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr><td>Armazenamento</td><td>Apenas a definição SQL</td><td><strong>Dados físicos</strong> (como tabela)</td></tr>
+ <tr><td>Performance</td><td style="color: #ff5555;">Lenta (reexecuta query)</td><td style="color: #50fa7b;"><strong>Rápida</strong> (dados prontos)</td></tr>
+ <tr><td>Atualização</td><td style="color: #50fa7b;">Automática (sempre atual)</td><td style="color: #f1fa8c;">Manual (REFRESH)</td></tr>
+ <tr><td>Índices próprios</td><td>Não</td><td style="color: #50fa7b;"><strong>Sim</strong></td></tr>
+ <tr><td>Espaço em disco</td><td style="color: #50fa7b;">Quase zero</td><td style="color: #f1fa8c;">Ocupa espaço</td></tr>
+ <tr><td>Cenário ideal</td><td>Dados em tempo real</td><td>Relatórios, BI, dashboards</td></tr>
+ </tbody>
+ </table>
+ </section>
 
-    <!-- SLIDE 9-14: Criando MV passo a passo (com animações) -->
-    <section>
-      <h2>🛠️ Criando uma MV — Passo a Passo</h2>
-      <p>Vamos entender cada parte do comando:</p>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <!-- SLIDE 9-14: Criando MV passo a passo (com animações) -->
+ <section>
+ <h2>Criando uma MV — Passo a Passo</h2>
+ <p>Vamos entender cada parte do comando:</p>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p class="fragment fade-in" style="color: #bd93f9;">👇 Vamos explorar cada linha...</p>
-    </section>
+ </code></pre>
+ <p class="fragment fade-in" style="color: #bd93f9;"> Vamos explorar cada linha...</p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Criando uma MV — Passo a Passo</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="1" data-trim>
+ <section data-auto-animate>
+ <h2>Criando uma MV — Passo a Passo</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="1" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linha 1: CREATE MATERIALIZED VIEW**
 - `CREATE MATERIALIZED VIEW`: comando para criar a MV
 - `mv_vendas_categoria`: nome da view (prefixo `mv_` é convenção)
 - `AS`: separa o nome da query que define o conteúdo
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Criando uma MV — Passo a Passo</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="2-4" data-trim>
+ <section data-auto-animate>
+ <h2>Criando uma MV — Passo a Passo</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="2-4" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linhas 2-4: SELECT — As colunas do resultado**
 - `c.category_name`: nome da categoria (agrupador)
 - `SUM(od.unit_price * od.quantity)`: faturamento total
 - `COUNT(DISTINCT o.order_id)`: quantos pedidos distintos
 - Cada coluna recebe um alias (`AS`) para clareza
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Criando uma MV — Passo a Passo</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="5-7" data-trim>
+ <section data-auto-animate>
+ <h2>Criando uma MV — Passo a Passo</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="5-7" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linhas 5-7: FROM + JOINs**
 - `FROM order_details od`: tabela base (itens dos pedidos)
 - `JOIN products p`: liga itens aos produtos (via `product_id`)
 - `JOIN categories c`: liga produtos às categorias (via `category_id`)
 - Sem esses JOINs, não teríamos o nome da categoria
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Criando uma MV — Passo a Passo</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="8" data-trim>
+ <section data-auto-animate>
+ <h2>Criando uma MV — Passo a Passo</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="8" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linha 8: GROUP BY c.category_name**
 - Agrupa os resultados por categoria
 - Necessário porque usamos funções de agregação (SUM, COUNT)
 - Cada linha do resultado = uma categoria diferente
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Criando uma MV — Passo a Passo</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="9" data-trim>
+ <section data-auto-animate>
+ <h2>Criando uma MV — Passo a Passo</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="9" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linha 9: WITH DATA**
 - `WITH DATA`: cria a MV **já preenchida** com os resultados
 - `WITH NO DATA`: cria vazia (precisa de REFRESH antes de consultar)
 - Se omitido, o padrão é `WITH DATA`
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <!-- SLIDE 15: Comparação de Performance -->
-    <section>
-      <h2>⚡ Performance: Números Reais</h2>
-      <div class="two-cols">
-        <div style="text-align: center;">
-          <h3>View Regular</h3>
-          <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 15: Comparação de Performance -->
+ <section>
+ <h2> Performance: Números Reais</h2>
+ <div class="two-cols">
+ <div style="text-align: center;">
+ <h3>View Regular</h3>
+ <pre><code class="lang-sql" data-trim>
 SELECT * FROM vw_vendas_categoria;
-          </code></pre>
-          <p class="red-number">3.000 ms</p>
-          <p style="font-size: 0.7em; color: #ff5555;">~500 mil itens processados toda vez</p>
-        </div>
-        <div style="text-align: center;">
-          <h3>Materialized View</h3>
-          <pre><code class="lang-sql" data-trim>
+ </code></pre>
+ <p class="red-number">3.000 ms</p>
+ <p style="font-size: 0.7em; color: #ff5555;">~500 mil itens processados toda vez</p>
+ </div>
+ <div style="text-align: center;">
+ <h3>Materialized View</h3>
+ <pre><code class="lang-sql" data-trim>
 SELECT * FROM mv_vendas_categoria;
-          </code></pre>
-          <p class="big-number">20 ms</p>
-          <p style="font-size: 0.7em; color: #50fa7b;">Lê dados pré-computados</p>
-        </div>
-      </div>
-      <div class="fragment fade-in" style="text-align: center; margin-top: 20px;">
-        <p style="font-size: 1.5em; color: #bd93f9;"><strong>150x mais rápido</strong></p>
-      </div>
-    </section>
+ </code></pre>
+ <p class="big-number">20 ms</p>
+ <p style="font-size: 0.7em; color: #50fa7b;">Lê dados pré-computados</p>
+ </div>
+ </div>
+ <div class="fragment fade-in" style="text-align: center; margin-top: 20px;">
+ <p style="font-size: 1.5em; color: #bd93f9;"><strong>150x mais rápido</strong></p>
+ </div>
+ </section>
 
-    <!-- SLIDE 16: Como provar? EXPLAIN ANALYZE -->
-    <section>
-      <h2>🔍 Como provar? EXPLAIN ANALYZE</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <!-- SLIDE 16: Como provar? EXPLAIN ANALYZE -->
+ <section>
+ <h2>Como provar? EXPLAIN ANALYZE</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- View Regular: reexecuta tudo
 EXPLAIN ANALYZE SELECT * FROM vw_vendas_categoria;
 
 -- Materialized View: leitura direta
 EXPLAIN ANALYZE SELECT * FROM mv_vendas_categoria;
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="yellow-box">
-          <p><strong>💡 Dica:</strong> Use <code>EXPLAIN ANALYZE</code> sempre que quiser comparar performance. Ele mostra o plano de execução e o tempo real.</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="yellow-box">
+ <p><strong>Dica:</strong> Use <code>EXPLAIN ANALYZE</code> sempre que quiser comparar performance. Ele mostra o plano de execução e o tempo real.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 17: REFRESH (animação) -->
-    <section>
-      <h2>🔄 Atualizando a MV: REFRESH</h2>
-      <div class="yellow-box">
-        <p><strong>⚠️ Lembrete:</strong> A MV não atualiza sozinha. Você precisa disparar o <code>REFRESH</code>.</p>
-      </div>
-      <pre><code class="code-wrapper lang-sql" data-trim>
+ <!-- SLIDE 17: REFRESH (animação) -->
+ <section>
+ <h2>Atualizando a MV: REFRESH</h2>
+ <div class="yellow-box">
+ <p><strong>Lembrete:</strong> A MV não atualiza sozinha. Você precisa disparar o <code>REFRESH</code>.</p>
+ </div>
+ <pre><code class="code-wrapper lang-sql" data-trim>
 -- Atualização completa (bloqueia leituras durante o refresh)
 REFRESH MATERIALIZED VIEW mv_vendas_categoria;
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="red-box">
-          <p><strong>⛔ Problema:</strong> Durante o REFRESH, ninguém consegue ler a MV!</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="red-box">
+ <p><strong>Problema:</strong> Durante o REFRESH, ninguém consegue ler a MV!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 18: REFRESH CONCURRENTLY (animação) -->
-    <section data-auto-animate>
-      <h2>🔄 REFRESH CONCURRENTLY</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="1-2" data-trim>
+ <!-- SLIDE 18: REFRESH CONCURRENTLY (animação) -->
+ <section data-auto-animate>
+ <h2>REFRESH CONCURRENTLY</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="1-2" data-trim>
 -- Passo 1: Criar índice único (OBRIGATÓRIO)
 CREATE UNIQUE INDEX idx_mv_vendas_cat_unique
-  ON mv_vendas_categoria(category_name);
+ ON mv_vendas_categoria(category_name);
 
 -- Passo 2: Refresh sem bloquear leituras
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linha 1-2: Índice único é pré-requisito**
 - `CREATE UNIQUE INDEX`: sem isso, o `CONCURRENTLY` falha
 - O índice precisa ser **único** para o PostgreSQL garantir consistência
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>🔄 REFRESH CONCURRENTLY</h2>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="4-5" data-trim>
+ <section data-auto-animate>
+ <h2>REFRESH CONCURRENTLY</h2>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="4-5" data-trim>
 -- Passo 1: Criar índice único (OBRIGATÓRIO)
 CREATE UNIQUE INDEX idx_mv_vendas_cat_unique
-  ON mv_vendas_categoria(category_name);
+ ON mv_vendas_categoria(category_name);
 
 -- Passo 2: Refresh sem bloquear leituras
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linha 4-5: Refresh concorrente**
 - `CONCURRENTLY`: permite leituras durante o refresh
 - Mais lento que o REFRESH comum, mas não bloqueia
 - Ideal para MVs grandes em **ambiente de produção**
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <!-- SLIDE 19: Comparação REFRESH -->
-    <section>
-      <h2>📊 REFRESH: Comparação</h2>
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>REFRESH (comum)</th>
-            <th>REFRESH CONCURRENTLY</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Bloqueia leituras?</td><td style="color: #ff5555;"><strong>Sim</strong></td><td style="color: #50fa7b;"><strong>Não</strong></td></tr>
-          <tr><td>Velocidade</td><td style="color: #50fa7b;">Mais rápido</td><td style="color: #f1fa8c;">Mais lento</td></tr>
-          <tr><td>Requisito</td><td>Nenhum</td><td style="color: #f1fa8c;">Índice único</td></tr>
-          <tr><td>Uso ideal</td><td>MVs pequenas / noturno</td><td>MVs grandes / produção</td></tr>
-        </tbody>
-      </table>
-    </section>
+ <!-- SLIDE 19: Comparação REFRESH -->
+ <section>
+ <h2>REFRESH: Comparação</h2>
+ <table class="comparison-table">
+ <thead>
+ <tr>
+ <th></th>
+ <th>REFRESH (comum)</th>
+ <th>REFRESH CONCURRENTLY</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr><td>Bloqueia leituras?</td><td style="color: #ff5555;"><strong>Sim</strong></td><td style="color: #50fa7b;"><strong>Não</strong></td></tr>
+ <tr><td>Velocidade</td><td style="color: #50fa7b;">Mais rápido</td><td style="color: #f1fa8c;">Mais lento</td></tr>
+ <tr><td>Requisito</td><td>Nenhum</td><td style="color: #f1fa8c;">Índice único</td></tr>
+ <tr><td>Uso ideal</td><td>MVs pequenas / noturno</td><td>MVs grandes / produção</td></tr>
+ </tbody>
+ </table>
+ </section>
 
-    <!-- SLIDE 20: Índices em MVs -->
-    <section>
-      <h2>🚀 Índices em Materialized Views</h2>
-      <p>Uma MV pode ter seus <strong>próprios índices</strong>, assim como uma tabela.</p>
-      <pre><code class="code-wrapper lang-sql" data-trim>
+ <!-- SLIDE 20: Índices em MVs -->
+ <section>
+ <h2>Índices em Materialized Views</h2>
+ <p>Uma MV pode ter seus <strong>próprios índices</strong>, assim como uma tabela.</p>
+ <pre><code class="code-wrapper lang-sql" data-trim>
 -- Índice para consultas por categoria
 CREATE INDEX idx_mv_categoria
-  ON mv_vendas_categoria(category_name);
+ ON mv_vendas_categoria(category_name);
 
 -- Índice para ordenação por valor
 CREATE INDEX idx_mv_valor
-  ON mv_vendas_categoria(valor_total DESC);
+ ON mv_vendas_categoria(valor_total DESC);
 
 -- Índice único (para REFRESH CONCURRENTLY)
 CREATE UNIQUE INDEX idx_mv_unique
-  ON mv_vendas_categoria(category_name);
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="green-box">
-          <p><strong>✅ Antes:</strong> 120ms | <strong>Depois:</strong> 8ms → <strong>15x mais rápido</strong> nas consultas com filtro</p>
-        </div>
-      </div>
-    </section>
+ ON mv_vendas_categoria(category_name);
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="green-box">
+ <p><strong>Antes:</strong> 120ms | <strong>Depois:</strong> 8ms → <strong>15x mais rápido</strong> nas consultas com filtro</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 21: Quando usar MVs (animação) -->
-    <section>
-      <h2>✅ Quando usar Materialized Views</h2>
-      <div class="green-box">
-        <p><strong>Use MVs quando:</strong></p>
-        <ul style="font-size: 0.85em;">
-          <li class="fragment fade-in">Consultas são <strong>complexas e lentas</strong> (muitos JOINs, agregações)</li>
-          <li class="fragment fade-in">Volume de leitura <strong>>> volume de escrita</strong></li>
-          <li class="fragment fade-in">Dados podem ter <strong>algumas horas/dias de atraso</strong></li>
-          <li class="fragment fade-in">Performance é <strong>crítica</strong> (dashboards, relatórios)</li>
-          <li class="fragment fade-in">Dados base mudam <strong>pouco</strong> (catálogo, regiões)</li>
-        </ul>
-      </div>
-    </section>
+ <!-- SLIDE 21: Quando usar MVs (animação) -->
+ <section>
+ <h2>Quando usar Materialized Views</h2>
+ <div class="green-box">
+ <p><strong>Use MVs quando:</strong></p>
+ <ul style="font-size: 0.85em;">
+ <li class="fragment fade-in">Consultas são <strong>complexas e lentas</strong> (muitos JOINs, agregações)</li>
+ <li class="fragment fade-in">Volume de leitura <strong>>> volume de escrita</strong></li>
+ <li class="fragment fade-in">Dados podem ter <strong>algumas horas/dias de atraso</strong></li>
+ <li class="fragment fade-in">Performance é <strong>crítica</strong> (dashboards, relatórios)</li>
+ <li class="fragment fade-in">Dados base mudam <strong>pouco</strong> (catálogo, regiões)</li>
+ </ul>
+ </div>
+ </section>
 
-    <section>
-      <h2>❌ Quando NÃO usar Materialized Views</h2>
-      <div class="red-box">
-        <p><strong>Evite MVs quando:</strong></p>
-        <ul style="font-size: 0.85em;">
-          <li class="fragment fade-in">Dados precisam ser <strong>em tempo real</strong> (estoque, transações)</li>
-          <li class="fragment fade-in">Tabelas base mudam <strong>constantemente</strong></li>
-          <li class="fragment fade-in">Espaço em disco é <strong>limitado</strong></li>
-          <li class="fragment fade-in">A query base é <strong>simples</strong> e já é rápida</li>
-        </ul>
-      </div>
-    </section>
+ <section>
+ <h2>Quando NÃO usar Materialized Views</h2>
+ <div class="red-box">
+ <p><strong>Evite MVs quando:</strong></p>
+ <ul style="font-size: 0.85em;">
+ <li class="fragment fade-in">Dados precisam ser <strong>em tempo real</strong> (estoque, transações)</li>
+ <li class="fragment fade-in">Tabelas base mudam <strong>constantemente</strong></li>
+ <li class="fragment fade-in">Espaço em disco é <strong>limitado</strong></li>
+ <li class="fragment fade-in">A query base é <strong>simples</strong> e já é rápida</li>
+ </ul>
+ </div>
+ </section>
 
-    <!-- SLIDE 22: Casos reais -->
-    <section>
-      <h2>🏪 Casos Reais de Uso</h2>
-      <div class="two-cols">
-        <div>
-          <div class="green-box">
-            <h3>🏪 E-commerce</h3>
-            <ul style="font-size: 0.75em;">
-              <li>Dashboard de vendas diárias</li>
-              <li>Produtos mais vendidos</li>
-              <li>Performance por região</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <div class="green-box">
-            <h3>🏦 Finanças</h3>
-            <ul style="font-size: 0.75em;">
-              <li>Relatório de transações</li>
-              <li>Análise de risco consolidada</li>
-              <li>Dashboard de investimentos</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE 22: Casos reais -->
+ <section>
+ <h2>Casos Reais de Uso</h2>
+ <div class="two-cols">
+ <div>
+ <div class="green-box">
+ <h3>E-commerce</h3>
+ <ul style="font-size: 0.75em;">
+ <li>Dashboard de vendas diárias</li>
+ <li>Produtos mais vendidos</li>
+ <li>Performance por região</li>
+ </ul>
+ </div>
+ </div>
+ <div>
+ <div class="green-box">
+ <h3>Finanças</h3>
+ <ul style="font-size: 0.75em;">
+ <li>Relatório de transações</li>
+ <li>Análise de risco consolidada</li>
+ <li>Dashboard de investimentos</li>
+ </ul>
+ </div>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 23: Resumo Aula 1 -->
-    <section>
-      <h2>📋 Resumo</h2>
-      <ol style="font-size: 0.85em;">
-        <li><strong>View Regular</strong>: apenas define a query, não armazena dados</li>
-        <li><strong>Materialized View</strong>: executa a query e guarda o resultado fisicamente</li>
-        <li><strong>Performance</strong>: MVs podem ser 100-400x mais rápidas</li>
-        <li><strong>Trade-off</strong>: velocidade vs atualidade dos dados</li>
-        <li><strong>REFRESH</strong>: manual (bloqueante) ou CONCURRENTLY (não bloqueante)</li>
-        <li><strong>Índices</strong>: MVs podem ter índices próprios para acelerar consultas</li>
-      </ol>
-      <div class="fragment fade-in" style="margin-top: 20px;">
-        <div class="highlight-box" style="text-align: center;">
-          <p><strong>Regra de ouro:</strong> Se pode esperar minutos/horas por dados atualizados e precisa de performance extrema → use MV!</p>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ============================================== -->
-    <!-- AULA 2: PRÁTICA GUIADA (50 min)               -->
-    <!-- ============================================== -->
-
-    <!-- SLIDE 24: Capa Aula 2 -->
-    <section>
-      <h2>Prática Guiada</h2>
-      <h3>Mão na massa com Materialized Views</h3>
-      <p style="color: #bd93f9;">Banco de Dados 2 — IFSP Capivari</p>
-    </section>
+ <!-- SLIDE 23: Resumo Aula 1 -->
+ <section>
+ <h2>Resumo</h2>
+ <ol style="font-size: 0.85em;">
+ <li><strong>View Regular</strong>: apenas define a query, não armazena dados</li>
+ <li><strong>Materialized View</strong>: executa a query e guarda o resultado fisicamente</li>
+ <li><strong>Performance</strong>: MVs podem ser 100-400x mais rápidas</li>
+ <li><strong>Trade-off</strong>: velocidade vs atualidade dos dados</li>
+ <li><strong>REFRESH</strong>: manual (bloqueante) ou CONCURRENTLY (não bloqueante)</li>
+ <li><strong>Índices</strong>: MVs podem ter índices próprios para acelerar consultas</li>
+ </ol>
+ <div class="fragment fade-in" style="margin-top: 20px;">
+ <div class="highlight-box" style="text-align: center;">
+ <p><strong>Regra de ouro:</strong> Se pode esperar minutos/horas por dados atualizados e precisa de performance extrema → use MV!</p>
+ </div>
+ </div>
+ </section>
 
 
-    <!-- SLIDE 26: Recap rápido -->
-    <section>
-      <h2>Recap Rápido</h2>
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>View Regular</th>
-            <th>Materialized View</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Armazena dados?</td><td>Não</td><td><strong>Sim</strong></td></tr>
-          <tr><td>Atualiza sozinha?</td><td><strong>Sim</strong></td><td>Não (precisa REFRESH)</td></tr>
-          <tr><td>Performance</td><td>Lenta</td><td><strong>Rápida</strong></td></tr>
-        </tbody>
-      </table>
-      <div class="fragment fade-in" style="margin-top: 15px;">
-        <p style="font-size: 0.85em;">Sintaxe básica:</p>
-        <pre><code class="lang-sql" data-trim>
+ <!-- ============================================== -->
+ <!-- AULA 2: PRÁTICA GUIADA (50 min) -->
+ <!-- ============================================== -->
+
+ <!-- SLIDE 24: Capa Aula 2 -->
+ <section>
+ <h2>Prática Guiada</h2>
+ <h3>Mão na massa com Materialized Views</h3>
+ <p style="color: #bd93f9;">Banco de Dados 2 — IFSP Capivari</p>
+ </section>
+
+
+ <!-- SLIDE 26: Recap rápido -->
+ <section>
+ <h2>Recap Rápido</h2>
+ <table class="comparison-table">
+ <thead>
+ <tr>
+ <th></th>
+ <th>View Regular</th>
+ <th>Materialized View</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr><td>Armazena dados?</td><td>Não</td><td><strong>Sim</strong></td></tr>
+ <tr><td>Atualiza sozinha?</td><td><strong>Sim</strong></td><td>Não (precisa REFRESH)</td></tr>
+ <tr><td>Performance</td><td>Lenta</td><td><strong>Rápida</strong></td></tr>
+ </tbody>
+ </table>
+ <div class="fragment fade-in" style="margin-top: 15px;">
+ <p style="font-size: 0.85em;">Sintaxe básica:</p>
+ <pre><code class="lang-sql" data-trim>
 CREATE MATERIALIZED VIEW mv_nome AS
-  SELECT ... FROM ... GROUP BY ...
+ SELECT ... FROM ... GROUP BY ...
 WITH DATA;
-        </code></pre>
-      </div>
-    </section>
+ </code></pre>
+ </div>
+ </section>
 
-    <!-- SLIDE 27: Setup -->
-    <section>
-      <h2>⚙️ Setup do Ambiente</h2>
-      <p>Banco: <strong>Northwind</strong> com dados sintéticos para volume realista</p>
-      <pre><code class="lang-sql" data-trim>-- Execute o script de geração de dados:
+ <!-- SLIDE 27: Setup -->
+ <section>
+ <h2>Setup do Ambiente</h2>
+ <p>Banco: <strong>Northwind</strong> com dados sintéticos para volume realista</p>
+ <pre><code class="lang-sql" data-trim>-- Execute o script de geração de dados:
 -- scripts/northwind_synthetic_data.sql
-      </code></pre>
-      <div class="fragment fade-in">
-        <table class="comparison-table">
-          <thead>
-            <tr><th>Tabela</th><th>Dados originais</th><th>Com dados sintéticos</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>orders</td><td>830</td><td style="color: #50fa7b;"><strong>~100.000</strong></td></tr>
-            <tr><td>order_details</td><td>2.155</td><td style="color: #50fa7b;"><strong>~500.000</strong></td></tr>
-            <tr><td>customers</td><td>91</td><td style="color: #50fa7b;"><strong>~5.000</strong></td></tr>
-            <tr><td>products</td><td>77</td><td>77</td></tr>
-            <tr><td>employees</td><td>9</td><td>9</td></tr>
-            <tr><td>categories</td><td>8</td><td>8</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="fragment fade-in" style="margin-top: 10px;">
-        <div class="yellow-box">
-          <p><strong>💡</strong> Execute o script <strong>antes da aula</strong>. Com ~500 mil itens, as consultas serão naturalmente lentas!</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <table class="comparison-table">
+ <thead>
+ <tr><th>Tabela</th><th>Dados originais</th><th>Com dados sintéticos</th></tr>
+ </thead>
+ <tbody>
+ <tr><td>orders</td><td>830</td><td style="color: #50fa7b;"><strong>~100.000</strong></td></tr>
+ <tr><td>order_details</td><td>2.155</td><td style="color: #50fa7b;"><strong>~500.000</strong></td></tr>
+ <tr><td>customers</td><td>91</td><td style="color: #50fa7b;"><strong>~5.000</strong></td></tr>
+ <tr><td>products</td><td>77</td><td>77</td></tr>
+ <tr><td>employees</td><td>9</td><td>9</td></tr>
+ <tr><td>categories</td><td>8</td><td>8</td></tr>
+ </tbody>
+ </table>
+ </div>
+ <div class="fragment fade-in" style="margin-top: 10px;">
+ <div class="yellow-box">
+ <p><strong></strong> Execute o script <strong>antes da aula</strong>. Com ~500 mil itens, as consultas serão naturalmente lentas!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 28: Prática 1 — O Problema -->
-    <section>
-      <h2>Prática 1: Dashboard de Vendas</h2>
-      <div class="red-box">
-        <p><strong>Problema:</strong> A diretoria quer um dashboard com vendas por categoria, mas com ~500 mil itens a query demora segundos.</p>
-      </div>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <!-- SLIDE 28: Prática 1 — O Problema -->
+ <section>
+ <h2>Prática 1: Dashboard de Vendas</h2>
+ <div class="red-box">
+ <p><strong>Problema:</strong> A diretoria quer um dashboard com vendas por categoria, mas com ~500 mil itens a query demora segundos.</p>
+ </div>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Primeiro: veja o volume de dados
 SELECT COUNT(*) AS total_itens FROM order_details;
 SELECT COUNT(*) AS total_pedidos FROM orders;
 
 -- Agora: a query lenta
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
-      </code></pre>
-      <p class="fragment fade-in">⏱️ <strong>Execute com EXPLAIN ANALYZE e anote o tempo!</strong></p>
-    </section>
+ </code></pre>
+ <p class="fragment fade-in"><strong>Execute com EXPLAIN ANALYZE e anote o tempo!</strong></p>
+ </section>
 
-    <!-- SLIDE 29: Prática 1 — Criação da MV (passo a passo guiado) -->
-    <section data-auto-animate>
-      <h2>🧪 Prática 1: Criando a MV</h2>
-      <p><span class="step-number">1</span> Crie a Materialized View:</p>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="1-3" data-trim>
+ <!-- SLIDE 29: Prática 1 — Criação da MV (passo a passo guiado) -->
+ <section data-auto-animate>
+ <h2>Prática 1: Criando a MV</h2>
+ <p><span class="step-number">1</span> Crie a Materialized View:</p>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="1-3" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linhas 1-3: Definição e colunas**
 - `CREATE MATERIALIZED VIEW mv_vendas_categoria AS`
 - `category_name`: agrupador principal
 - `valor_total`: faturamento por categoria
 - `total_pedidos`: quantidade de pedidos únicos
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>🧪 Prática 1: Criando a MV</h2>
-      <p><span class="step-number">1</span> Crie a Materialized View:</p>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers="4-8" data-trim>
+ <section data-auto-animate>
+ <h2>Prática 1: Criando a MV</h2>
+ <p><span class="step-number">1</span> Crie a Materialized View:</p>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers="4-8" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
-       SUM(od.unit_price * od.quantity) AS valor_total,
-       COUNT(DISTINCT o.order_id) AS total_pedidos
+ SUM(od.unit_price * od.quantity) AS valor_total,
+ COUNT(DISTINCT o.order_id) AS total_pedidos
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name
 WITH DATA;
-      </code></pre>
-      <p data-markdown>
-        <textarea class="fragment fade-in" data-template>
+ </code></pre>
+ <p data-markdown>
+ <textarea class="fragment fade-in" data-template>
 **Linhas 4-8: Fontes dos dados**
 - `FROM order_details`: itens de cada pedido
 - `JOIN products`: para saber o produto
 - `JOIN categories`: para saber a categoria
 - `JOIN orders`: para associar ao pedido
-        </textarea>
-      </p>
-    </section>
+ </textarea>
+ </p>
+ </section>
 
-    <!-- SLIDE 30: Prática 1 — Verifique! -->
-    <section>
-      <h2>🧪 Prática 1: Verifique o Resultado</h2>
-      <p><span class="step-number">2</span> Consulte a MV:</p>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 30: Prática 1 — Verifique! -->
+ <section>
+ <h2>Prática 1: Verifique o Resultado</h2>
+ <p><span class="step-number">2</span> Consulte a MV:</p>
+ <pre><code class="lang-sql" data-trim>
 SELECT * FROM mv_vendas_categoria
 ORDER BY valor_total DESC;
-      </code></pre>
-      <p><span class="step-number">3</span> Compare com a view regular:</p>
-      <pre><code class="lang-sql" data-trim>
+ </code></pre>
+ <p><span class="step-number">3</span> Compare com a view regular:</p>
+ <pre><code class="lang-sql" data-trim>
 -- View regular
 EXPLAIN ANALYZE SELECT * FROM vw_vendas_categoria;
 
 -- Materialized View
 EXPLAIN ANALYZE SELECT * FROM mv_vendas_categoria;
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="green-box">
-          <p><strong>✅ Anote os tempos!</strong> A diferença deve ser de ordens de magnitude.</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="green-box">
+ <p><strong>Anote os tempos!</strong> A diferença deve ser de ordens de magnitude.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 31: Prática 2 — Desempenho de Funcionários -->
-    <section>
-      <h2>🧪 Prática 2: Desempenho de Funcionários</h2>
-      <div class="yellow-box">
-        <p><strong>Cenário:</strong> RH quer saber o desempenho de cada vendedor nos últimos 90 dias.</p>
-      </div>
-      <p><span class="step-number">1</span> Crie a view regular primeiro:</p>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 31: Prática 2 — Desempenho de Funcionários -->
+ <section>
+ <h2>Prática 2: Desempenho de Funcionários</h2>
+ <div class="yellow-box">
+ <p><strong>Cenário:</strong> RH quer saber o desempenho de cada vendedor nos últimos 90 dias.</p>
+ </div>
+ <p><span class="step-number">1</span> Crie a view regular primeiro:</p>
+ <pre><code class="lang-sql" data-trim>
 CREATE OR REPLACE VIEW vw_desempenho_funcionarios AS
 SELECT e.employee_id,
-       e.first_name || ' ' || e.last_name AS nome,
-       e.title AS cargo,
-       COUNT(DISTINCT o.order_id) AS total_pedidos,
-       SUM(od.quantity * od.unit_price) AS valor_total_vendido,
-       ROUND(AVG(od.quantity * od.unit_price), 2) AS ticket_medio
+ e.first_name || ' ' || e.last_name AS nome,
+ e.title AS cargo,
+ COUNT(DISTINCT o.order_id) AS total_pedidos,
+ SUM(od.quantity * od.unit_price) AS valor_total_vendido,
+ ROUND(AVG(od.quantity * od.unit_price), 2) AS ticket_medio
 FROM employees e
 LEFT JOIN orders o ON e.employee_id = o.employee_id
 LEFT JOIN order_details od ON o.order_id = od.order_id
 GROUP BY e.employee_id, e.first_name, e.last_name, e.title;
-      </code></pre>
-      <p class="fragment fade-in">⏱️ <strong>Execute com EXPLAIN ANALYZE e anote o tempo!</strong></p>
-    </section>
+ </code></pre>
+ <p class="fragment fade-in"><strong>Execute com EXPLAIN ANALYZE e anote o tempo!</strong></p>
+ </section>
 
-    <!-- SLIDE 32: Prática 2 — Criando a MV -->
-    <section>
-      <h2>🧪 Prática 2: Criando a MV</h2>
-      <p><span class="step-number">2</span> Crie a Materialized View:</p>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 32: Prática 2 — Criando a MV -->
+ <section>
+ <h2>Prática 2: Criando a MV</h2>
+ <p><span class="step-number">2</span> Crie a Materialized View:</p>
+ <pre><code class="lang-sql" data-trim>
 CREATE MATERIALIZED VIEW mv_desempenho_funcionarios AS
 SELECT e.employee_id,
-       e.first_name || ' ' || e.last_name AS nome,
-       e.title AS cargo,
-       COUNT(DISTINCT o.order_id) AS total_pedidos,
-       SUM(od.quantity * od.unit_price) AS valor_total_vendido,
-       ROUND(AVG(od.quantity * od.unit_price), 2) AS ticket_medio
+ e.first_name || ' ' || e.last_name AS nome,
+ e.title AS cargo,
+ COUNT(DISTINCT o.order_id) AS total_pedidos,
+ SUM(od.quantity * od.unit_price) AS valor_total_vendido,
+ ROUND(AVG(od.quantity * od.unit_price), 2) AS ticket_medio
 FROM employees e
 LEFT JOIN orders o ON e.employee_id = o.employee_id
 LEFT JOIN order_details od ON o.order_id = od.order_id
 GROUP BY e.employee_id, e.first_name, e.last_name, e.title
 WITH DATA;
-      </code></pre>
-      <p><span class="step-number">3</span> Verifique:</p>
-      <pre><code class="lang-sql" data-trim>
+ </code></pre>
+ <p><span class="step-number">3</span> Verifique:</p>
+ <pre><code class="lang-sql" data-trim>
 SELECT * FROM mv_desempenho_funcionarios
 ORDER BY valor_total_vendido DESC;
-      </code></pre>
-    </section>
+ </code></pre>
+ </section>
 
-    <!-- SLIDE 33: Índices (prática) -->
-    <section>
-      <h2>🚀 Adicionando Índices</h2>
-      <p><span class="step-number">4</span> Crie índices nas MVs:</p>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <!-- SLIDE 33: Índices (prática) -->
+ <section>
+ <h2>Adicionando Índices</h2>
+ <p><span class="step-number">4</span> Crie índices nas MVs:</p>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- MV: vendas por categoria
 CREATE INDEX idx_mv_categoria
-  ON mv_vendas_categoria(category_name);
+ ON mv_vendas_categoria(category_name);
 CREATE UNIQUE INDEX idx_mv_cat_unique
-  ON mv_vendas_categoria(category_name);
+ ON mv_vendas_categoria(category_name);
 
 -- MV: desempenho funcionários
 CREATE INDEX idx_mv_func_id
-  ON mv_desempenho_funcionarios(employee_id);
+ ON mv_desempenho_funcionarios(employee_id);
 CREATE INDEX idx_mv_func_valor
-  ON mv_desempenho_funcionarios(valor_total_vendido DESC);
+ ON mv_desempenho_funcionarios(valor_total_vendido DESC);
 CREATE UNIQUE INDEX idx_mv_func_unique
-  ON mv_desempenho_funcionarios(employee_id);
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="green-box">
-          <p><strong>✅ Índice único</strong> é obrigatório para <code>REFRESH CONCURRENTLY</code></p>
-        </div>
-      </div>
-    </section>
+ ON mv_desempenho_funcionarios(employee_id);
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="green-box">
+ <p><strong>Índice único</strong> é obrigatório para <code>REFRESH CONCURRENTLY</code></p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 34: Medindo o ganho dos índices -->
-    <section>
-      <h2>📊 Medindo o Ganho dos Índices</h2>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 34: Medindo o ganho dos índices -->
+ <section>
+ <h2>Medindo o Ganho dos Índices</h2>
+ <pre><code class="lang-sql" data-trim>
 -- Antes dos índices (já anotou?)
 EXPLAIN ANALYZE
 SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
@@ -882,30 +882,30 @@ SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
 -- Depois dos índices
 EXPLAIN ANALYZE
 SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
-      </code></pre>
-      <div class="fragment fade-in">
-        <table class="comparison-table" style="margin-top: 15px;">
-          <thead>
-            <tr><th>Etapa</th><th>Tempo</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>View regular</td><td style="color: #ff5555;">~3.000 ms</td></tr>
-            <tr><td>MV sem índice</td><td style="color: #f1fa8c;">~120 ms</td></tr>
-            <tr><td>MV com índice</td><td style="color: #50fa7b;">~8 ms</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <table class="comparison-table" style="margin-top: 15px;">
+ <thead>
+ <tr><th>Etapa</th><th>Tempo</th></tr>
+ </thead>
+ <tbody>
+ <tr><td>View regular</td><td style="color: #ff5555;">~3.000 ms</td></tr>
+ <tr><td>MV sem índice</td><td style="color: #f1fa8c;">~120 ms</td></tr>
+ <tr><td>MV com índice</td><td style="color: #50fa7b;">~8 ms</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </section>
 
-    <!-- SLIDE 35: REFRESH na prática -->
-    <section>
-      <h2>🔄 Praticando o REFRESH</h2>
-      <p><span class="step-number">5</span> Insira um pedido e veja a MV desatualizada:</p>
-      <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <!-- SLIDE 35: REFRESH na prática -->
+ <section>
+ <h2>Praticando o REFRESH</h2>
+ <p><span class="step-number">5</span> Insira um pedido e veja a MV desatualizada:</p>
+ <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Insira um pedido novo para testar
 INSERT INTO orders (order_id, customer_id, employee_id, order_date)
 VALUES ((SELECT MAX(order_id) + 1 FROM orders),
-        'ALFKI', 1, CURRENT_DATE);
+ 'ALFKI', 1, CURRENT_DATE);
 
 INSERT INTO order_details (order_id, product_id, unit_price, quantity)
 VALUES ((SELECT MAX(order_id) FROM orders), 1, 18.00, 500);
@@ -920,70 +920,70 @@ REFRESH MATERIALIZED VIEW mv_vendas_categoria;
 -- Agora sim! O novo pedido aparece
 SELECT * FROM mv_vendas_categoria
 WHERE category_name = 'Beverages';
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="yellow-box">
-          <p><strong>💡</strong> Com ~500 mil itens, o REFRESH leva alguns segundos. Esse é o trade-off!</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="yellow-box">
+ <p><strong></strong> Com ~500 mil itens, o REFRESH leva alguns segundos. Esse é o trade-off!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 36: REFRESH CONCURRENTLY na prática -->
-    <section>
-      <h2>🔄 REFRESH CONCURRENTLY na Prática</h2>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 36: REFRESH CONCURRENTLY na prática -->
+ <section>
+ <h2>REFRESH CONCURRENTLY na Prática</h2>
+ <pre><code class="lang-sql" data-trim>
 -- Precisa do índice único (já criamos!)
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
 
 -- Para a MV de funcionários:
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios;
-      </code></pre>
-      <div class="fragment fade-in">
-        <table class="comparison-table" style="margin-top: 15px;">
-          <thead>
-            <tr><th></th><th>REFRESH</th><th>CONCURRENTLY</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Bloqueia leitura?</td><td style="color: #ff5555;">Sim</td><td style="color: #50fa7b;">Não</td></tr>
-            <tr><td>Velocidade</td><td style="color: #50fa7b;">Rápido</td><td style="color: #f1fa8c;">Mais lento</td></tr>
-            <tr><td>Índice único?</td><td>Não precisa</td><td style="color: #ff5555;">Obrigatório</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <table class="comparison-table" style="margin-top: 15px;">
+ <thead>
+ <tr><th></th><th>REFRESH</th><th>CONCURRENTLY</th></tr>
+ </thead>
+ <tbody>
+ <tr><td>Bloqueia leitura?</td><td style="color: #ff5555;">Sim</td><td style="color: #50fa7b;">Não</td></tr>
+ <tr><td>Velocidade</td><td style="color: #50fa7b;">Rápido</td><td style="color: #f1fa8c;">Mais lento</td></tr>
+ <tr><td>Índice único?</td><td>Não precisa</td><td style="color: #ff5555;">Obrigatório</td></tr>
+ </tbody>
+ </table>
+ </div>
+ </section>
 
-    <!-- SLIDE 37: Agendamento com cron -->
-    <section>
-      <h2>⏰ Agendamento com pg_cron</h2>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 37: Agendamento com cron -->
+ <section>
+ <h2>Agendamento com pg_cron</h2>
+ <pre><code class="lang-sql" data-trim>
 -- Instalar a extensão (se não tiver)
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 -- Atualizar MV de vendas todo dia às 2h
 SELECT cron.schedule(
-  'refresh-mv-vendas',
-  '0 2 * * *',
-  $$REFRESH MATERIALIZED VIEW mv_vendas_categoria$$
+ 'refresh-mv-vendas',
+ '0 2 * * *',
+ $$REFRESH MATERIALIZED VIEW mv_vendas_categoria$$
 );
 
 -- Atualizar MV de funcionários a cada hora
 SELECT cron.schedule(
-  'refresh-mv-funcionarios',
-  '0 * * * *',
-  $$REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios$$
+ 'refresh-mv-funcionarios',
+ '0 * * * *',
+ $$REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios$$
 );
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="green-box">
-          <p><strong>✅</strong> Com <code>pg_cron</code>, o REFRESH é automático. Sem necessidade de scripts externos!</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="green-box">
+ <p><strong></strong> Com <code>pg_cron</code>, o REFRESH é automático. Sem necessidade de scripts externos!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 38: Agendamento com crontab (Linux) -->
-    <section>
-      <h2>⏰ Alternativa: crontab do Linux</h2>
-      <pre><code class="lang-bash" data-trim>
+ <!-- SLIDE 38: Agendamento com crontab (Linux) -->
+ <section>
+ <h2>Alternativa: crontab do Linux</h2>
+ <pre><code class="lang-bash" data-trim>
 # Editar crontab
 crontab -e
 
@@ -992,387 +992,387 @@ crontab -e
 
 # Atualizar MV de funcionários a cada hora
 0 * * * * psql -d northwind -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios;"
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="yellow-box">
-          <p><strong>💡</strong> Se o PostgreSQL não tem <code>pg_cron</code>, o crontab do Linux funciona perfeitamente.</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="yellow-box">
+ <p><strong></strong> Se o PostgreSQL não tem <code>pg_cron</code>, o crontab do Linux funciona perfeitamente.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 39: Monitoramento -->
-    <section>
-      <h2>📡 Monitorando suas MVs</h2>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 39: Monitoramento -->
+ <section>
+ <h2>Monitorando suas MVs</h2>
+ <pre><code class="lang-sql" data-trim>
 -- Listar todas as MVs e seus tamanhos
 SELECT schemaname, matviewname,
-       pg_size_pretty(pg_total_relation_size(
-         schemaname || '.' || matviewname
-       )) AS tamanho
+ pg_size_pretty(pg_total_relation_size(
+ schemaname || '.' || matviewname
+ )) AS tamanho
 FROM pg_matviews
 WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(
-  schemaname || '.' || matviewname
+ schemaname || '.' || matviewname
 ) DESC;
-      </code></pre>
-      <div class="fragment fade-in">
-        <pre><code class="lang-sql" data-trim>
+ </code></pre>
+ <div class="fragment fade-in">
+ <pre><code class="lang-sql" data-trim>
 -- Verificar quantos registros cada MV tem
 SELECT 'mv_vendas_categoria' AS mv,
-       COUNT(*) AS registros FROM mv_vendas_categoria
+ COUNT(*) AS registros FROM mv_vendas_categoria
 UNION ALL
 SELECT 'mv_desempenho_funcionarios',
-       COUNT(*) FROM mv_desempenho_funcionarios;
-        </code></pre>
-      </div>
-    </section>
+ COUNT(*) FROM mv_desempenho_funcionarios;
+ </code></pre>
+ </div>
+ </section>
 
-    <!-- SLIDE 40: Exercício Livre -->
-    <section>
-      <h2>🏋️ Exercício Livre (15 min)</h2>
-      <div class="highlight-box">
-        <h3>🎯 Objetivo: Criar uma MV para análise de fornecedores</h3>
-      </div>
-      <p style="font-size: 0.85em;">Usando as tabelas <code>suppliers</code>, <code>products</code> e <code>order_details</code>:</p>
-      <ol style="font-size: 0.85em;">
-        <li class="fragment fade-in">Crie uma <strong>view regular</strong> que mostre: nome do fornecedor, total de produtos, quantidade total vendida e faturamento</li>
-        <li class="fragment fade-in">Meça o tempo com <code>EXPLAIN ANALYZE</code></li>
-        <li class="fragment fade-in">Crie uma <strong>Materialized View</strong> com a mesma query</li>
-        <li class="fragment fade-in">Adicione um <strong>índice único</strong> (para CONCURRENTLY)</li>
-        <li class="fragment fade-in">Compare os tempos: view regular vs MV sem índice vs MV com índice</li>
-      </ol>
-      <div class="fragment fade-in" style="margin-top: 15px;">
-        <div class="green-box">
-          <p><strong>🔥 Desafio extra:</strong> Configure um <code>pg_cron</code> ou crontab para atualizar a MV a cada 30 minutos.</p>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE 40: Exercício Livre -->
+ <section>
+ <h2> Exercício Livre (15 min)</h2>
+ <div class="highlight-box">
+ <h3>Objetivo: Criar uma MV para análise de fornecedores</h3>
+ </div>
+ <p style="font-size: 0.85em;">Usando as tabelas <code>suppliers</code>, <code>products</code> e <code>order_details</code>:</p>
+ <ol style="font-size: 0.85em;">
+ <li class="fragment fade-in">Crie uma <strong>view regular</strong> que mostre: nome do fornecedor, total de produtos, quantidade total vendida e faturamento</li>
+ <li class="fragment fade-in">Meça o tempo com <code>EXPLAIN ANALYZE</code></li>
+ <li class="fragment fade-in">Crie uma <strong>Materialized View</strong> com a mesma query</li>
+ <li class="fragment fade-in">Adicione um <strong>índice único</strong> (para CONCURRENTLY)</li>
+ <li class="fragment fade-in">Compare os tempos: view regular vs MV sem índice vs MV com índice</li>
+ </ol>
+ <div class="fragment fade-in" style="margin-top: 15px;">
+ <div class="green-box">
+ <p><strong> Desafio extra:</strong> Configure um <code>pg_cron</code> ou crontab para atualizar a MV a cada 30 minutos.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 41: Boas Práticas -->
-    <section>
-      <h2>✅ Boas Práticas</h2>
-      <div class="green-box">
-        <ul style="font-size: 0.85em;">
-          <li class="fragment fade-in"><strong>Nomeclatura:</strong> prefixo <code>mv_</code> para distinguir de views regulares</li>
-          <li class="fragment fade-in"><strong>Documente:</strong> frequência de refresh e tolerância a dados antigos</li>
-          <li class="fragment fade-in"><strong>Índice único:</strong> sempre crie se pretende usar CONCURRENTLY</li>
-          <li class="fragment fade-in"><strong>Monitore:</strong> tamanho das MVs e tempo de refresh</li>
-          <li class="fragment fade-in"><strong>Plano B:</strong> saiba como fazer DROP e recriar se algo der errado</li>
-        </ul>
-      </div>
-    </section>
+ <!-- SLIDE 41: Boas Práticas -->
+ <section>
+ <h2>Boas Práticas</h2>
+ <div class="green-box">
+ <ul style="font-size: 0.85em;">
+ <li class="fragment fade-in"><strong>Nomeclatura:</strong> prefixo <code>mv_</code> para distinguir de views regulares</li>
+ <li class="fragment fade-in"><strong>Documente:</strong> frequência de refresh e tolerância a dados antigos</li>
+ <li class="fragment fade-in"><strong>Índice único:</strong> sempre crie se pretende usar CONCURRENTLY</li>
+ <li class="fragment fade-in"><strong>Monitore:</strong> tamanho das MVs e tempo de refresh</li>
+ <li class="fragment fade-in"><strong>Plano B:</strong> saiba como fazer DROP e recriar se algo der errado</li>
+ </ul>
+ </div>
+ </section>
 
-    <!-- SLIDE 42: Armadilhas -->
-    <section>
-      <h2>⚠️ Armadilhas Comuns</h2>
-      <div class="two-cols">
-        <div>
-          <div class="red-box">
-            <h3>❌ Erros frequentes</h3>
-            <ul style="font-size: 0.8em;">
-              <li>Esquecer de dar REFRESH</li>
-              <li>Usar MV para dados em tempo real</li>
-              <li>Não criar índice único</li>
-              <li>MV muito grande sem particionamento</li>
-            </ul>
-          </div>
-        </div>
-        <div>
-          <div class="green-box">
-            <h3>✅ Soluções</h3>
-            <ul style="font-size: 0.8em;">
-              <li>Agendar refresh automático</li>
-              <li>Usar view regular para dados críticos</li>
-              <li>Criar UNIQUE INDEX sempre</li>
-              <li>Particionar por período</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE 42: Armadilhas -->
+ <section>
+ <h2>Armadilhas Comuns</h2>
+ <div class="two-cols">
+ <div>
+ <div class="red-box">
+ <h3>Erros frequentes</h3>
+ <ul style="font-size: 0.8em;">
+ <li>Esquecer de dar REFRESH</li>
+ <li>Usar MV para dados em tempo real</li>
+ <li>Não criar índice único</li>
+ <li>MV muito grande sem particionamento</li>
+ </ul>
+ </div>
+ </div>
+ <div>
+ <div class="green-box">
+ <h3>Soluções</h3>
+ <ul style="font-size: 0.8em;">
+ <li>Agendar refresh automático</li>
+ <li>Usar view regular para dados críticos</li>
+ <li>Criar UNIQUE INDEX sempre</li>
+ <li>Particionar por período</li>
+ </ul>
+ </div>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 43: DROP MATERIALIZED VIEW -->
-    <section>
-      <h2>🗑️ Removendo uma MV</h2>
-      <pre><code class="lang-sql" data-trim>
+ <!-- SLIDE 43: DROP MATERIALIZED VIEW -->
+ <section>
+ <h2> Removendo uma MV</h2>
+ <pre><code class="lang-sql" data-trim>
 -- Remover MV e todos os índices
 DROP MATERIALIZED VIEW IF EXISTS mv_vendas_categoria;
 
 -- Remover com CASCADE (se houver dependências)
 DROP MATERIALIZED VIEW IF EXISTS mv_vendas_categoria CASCADE;
-      </code></pre>
-      <div class="fragment fade-in">
-        <div class="yellow-box">
-          <p><strong>⚠️</strong> <code>CASCADE</code> remove também objetos que dependem da MV. Use com cuidado!</p>
-        </div>
-      </div>
-    </section>
+ </code></pre>
+ <div class="fragment fade-in">
+ <div class="yellow-box">
+ <p><strong></strong> <code>CASCADE</code> remove também objetos que dependem da MV. Use com cuidado!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 44: Checklist final -->
-    <section>
-      <h2>📋 Checklist de Aprendizado</h2>
-      <ul style="font-size: 0.85em;">
-        <li class="fragment fade-in">☐ Entendo a diferença entre View e Materialized View</li>
-        <li class="fragment fade-in">☐ Sei criar uma MV com <code>CREATE MATERIALIZED VIEW ... WITH DATA</code></li>
-        <li class="fragment fade-in">☐ Sei atualizar com <code>REFRESH</code> e <code>REFRESH CONCURRENTLY</code></li>
-        <li class="fragment fade-in">☐ Entendo que índice único é obrigatório para CONCURRENTLY</li>
-        <li class="fragment fade-in">☐ Sei criar índices em MVs para otimizar consultas</li>
-        <li class="fragment fade-in">☐ Sei agendar refresh automático (cron / pg_cron)</li>
-        <li class="fragment fade-in">☐ Sei monitorar tamanho e saúde das MVs</li>
-        <li class="fragment fade-in">☐ Consigo decidir quando usar MV vs View regular</li>
-      </ul>
-    </section>
+ <!-- SLIDE 44: Checklist final -->
+ <section>
+ <h2>Checklist de Aprendizado</h2>
+ <ul style="font-size: 0.85em;">
+ <li class="fragment fade-in"> Entendo a diferença entre View e Materialized View</li>
+ <li class="fragment fade-in"> Sei criar uma MV com <code>CREATE MATERIALIZED VIEW ... WITH DATA</code></li>
+ <li class="fragment fade-in"> Sei atualizar com <code>REFRESH</code> e <code>REFRESH CONCURRENTLY</code></li>
+ <li class="fragment fade-in"> Entendo que índice único é obrigatório para CONCURRENTLY</li>
+ <li class="fragment fade-in"> Sei criar índices em MVs para otimizar consultas</li>
+ <li class="fragment fade-in"> Sei agendar refresh automático (cron / pg_cron)</li>
+ <li class="fragment fade-in"> Sei monitorar tamanho e saúde das MVs</li>
+ <li class="fragment fade-in"> Consigo decidir quando usar MV vs View regular</li>
+ </ul>
+ </section>
 
-    <!-- SLIDE 45: Resumo Final -->
-    <section>
-      <h2>🎓 Resumo Final</h2>
-      <div class="highlight-box">
-        <ol style="font-size: 0.85em;">
-          <li><strong>View Regular</strong> = atalho, não guarda dados → sempre atual, mas lenta</li>
-          <li><strong>Materialized View</strong> = tabela física com resultados → rápida, mas precisa de REFRESH</li>
-          <li><strong>Ganho real:</strong> 100-400x mais rápido em queries complexas</li>
-          <li><strong>Trade-off:</strong> velocidade vs atualidade</li>
-          <li><strong>REFRESH:</strong> comum (bloqueante) ou CONCURRENTLY (não bloqueante)</li>
-          <li><strong>Índices:</strong> essenciais para performance e CONCURRENTLY</li>
-          <li><strong>Automação:</strong> pg_cron ou crontab para refresh agendado</li>
-        </ol>
-      </div>
-      <div class="fragment fade-in" style="margin-top: 15px; text-align: center;">
-        <p style="font-size: 1.2em; color: #bd93f9;"><strong>Se pode esperar → use MV!<br/>Se precisa agora → use View!</strong></p>
-      </div>
-    </section>
+ <!-- SLIDE 45: Resumo Final -->
+ <section>
+ <h2> Resumo Final</h2>
+ <div class="highlight-box">
+ <ol style="font-size: 0.85em;">
+ <li><strong>View Regular</strong> = atalho, não guarda dados → sempre atual, mas lenta</li>
+ <li><strong>Materialized View</strong> = tabela física com resultados → rápida, mas precisa de REFRESH</li>
+ <li><strong>Ganho real:</strong> 100-400x mais rápido em queries complexas</li>
+ <li><strong>Trade-off:</strong> velocidade vs atualidade</li>
+ <li><strong>REFRESH:</strong> comum (bloqueante) ou CONCURRENTLY (não bloqueante)</li>
+ <li><strong>Índices:</strong> essenciais para performance e CONCURRENTLY</li>
+ <li><strong>Automação:</strong> pg_cron ou crontab para refresh agendado</li>
+ </ol>
+ </div>
+ <div class="fragment fade-in" style="margin-top: 15px; text-align: center;">
+ <p style="font-size: 1.2em; color: #bd93f9;"><strong>Se pode esperar → use MV!<br/>Se precisa agora → use View!</strong></p>
+ </div>
+ </section>
 
-    <!-- ============================================== -->
-    <!-- SNAPSHOT: MATERIALIZED VIEWS COMO FOTOGRAFIA   -->
-    <!-- ============================================== -->
+ <!-- ============================================== -->
+ <!-- SNAPSHOT: MATERIALIZED VIEWS COMO FOTOGRAFIA -->
+ <!-- ============================================== -->
 
-    <section>
-      <h2>📸 Materialized Views como Snapshot</h2>
-      <p>Congelando dados no tempo</p>
-    </section>
+ <section>
+ <h2>Materialized Views como Snapshot</h2>
+ <p>Congelando dados no tempo</p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>O Problema do Tempo</h2>
-      <p>A diretoria pediu um relatório de vendas de março.</p>
-      <p class="fragment fade-in">Você roda a query no dia <strong>5 de abril</strong>.</p>
-      <p class="fragment fade-in">Mas entre 31/03 e 05/04...</p>
-      <ul>
-        <li class="fragment fade-in">Pedidos foram cancelados</li>
-        <li class="fragment fade-in">Valores foram alterados</li>
-        <li class="fragment fade-in">Produtos foram removidos</li>
-      </ul>
-      <p class="fragment fade-in" style="color: #ff5555;"><strong>O relatório não mostra mais os dados reais de março.</strong></p>
-    </section>
+ <section data-auto-animate>
+ <h2>O Problema do Tempo</h2>
+ <p>A diretoria pediu um relatório de vendas de março.</p>
+ <p class="fragment fade-in">Você roda a query no dia <strong>5 de abril</strong>.</p>
+ <p class="fragment fade-in">Mas entre 31/03 e 05/04...</p>
+ <ul>
+ <li class="fragment fade-in">Pedidos foram cancelados</li>
+ <li class="fragment fade-in">Valores foram alterados</li>
+ <li class="fragment fade-in">Produtos foram removidos</li>
+ </ul>
+ <p class="fragment fade-in" style="color: #ff5555;"><strong>O relatório não mostra mais os dados reais de março.</strong></p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>View Regular Não Resolve</h2>
-      <pre><code class="lang-sql" data-line-numbers data-trim>
+ <section data-auto-animate>
+ <h2>View Regular Não Resolve</h2>
+ <pre><code class="lang-sql" data-line-numbers data-trim>
 -- View SEMPRE re-executa a query com os dados ATUAIS
 CREATE VIEW vw_vendas_marco AS
 SELECT produto, SUM(quantidade) AS total
 FROM pedidos
 WHERE data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
 GROUP BY produto;
-      </code></pre>
-      <p class="fragment fade-in">Cada <code>SELECT</code> reflete o estado <strong>atual</strong> das tabelas.</p>
-      <p class="fragment fade-in">Se um pedido foi deletado em abril, ele <strong>desaparece</strong> do resultado.</p>
-    </section>
+ </code></pre>
+ <p class="fragment fade-in">Cada <code>SELECT</code> reflete o estado <strong>atual</strong> das tabelas.</p>
+ <p class="fragment fade-in">Se um pedido foi deletado em abril, ele <strong>desaparece</strong> do resultado.</p>
+ </section>
 
-    <section>
-      <h2>📷 Snapshot = Fotografia dos Dados</h2>
-      <div style="display: flex; align-items: center; justify-content: center; gap: 30px; font-size: 0.85em;">
-        <div style="text-align: center;">
-          <p style="font-size: 2em;">📷</p>
-          <p><strong>31/03 às 23:59</strong></p>
-          <p>Foto tirada</p>
-        </div>
-        <div style="font-size: 2em;">→</div>
-        <div style="text-align: center;">
-          <p style="font-size: 2em;">🖼️</p>
-          <p><strong>05/04</strong></p>
-          <p>Foto revelada</p>
-        </div>
-        <div style="font-size: 2em;">≠</div>
-        <div style="text-align: center;">
-          <p style="font-size: 2em;">🎥</p>
-          <p><strong>05/04</strong></p>
-          <p>Câmera ao vivo</p>
-        </div>
-      </div>
-      <div class="fragment fade-in" style="margin-top: 15px;">
-        <div class="green-box">
-          <p><strong>Materialized View</strong> = fotografia que preserva o momento exato</p>
-        </div>
-        <div class="red-box">
-          <p><strong>View Regular</strong> = câmera ao vivo que mostra o estado atual</p>
-        </div>
-      </div>
-    </section>
+ <section>
+ <h2>Snapshot = Fotografia dos Dados</h2>
+ <div style="display: flex; align-items: center; justify-content: center; gap: 30px; font-size: 0.85em;">
+ <div style="text-align: center;">
+ <p style="font-size: 1.5em; font-weight: bold; color: #bd93f9;">FOTO</p>
+ <p><strong>31/03 às 23:59</strong></p>
+ <p>Foto tirada</p>
+ </div>
+ <div style="font-size: 2em;">→</div>
+ <div style="text-align: center;">
+ <p style="font-size: 1.5em; font-weight: bold; color: #50fa7b;">REVELADA</p>
+ <p><strong>05/04</strong></p>
+ <p>Foto revelada</p>
+ </div>
+ <div style="font-size: 2em;">≠</div>
+ <div style="text-align: center;">
+ <p style="font-size: 1.5em; font-weight: bold; color: #ff5555;">AO VIVO</p>
+ <p><strong>05/04</strong></p>
+ <p>Câmera ao vivo</p>
+ </div>
+ </div>
+ <div class="fragment fade-in" style="margin-top: 15px;">
+ <div class="green-box">
+ <p><strong>Materialized View</strong> = fotografia que preserva o momento exato</p>
+ </div>
+ <div class="red-box">
+ <p><strong>View Regular</strong> = câmera ao vivo que mostra o estado atual</p>
+ </div>
+ </div>
+ </section>
 
-    <section data-auto-animate>
-      <h2>Criando um Snapshot</h2>
-      <pre><code class="lang-sql" data-line-numbers data-trim>
+ <section data-auto-animate>
+ <h2>Criando um Snapshot</h2>
+ <pre><code class="lang-sql" data-line-numbers data-trim>
 CREATE MATERIALIZED VIEW mv_snapshot_vendas_marco AS
 SELECT 
-    p.product_name,
-    SUM(od.quantity) AS total_vendido,
-    SUM(od.quantity * od.unit_price) AS valor_total,
-    NOW() AS snapshot_em
+ p.product_name,
+ SUM(od.quantity) AS total_vendido,
+ SUM(od.quantity * od.unit_price) AS valor_total,
+ NOW() AS snapshot_em
 FROM order_details od
 JOIN products p ON od.product_id = p.product_id
 JOIN orders o ON od.order_id = o.order_id
 WHERE o.order_date BETWEEN '2026-03-01' AND '2026-03-31'
 GROUP BY p.product_name
 WITH DATA;
-      </code></pre>
-      <p class="fragment fade-in">A coluna <code>snapshot_em</code> registra <strong>quando</strong> a foto foi tirada.</p>
-    </section>
+ </code></pre>
+ <p class="fragment fade-in">A coluna <code>snapshot_em</code> registra <strong>quando</strong> a foto foi tirada.</p>
+ </section>
 
-    <section data-auto-animate>
-      <h2>⚠️ Regra de Ouro do Snapshot</h2>
-      <div class="red-box">
-        <p><strong>NUNCA</strong> faça isso em um snapshot:</p>
-      </div>
-      <pre><code class="lang-sql" data-trim>
--- ❌ NUNCA faça REFRESH em um snapshot!
+ <section data-auto-animate>
+ <h2>Regra de Ouro do Snapshot</h2>
+ <div class="red-box">
+ <p><strong>NUNCA</strong> faça isso em um snapshot:</p>
+ </div>
+ <pre><code class="lang-sql" data-trim>
+-- NUNCA faça REFRESH em um snapshot!
 REFRESH MATERIALIZED VIEW mv_snapshot_vendas_marco;
-      </code></pre>
-      <p class="fragment fade-in"><code>REFRESH</code> destrói o snapshot e tira uma <strong>nova foto</strong>.</p>
-      <p class="fragment fade-in">Os dados originais de março seriam substituídos pelo estado atual.</p>
-      <p class="fragment fade-in" style="color: #ff5555;"><strong>Um snapshot que recebeu REFRESH não é mais um snapshot.</strong></p>
-    </section>
+ </code></pre>
+ <p class="fragment fade-in"><code>REFRESH</code> destrói o snapshot e tira uma <strong>nova foto</strong>.</p>
+ <p class="fragment fade-in">Os dados originais de março seriam substituídos pelo estado atual.</p>
+ <p class="fragment fade-in" style="color: #ff5555;"><strong>Um snapshot que recebeu REFRESH não é mais um snapshot.</strong></p>
+ </section>
 
-    <section>
-      <h2>📊 Três Usos de Materialized Views</h2>
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>View Regular</th>
-            <th>MV (cache)</th>
-            <th>MV (snapshot)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Dados</strong></td><td>Tempo real</td><td>Cache periódico</td><td>Congelados no tempo</td></tr>
-          <tr><td><strong>Refresh</strong></td><td>Não se aplica</td><td>Periódico</td><td><strong style="color: #ff5555;">Nunca</strong></td></tr>
-          <tr><td><strong>Uso típico</strong></td><td>Abstração</td><td>Performance</td><td>Auditoria / compliance</td></tr>
-          <tr><td><strong>Exemplo</strong></td><td>View de clientes ativos</td><td>Dashboard de vendas</td><td>Fechamento mensal</td></tr>
-        </tbody>
-      </table>
-    </section>
+ <section>
+ <h2>Três Usos de Materialized Views</h2>
+ <table class="comparison-table">
+ <thead>
+ <tr>
+ <th></th>
+ <th>View Regular</th>
+ <th>MV (cache)</th>
+ <th>MV (snapshot)</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr><td><strong>Dados</strong></td><td>Tempo real</td><td>Cache periódico</td><td>Congelados no tempo</td></tr>
+ <tr><td><strong>Refresh</strong></td><td>Não se aplica</td><td>Periódico</td><td><strong style="color: #ff5555;">Nunca</strong></td></tr>
+ <tr><td><strong>Uso típico</strong></td><td>Abstração</td><td>Performance</td><td>Auditoria / compliance</td></tr>
+ <tr><td><strong>Exemplo</strong></td><td>View de clientes ativos</td><td>Dashboard de vendas</td><td>Fechamento mensal</td></tr>
+ </tbody>
+ </table>
+ </section>
 
-    <section>
-      <h2>🎯 Quando Usar Snapshot?</h2>
-      <ul style="font-size: 0.85em;">
-        <li class="fragment fade-in">📊 <strong>Fechamento contábil</strong> — balancete mensal que não pode mudar</li>
-        <li class="fragment fade-in">📋 <strong>Auditoria</strong> — evidência do estado dos dados em uma data</li>
-        <li class="fragment fade-in">📈 <strong>Relatórios de desempenho</strong> — ranking congelado para comparação</li>
-        <li class="fragment fade-in">🧾 <strong>Compliance fiscal</strong> — dados que a lei exige preservar como estavam</li>
-        <li class="fragment fade-in">🔄 <strong>Baseline para comparação</strong> — comparar mês atual vs mês anterior congelado</li>
-      </ul>
-    </section>
+ <section>
+ <h2>Quando Usar Snapshot?</h2>
+ <ul style="font-size: 0.85em;">
+ <li class="fragment fade-in"><strong>Fechamento contábil</strong> — balancete mensal que não pode mudar</li>
+ <li class="fragment fade-in"><strong>Auditoria</strong> — evidência do estado dos dados em uma data</li>
+ <li class="fragment fade-in"><strong>Relatórios de desempenho</strong> — ranking congelado para comparação</li>
+ <li class="fragment fade-in"><strong>Compliance fiscal</strong> — dados que a lei exige preservar como estavam</li>
+ <li class="fragment fade-in"><strong>Baseline para comparação</strong> — comparar mês atual vs mês anterior congelado</li>
+ </ul>
+ </section>
 
-    <section>
-      <h2>🤔 Reflexão</h2>
-      <blockquote style="font-size: 0.85em; border-left: 4px solid #bd93f9; padding-left: 15px;">
-        Uma empresa de e-commerce faz o fechamento do mês às 23h59 do último dia. No dia seguinte, o financeiro percebe que um estorno de R$ 15.000 foi processado retroativamente.
-        <br><br>
-        <strong>Como garantir que o relatório de fechamento não seja afetado?</strong>
-      </blockquote>
-      <div class="fragment fade-in" style="margin-top: 15px;">
-        <div class="green-box">
-          <p><strong>Resposta:</strong> O snapshot (MV sem refresh) preserva os dados como estavam no momento do fechamento, independentemente do que acontecer depois.</p>
-        </div>
-      </div>
-    </section>
+ <section>
+ <h2>Reflexão</h2>
+ <blockquote style="font-size: 0.85em; border-left: 4px solid #bd93f9; padding-left: 15px;">
+ Uma empresa de e-commerce faz o fechamento do mês às 23h59 do último dia. No dia seguinte, o financeiro percebe que um estorno de R$ 15.000 foi processado retroativamente.
+ <br><br>
+ <strong>Como garantir que o relatório de fechamento não seja afetado?</strong>
+ </blockquote>
+ <div class="fragment fade-in" style="margin-top: 15px;">
+ <div class="green-box">
+ <p><strong>Resposta:</strong> O snapshot (MV sem refresh) preserva os dados como estavam no momento do fechamento, independentemente do que acontecer depois.</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE: Próxima aula -->
-    <section>
-      <h2>🔮 Próxima Aula: Triggers</h2>
-      <ul style="font-size: 0.85em;">
-        <li><strong>BEFORE / AFTER</strong> triggers</li>
-        <li><strong>FOR EACH ROW / STATEMENT</strong></li>
-        <li>Variáveis <code>NEW</code>, <code>OLD</code>, <code>TG_OP</code></li>
-        <li>Casos de uso: auditoria, validação, consistência</li>
-      </ul>
-      <div class="fragment fade-in" style="margin-top: 20px;">
-        <div class="green-box">
-          <p><strong>💡</strong> Triggers podem ser usados para atualizar MVs automaticamente quando os dados base mudam!</p>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE: Próxima aula -->
+ <section>
+ <h2> Próxima Aula: Triggers</h2>
+ <ul style="font-size: 0.85em;">
+ <li><strong>BEFORE / AFTER</strong> triggers</li>
+ <li><strong>FOR EACH ROW / STATEMENT</strong></li>
+ <li>Variáveis <code>NEW</code>, <code>OLD</code>, <code>TG_OP</code></li>
+ <li>Casos de uso: auditoria, validação, consistência</li>
+ </ul>
+ <div class="fragment fade-in" style="margin-top: 20px;">
+ <div class="green-box">
+ <p><strong></strong> Triggers podem ser usados para atualizar MVs automaticamente quando os dados base mudam!</p>
+ </div>
+ </div>
+ </section>
 
-    <!-- SLIDE 47: Perguntas -->
-    <section>
-      <h2>❓ Dúvidas?</h2>
-      <p style="font-size: 1.1em;">Vamos discutir!</p>
-      <div class="fragment fade-in">
-        <div class="highlight-box" style="text-align: center;">
-          <p><strong>Material extra:</strong></p>
-          <ul style="font-size: 0.8em; text-align: left; display: inline-block;">
-            <li><a href="https://www.postgresql.org/docs/current/rules-materializedviews.html" target="_blank">Docs PostgreSQL — Materialized Views</a></li>
-            <li><a href="https://www.citusdata.com/blog/2017/10/17/materialized-views-in-postgresql/" target="_blank">Citus Data — MV Strategies</a></li>
-          </ul>
-        </div>
-      </div>
-    </section>
+ <!-- SLIDE 47: Perguntas -->
+ <section>
+ <h2> Dúvidas?</h2>
+ <p style="font-size: 1.1em;">Vamos discutir!</p>
+ <div class="fragment fade-in">
+ <div class="highlight-box" style="text-align: center;">
+ <p><strong>Material extra:</strong></p>
+ <ul style="font-size: 0.8em; text-align: left; display: inline-block;">
+ <li><a href="https://www.postgresql.org/docs/current/rules-materializedviews.html" target="_blank">Docs PostgreSQL — Materialized Views</a></li>
+ <li><a href="https://www.citusdata.com/blog/2017/10/17/materialized-views-in-postgresql/" target="_blank">Citus Data — MV Strategies</a></li>
+ </ul>
+ </div>
+ </div>
+ </section>
 
-  </div>
+ </div>
 </div>
 
 
 
 <!-- FINAL -->
 
-  <script src="../dist/reveal.js"></script>
-  <script src="../plugin/notes/notes.js"></script>
-  <script src="../plugin/math/math.js"></script>
-  <script src="../plugin/markdown/markdown.js"></script>
-  <script src="../plugin/highlight/highlight.js"></script>
-  <script src="../plugin/zoom/zoom.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
-  <script src="../dist/vue.js"></script>
+ <script src="../dist/reveal.js"></script>
+ <script src="../plugin/notes/notes.js"></script>
+ <script src="../plugin/math/math.js"></script>
+ <script src="../plugin/markdown/markdown.js"></script>
+ <script src="../plugin/highlight/highlight.js"></script>
+ <script src="../plugin/zoom/zoom.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+ <script src="../dist/vue.js"></script>
 
-  <script>
-    window.app = Vue.createApp({
-      setup() {
-        Vue.onMounted(() => {
-          initializeReveal();
-        });
+ <script>
+ window.app = Vue.createApp({
+ setup() {
+ Vue.onMounted(() => {
+ initializeReveal();
+ });
 
-        return {};
-      },
-    });
-  </script>
-  <script src="../plugin/leader-line.min.js"></script>
-  <script src="../slides_template/header1.js"></script>
-  <script src="../components/md.js"></script>
-  <script src="../components/components.js"></script>
+ return {};
+ },
+ });
+ </script>
+ <script src="../plugin/leader-line.min.js"></script>
+ <script src="../slides_template/header1.js"></script>
+ <script src="../components/md.js"></script>
+ <script src="../components/components.js"></script>
 
-  <script>
-    function initializeReveal() {
-      var deck1 = new Reveal(document.querySelector(".reveal"), {
-        controls: true,
-        controlsLayout: 'edges',
-        hash: true,
-        respondToHashChanges: true,
-        history: true,
-        keyboardCondition: "focused",
-        theme: "dracula",
-        slideNumber: "h.v",
-        navigationMode: "linear",
+ <script>
+ function initializeReveal() {
+ var deck1 = new Reveal(document.querySelector(".reveal"), {
+ controls: true,
+ controlsLayout: 'edges',
+ hash: true,
+ respondToHashChanges: true,
+ history: true,
+ keyboardCondition: "focused",
+ theme: "dracula",
+ slideNumber: "h.v",
+ navigationMode: "linear",
 
-        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
-      });
+ plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+ });
 
-      deck1.initialize();
-      deck1.on("slidechanged", () => {
-      addCopyButtons();
-      });
-    } 
+ deck1.initialize();
+ deck1.on("slidechanged", () => {
+ addCopyButtons();
+ });
+ } 
 
-    window.app.mount("#app");
-  </script>
+ window.app.mount("#app");
+ </script>
 </body>
 </html>
