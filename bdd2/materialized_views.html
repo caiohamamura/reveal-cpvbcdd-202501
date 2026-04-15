@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>CPVBCDD2025 - Aula 16 - Materialized Views</title>
+
+    <link rel="stylesheet" href="../dist/reset.css" />
+    <link rel="stylesheet" href="../dist/reveal.css" />
+    <link rel="stylesheet" href="../dist/theme/night.css" />
+    <link rel="stylesheet" href="../dist/custom.css" />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="../dist/highlight/panda-syntax-dark.min.css" />
+</head>
+
+<body>
+    <div id="app" class="reveal">
+        <div class="slides">
+            <!-- Slides -->
+        </div>
+    </div>
+
+    <script src="../dist/reveal.js"></script>
+    <script src="../plugin/notes/notes.js"></script>
+    <script src="../plugin/math/math.js"></script>
+    <script src="../plugin/markdown/markdown.js"></script>
+    <script src="../plugin/highlight/highlight.js"></script>
+    <script src="../plugin/zoom/zoom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+    <script src="../dist/vue.js"></script>
+
+    <script src="../plugin/leader-line.min.js"></script>
+    <script src="../slides_template/header1.js"></script>
+    <script src="../components/md.js"></script>
+    <script src="../components/components.js"></script>
+
+    <script>
+        // Inicialização customizada
+        window.app = Vue.createApp({
+            setup() {
+                Vue.onMounted(() => {
+                    initializeReveal();
+                });
+                return {};
+            },
+        });
+    </script>
+
+    <script>
+        function initializeReveal() {
+            var deck1 = new Reveal(document.querySelector(".reveal"), {
+                controls: true,
+                controlsLayout: 'edges',
+                hash: true,
+                respondToHashChanges: true,
+                history: true,
+                keyboardCondition: "focused",
+                theme: "dracula",
+                slideNumber: "h.v",
+                navigationMode: "linear",
+                plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+            });
+
+            deck1.initialize();
+            let line = null;
+
+            deck1.on("fragmentshown", (event) => {
+                console.log(event);
+                // Personalize animações aqui se necessário
+            });
+
+            deck1.on("slidechanged", (event) => {
+                console.log(event);
+                // Atualização de URL via hash
+            });
+        }
+
+        window.app.mount("#app");
+    </script>
+</body>
+</html>
+
+<!-- Slides de Conteúdo -->
+
+<section data-auto-animate>
+    <header1 aula="16" curso="Banco de Dados" title-size="30" title="Materialized Views - Otimizando Performance">
+        <div class="mermaid" data-id="erd">
+            <pre>
+            graph LR
+            A[Consulta Lenta] -->B[Materialized View]
+            B -->|Caching| C[Consulta Rápida]
+            
+            class A fill:#ff7f7f,color:white
+            class B fill:#7fff7f,color:#000
+            class C fill:#7f7fff,color:white
+            </pre>
+        </div>
+    </header1>
+</section>
+
+<section data-auto-animate>
+    <h2>O Problema: Consultas Demoradas</h2>
+    <ul>
+        <li class="fragment">Relatórios complexos que levam <b>8-10 segundos</b></li>
+        <li class="fragment">Consultas executadas várias vezes por dia</li>
+        <li class="fragment">Impacto na experiência do usuário</li>
+    </ul>
+    
+    <pre>
+    <code class="language-sql" data-line-numbers="1-4" data-trim>
+    SELECT p.product_name,
+           COUNT(*) as total_vendido,
+           SUM(quantity * unit_price) as valor_total
+    FROM order_details od
+    JOIN products p ON od.product_id = p.product_id
+    JOIN orders o ON od.order_id = o.order_id
+    WHERE o.order_date >= CURRENT_DATE - 30
+    GROUP BY p.product_name
+    ORDER BY valor_total DESC;
+    </code>
+    </pre>
+    
+    <div class="fragment">
+        <p style="font-size:24pt; color: yellow;">⏱️ Tempo: <b>8-10 segundos</b> para executar</p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Solução: Materialized View</h2>
+    <div class="mermaid" data-id="mv-diagram">
+        <pre>
+        graph LR
+        A[Consulta Completa] -->|10s| B{Materialized View}
+        B -->|&lt;0.1s| C[Consulta Rápida]
+        D[Refresh Daily] -->|Atualiza| B
+        
+        style A fill:#ff6b6b
+        style B fill:#feca57
+        style C fill:#1dd1a1
+        </pre>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>1. Criando a Materialized View</h2>
+    
+    <pre data-id="code" style="width: min-content;margin: 10px 20px;"><code style="padding: 10px" data-trim>
+    -- Cria a MV com os dados carregados
+    CREATE MATERIALIZED VIEW mv_relatorio_vendas AS
+    SELECT 
+        p.product_name,
+        c.category_name,
+        s.company_name AS supplier,
+        SUM(od.quantity) AS total_vendido,
+        SUM(od.quantity * od.unit_price) AS valor_total,
+        COUNT(DISTINCT o.order_id) AS pedidos_unicos,
+        ROUND(AVG(od.quantity * od.unit_price), 2) AS ticket_medio,
+        CURRENT_DATE AS data_atualizacao
+    FROM order_details od
+    JOIN products p ON od.product_id = p.product_id
+    JOIN categories c ON p.category_id = c.category_id
+    JOIN suppliers s ON p.supplier_id = s.supplier_id
+    JOIN orders o ON od.order_id = o.order_id
+    WHERE o.order_date >= CURRENT_DATE - INTERVAL '30 days'
+    GROUP BY p.product_name, c.category_name, s.company_name
+    ORDER BY valor_total DESC
+    WITH DATA;
+    </code></pre>
+    
+    <div class="fragment">
+        <p style="font-size:24pt;"><b>WITH DATA</b>: Carrega os dados imediatamente</p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>2. Criando Índices para Performance</h2>
+    
+    <pre data-id="code" style="width: min-content;margin: 10px 20px;"><code style="padding: 10px" data-trim>
+    -- Índice para ordenação por valor total
+    CREATE INDEX idx_mv_valor_total 
+    ON mv_relatorio_vendas_completo(valor_total DESC);
+    
+    -- Índice para filtro por categoria
+    CREATE INDEX idx_mv_categoria 
+    ON mv_relatorio_vendas_completo(category_name);
+    
+    -- Índice para filtro por fornecedor
+    CREATE INDEX idx_mv_fornecedor 
+    ON mv_relatorio_vendas_completo(supplier);
+    </code></pre>
+    
+    <div class="fragment">
+        <p style="font-size:20pt; color: #feca57;">⚡ Índices aceleram buscas e ordenações</p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Comparação de Performance</h2>
+    
+    <div class="row" style="justify-content: start; gap: 50px;">
+        <div style="min-width:320px;">
+            <h3>View Regular</h3>
+            <pre data-id="code" style="width: min-content;font-size:14px;"><code style="padding: 5px" data-trim>
+-- Executa a JOIN toda vez
+CREATE VIEW vw_vendas AS
+SELECT ... FROM ... WHERE ...
+JOIN ...
+
+-- Tempo de execução
+SELECT * FROM vw_vendas;
+-- ⏱️ 8-10 segundos
+            </code></pre>
+        </div>
+        
+        <div style="min-width:320px;">
+            <h3>Materialized View</h3>
+            <pre data-id="code" style="width: min-content;font-size:14px;"><code style="padding: 5px" data-trim>
+-- Resultados pré-calcados
+CREATE MATERIALIZED VIEW mv_vendas AS
+SELECT ...
+WITH DATA;
+
+-- Cria índices
+CREATE INDEX idx_valor ON mv_vendas(valor_total);
+
+-- Tempo de execução
+SELECT * FROM mv_vendas;
+-- ⏱️ &lt; 0.1 segundo
+            </code></pre>
+        </div>
+    </div>
+    
+    <div class="fragment" style="text-align: center; margin-top: 20px;">
+        <p style="font-size:32pt; font-weight: bold; color: #1dd1a1;">Ganho de Performance: <b>80x</b></p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>3. Atualizando a Materialized View</h2>
+    
+    <pre data-id="code" style="width: min-content;margin: 10px 20px;"><code style="padding: 10px" data-trim>
+-- Opção 1: Refresh completo (bloqueante)
+REFRESH MATERIALIZED VIEW mv_relatorio_vendas;
+
+-- Opção 2: Refresh concorrente (não bloqueante)
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_relatorio_vendas;
+            </code></pre>
+    
+    <ul>
+        <li class="fragment"><b>Refresh completo</b>: Reprocessa tudo, mais rápido mas bloqueia</li>
+        <li class="fragment"><b>Refresh concorrente</b>: Não bloqueia, mas precisa de índice único</li>
+    </ul>
+    
+    <div class="fragment">
+        <p style="font-size:20pt; color: #feca57;">📅 Atualização diária recomendada</p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>4. Verificando Dados</h2>
+    
+    <div style="max-width: 900px;">
+        <table data-id="mv-tabela" class="tg" style="font-size:18px;">
+            <thead>
+                <tr>
+                    <th class="tg-bf9e">Categoria</th>
+                    <th class="tg-bf9e">Vendas Totais</th>
+                    <th class="tg-bf9e">Pedidos</th>
+                    <th class="tg-bf9e">Última Atualização</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="tg-0lax">Beverages</td>
+                    <td class="tg-0lax">R$ 125.432,50</td>
+                    <td class="tg-0lax">892</td>
+                    <td class="tg-0lax">2026-04-15</td>
+                </tr>
+                <tr>
+                    <td class="tg-0lax">Confections</td>
+                    <td class="tg-0lax">R$ 98.765,30</td>
+                    <td class="tg-0lax">756</td>
+                    <td class="tg-0lax">2026-04-15</td>
+                </tr>
+                <tr>
+                    <td class="tg-0lax">Garden Supplies</td>
+                    <td class="tg-0lax">R$ 87.234,10</td>
+                    <td class="tg-0lax">623</td>
+                    <td class="tg-0lax">2026-04-15</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2>Quando Usar Materialized Views?</h2>
+    
+    <ul style="color: #2ed573;">
+        <li class="fragment">✓ Relatórios executados frequentemente</li>
+        <li class="fragment">✓ Dados que mudam pouco (estáveis)</li>
+        <li class="fragment">✓ Agregações complexas (SUM, AVG, COUNT)</li>
+        <li class="fragment">✓ Consultas com filtros repetitivos</li>
+    </ul>
+    
+    <ul style="color: #ff6b6b;">
+        <li class="fragment">✗ Dados que mudam constantemente</li>
+        <li class="fragment">✗ Consultas que já são rápidas</li>
+        <li class="fragment">✗ Quando storage é limitado</li>
+    </ul>
+</section>
+
+<section data-markdown>
+    ## Trade-offs: Materialized Views
+    
+    **Performance vs Atualização**
+    
+    - **Prós**:
+    - Consultas muito mais rápidas (&lt; 0.1s vs 8-10s)
+    - Reduz carga de processamento em queries complexas
+    - Melhora a experiência do usuário
+    
+    - **Contras**:
+    - Uso adicional de storage
+    - Necessidade de manter dados atualizados
+    - Complexidade de gerenciamento
+    - Trade-off: performance de escrita vs leitura
+    
+    **Dica**: Use para relatórios onde a performance de leitura é mais importante que atualização em tempo real.
+</section>
+
+<section data-background-image="https://i.imgur.com/DOhHyzg.png" data-background-opacity="0.09">
+    <h1>Próxima Aula: Triggers Básicos</h1>
+    <p style="color: #aaa;">Automatização de regras de negócio no banco de dados</p>
+</section>
+
+</div>
+</div>
+
+</body>
+</html>
