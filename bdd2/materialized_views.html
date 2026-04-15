@@ -1142,7 +1142,152 @@ DROP MATERIALIZED VIEW IF EXISTS mv_vendas_categoria CASCADE;
       </div>
     </section>
 
-    <!-- SLIDE 46: Próxima aula -->
+    <!-- ============================================== -->
+    <!-- SNAPSHOT: MATERIALIZED VIEWS COMO FOTOGRAFIA   -->
+    <!-- ============================================== -->
+
+    <section>
+      <h2>📸 Materialized Views como Snapshot</h2>
+      <p>Congelando dados no tempo</p>
+    </section>
+
+    <section data-auto-animate>
+      <h2>O Problema do Tempo</h2>
+      <p>A diretoria pediu um relatório de vendas de março.</p>
+      <p class="fragment fade-in">Você roda a query no dia <strong>5 de abril</strong>.</p>
+      <p class="fragment fade-in">Mas entre 31/03 e 05/04...</p>
+      <ul>
+        <li class="fragment fade-in">Pedidos foram cancelados</li>
+        <li class="fragment fade-in">Valores foram alterados</li>
+        <li class="fragment fade-in">Produtos foram removidos</li>
+      </ul>
+      <p class="fragment fade-in" style="color: #ff5555;"><strong>O relatório não mostra mais os dados reais de março.</strong></p>
+    </section>
+
+    <section data-auto-animate>
+      <h2>View Regular Não Resolve</h2>
+      <pre><code class="lang-sql" data-line-numbers data-trim>
+-- View SEMPRE re-executa a query com os dados ATUAIS
+CREATE VIEW vw_vendas_marco AS
+SELECT produto, SUM(quantidade) AS total
+FROM pedidos
+WHERE data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
+GROUP BY produto;
+      </code></pre>
+      <p class="fragment fade-in">Cada <code>SELECT</code> reflete o estado <strong>atual</strong> das tabelas.</p>
+      <p class="fragment fade-in">Se um pedido foi deletado em abril, ele <strong>desaparece</strong> do resultado.</p>
+    </section>
+
+    <section>
+      <h2>📷 Snapshot = Fotografia dos Dados</h2>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 30px; font-size: 0.85em;">
+        <div style="text-align: center;">
+          <p style="font-size: 2em;">📷</p>
+          <p><strong>31/03 às 23:59</strong></p>
+          <p>Foto tirada</p>
+        </div>
+        <div style="font-size: 2em;">→</div>
+        <div style="text-align: center;">
+          <p style="font-size: 2em;">🖼️</p>
+          <p><strong>05/04</strong></p>
+          <p>Foto revelada</p>
+        </div>
+        <div style="font-size: 2em;">≠</div>
+        <div style="text-align: center;">
+          <p style="font-size: 2em;">🎥</p>
+          <p><strong>05/04</strong></p>
+          <p>Câmera ao vivo</p>
+        </div>
+      </div>
+      <div class="fragment fade-in" style="margin-top: 15px;">
+        <div class="green-box">
+          <p><strong>Materialized View</strong> = fotografia que preserva o momento exato</p>
+        </div>
+        <div class="red-box">
+          <p><strong>View Regular</strong> = câmera ao vivo que mostra o estado atual</p>
+        </div>
+      </div>
+    </section>
+
+    <section data-auto-animate>
+      <h2>Criando um Snapshot</h2>
+      <pre><code class="lang-sql" data-line-numbers data-trim>
+CREATE MATERIALIZED VIEW mv_snapshot_vendas_marco AS
+SELECT 
+    p.product_name,
+    SUM(od.quantity) AS total_vendido,
+    SUM(od.quantity * od.unit_price) AS valor_total,
+    NOW() AS snapshot_em
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+JOIN orders o ON od.order_id = o.order_id
+WHERE o.order_date BETWEEN '2026-03-01' AND '2026-03-31'
+GROUP BY p.product_name
+WITH DATA;
+      </code></pre>
+      <p class="fragment fade-in">A coluna <code>snapshot_em</code> registra <strong>quando</strong> a foto foi tirada.</p>
+    </section>
+
+    <section data-auto-animate>
+      <h2>⚠️ Regra de Ouro do Snapshot</h2>
+      <div class="red-box">
+        <p><strong>NUNCA</strong> faça isso em um snapshot:</p>
+      </div>
+      <pre><code class="lang-sql" data-trim>
+-- ❌ NUNCA faça REFRESH em um snapshot!
+REFRESH MATERIALIZED VIEW mv_snapshot_vendas_marco;
+      </code></pre>
+      <p class="fragment fade-in"><code>REFRESH</code> destrói o snapshot e tira uma <strong>nova foto</strong>.</p>
+      <p class="fragment fade-in">Os dados originais de março seriam substituídos pelo estado atual.</p>
+      <p class="fragment fade-in" style="color: #ff5555;"><strong>Um snapshot que recebeu REFRESH não é mais um snapshot.</strong></p>
+    </section>
+
+    <section>
+      <h2>📊 Três Usos de Materialized Views</h2>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>View Regular</th>
+            <th>MV (cache)</th>
+            <th>MV (snapshot)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Dados</strong></td><td>Tempo real</td><td>Cache periódico</td><td>Congelados no tempo</td></tr>
+          <tr><td><strong>Refresh</strong></td><td>Não se aplica</td><td>Periódico</td><td><strong style="color: #ff5555;">Nunca</strong></td></tr>
+          <tr><td><strong>Uso típico</strong></td><td>Abstração</td><td>Performance</td><td>Auditoria / compliance</td></tr>
+          <tr><td><strong>Exemplo</strong></td><td>View de clientes ativos</td><td>Dashboard de vendas</td><td>Fechamento mensal</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>🎯 Quando Usar Snapshot?</h2>
+      <ul style="font-size: 0.85em;">
+        <li class="fragment fade-in">📊 <strong>Fechamento contábil</strong> — balancete mensal que não pode mudar</li>
+        <li class="fragment fade-in">📋 <strong>Auditoria</strong> — evidência do estado dos dados em uma data</li>
+        <li class="fragment fade-in">📈 <strong>Relatórios de desempenho</strong> — ranking congelado para comparação</li>
+        <li class="fragment fade-in">🧾 <strong>Compliance fiscal</strong> — dados que a lei exige preservar como estavam</li>
+        <li class="fragment fade-in">🔄 <strong>Baseline para comparação</strong> — comparar mês atual vs mês anterior congelado</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>🤔 Reflexão</h2>
+      <blockquote style="font-size: 0.85em; border-left: 4px solid #bd93f9; padding-left: 15px;">
+        Uma empresa de e-commerce faz o fechamento do mês às 23h59 do último dia. No dia seguinte, o financeiro percebe que um estorno de R$ 15.000 foi processado retroativamente.
+        <br><br>
+        <strong>Como garantir que o relatório de fechamento não seja afetado?</strong>
+      </blockquote>
+      <div class="fragment fade-in" style="margin-top: 15px;">
+        <div class="green-box">
+          <p><strong>Resposta:</strong> O snapshot (MV sem refresh) preserva os dados como estavam no momento do fechamento, independentemente do que acontecer depois.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: Próxima aula -->
     <section>
       <h2>🔮 Próxima Aula: Triggers</h2>
       <ul style="font-size: 0.85em;">
