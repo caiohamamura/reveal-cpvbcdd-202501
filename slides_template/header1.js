@@ -20,7 +20,7 @@ window.app.component("header1", {
         <!-- r1: Top section -->
         <div
           style="
-            background: url('img/fundo.png') no-repeat center/cover;
+            background: url('../img/fundo.png') no-repeat center/cover;
             display: grid;
             grid-template-rows: auto 1fr auto;
           "
@@ -76,7 +76,7 @@ window.app.component("header1", {
             <p>Prof. Caio Hamamura</p>
             <p>hamamura.caio@ifsp.edu.br</p>
           </div>
-          <img src="img/Artboard 1 copy 2.png" height="135" alt="" />
+          <img src="../img/Artboard 1 copy 2.png" height="135" alt="" />
         </div>
       </div>
       `,
