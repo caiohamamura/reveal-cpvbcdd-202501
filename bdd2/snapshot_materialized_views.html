@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+  <title>Materialized Views como Snapshot - Banco de Dados 2</title>
+</head>
+
+<body>
+
+<div id="app" class="reveal">
+  <div class="slides">
+
+    <!-- SLIDE 1: TÍTULO -->
+    <section>
+      <h2>📸 Materialized Views como Snapshot</h2>
+      <p>Congelando dados no tempo</p>
+      <p><small>Banco de Dados 2 — IFSP Capivari</small></p>
+    </section>
+
+    <!-- SLIDE 2: O PROBLEMA -->
+    <section data-auto-animate>
+      <h2>O Problema</h2>
+      <p>Imagine que a diretoria pediu um relatório de vendas de março.</p>
+      <p class="fragment fade-in">Você roda a query no dia <strong>5 de abril</strong>.</p>
+      <p class="fragment fade-in">Mas entre 31/03 e 05/04...</p>
+      <ul>
+        <li class="fragment fade-in">Pedidos foram cancelados</li>
+        <li class="fragment fade-in">Valores foram alterados</li>
+        <li class="fragment fade-in">Produtos foram removidos</li>
+      </ul>
+      <p class="fragment fade-in"><strong>O relatório não mostra mais os dados reais de março.</strong></p>
+    </section>
+
+    <!-- SLIDE 3: VIEW REGULAR NÃO RESOLVE -->
+    <section data-auto-animate>
+      <h2>View Regular Não Resolve</h2>
+      <pre><code data-trim data-line-numbers="1-6" lang-sql>
+-- Uma view regular SEMPRE re-executa a query
+CREATE VIEW vw_vendas_marco AS
+SELECT produto, SUM(quantidade) AS total
+FROM pedidos
+WHERE data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
+GROUP BY produto;
+      </code></pre>
+      <p class="fragment fade-in">Cada <code>SELECT</code> nessa view reflete o estado <strong>atual</strong> das tabelas, não o estado do passado.</p>
+      <p class="fragment fade-in">Se um pedido foi deletado em abril, ele <strong>desaparece</strong> do resultado.</p>
+    </section>
+
+    <!-- SLIDE 4: O CONCEITO DE SNAPSHOT -->
+    <section data-auto-animate>
+      <h2>Snapshot = Fotografia dos Dados</h2>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 40px;">
+        <div style="text-align: center;">
+          <p>📷</p>
+          <p><strong>31/03 às 23:59</strong></p>
+          <p>Foto tirada</p>
+        </div>
+        <div style="text-align: center; font-size: 2em;">→</div>
+        <div style="text-align: center;">
+          <p>🖼️</p>
+          <p><strong>05/04</strong></p>
+          <p>Foto revelada</p>
+        </div>
+        <div style="text-align: center; font-size: 2em;">≠</div>
+        <div style="text-align: center;">
+          <p>🎥</p>
+          <p><strong>05/04</strong></p>
+          <p>Câmera ao vivo</p>
+        </div>
+      </div>
+      <p class="fragment fade-in">Materialized view = <strong>fotografia</strong> que preserva o momento exato.</p>
+      <p class="fragment fade-in">View regular = <strong>câmera ao vivo</strong> que mostra o estado atual.</p>
+    </section>
+
+    <!-- SLIDE 5: CRIANDO UM SNAPSHOT -->
+    <section data-auto-animate>
+      <h2>Criando um Snapshot</h2>
+      <pre><code data-trim data-line-numbers lang-sql>
+CREATE MATERIALIZED VIEW mv_snapshot_vendas_marco AS
+SELECT 
+    p.produto,
+    SUM(ip.quantidade) AS total_vendido,
+    SUM(ip.quantidade * ip.preco_unitario) AS valor_total,
+    NOW() AS snapshot_em
+FROM itens_pedido ip
+JOIN pedidos p ON ip.id_pedido = p.id_pedido
+WHERE p.data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
+GROUP BY p.produto
+WITH DATA;
+      </code></pre>
+      <p class="fragment fade-in">A coluna <code>snapshot_em</code> registra <strong>quando</strong> a foto foi tirada.</p>
+    </section>
+
+    <!-- SLIDE 6: NUNCA DÊ REFRESH -->
+    <section data-auto-animate>
+      <h2>⚠️ Regra de Ouro do Snapshot</h2>
+      <pre><code data-trim data-line-numbers="1" lang-sql>
+-- NUNCA faça isso em um snapshot:
+REFRESH MATERIALIZED VIEW mv_snapshot_vendas_marco;
+      </code></pre>
+      <p class="fragment fade-in"><code>REFRESH</code> destrói o snapshot e tira uma <strong>nova foto</strong>.</p>
+      <p class="fragment fade-in">Os dados originais de março seriam substituídos pelo estado atual.</p>
+      <p class="fragment fade-in" style="color: #ff5555;"><strong>Um snapshot que recebeu refresh não é mais um snapshot.</strong></p>
+    </section>
+
+    <!-- SLIDE 7: VIEW REGULAR VS SNAPSHOT -->
+    <section>
+      <h2>Comparação</h2>
+      <table style="font-size: 0.75em;">
+        <thead>
+          <tr>
+            <th></th>
+            <th>View Regular</th>
+            <th>MV (cache)</th>
+            <th>MV (snapshot)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Dados</strong></td>
+            <td>Tempo real</td>
+            <td>Cache periódico</td>
+            <td>Congelados no tempo</td>
+          </tr>
+          <tr>
+            <td><strong>Refresh</strong></td>
+            <td>Não se aplica</td>
+            <td>Periódico</td>
+            <td>Nunca</td>
+          </tr>
+          <tr>
+            <td><strong>Uso típico</strong></td>
+            <td>Abstração</td>
+            <td>Performance</td>
+            <td>Auditoria / compliance</td>
+          </tr>
+          <tr>
+            <td><strong>Exemplo</strong></td>
+            <td>View de clientes ativos</td>
+            <td>Dashboard de vendas</td>
+            <td>Fechamento mensal</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SLIDE 8: CASOS DE USO REAIS -->
+    <section>
+      <h2>Quando Usar Snapshot?</h2>
+      <ul>
+        <li class="fragment fade-in">📊 <strong>Fechamento contábil</strong> — balancete mensal que não pode mudar</li>
+        <li class="fragment fade-in">📋 <strong>Auditoria</strong> — evidência do estado dos dados em uma data</li>
+        <li class="fragment fade-in">📈 <strong>Relatórios de desempenho</strong> — ranking congelado para comparação</li>
+        <li class="fragment fade-in">🧾 <strong>Compliance fiscal</strong> — dados que a lei exige preservar como estavam</li>
+        <li class="fragment fade-in">🔄 <strong>Baseline para comparação</strong> — comparar mês atual vs mês anterior congelado</li>
+      </ul>
+    </section>
+
+    <!-- SLIDE 9: PERGUNTA -->
+    <section>
+      <h2>🤔 Reflexão</h2>
+      <blockquote style="font-size: 0.9em;">
+        "Uma empresa de e-commerce faz o fechamento do mês às 23h59 do último dia. No dia seguinte, o financeiro percebe que um estorno de R$ 15.000 foi processado retroativamente. Como garantir que o relatório de fechamento não seja afetado?"
+      </blockquote>
+      <p class="fragment fade-in"><strong>Resposta:</strong> O snapshot (MV sem refresh) preserva os dados como estavam no momento do fechamento, independentemente do que acontecer depois.</p>
+    </section>
+
+  </div>
+</div>
+
+<script src="../dist/reveal.js"></script>
+<script src="../plugin/notes/notes.js"></script>
+<script src="../plugin/math/math.js"></script>
+<script src="../plugin/markdown/markdown.js"></script>
+<script src="../plugin/highlight/highlight.js"></script>
+<script src="../plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+<script src="../dist/vue.js"></script>
+
+<script>
+  window.app = Vue.createApp({
+    setup() {
+      Vue.onMounted(() => {
+        initializeReveal();
+      });
+      return {};
+    },
+  });
+</script>
+<script src="../plugin/leader-line.min.js"></script>
+<script src="../slides_template/header1.js"></script>
+<script src="../components/md.js"></script>
+<script src="../components/components.js"></script>
+
+<script>
+  function initializeReveal() {
+    var deck1 = new Reveal(document.querySelector(".reveal"), {
+      controls: true,
+      controlsLayout: 'edges',
+      hash: true,
+      respondToHashChanges: true,
+      history: true,
+      keyboardCondition: "focused",
+      theme: "dracula",
+      slideNumber: "h.v",
+      navigationMode: "linear",
+      plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+    });
+    deck1.initialize();
+  }
+  window.app.mount("#app");
+</script>
+
+</body>
+</html>
