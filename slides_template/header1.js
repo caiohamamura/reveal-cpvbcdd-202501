@@ -81,3 +81,29 @@ window.app.component("header1", {
       </div>
       `,
 });
+
+function addCopyButtons() {
+  document.querySelectorAll("pre > code.copy").forEach((codeBlock) => {
+    const pre = codeBlock.parentElement;
+
+    if (pre.querySelector(".copy-btn")) return;
+
+    const button = document.createElement("button");
+    button.innerText = "Copy";
+    button.className = "copy-btn";
+
+    button.addEventListener("click", async () => {
+      const text = codeBlock.innerText;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        button.innerText = "Copied!";
+        setTimeout(() => (button.innerText = "Copy"), 1500);
+      } catch {
+        button.innerText = "Error";
+      }
+    });
+
+    pre.appendChild(button);
+  });
+}

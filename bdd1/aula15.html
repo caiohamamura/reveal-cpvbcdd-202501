@@ -176,7 +176,7 @@ class idproduto attribute
           <h3>Comandos SELECT: A Essência da Consulta</h3>
           <ul>
             <li>
-              <pre class="sql"
+              <pre class="sql nocopy"
                    style="width: fit-content; margin: 0; font-size: 24pt; display: inline-flex"><code style="padding: 5px">SELECT</code></pre>
               : Especifica as colunas a serem exibidas.
             </li>
@@ -691,7 +691,7 @@ ORDER BY preco DESC;
             </div>
           </div>
           <p>Queremos saber o nome do cliente e qual produto ele pediu.</p>
-          <pre><code class="lang-sql" data-line-numbers="1-4" data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers="1-4" data-trim>
 SELECT c.nome, p.nome_produto
 FROM Clientes c
 JOIN Pedidos p 
@@ -701,7 +701,7 @@ JOIN Pedidos p
 
         <section data-auto-animate>
           <h2>Explicando o Código</h2>
-          <pre><code class="lang-sql" data-line-numbers="1" data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers="1" data-trim>
 SELECT c.nome, p.nome_produto
 FROM Clientes c
 JOIN Pedidos p 
@@ -717,7 +717,7 @@ JOIN Pedidos p
 
         <section data-auto-animate>
           <h2>Explicando o Código</h2>
-          <pre><code class="lang-sql" data-line-numbers="2" data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers="2" data-trim>
 SELECT c.nome, p.nome_produto
 FROM Clientes c
 JOIN Pedidos p 
@@ -1084,16 +1084,7 @@ ON c.cliente_id = p.cliente_id;
 
         // Learn about plugins: https://revealjs.com/plugins/
         plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
-        // dependencies: [
-        // 	{ src: 'plugin/myhighlight/highlight.min.js' },
-        // 	{
-        // 		src: 'node_modules/reveal-code-focus/reveal-code-focus.js',
-        // 		async: true,
-        // 		callback: function () {
-        // 			RevealCodeFocus();
-        // 		}
-        // 	}
-        // ]
+
       });
 
       deck1.initialize();

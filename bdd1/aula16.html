@@ -14,7 +14,7 @@
 
   <!-- Theme used for syntax highlighted code -->
   <link rel="stylesheet" href="../dist/highlight/panda-syntax-dark.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
   <!-- <link rel="stylesheet" href="dist/highlight/dracula.css"> -->
 </head>
 
@@ -190,12 +190,12 @@ INSERT INTO post (titulo, conteudo, usuario_id) VALUES
                         resultado = conn.execute(text("SELECT 1")).scalar()
                         print(f"Você selecionou: {db_version}")
                 </code></pre>
-          <copy-btn class="mr-49"></copy-btn>
         </div>
         <div class="fragment">
           <p>SQLAlchemy atua como ponte para executar SQL diretamente</p>
         </div>
       </section>
+
 
       <!-- Slide 5: Operações CRUD - Create -->
       <section>
