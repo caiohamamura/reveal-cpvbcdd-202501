@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - RTC, Deep Sleep e Autonomia no ESP8266</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/night.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+</head>
+
+<body>
+
+<div id="app" class="reveal">
+  <div class="slides">
+
+    <!-- ============================================================
+         SEÇÃO 1: INTRODUÇÃO E MOTIVAÇÃO
+         ============================================================ -->
+
+    <!-- SLIDE 1: Capa -->
+    <section data-auto-animate>
+      <header1 aula="2" curso="Programação Avançada IoT" title-size="24"
+        title="RTC, Deep Sleep e Autonomia no ESP8266">
+        <div class="mermaid" data-id="sleep-diagram">
+          <pre>
+graph LR
+  A["🔄 Acorda"] -->|"5 seg"| B["📊 Lê Sensor"]
+  B -->|"📡 Envia"| C["💤 Dorme"]
+  C -->|"5 min"| A
+          </pre>
+        </div>
+      </header1>
+    </section>
+
+    <!-- SLIDE 2: Revisão Rápida -->
+    <section data-auto-animate>
+      <h2>📋 Revisão: Aula Passada</h2>
+      <ls-u>
+        <li><code>millis()</code> substitui <code>delay()</code></li>
+        <li>Timer (Ticker) para tarefas periódicas</li>
+        <li>Interrupts para eventos instantâneos</li>
+        <li>NTP sincroniza relógio via Wi-Fi</li>
+      </ls-u>
+      <div class="fragment" style="background: rgba(189,147,249,0.15); border-left: 4px solid #bd93f9; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 22pt; color: #bd93f9;">⚡ Hoje: E se o dispositivo precisar rodar <b>meses</b> sem tomada?</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: O Desafio da Bateria -->
+    <section data-auto-animate>
+      <h2>🔋 O Desafio da Bateria</h2>
+      <div style="display: flex; align-items: center; gap: 1.5em;">
+        <div style="flex: 1;">
+          <ls-u>
+            <li>ESP8266 ligado consome <b style="color: #ff5555">~80 mA</b></li>
+            <li>Pilha AA alcalina: <b style="color: #8be9fd">~2500 mAh</b></li>
+            <li>Autonomia: 2500 ÷ 80 = <b style="color: #ff5555">~31 horas</b></li>
+          </ls-u>
+        </div>
+        <div style="flex: 1; text-align: center;">
+          <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+            <div class="mermaid" data-id="battery-basic">
+              <pre>
+graph TD
+  A["🔋 2500 mAh"] -->|"÷ 80 mA"| B["⏰ 31 horas"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#ff5555,color:#f8f8f2
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fragment" style="text-align: center; margin-top: 15px;">
+        <p style="font-size: 26pt; color: #ff79c6;">E se eu precisasse de <b>6 meses</b> no meio do mato?</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: A Resposta — Deep Sleep -->
+    <section data-auto-animate>
+      <h2>💤 A Resposta: Deep Sleep</h2>
+      <div style="display: flex; align-items: center; gap: 1.5em;">
+        <div style="flex: 1;">
+          <ls-u>
+            <li>De 80 mA → <b style="color: #50fa7b">0,02 mA</b> (20 μA)</li>
+            <li><b style="color: #50fa7b">4.000x menos consumo!</b></li>
+            <li>Autonomia: de 31 horas → <b style="color: #50fa7b">anos</b></li>
+          </ls-u>
+        </div>
+        <div style="flex: 1; text-align: center;">
+          <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+            <div class="mermaid" data-id="sleep-gain">
+              <pre>
+graph LR
+  A["⚡ 80 mA<br/>31 horas"] -->|"Deep Sleep"| B["💤 0,02 mA<br/>meses/anos"]
+  style A fill:#ff5555,color:#f8f8f2
+  style B fill:#50fa7b,color:#282a36
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 2: EXEMPLOS DO MUNDO REAL
+         ============================================================ -->
+
+    <!-- SLIDE 5: Capa da Seção -->
+    <section>
+      <h2>🌍 Quem Dorme, Vive Mais</h2>
+      <p style="font-size: 28pt; text-align: center; color: #bd93f9;">8 projetos reais que <b>dependem</b> de Deep Sleep</p>
+    </section>
+
+    <!-- SLIDE 6: Estação Meteorológica -->
+    <section data-auto-animate>
+      <h2>🏠 Estação Meteorológica na Fazenda</h2>
+      <div style="display: flex; align-items: center; gap: 1.5em;">
+        <div style="flex: 1;">
+          <ls-u>
+            <li>Mede temperatura a cada 30 min</li>
+            <li>Envia para dashboard via Wi-Fi</li>
+            <li>Local sem energia elétrica</li>
+            <li>Painel solar + bateria</li>
+          </ls-u>
+        </div>
+        <div style="flex: 0 0 200px; text-align: center;">
+          <div style="background: #44475a; border-radius: 12px; padding: 1em;">
+            <p><b style="color: #ff5555">Sem sleep:</b> 1 dia</p>
+            <p style="font-size: 36pt;">⚡</p>
+            <p><b style="color: #50fa7b">Com sleep:</b> 8 meses</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Irrigação Inteligente -->
+    <section data-auto-animate>
+      <h2>🌾 Irrigação Inteligente</h2>
+      <ls-u>
+        <li>Sensor de umidade do solo</li>
+        <li>Acorda → mede → decide → dorme</li>
+        <li>5 seg acordado, 1 hora dormindo</li>
+        <li>Consumo: <b style="color: #50fa7b">4.000x menos!</b></li>
+      </ls-u>
+      <div class="fragment">
+        <div class="mermaid" data-id="irrig-flow">
+          <pre>
+graph LR
+  A["💤 Dorme 1h"] -->|"Timer"| B["🔄 Acorda"]
+  B -->|"5 seg"| C["💧 Mede Umidade"]
+  C --> D{"Solo seco?"}
+  D -->|"Sim"| E["🚿 Irriga"]
+  D -->|"Não"| A
+  E --> A
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Sensor de Intrusão -->
+    <section data-auto-animate>
+      <h2>🚨 Sensor de Intrusão</h2>
+      <ls-u>
+        <li>Acelerômetro na porta do galpão</li>
+        <li>Acorda por <b style="color: #8be9fd">movimento</b> (não por timer!)</li>
+        <li>Manda alerta no Telegram</li>
+        <li><b style="color: #50fa7b">1 ano</b> com bateria 18650</li>
+      </ls-u>
+    </section>
+
+    <!-- SLIDE 9: Colmeias -->
+    <section data-auto-animate>
+      <h2>🐝 Monitoramento de Colmeias</h2>
+      <ls-u>
+        <li>Peso + temperatura + som da colmeia</li>
+        <li>Projeto real da <b style="color: #bd93f9">Embrapa</b></li>
+        <li>Apiário no meio do mato</li>
+        <li>Acorda a cada hora, transmite, dorme</li>
+      </ls-u>
+    </section>
+
+    <!-- SLIDE 10: Lixeira -->
+    <section data-auto-animate>
+      <h2>🗑️ Lixeira Inteligente</h2>
+      <ls-u>
+        <li>Ultrassom mede nível de enchimento</li>
+        <li>Acorda 4x ao dia</li>
+        <li>Prefeitura roteiriza coleta</li>
+        <li><b style="color: #50fa7b">Economia de diesel e rotas otimizadas</b></li>
+      </ls-u>
+    </section>
+
+    <!-- SLIDE 11: Aquicultura -->
+    <section data-auto-animate>
+      <h2>🐟 Aquicultura (Tanque de Peixes)</h2>
+      <ls-u>
+        <li>pH, oxigênio e temperatura do tanque</li>
+        <li>Se oxigênio baixo → aciona aerador</li>
+        <li>Acorda a cada 15 minutos</li>
+        <li><b style="color: #ff5555">Sem deep sleep:</b> bateria dura 2 dias</li>
+      </ls-u>
+    </section>
+
+    <!-- SLIDE 12: Vaga Inteligente -->
+    <section data-auto-animate>
+      <h2>🅿️ Vaga Inteligente</h2>
+      <ls-u>
+        <li>Sensor magnético detecta carro</li>
+        <li>Acorda quando campo magnético muda</li>
+      </ls-u>
+      <div class="fragment" style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 36pt; color: #50fa7b;"><b>3 anos com 2 pilhas AA!</b></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 13: Queimada -->
+    <section data-auto-animate>
+      <h2>🌳 Sensor de Queimada</h2>
+      <ls-u>
+        <li>Gás + temperatura + umidade</li>
+        <li>Floresta Amazônica, local remoto</li>
+        <li><b style="color: #ff5555">Não pode trocar bateria todo mês</b></li>
+        <li>Deep sleep é questão de <b style="color: #bd93f9">viabilidade</b></li>
+      </ls-u>
+    </section>
+
+    <!-- SLIDE 14: Reflexão -->
+    <section>
+      <h2>🤔 Qual projeto vocês fariam?</h2>
+      <p style="font-size: 26pt; text-align: center; color: #bd93f9;">Qual desses seria mais legal implementar<br>aqui no IFSP ou em Capivari?</p>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 3: OS 3 MODOS DE SLEEP
+         ============================================================ -->
+
+    <!-- SLIDE 15: Capa da Seção -->
+    <section>
+      <h2>💤 Como o ESP8266 Dorme</h2>
+      <p style="font-size: 28pt; text-align: center; color: #bd93f9;">3 modos de sleep — do "cochilo" ao "coma"</p>
+    </section>
+
+    <!-- SLIDE 16: Comparação dos 3 Modos -->
+    <section data-auto-animate>
+      <h2>💤 Os 3 Modos de Sleep</h2>
+      <table>
+        <thead>
+          <tr>
+            <th class="tg-bf9e">Modo</th>
+            <th class="tg-bf9e">Consumo</th>
+            <th class="tg-bf9e">CPU</th>
+            <th class="tg-bf9e">Wi-Fi</th>
+            <th class="tg-bf9e">Acordar com</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tg-bf9e"><b>Modem Sleep</b></td>
+            <td class="tg-bf9e">~15 mA</td>
+            <td class="tg-bf9e" style="color: #50fa7b">✅ Ligada</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Off</td>
+            <td class="tg-bf9e">Timer automático</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e"><b>Light Sleep</b></td>
+            <td class="tg-bf9e">~0,4 mA</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Pausada</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Off</td>
+            <td class="tg-bf9e">Timer ou GPIO</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e" style="color: #50fa7b"><b>Deep Sleep</b></td>
+            <td class="tg-bf9e" style="color: #50fa7b"><b>~20 μA</b></td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Off</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Off</td>
+            <td class="tg-bf9e">GPIO 16 (RST)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 20pt; color: #50fa7b;">💡 Deep Sleep desliga <b>tudo</b>. Só o RTC continua. Maior economia, mas reinicia do zero.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 17: Deep Sleep em Detalhe -->
+    <section data-auto-animate>
+      <h2>💤 Deep Sleep em Detalhe</h2>
+      <div style="display: flex; align-items: flex-start; gap: 1.5em;">
+        <div style="flex: 1;">
+          <ls-u>
+            <li><b style="color: #ff5555">Tudo</b> é desligado (CPU, Wi-Fi, RAM)</li>
+            <li>Só o <b style="color: #8be9fd">RTC</b> continua rodando</li>
+            <li>Consome apenas <b style="color: #50fa7b">20 μA</b> (0,02 mA)</li>
+            <li>Acorda como <b>ligado do zero</b></li>
+            <li>Roda <code>setup()</code> novamente</li>
+          </ls-u>
+        </div>
+        <div style="flex: 1; text-align: center;">
+          <div style="background: #44475a; border-radius: 12px; padding: 1em; border: 2px dashed #6272a4;">
+            <span style="color: #bd93f9; font-size: 1.1em;">📐 Analogia: desligar o celular — o despertador continua, mas tudo mais reinicia</span>
+          </div>
+        </div>
+      </div>
+      <div class="fragment">
+        <div class="mermaid" data-id="deep-sleep-cycle">
+          <pre>
+graph LR
+  A["🔄 setup()"] -->|"Trabalha"| B["📊 Lê/Envia"]
+  B -->|"ESP.deepSleep()"| C["💤 Dorme 20 μA"]
+  C -->|"RST pulso"| A
+          </pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 18: O Pino Mágico -->
+    <section data-auto-animate>
+      <h2>⚡ O Pino Mágico: GPIO 16 → RST</h2>
+      <div style="display: flex; align-items: center; gap: 1.5em;">
+        <div style="flex: 1;">
+          <ls-u>
+            <li>Conexão <b style="color: #ff5555">obrigatória:</b> D0 (GPIO 16) → RST</li>
+            <li>É o RTC que "cutuca" o RST para acordar</li>
+            <li><b style="color: #ff5555">Sem esse fio:</b> o ESP dorme para sempre</li>
+            <li>Resistor <b>10kΩ</b> entre RST e 3.3V (pull-up)</li>
+          </ls-u>
+        </div>
+        <div style="flex: 1; text-align: center;">
+          <div style="background: #44475a; border-radius: 12px; padding: 1em; border: 2px dashed #6272a4;">
+            <div class="mermaid" data-id="pin-diagram">
+              <pre>
+graph TD
+  A["ESP8266<br/>GPIO 16 (D0)"] -->|"Fio"| B["RST"]
+  B -->|"10kΩ"| C["3.3V"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#ff79c6,color:#282a36
+  style C fill:#50fa7b,color:#282a36
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fragment" style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 22pt; color: #ff79c6;">⚠️ "Meu ESP não acorda?" → Verifique o fio D0→RST!</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 4: MÃO NA MASSA — CÓDIGO
+         ============================================================ -->
+
+    <!-- SLIDE 19: Primeiro Código -->
+    <section data-auto-animate>
+      <h2>👋 "Olá, Acordei!"</h2>
+      <pre><code class="lang-cpp" data-trim data-line-numbers>
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Acordei!");     // Primeira mensagem
+  delay(2000);                     // Simula "trabalho"
+  Serial.println("Dormindo 10s...");
+  ESP.deepSleep(10e6);            // Dorme 10 segundos
+}
+
+void loop() {
+  // NUNCA executa após deep sleep!
+}
+      </code></pre>
+    </section>
+
+    <!-- SLIDE 20: Primeiro Código — Destaque -->
+    <section data-auto-animate>
+      <h2>👋 "Olá, Acordei!" — Entendendo</h2>
+      <pre><code class="lang-cpp" data-trim data-line-numbers="6-8">
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Acordei!");
+  delay(2000);
+  Serial.println("Dormindo 10s...");
+  ESP.deepSleep(10e6);            // ⬅ microssegundos!
+}
+
+void loop() {
+  // NUNCA executa após deep sleep!
+}
+      </code></pre>
+      <div class="fragment fade-in">
+        <ls-u font-size="20">
+          <li><code>10e6</code> = 10 × 10⁶ μs = 10 segundos</li>
+          <li>Após <code>deepSleep()</code>, o ESP <b>reinicia completamente</b></li>
+          <li><code>loop()</code> nunca roda — tudo vai em <code>setup()</code></li>
+        </ls-u>
+      </div>
+    </section>
+
+    <!-- SLIDE 21: Matemática do Sleep -->
+    <section data-auto-animate>
+      <h2>⏱️ Matemática do Sleep</h2>
+      <p><code>ESP.deepSleep()</code> recebe <b>microssegundos</b></p>
+      <table style="max-width: 550px;">
+        <thead>
+          <tr>
+            <th class="tg-bf9e">Tempo</th>
+            <th class="tg-bf9e">Código</th>
+            <th class="tg-bf9e">Cálculo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="tg-bf9e">1 segundo</td><td class="tg-bf9e"><code>1e6</code></td><td class="tg-bf9e">1 × 1.000.000</td></tr>
+          <tr><td class="tg-bf9e">10 segundos</td><td class="tg-bf9e"><code>10e6</code></td><td class="tg-bf9e">10 × 1.000.000</td></tr>
+          <tr><td class="tg-bf9e">1 minuto</td><td class="tg-bf9e"><code>60e6</code></td><td class="tg-bf9e">60 × 1.000.000</td></tr>
+          <tr><td class="tg-bf9e">5 minutos</td><td class="tg-bf9e"><code>300e6</code></td><td class="tg-bf9e">300 × 1.000.000</td></tr>
+          <tr><td class="tg-bf9e">1 hora</td><td class="tg-bf9e"><code>3600e6</code></td><td class="tg-bf9e">3600 × 1.000.000</td></tr>
+        </tbody>
+      </table>
+      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 20pt; color: #50fa7b;">💡 Dica: use a fórmula <code>segundos * 1e6</code> para nunca errar</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 22: Calculadora de Autonomia -->
+    <section data-auto-animate>
+      <h2>🔢 Calculadora de Autonomia</h2>
+      <div style="display: flex; align-items: flex-start; gap: 1.5em;">
+        <div style="flex: 1;">
+          <p><b>Dados:</b></p>
+          <ls-u font-size="20">
+            <li>Bateria 18650: <b style="color: #8be9fd">3000 mAh</b></li>
+            <li>Acordado (Wi-Fi): <b style="color: #ff5555">80 mA</b> por 5 seg</li>
+            <li>Dormindo: <b style="color: #50fa7b">0,02 mA</b></li>
+            <li>Ciclo: a cada 30 minutos</li>
+          </ls-u>
+        </div>
+        <div style="flex: 1;">
+          <p><b>Cálculo por dia:</b></p>
+          <ls-u font-size="20">
+            <li>48 ciclos/dia (24h ÷ 30min)</li>
+            <li>Acordado: 80 × 4min/60 = <b>5,3 mAh</b></li>
+            <li>Dormindo: 0,02 × 23,93h = <b>0,48 mAh</b></li>
+            <li>Total: <b style="color: #8be9fd">~5,8 mAh/dia</b></li>
+          </ls-u>
+        </div>
+      </div>
+      <div class="fragment" style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 36pt; color: #50fa7b;"><b>Autonomia: 3000 ÷ 5,8 ≈ 517 dias! 🤯</b></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 23: Comparação Visual -->
+    <section data-auto-animate>
+      <h2>📊 Com vs Sem Deep Sleep</h2>
+      <table>
+        <thead>
+          <tr>
+            <th class="tg-bf9e">Intervalo</th>
+            <th class="tg-bf9e">Sem Sleep</th>
+            <th class="tg-bf9e">Com Sleep</th>
+            <th class="tg-bf9e">Ganho</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tg-bf9e">Contínuo</td>
+            <td class="tg-bf9e" style="color: #ff5555">37h</td>
+            <td class="tg-bf9e">—</td>
+            <td class="tg-bf9e">—</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">A cada 1 min</td>
+            <td class="tg-bf9e" style="color: #ff5555">37h</td>
+            <td class="tg-bf9e" style="color: #50fa7b">35 dias</td>
+            <td class="tg-bf9e"><b>23x</b></td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">A cada 10 min</td>
+            <td class="tg-bf9e" style="color: #ff5555">37h</td>
+            <td class="tg-bf9e" style="color: #50fa7b">280 dias</td>
+            <td class="tg-bf9e"><b>181x</b></td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">A cada 1 hora</td>
+            <td class="tg-bf9e" style="color: #ff5555">37h</td>
+            <td class="tg-bf9e" style="color: #50fa7b; font-weight: bold;">517 dias</td>
+            <td class="tg-bf9e"><b style="color: #50fa7b">335x</b></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="fragment" style="text-align: center; margin-top: 15px;">
+        <p style="font-size: 22pt; color: #bd93f9;">💡 Quanto mais dorme, mais dura. Mas precisa acordar o suficiente para ser útil.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 24: Acordar por Botão -->
+    <section data-auto-animate>
+      <h2>🔘 Acordar por Botão (Interrupt Externo)</h2>
+      <pre><code class="lang-cpp" data-trim data-line-numbers>
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Acordei por botão!");
+  delay(3000);
+  Serial.println("Voltando a dormir...");
+  ESP.deepSleep(0);  // "infinito" — só botão
+}
+
+void loop() {}
+      </code></pre>
+    </section>
+
+    <!-- SLIDE 25: Acordar por Botão — Destaque -->
+    <section data-auto-animate>
+      <h2>🔘 Acordar por Botão — Detalhes</h2>
+      <pre><code class="lang-cpp" data-trim data-line-numbers="6">
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Acordei por botão!");
+  delay(3000);
+  Serial.println("Voltando a dormir...");
+  ESP.deepSleep(0);  // ⬅ dorme "para sempre"
+}
+
+void loop() {}
+      </code></pre>
+      <div class="fragment fade-in">
+        <ls-u font-size="20">
+          <li>Botão entre <b>RST</b> e <b>GND</b> — pula o pino para LOW</li>
+          <li><code>deepSleep(0)</code> = só acorda por RST externo</li>
+          <li>Aplicações: sensor de porta, botão de pânico, alerta</li>
+        </ls-u>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 5: RTC MEMORY E NTP INTELIGENTE
+         ============================================================ -->
+
+    <!-- SLIDE 26: O Problema da Memória -->
+    <section data-auto-animate>
+      <h2>🕐 O Problema: "Que Horas São?"</h2>
+      <ls-u>
+        <li>Deep sleep reinicia <b style="color: #ff5555">TUDO</b></li>
+        <li>Variáveis normais são <b style="color: #ff5555">perdidas</b></li>
+        <li>Hora, contadores, dados... <b style="color: #ff5555">tudo some!</b></li>
+      </ls-u>
+      <div class="fragment" style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 26pt; color: #bd93f9;"><b>Como lembrar que horas são sem Wi-Fi?</b></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 27: RTC Memory -->
+    <section data-auto-animate>
+      <h2>📝 RTC Memory — O "Post-it" do ESP8266</h2>
+      <ls-u>
+        <li><b style="color: #8be9fd">512 bytes</b> que sobrevivem ao deep sleep</li>
+        <li>Declarado com <code>RTC_DATA_ATTR</code></li>
+        <li>Rápido como RAM (sem desgaste de flash)</li>
+        <li><b style="color: #ff5555">Não</b> sobrevive a desconexão de energia</li>
+      </ls-u>
+      <div class="fragment">
+        <pre><code class="lang-cpp" data-trim>
+RTC_DATA_ATTR int contador = 0;            // Persiste ao acordar!
+RTC_DATA_ATTR float ultimaTemperatura = 0;  // Persiste ao acordar!
+RTC_DATA_ATTR bool primeiraVez = true;      // Persiste ao acordar!
+        </code></pre>
+      </div>
+    </section>
+
+    <!-- SLIDE 28: Comparação de Memórias -->
+    <section data-auto-animate>
+      <h2>🧠 O Que Sobrevive?</h2>
+      <table>
+        <thead>
+          <tr>
+            <th class="tg-bf9e">Tipo</th>
+            <th class="tg-bf9e">Deep Sleep?</th>
+            <th class="tg-bf9e">Power-off?</th>
+            <th class="tg-bf9e">Velocidade</th>
+            <th class="tg-bf9e">Limite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tg-bf9e">RAM normal</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
+            <td class="tg-bf9e">Rápida</td>
+            <td class="tg-bf9e">~80 KB</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e" style="color: #50fa7b"><b>RTC memory</b></td>
+            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
+            <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
+            <td class="tg-bf9e">Rápida</td>
+            <td class="tg-bf9e">512 bytes</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">EEPROM</td>
+            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
+            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
+            <td class="tg-bf9e">Média</td>
+            <td class="tg-bf9e">4 KB</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">SPIFFS</td>
+            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
+            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
+            <td class="tg-bf9e">Lenta</td>
+            <td class="tg-bf9e">~3 MB</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 20pt; color: #50fa7b;">💡 Para deep sleep, RTC memory é ideal: rápida e persiste. Para dados críticos, use SPIFFS.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 29: NTP Inteligente — Fluxo -->
+    <section data-auto-animate>
+      <h2>⏰ NTP Inteligente — Fluxo</h2>
+      <div class="mermaid" data-id="ntp-flow">
+        <pre>
+graph TD
+  A["🔄 Acorda"] --> B{"ntpOk?"}
+  B -->|"Não<br/>1ª vez"| C["📡 Conecta Wi-Fi"]
+  C --> D["🌐 Sincroniza NTP"]
+  D --> E["💾 Salva epochBase<br/>+ millisBase"]
+  E --> F["📅 Calcula Hora"]
+  B -->|"Sim"| F
+  F --> G["📊 Lê Sensor + Timestamp"]
+  G --> H["💤 Deep Sleep"]
+  H --> A
+  style C fill:#ff5555,color:#f8f8f2
+  style E fill:#50fa7b,color:#282a36
+  style F fill:#8be9fd,color:#282a36
+        </pre>
+      </div>
+    </section>
+
+    <!-- SLIDE 30: NTP — A Economia -->
+    <section data-auto-animate>
+      <h2>⏰ NTP Inteligente — A Economia</h2>
+      <ls-u>
+        <li><b style="color: #50fa7b">1ª vez:</b> conecta Wi-Fi → sincroniza NTP → salva epoch</li>
+        <li><b style="color: #8be9fd">Depois:</b> calcula hora via <code>millis() - millisBase + epochBase</code></li>
+        <li><b style="color: #50fa7b">Economia:</b> Wi-Fi ligado só no primeiro ciclo!</li>
+      </ls-u>
+      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 20pt; color: #50fa7b;">⚡ Com Wi-Fi: 5 seg × 80mA = 400 mA·s. Sem Wi-Fi: 5ms × 20mA = 0,1 mA·s → <b>4.000x menos por ciclo!</b></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 31: Código NTP + RTC -->
+    <section data-auto-animate>
+      <h2>⏰ Código: NTP + RTC Memory</h2>
+      <pre><code class="lang-cpp" data-trim data-line-numbers>
+RTC_DATA_ATTR bool ntpOk = false;
+RTC_DATA_ATTR time_t epochBase = 0;
+RTC_DATA_ATTR unsigned long millisBase = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  if (!ntpOk) {
+    // Primeira vez: conecta e sincroniza
+    WiFi.begin(ssid, senha);
+    configTime(0, 0, "pool.ntp.org");
+    while (time(nullptr) < 1000) delay(100);
+    epochBase = time(nullptr);
+    millisBase = millis();
+    ntpOk = true;
+    WiFi.disconnect(true);  // Desliga Wi-Fi!
+  }
+
+  // Calcula hora sem Wi-Fi
+  time_t agora = epochBase + (millis() - millisBase) / 1000;
+  Serial.printf("Hora: %s", ctime(&agora));
+
+  ESP.deepSleep(300e6);  // 5 minutos
+}
+
+void loop() {}
+      </code></pre>
+    </section>
+
+    <!-- SLIDE 32: Código NTP — Destaque -->
+    <section data-auto-animate>
+      <h2>⏰ Código NTP — Linhas-Chave</h2>
+      <pre><code class="lang-cpp" data-trim data-line-numbers="10-11,20-21">
+RTC_DATA_ATTR bool ntpOk = false;
+RTC_DATA_ATTR time_t epochBase = 0;
+RTC_DATA_ATTR unsigned long millisBase = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  if (!ntpOk) {
+    WiFi.begin(ssid, senha);
+    configTime(0, 0, "pool.ntp.org");       // ⬅ sincroniza
+    while (time(nullptr) < 1000) delay(100); // ⬅ espera NTP
+    epochBase = time(nullptr);
+    millisBase = millis();
+    ntpOk = true;
+    WiFi.disconnect(true);
+  }
+
+  time_t agora = epochBase +                // ⬅ calcula sem Wi-Fi
+    (millis() - millisBase) / 1000;          // ⬅ diferença de tempo
+  Serial.printf("Hora: %s", ctime(&agora));
+  ESP.deepSleep(300e6);
+}
+      </code></pre>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 6: PROJETO INTEGRADOR
+         ============================================================ -->
+
+    <!-- SLIDE 33: Logger Completo — Fluxo -->
+    <section data-auto-animate>
+      <h2>🌡️ Logger Completo — Fluxo</h2>
+      <div class="mermaid" data-id="logger-flow">
+        <pre>
+graph LR
+  A["🔄 Acorda"] --> B{"NTP<br/>sincronizado?"}
+  B -->|"Não"| C["📡 WiFi + NTP"]
+  C --> D["🌡️ Lê DHT11"]
+  B -->|"Sim"| D
+  D --> E["📅 Timestamp RTC"]
+  E --> F["📋 Serial Log"]
+  F --> G["💤 Deep Sleep 5 min"]
+        </pre>
+      </div>
+    </section>
+
+    <!-- SLIDE 34: Projeto Integrador -->
+    <section data-auto-animate>
+      <h2>🚀 Projeto: Estação Autônoma</h2>
+      <ls-u>
+        <li>Acorda a cada <b>5 minutos</b></li>
+        <li>Lê <b style="color: #8be9fd">DHT11</b> (temperatura + umidade)</li>
+        <li><b style="color: #50fa7b">Timestamp</b> correto em cada leitura</li>
+        <li>NTP sincroniza só <b>1 vez</b></li>
+        <li>RTC memory para contadores e hora</li>
+        <li>Deep sleep entre leituras</li>
+      </ls-u>
+      <div class="fragment" style="background: rgba(189,147,249,0.15); border-left: 4px solid #bd93f9; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 22pt; color: #bd93f9;">🚀 <b>Desafio extra:</b> Enviar dados via MQTT para um dashboard!</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 35: Checklist do Projeto -->
+    <section data-auto-animate>
+      <h2>✅ Checklist do Projeto</h2>
+      <ls-u font-size="20">
+        <li>Fio D0 → RST conectado (com pull-up 10kΩ)</li>
+        <li>LED pisca ao acordar (feedback visual)</li>
+        <li>DHT11 lendo dados válidos</li>
+        <li>NTP sincroniza na primeira vez</li>
+        <li>Hora correta entre ciclos (RTC memory)</li>
+        <li>Timestamps no Serial</li>
+        <li>Deep sleep de 5 minutos</li>
+        <li>Contador de ciclos (<code>RTC_DATA_ATTR</code>)</li>
+        <li>Wi-Fi desligado após uso</li>
+        <li>Código limpo e comentado</li>
+      </ls-u>
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 7: ENCERRAMENTO
+         ============================================================ -->
+
+    <!-- SLIDE 36: Resumo -->
+    <section data-auto-animate>
+      <h2>✅ O Que Aprendemos Hoje</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 1em;">
+        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #8be9fd;">💤 Deep Sleep</h3>
+          <p style="font-size: 18pt;">~4.000x menos consumo (80mA → 20μA)</p>
+        </div>
+        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #50fa7b;">⚡ D0 → RST</h3>
+          <p style="font-size: 18pt;">Conexão obrigatória para acordar</p>
+        </div>
+        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #bd93f9;">📝 RTC Memory</h3>
+          <p style="font-size: 18pt;">512 bytes persistentes entre ciclos</p>
+        </div>
+        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #ff79c6;">⏰ NTP 1x</h3>
+          <p style="font-size: 18pt;">Sincroniza 1 vez, depois calcula</p>
+        </div>
+      </div>
+      <div class="fragment" style="text-align: center; margin-top: 20px;">
+        <p style="font-size: 24pt; color: #ff79c6;"><b>"Sem deep sleep, IoT em campo é impossível."</b></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 37: Próxima Aula -->
+    <section>
+      <h2>🔮 Próxima Aula: Máquinas de Estado</h2>
+      <p style="font-size: 24pt; margin: 20px 40px;">E se ao acordar, o sensor precisasse <b style="color: #bd93f9">decidir</b> o que fazer?</p>
+      <div class="fragment">
+        <div class="mermaid" data-id="fsm-preview">
+          <pre>
+graph TD
+  A["🔄 Acorda"] --> B{"Temp > 30°C?"}
+  B -->|"Sim"| C["❄️ Liga Cooler"]
+  B -->|"Não"| D{"Umidade < 40%?"}
+  D -->|"Sim"| E["💧 Liga Irrigação"]
+  D -->|"Não"| F["💤 Dorme"]
+  C --> F
+  E --> F
+          </pre>
+        </div>
+      </div>
+      <div class="fragment" style="text-align: center; margin-top: 15px;">
+        <p style="font-size: 28pt; color: #50fa7b;"><b>Isso é uma Máquina de Estados Finitos (FSM)!</b></p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- SCRIPT SECTION -->
+<script src="../dist/reveal.js"></script>
+<script src="../plugin/notes/notes.js"></script>
+<script src="../plugin/math/math.js"></script>
+<script src="../plugin/markdown/markdown.js"></script>
+<script src="../plugin/highlight/highlight.js"></script>
+<script src="../plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+<script src="../dist/vue.js"></script>
+<script src="../plugin/leader-line.min.js"></script>
+<script src="../slides_template/header1.js"></script>
+<script src="../components/md.js"></script>
+<script src="../components/components.js"></script>
+
+<script>
+  window.app = Vue.createApp({
+    setup() {
+      Vue.onMounted(() => {
+        initializeReveal();
+      });
+      return {};
+    },
+  });
+
+  function initializeReveal() {
+    var deck1 = new Reveal(document.querySelector(".reveal"), {
+      controls: true,
+      controlsLayout: 'edges',
+      hash: true,
+      respondToHashChanges: true,
+      history: true,
+      keyboardCondition: "focused",
+      slideNumber: "h.v",
+      navigationMode: "linear",
+      plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+    });
+    deck1.initialize();
+  }
+  window.app.mount("#app");
+</script>
+
+</body>
+</html>
