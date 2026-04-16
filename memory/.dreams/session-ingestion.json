@@ -8,7 +8,7 @@
       "lineCount": 17,
       "lastContentLine": 17
     },
-    "iot:sessions/0544bbde-5a18-4d0f-b28f-a22430b78e01.jsonl": {
+    "iot:sessions/0544bbde-5a18-4d0f-b28f-a22430b78e01.jsonl.reset.2026-04-16T14-09-30.788Z": {
       "mtimeMs": 1776337939029,
       "size": 162937,
       "contentHash": "bd97b161ba13afe133b031f5d1632c1b7809e4ce7a90fd8ab7e2087bf9bdfb99",
@@ -21,6 +21,13 @@
       "contentHash": "32b22147954082c416004ad0344a792de6fa7e005d875b41f1efab338055fd6e",
       "lineCount": 4,
       "lastContentLine": 4
+    },
+    "iot:sessions/38f2de69-c6fc-469f-a575-7bf5cb1801d0.jsonl": {
+      "mtimeMs": 1776350385189,
+      "size": 155064,
+      "contentHash": "a302c5537e1aa3a1e46665d75569500c47e3ba40c19afa025f2897f862c40244",
+      "lineCount": 20,
+      "lastContentLine": 20
     },
     "iot:sessions/3f5874b4-9d1d-4e2f-a3be-199fbc32cb3b.jsonl.reset.2026-04-16T09-08-19.437Z": {
       "mtimeMs": 1776314314111,
@@ -232,6 +239,28 @@
       "6071bba0391fde5d0625f4e74a23714d865f2619",
       "ed4b9e35afef382d7b248536f4bbbf1cdc7af2ae",
       "9e45722e011b0535c93cfec268a7f7687e77d2ce"
+    ],
+    "iot:38f2de69-c6fc-469f-a575-7bf5cb1801d0": [
+      "8b1630f86fb222f59048d6ab482ba18aef4058c6",
+      "c055abccff953530b519a04f9243695293e4078c",
+      "910212e11211c60aafad240f3d1c5ce9d6cc16b4",
+      "d27e0ee68078032a6439f4f6681c282c3ab00978",
+      "1f1c9416ef96c67be3dd36c9b288c28eadfeed4f",
+      "ac00a4bdcdfee76c71a2c2670df30a04e9ad603c",
+      "53447cc8123993877d33ff0814ad549d456626ee",
+      "76c314e2280fdb746c9ae12f6dd917a67e288fc9",
+      "53d839c38e04e89c412a6c146aeb1735bc4def44",
+      "2f7ba414f5a88bd5e824e56da44675d8695457b8",
+      "8cf877d059784d5798aa799e8c87c1efcf888ee0",
+      "a72dc393a059b581f18bc6f5667de3cc519a6b44",
+      "504a29052f208c0d4b1d56e9f4c98559239ff641",
+      "b8587c4d6a8652cb5880558b786bbe1f0f80de24",
+      "c410920a83186a3f79a03719507792daf796fefb",
+      "e072f23fa57039129efc2bee79da91e8b609b0fa",
+      "35484a2bd49aee55b39cde60b366702f49836e00",
+      "726ee5ea123d27704ce0318ca18cb84c4caad374",
+      "6e27da1c6e0d9f9c76954f59520f0d7e45781fea",
+      "3232bace2731dc1b8b589e833a17c40e64f20e56"
     ]
   }
 }

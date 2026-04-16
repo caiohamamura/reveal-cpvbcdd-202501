@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-16T13:49:57.981Z",
+  "updatedAt": "2026-04-16T15:18:51.156Z",
   "entries": {
     "memory:memory/2026-04-12.md:1:32": {
       "key": "memory:memory/2026-04-12.md:1:32",
@@ -46,7 +46,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -80,7 +80,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -114,7 +114,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -148,7 +148,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -182,7 +182,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -216,7 +216,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -250,7 +250,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -284,7 +284,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:01:38.632Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "01679c334ef2"
       ],
@@ -2875,7 +2875,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:30:01.438Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "0dac2e09ca9b"
       ],
@@ -2908,7 +2908,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-13T03:30:01.438Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "0dac2e09ca9b"
       ],
@@ -4341,7 +4341,7 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-16T11:13:16.746Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
       "queryHashes": [
         "b628913e3912"
       ],
@@ -4372,7 +4372,747 @@
       "totalScore": 0.62,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-16T11:13:16.746Z",
-      "lastRecalledAt": "2026-04-16T13:49:57.981Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "b628913e3912"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "possible",
+        "lasting",
+        "truths",
+        "strong",
+        "candidate",
+        "surfaced"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:30:30": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:30:30",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 30,
+      "endLine": 30,
+      "source": "memory",
+      "snippet": "User: Conversation info (untrusted metadata): ```json { \"message_id\": \"971\", \"sender_id\": \"8352338864\", \"conversation_label\": \"Planejamento IoT id:-5189152367\", \"sender\": \"Caio Hamamura\", \"timestamp\": \"Thu 2026-04-16 14:09 UTC\", \"group_subject\": \"Planejamento IoT\", \"is_group_chat",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "message-id",
+        "sender-id",
+        "conversation-label",
+        "group-subject",
+        "is-group-chat",
+        "user",
+        "conversation",
+        "info"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:31:31": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:31:31",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 31,
+      "endLine": 31,
+      "source": "memory",
+      "snippet": "Assistant: O diretório `reveal-cpvbcdd-202501` tem um `.git` dentro — vou remover do index para evitar problema de submódulo:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "reveal-cpvbcdd-202501",
+        "assistant",
+        "diretório",
+        "reveal",
+        "cpvbcdd",
+        "tem",
+        "git",
+        "dentro"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:32:32": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:32:32",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 32,
+      "endLine": 32,
+      "source": "memory",
+      "snippet": "Assistant: Pronto, tudo commitado! Mas não tem remote configurado ainda. Você precisa criar o repositório no GitHub e me passar a URL, ou me dar o nome do repo que eu adiciono o remote. Algo como: ``` git remote add origin git@github.com:caiohamamura/iot-ifsp.git git push -u orig",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "github.com",
+        "caiohamamura/iot-ifsp.git",
+        "assistant",
+        "pronto",
+        "tudo",
+        "commitado",
+        "mas",
+        "não"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:33:33": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:33:33",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 33,
+      "endLine": 33,
+      "source": "memory",
+      "snippet": "User: Conversation info (untrusted metadata): ```json { \"message_id\": \"974\", \"sender_id\": \"8352338864\", \"conversation_label\": \"Planejamento IoT id:-5189152367\", \"sender\": \"Caio Hamamura\", \"timestamp\": \"Thu 2026-04-16 14:11 UTC\", \"group_subject\": \"Planejamento IoT\", \"is_group_chat",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "message-id",
+        "sender-id",
+        "conversation-label",
+        "group-subject",
+        "is-group-chat",
+        "user",
+        "conversation",
+        "info"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:34:34": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:34:34",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 34,
+      "endLine": 34,
+      "source": "memory",
+      "snippet": "Assistant: Ah, entendi! O remote está no sub-repositório `reveal-cpvbcdd-202501`, não no repo pai. Vou adicionar o mesmo remote no repo principal:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "sub-repositório",
+        "reveal-cpvbcdd-202501",
+        "assistant",
+        "entendi",
+        "remote",
+        "está",
+        "sub",
+        "repositório"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:35:35": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:35:35",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 35,
+      "endLine": 35,
+      "source": "memory",
+      "snippet": "Assistant: Precisa de autenticação. Quer configurar com SSH ou token? Se tiver chave SSH: ``` git remote set-url origin git@github.com:caiohamamura/reveal-cpvbcdd-202501.git ``` Ou prefere criar um repo novo no GitHub para os materiais de IoT separado do reveal?",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:20:23.840Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "set-url",
+        "github.com",
+        "assistant",
+        "precisa",
+        "autenticação",
+        "quer",
+        "configurar",
+        "com"
+      ]
+    },
+    "memory:memory/2026-04-16.md:278:281": {
+      "key": "memory:memory/2026-04-16.md:278:281",
+      "path": "memory/2026-04-16.md",
+      "startLine": 278,
+      "endLine": 281,
+      "source": "memory",
+      "snippet": "Reflections: Theme: `assistant` kept surfacing across 84 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.62,
+      "maxScore": 0.62,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "b628913e3912"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "1.00",
+        "2-2",
+        "3-3",
+        "5-5",
+        "reflections",
+        "theme",
+        "assistant",
+        "kept"
+      ]
+    },
+    "memory:memory/2026-04-16.md:284:284": {
+      "key": "memory:memory/2026-04-16.md:284:284",
+      "path": "memory/2026-04-16.md",
+      "startLine": 284,
+      "endLine": 284,
+      "source": "memory",
+      "snippet": "Possible Lasting Truths: No strong candidate truths surfaced.",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.62,
+      "maxScore": 0.62,
+      "firstRecalledAt": "2026-04-16T14:20:23.840Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "b628913e3912"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "possible",
+        "lasting",
+        "truths",
+        "strong",
+        "candidate",
+        "surfaced"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:36:36": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:36:36",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 36,
+      "endLine": 36,
+      "source": "memory",
+      "snippet": "User: Conversation info (untrusted metadata): ```json { \"message_id\": \"988\", \"sender_id\": \"8352338864\", \"conversation_label\": \"Planejamento IoT id:-5189152367\", \"sender\": \"Caio Hamamura\", \"timestamp\": \"Thu 2026-04-16 14:29 UTC\", \"group_subject\": \"Planejamento IoT\", \"is_group_chat",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "message-id",
+        "sender-id",
+        "conversation-label",
+        "group-subject",
+        "is-group-chat",
+        "user",
+        "conversation",
+        "info"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:37:37": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:37:37",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 37,
+      "endLine": 37,
+      "source": "memory",
+      "snippet": "Assistant: Entendi! O workspace raiz tem o repo com SSH configurado. Vou usar o mesmo remote com SSH no repo de IoT:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "assistant",
+        "entendi",
+        "raiz",
+        "tem",
+        "repo",
+        "com",
+        "ssh",
+        "configurado"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:38:38": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:38:38",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 38,
+      "endLine": 38,
+      "source": "memory",
+      "snippet": "Assistant: Pronto! ✅ Tudo enviado para o GitHub em `master`. Mas parece que o repo original usa outra branch como principal — o GitHub sugeriu criar PR. Quer que eu mande para a branch correta?",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "assistant",
+        "pronto",
+        "tudo",
+        "enviado",
+        "github",
+        "master",
+        "mas",
+        "parece"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:39:39": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:39:39",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 39,
+      "endLine": 39,
+      "source": "memory",
+      "snippet": "User: Conversation info (untrusted metadata): ```json { \"message_id\": \"991\", \"sender_id\": \"8352338864\", \"conversation_label\": \"Planejamento IoT id:-5189152367\", \"sender\": \"Caio Hamamura\", \"timestamp\": \"Thu 2026-04-16 14:30 UTC\", \"group_subject\": \"Planejamento IoT\", \"is_group_chat",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "message-id",
+        "sender-id",
+        "conversation-label",
+        "group-subject",
+        "is-group-chat",
+        "user",
+        "conversation",
+        "info"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:40:40": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:40:40",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 40,
+      "endLine": 40,
+      "source": "memory",
+      "snippet": "Assistant: O endereço seria: **https://caiohamamura.github.io/reveal-cpvbcdd-202501/** Mas está dando 404 — provavelmente o GitHub Pages está configurado para outra branch (main?). O push foi para `master`. Dá uma olhada nas Settings → Pages do repo qual branch está configurada.",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "assistant",
+        "endereço",
+        "seria",
+        "https",
+        "caiohamamura.github.io",
+        "reveal",
+        "cpvbcdd",
+        "mas"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:41:41": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:41:41",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 41,
+      "endLine": 41,
+      "source": "memory",
+      "snippet": "User: Conversation info (untrusted metadata): ```json { \"message_id\": \"993\", \"sender_id\": \"8352338864\", \"conversation_label\": \"Planejamento IoT id:-5189152367\", \"sender\": \"Caio Hamamura\", \"timestamp\": \"Thu 2026-04-16 14:31 UTC\", \"group_subject\": \"Planejamento IoT\", \"is_group_chat",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "message-id",
+        "sender-id",
+        "conversation-label",
+        "group-subject",
+        "is-group-chat",
+        "user",
+        "conversation",
+        "info"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:42:42": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:42:42",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 42,
+      "endLine": 42,
+      "source": "memory",
+      "snippet": "Assistant: O slide de RTC/Deep Sleep está em dois lugares. O que está no sub-repo `reveal-cpvbcdd-202501` seria: **https://caiohamamura.github.io/reveal-cpvbcdd-202501/bdd2/aula-rtc-deep-sleep.html** É esse o caminho que você quer?",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "rtc/deep",
+        "sub-repo",
+        "reveal-cpvbcdd-202501",
+        "assistant",
+        "slide",
+        "rtc",
+        "deep",
+        "sleep"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:43:43": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:43:43",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 43,
+      "endLine": 43,
+      "source": "memory",
+      "snippet": "User: [media attached: /home/openclaw/.openclaw/media/inbound/file_27---84b30637-92a2-4ed6-8444-f35c5e42107e.ogg (audio/ogg; codecs=opus) | /home/openclaw/.openclaw/media/inbound/file_27---84b30637-92a2-4ed6-8444-f35c5e42107e.ogg] To send an image back, prefer the message tool (m",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "home/openclaw",
+        "openclaw/media/inbound/file-27",
+        "audio/ogg",
+        "user",
+        "media",
+        "attached",
+        "home",
+        "openclaw"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:44:44": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:44:44",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 44,
+      "endLine": 44,
+      "source": "memory",
+      "snippet": "Assistant: O modelo turbo está grande (1.5GB), vou usar o modelo small que é mais rápido:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "1.5gb",
+        "assistant",
+        "modelo",
+        "turbo",
+        "está",
+        "grande",
+        "vou",
+        "usar"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:45:45": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:45:45",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 45,
+      "endLine": 45,
+      "source": "memory",
+      "snippet": "Assistant: [[reply_to_current]] Entendi! O slide de RTC/Deep Sleep não está aparecendo no repositório GitHub Pages. Vou verificar o que aconteceu — provavelmente o push foi para o repo errado ou a pasta `bdd2` não subiu corretamente. Deixa eu checar:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "reply-to-current",
+        "rtc/deep",
+        "assistant",
+        "entendi",
+        "slide",
+        "rtc",
+        "deep",
+        "sleep"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:46:46": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:46:46",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 46,
+      "endLine": 46,
+      "source": "memory",
+      "snippet": "Assistant: O problema é que o slide HTML (`aula-rtc-deep-sleep.html`) está na raiz do repo IoT, mas o GitHub Pages está no repo `reveal-cpvbcdd-202501`. O HTML precisa estar dentro da pasta `bdd2/` daquele repo. Deixa eu copiar:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "aula-rtc-deep-sleep.html",
+        "reveal-cpvbcdd-202501",
+        "assistant",
+        "problema",
+        "slide",
+        "html",
+        "aula",
+        "rtc"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:47:47": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:47:47",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 47,
+      "endLine": 47,
+      "source": "memory",
+      "snippet": "Assistant: Pronto! ✅ Slide enviado para o repo correto na branch `main`. O link do GitHub Pages deve ser: **https://caiohamamura.github.io/reveal-cpvbcdd-202501/bdd2/aula-rtc-deep-sleep.html**",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "assistant",
+        "pronto",
+        "slide",
+        "enviado",
+        "repo",
+        "correto",
+        "branch",
+        "link"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:48:48": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:48:48",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 48,
+      "endLine": 48,
+      "source": "memory",
+      "snippet": "User: System (untrusted): [2026-04-16 14:36:52 UTC] Exec failed (tidy-zep, signal SIGTERM) :: /s] 39%|██████████████▋ | 596M/1.51G [00:54<01:24, 11.7MiB/s] 39%|██████████████▋ | 597M/1.51G [00:54<01:24, 11.7MiB/s]/home/linuxbrew/.linuxbrew/opt/python@3.14/lib/python3.14/mu… Syste",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "tidy-zep",
+        "596m/1.51g",
+        "11.7mib/s",
+        "597m/1.51g",
+        "home/linuxbrew",
+        "linuxbrew/opt/python",
+        "3.14/lib/python3.14/mu",
+        "user"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-16.txt:49:49": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-16.txt:49:49",
+      "path": "memory/.dreams/session-corpus/2026-04-16.txt",
+      "startLine": 49,
+      "endLine": 49,
+      "source": "memory",
+      "snippet": "Assistant: Pronto! ✅ Novo link: **https://caiohamamura.github.io/reveal-cpvbcdd-202501/iot/aula-rtc-deep-sleep.html**",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T14:49:51.072Z",
+      "queryHashes": [
+        "33f679d35d02"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "assistant",
+        "pronto",
+        "novo",
+        "link",
+        "https",
+        "caiohamamura.github.io",
+        "reveal",
+        "cpvbcdd"
+      ]
+    },
+    "memory:memory/2026-04-16.md:348:351": {
+      "key": "memory:memory/2026-04-16.md:348:351",
+      "path": "memory/2026-04-16.md",
+      "startLine": 348,
+      "endLine": 351,
+      "source": "memory",
+      "snippet": "Reflections: Theme: `assistant` kept surfacing across 94 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.62,
+      "maxScore": 0.62,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
+      "queryHashes": [
+        "b628913e3912"
+      ],
+      "recallDays": [
+        "2026-04-16"
+      ],
+      "conceptTags": [
+        "1.00",
+        "2-2",
+        "3-3",
+        "5-5",
+        "reflections",
+        "theme",
+        "assistant",
+        "kept"
+      ]
+    },
+    "memory:memory/2026-04-16.md:354:354": {
+      "key": "memory:memory/2026-04-16.md:354:354",
+      "path": "memory/2026-04-16.md",
+      "startLine": 354,
+      "endLine": 354,
+      "source": "memory",
+      "snippet": "Possible Lasting Truths: No strong candidate truths surfaced.",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.62,
+      "maxScore": 0.62,
+      "firstRecalledAt": "2026-04-16T14:49:51.072Z",
+      "lastRecalledAt": "2026-04-16T15:18:51.156Z",
       "queryHashes": [
         "b628913e3912"
       ],
