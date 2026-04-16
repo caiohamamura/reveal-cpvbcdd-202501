@@ -1,0 +1,1 @@
+[iot/sessions/553a959e-dfd4-43e7-9e8c-51da02187f83.jsonl#L5] User: Conversation info (untrusted metadata): ```json { "message_id": "395", "sender_id": "8352338864", "conversation_label": "Planejamento IoT id:-5189152367", "sender": "Caio Hamamura", "timestamp": "Mon 2026-04-13 05:48 UTC", "group_subject": "Planejamento IoT", "is_group_chat

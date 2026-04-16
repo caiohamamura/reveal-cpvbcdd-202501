@@ -1,0 +1,237 @@
+{
+  "version": 3,
+  "files": {
+    "iot:sessions/03fb4f67-a906-4588-a0f3-dbf37b426dcc.jsonl.reset.2026-04-12T20-42-44.966Z": {
+      "mtimeMs": 1776026035623,
+      "size": 48349,
+      "contentHash": "806b9ff6329e3d0acec04bf72979857898d18ddefce61a5886e5f6829d2c4bc0",
+      "lineCount": 17,
+      "lastContentLine": 17
+    },
+    "iot:sessions/0544bbde-5a18-4d0f-b28f-a22430b78e01.jsonl": {
+      "mtimeMs": 1776337939029,
+      "size": 162937,
+      "contentHash": "bd97b161ba13afe133b031f5d1632c1b7809e4ce7a90fd8ab7e2087bf9bdfb99",
+      "lineCount": 10,
+      "lastContentLine": 10
+    },
+    "iot:sessions/287d4f15-bb9b-48c4-87ba-0d6a32ecbcd9.jsonl.reset.2026-04-13T05-48-31.286Z": {
+      "mtimeMs": 1776026695298,
+      "size": 19553,
+      "contentHash": "32b22147954082c416004ad0344a792de6fa7e005d875b41f1efab338055fd6e",
+      "lineCount": 4,
+      "lastContentLine": 4
+    },
+    "iot:sessions/3f5874b4-9d1d-4e2f-a3be-199fbc32cb3b.jsonl.reset.2026-04-16T09-08-19.437Z": {
+      "mtimeMs": 1776314314111,
+      "size": 8928,
+      "contentHash": "641fb3f047e6a9606ddc66ecea8c4d6cfd330c1e109bea91e7e6fb3bd8672afc",
+      "lineCount": 2,
+      "lastContentLine": 2
+    },
+    "iot:sessions/4d2718d2-b52a-4ae4-bec0-69b68e8257c7.jsonl.reset.2026-04-12T16-29-15.159Z": {
+      "mtimeMs": 1776009232145,
+      "size": 109198,
+      "contentHash": "7b37010641eadc36e2d9767291bf844e31e58818e8e36e72e7b80fb57b7153ae",
+      "lineCount": 14,
+      "lastContentLine": 14
+    },
+    "iot:sessions/553a959e-dfd4-43e7-9e8c-51da02187f83.jsonl.reset.2026-04-16T02-20-48.114Z": {
+      "mtimeMs": 1776059355955,
+      "size": 3572,
+      "contentHash": "78380e385ee82820077d5acd9b1a79644c51e2575278ff4fde1e028a07504666",
+      "lineCount": 1,
+      "lastContentLine": 1
+    },
+    "iot:sessions/5655e974-1621-4f61-9e87-424c741c0789.jsonl.reset.2026-04-16T11-01-05.804Z": {
+      "mtimeMs": 1776330514469,
+      "size": 2209,
+      "contentHash": "91bea8d0cae80a9f343c6f05364a337bc0dbcfad39314a9140f949bd7c8e2699",
+      "lineCount": 2,
+      "lastContentLine": 2
+    },
+    "iot:sessions/82e69165-5bf5-4f63-bf5f-6f66ea8deaa6.jsonl": {
+      "mtimeMs": 1776008440381,
+      "size": 23576,
+      "contentHash": "413d036b74a589515886faf4d2ccbcfbbd31661b78ec8610ac7da7deef6f27e4",
+      "lineCount": 5,
+      "lastContentLine": 5
+    },
+    "iot:sessions/82e69165-5bf5-4f63-bf5f-6f66ea8deaa6.jsonl.reset.2026-04-12T15-38-43.611Z": {
+      "mtimeMs": 1776008309814,
+      "size": 45747,
+      "contentHash": "799c10e781374b68ca0001ea55c8f04891eaa6434e46b2d24857106f15126c15",
+      "lineCount": 13,
+      "lastContentLine": 13
+    },
+    "iot:sessions/8f74bd9b-e323-4586-827c-9607a5f8d28e.jsonl.reset.2026-04-16T04-38-04.580Z": {
+      "mtimeMs": 1776309189187,
+      "size": 393811,
+      "contentHash": "b553db7a202014f146ab7489b8ca170a7ed1844fb3a679a3209fbecc4f059cc0",
+      "lineCount": 15,
+      "lastContentLine": 15
+    },
+    "iot:sessions/d381ff78-0904-46c3-aa40-50cfddeed5a4.jsonl.reset.2026-04-12T19-01-18.451Z": {
+      "mtimeMs": 1776016001993,
+      "size": 12195,
+      "contentHash": "2cde4e396eddee8a93382ff83cbcea69471156d23326b13fd1170022a7038ade",
+      "lineCount": 4,
+      "lastContentLine": 4
+    },
+    "iot:sessions/e0390b01-ed8b-4bc1-99bb-6e42e52a3108.jsonl.reset.2026-04-12T17-21-58.262Z": {
+      "mtimeMs": 1776011826657,
+      "size": 14903,
+      "contentHash": "2c0a1e3cae831972f99d5710f53ce0e9cb9d468a95890713a8f949ddb1bf264d",
+      "lineCount": 4,
+      "lastContentLine": 4
+    },
+    "iot:sessions/eec96fa0-19fe-43a3-85f9-3bcf2df1c338.jsonl.reset.2026-04-12T20-15-18.261Z": {
+      "mtimeMs": 1776021956143,
+      "size": 27044,
+      "contentHash": "3a6da3970d69615089e13adbaf66a0dd6b656c03962c638e4cf516d823c28630",
+      "lineCount": 13,
+      "lastContentLine": 13
+    },
+    "iot:sessions/f34261d4-b7c3-4250-9206-0258c3ae99bf.jsonl.reset.2026-04-12T15-26-35.871Z": {
+      "mtimeMs": 1776007594800,
+      "size": 11007,
+      "contentHash": "64b4f89de203e96e983bd9449f51a5f72fd2ed3efb2e47ab8cadb9ea4e309010",
+      "lineCount": 2,
+      "lastContentLine": 2
+    }
+  },
+  "seenMessages": {
+    "iot:03fb4f67-a906-4588-a0f3-dbf37b426dcc": [
+      "9cb678180547ba88d256cbbaf6eee5e9fd131b07",
+      "5f63435bafa36fa595c5802e3a855fe31441043b",
+      "b1628298e0bcdf4489526eba073ed47ceb151695",
+      "fe72fe1d318ab312cf3cac61565e00d7b8c902fb",
+      "e295146f3f2bde968700a7c5eaa66c92653f816f",
+      "3ab75072151058e12613b26b086c53e4d4434fd6",
+      "c639591a8843a3ec4019e33535dad241cabb9937",
+      "9d0128d762613654f1228637e48e9ea0f5ad658e",
+      "ebb33c3244222f1f64b428aa120b1faf4d82d6da",
+      "245cfe4be922c4049263f8dce2d0599c09d804ec",
+      "8a236edf92574c182a4596cfafe7cccc59775e87",
+      "66ebc4c392f0343a983f0a1e8ab38e47ff693e46",
+      "ca15c129c2562f3633ee19d18c0170f81d56b1d3",
+      "85e805a5a93aa6d344a30272f3fd8c541a4c9a37",
+      "9a015b48389faaded284f069697166895f950c4c",
+      "a80699d9e68aabf1c2c21e4f05b046f762ec7eff",
+      "db434e6f70574fd97b6ed79f28aae76bd507e2cb"
+    ],
+    "iot:287d4f15-bb9b-48c4-87ba-0d6a32ecbcd9": [
+      "c132d0b9130e3f540e11ccd87e47802a10828bcb",
+      "56a1744567a5aed20fe1919a75dcec5f18b064c0",
+      "b4d1f47898c3654196ebda8bc5c8607c6a2489cc",
+      "7a7ebbabaabe62e3464c89a7664d220bf0ce28ce"
+    ],
+    "iot:4d2718d2-b52a-4ae4-bec0-69b68e8257c7": [
+      "aa94a4bf3f76ea3b5adef27e55d9c81d1a3e5c60",
+      "c83a8ed4cf36870f2bdf85e5ea2bcec700e773bb",
+      "70e7a59055936832ef866b7068f52929a7e89dd5",
+      "c0d6f2b5c169e825280695117b1acb57c16b9ae4",
+      "9c7e86b3173c1447b644b7439a75d9a0ca3056dd",
+      "17b2626294105bb3d1efabdefba1a0ee42d82fbe",
+      "ea84c15ae439c8f2400083afb455bfe0d674d5aa",
+      "8048ddc2824d648463c9f7e1283e8967c6cad43a",
+      "98b28548656d745bb3b0b3d7fe92980d6ef08628",
+      "54df563835b94819ca63e316d25bec5909477ed3",
+      "218e98e17d7f484cf7e5e239fc9e8173d39f0755",
+      "72211cb11323819fa33347484cf5dd7b889a1954",
+      "3fc9e780f55504012339981c9b4492e112367285",
+      "1c0699aa4a1e32c7072d678586f6057dc6636a50"
+    ],
+    "iot:82e69165-5bf5-4f63-bf5f-6f66ea8deaa6": [
+      "70cb6e3de84a6005616d154bef3513028d366d02",
+      "d284bfafc14546e4f721a44f6a8d545ab63dce06",
+      "18c92b8799c44d9a23a26b3fafd32c162cf7f55c",
+      "97502d1cfd5a9300fdff3810994c86dd28a71433",
+      "a7be2d09554a0e4ae24e3133e55213574e3d5da3",
+      "0f6a43cd8fc8fe1a1283d7a99144b7e36f6f91d1",
+      "deb4bd0ad85cba13770c231771d3ad0e86dcb95e",
+      "78325516d2450ca31f6251faa2fd1cc59fcddab5",
+      "b24f6f66a61d4bea456d7b6ab3205ebc0256d9dc",
+      "e148f0355a6634e7304df8794038a591c5e6e957",
+      "54cfd4281844af376ced08725be48808f1a5d00f",
+      "b1378fa8b2d148449404c3a524159b2108746202",
+      "6b4236514c394123ad9eedb33d63f52ef2262762",
+      "bece7480ac8105f5733f8de6c42fd6fdeff42913",
+      "58ebce7fcc61b9f0ee36abb36137307d22a6cc8c",
+      "f8762ae540563333e949f5e7ce3d68c7af73659a",
+      "0b06d82293982b1bdece7c949d28417eebda7a1e",
+      "b48fbc1ebf857f2218fe82b708901fe0312c7200"
+    ],
+    "iot:d381ff78-0904-46c3-aa40-50cfddeed5a4": [
+      "f76366fc345f2024c4dc14a6bbe2bbfda4bf2b12",
+      "03eb84b0b7cd5ec82d13850c43badedfd3c8686e",
+      "f375260a817c9127d81569e2a7ecb090939c4ad0",
+      "131c35b45e099b746ff41289a524455e6e0ea4e0"
+    ],
+    "iot:e0390b01-ed8b-4bc1-99bb-6e42e52a3108": [
+      "3ffd23e47ac21fbfa9653b92060cbe0d176ffc0c",
+      "51e1a6db2bb10b54b7c63d4fc901e93ac80d941b",
+      "9acfb3da75d5605e98bf5117c9626a1299ac417e",
+      "673452eaab334abca1eafc6a7bc5d382bc09fbbe"
+    ],
+    "iot:eec96fa0-19fe-43a3-85f9-3bcf2df1c338": [
+      "3f9733c56b678f6bdcb436db21cf47ecb16ae196",
+      "60e699699b66e053a851df363821cc87970d3121",
+      "639fda28571d8d0df9462f5ad86aa308f206feea",
+      "568f34df00ee890cb8bab733f0c6302e757f0251",
+      "754bfd26d4ef400082a680488a44e740c1bf9244",
+      "9dd54d4d93bbb2e5bc65f22f3b2140c50c9d8db9",
+      "9c3dfaaae840555764ce871113cd685f12ae01d6",
+      "7a8867f205e0be91542808fc7d0998a7ef00ccf2",
+      "c3b8cdc1216b457330410bc690f1c8721ca1aa1e",
+      "2c2d79ffa66419e454493503a8e402a760f1d442",
+      "cd8a975623e0af5fc778b270a3504e7ccd638760",
+      "9d20b1acee7fdeb727293a49b537d51aad4b5ea0",
+      "a90139efd536391cec8411d6163686b753dbceba"
+    ],
+    "iot:f34261d4-b7c3-4250-9206-0258c3ae99bf": [
+      "33d9e3df93f9a4a99800586167ec66dab864f76c",
+      "3267f6aa9d6cd4c93cd1258df0611f530e58874f"
+    ],
+    "iot:553a959e-dfd4-43e7-9e8c-51da02187f83": [
+      "3a3eeeaca931f49d16022f6d4a66fdb3271fff36"
+    ],
+    "iot:8f74bd9b-e323-4586-827c-9607a5f8d28e": [
+      "8a75c57f3f6121424ef92ccdb6d1a880aa5135c0",
+      "046bfcd8665b8cde7a0854cd786db8de608bf815",
+      "b637ee28bb60e7acfdc1beaf93519b0c2b65fc5e",
+      "5e86695de12481130cb44e3435d4191ab4fb8a35",
+      "647aa599b8375e238d9b8c67d709d1293a6fa2e5",
+      "cb72e64d63a83a6a09143b40628deb825ac1557a",
+      "d488cd0f8a535f5bad5976bdc214842d79bd5ba7",
+      "7865afbdbe76d51888d55337a50e65eb026d8261",
+      "4c6d2be275b0883a1785b4d12af8d8631ca7aba8",
+      "35f2da2a0564fb3fb0309b7c7c11e3d197c49d16",
+      "d9afeef4ffbab9b205ac744d08179f6f177eb13f",
+      "922174010dceda03e6cf5e88a01bfb4bb68d145a",
+      "ca19deb2be4617df97ed7cf6cd45237317551d0f",
+      "619900801fcc19f76ac88f1565b30186d1861a46",
+      "233a0dbf52e6d2555e29ef54976ba16afc68bddc"
+    ],
+    "iot:3f5874b4-9d1d-4e2f-a3be-199fbc32cb3b": [
+      "bf5dbbe1ce2f66303e8e5030fccfaab86f217453",
+      "2e95458c29fa5b7525c9d90e9343869c57ad709b"
+    ],
+    "iot:5655e974-1621-4f61-9e87-424c741c0789": [
+      "c67290933db3d6eeb7b4d047c76cf6937f61a110",
+      "a277ae83747fc2011a190d6f90b07537dfc732af"
+    ],
+    "iot:0544bbde-5a18-4d0f-b28f-a22430b78e01": [
+      "fea768216dffdb38652c0a0870b898be128fcbf9",
+      "0f142b0a3a257299f58c9ef30c15a70bfbcb1bfb",
+      "0354afdfdb0ee2d733d1a6a02c30614618d0092b",
+      "448b37c5711ce42d5b213b82030d48aec2b890d4",
+      "c10be4e83636a0a5e01edbca0164269686c6c2d5",
+      "0c5241c9fd22cd940dc25b48c1f54acd195feecb",
+      "98b1ae48f783753246d66eac0bc9c94b98182c8e",
+      "6071bba0391fde5d0625f4e74a23714d865f2619",
+      "ed4b9e35afef382d7b248536f4bbbf1cdc7af2ae",
+      "9e45722e011b0535c93cfec268a7f7687e77d2ce"
+    ]
+  }
+}
