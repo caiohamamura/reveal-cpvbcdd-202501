@@ -1,350 +1,646 @@
-# 📋 ROTEIRO DETALHADO DA AULA
-## "RTC, Deep Sleep e Autonomia no ESP8266"
-
-### 📍 CONTEXTO
-- **Módulo:** Programação Avançada em IoT
-- **Aula:** 2 do módulo (continuação de Timing/NTP)
-- **Duração:** 4 aulas de 45 minutos (180 min total)
-- **Pré-requisitos:** millis(), Ticker, NTP (aula anterior)
+# 📊 ROTEIRO DA AULA — RTC, Deep Sleep e Autonomia
+## Versão Professor Caio — 22/04/2026
 
 ---
 
-## 🎯 OBJETIVOS DE APRENDIZAGEM
+### 📍 Context
+- **Módulo:** Programação Avançada em IoT (Aula 11)
+- **Sequência:** Depois de Timing/NTP → Antes de Máquina de Estados
+- **Foco:** Economia de energia + persistência de dados + interrupt por luz
 
-Ao final da aula, o aluno será capaz de:
-1. Explicar **por que** economia de energia é crítica em IoT
-2. Implementar **Deep Sleep** no ESP8266 com despertar por timer
-3. Implementar **interrupt por luz** usando transistor KSP2222A + LDR
-4. Usar **LittleFS + ArduinoJson** para persistir dados (solução ESP8266!)
-5. Projetar um sistema IoT **solar-powered** que opera durante o dia
+### 🎯 Objetivos
+1. Entender **por que** deep sleep é essencial em IoT de campo
+2. Implementar deep sleep com despertar por **timer** e por **interrupt (transistor/botão)**
+3. Usar **LittleFS + ArduinoJson** para persistir dados (solução ESP8266!)
+4. Implementar um projeto com **MQTT + deep sleep** como projeto integrador
+
+### Conceitos-chave
+- **Deep Sleep:** 20 μA vs 80 mA = 4000x economia
+- **Acorda:** por tempo (D0→RST) ou por sinal (botão/transistor)
+- **D0→RST:** Conexão obrigatória para wake por timer
+- **KSP2222A:** Transistor NPN como interruptor controlado por luz
+- **LittleFS + ArduinoJson:** Persistência que funciona no ESP8266
+- **ESP.rtcUserMemoryWrite/Read:** 512 bytes que sobrevivem ao reset (não a power-off!)
+
+### Hardware Especial
+- **Transistor KSP2222A** (NPN)
+- **LDR** (Light Dependent Resistor)
+- **Trimpot** 10kΩ
+- **Resistor** 10kΩ (pull-up no RST)
+- **Botão Push** (para wake manual)
+- **Capacitor** 1µF (opcional, para pulso corto)
 
 ---
 
-## ⏰ CRONOGRAMA MINUTO A MINUTO
+## 📅 Estrutura (4 aulas × 45 min)
+
+| Aula | Tema | Tipo | Duração |
+|------|------|------|---------|
+| 1 | Engajamento + Teoria + Pisca-Dorme | Expositiva + Demo | 45 min |
+| 2 | Hands-on 1 (guiado): Pisca → Sleep → Botão wake → loop | Prática guiada | 45 min |
+| 3 | Hands-on 2 (base a ajustar): LittleFS + NTP + RTC memory | Prática mandiri | 45 min |
+| 4 | Projeto: Contador de flashes via MQTT | Projeto em duplas | 45 min |
 
 ---
 
-### AULA 1: "POR QUE DORMIR?" (45 min)
-*Aulão de engajamento — o objetivo é que os alunos sintam o problema na pele*
+## AULA 1: "POR QUE DORMIR?" (45 min)
 
-#### 0-5 min: ABERTURA — "O Desafio da Bateria" 🔋
+### 0-5 min: Abertura — "O Desafio da Bateria"
+> "Quanto tempo dura um ESP8266 ligado 24/7 com uma pilha AA (2500mAh)?"
+> — ~31 horas (80mA × 2500mAh)
 
-**Ação:** Professor mostra uma pilha AA e um NodeMCU ligado com LED piscando.
+> "E se precisasse funcionar por 6 meses numa fazenda, sem tomada?"
+> → Hoje vocês aprendem a fazer o ESP durar **meses**, não horas.
 
-**Fala sugerida:**
-> "Quanto tempo esse ESP8266 com LED piscando dura com essa pilha AA? Chutem."
-
-Deixe os alunos tentarem. Anote os palpites na lousa.
-
-**Resposta:** ~12 horas. Agora pergunte:
-> "E se eu precisasse que ele ficasse na fazenda do meu tio monitorando a temperatura do galinheiro por 6 meses? Sem tomada, sem solar. O que a gente faz?"
-
-**Gancho:** "Hoje vocês vão aprender a fazer um ESP8266 durar **meses** com uma pilha."
-
-#### 5-25 min: EXEMPLOS DO MUNDO REAL — "Quem dorme, vive mais" 🌍
-
-**Apresentar 7 exemplos reais:**
+### 5-15 min: Exemplos Reais (5 exemplos)
 
 1. **🏠 Estação meteorológica na fazenda**
-   - Mede temperatura/umidade a cada 30 minutos
-   - **Sem deep sleep:** 1 dia de bateria. **Com deep sleep:** 8 meses
+   - Mede a cada 30 min, envia via Wi-Fi
+   - Sem sleep: 1 dia | Com sleep: **8 meses**
 
-2. **🌾 Irrigação inteligente no campo**
-   - Acorda, mede, decide se irriga, volta a dormir
-   - **Consumo:** de 80mA para 20μA (4.000x menos!)
+2. **🌾 Irrigação inteligente**
+   - Acorda → mede umidade → decide → dorme
+   - 5s acordado, 1h dormindo = **4.000x menos energia**
 
-3. **☀️ Monitoramento solar (NOVO!)**
-   - Acorda só quando há luz
-   - Transistor + LDR como sensor
-   - **Perfeito para clima tropical!**
+3. **🚨 Sensor de intrusão em galpão**
+   - Acorda por movimento (PIR ou botão)
+   - 1 ano com bateria 18650 (3000mAh)
 
-4. **🚨 Sensor de intrusão em galpão**
-   - Acorda por interrupt (não por timer)
-   - **Autonomia:** 1 ano com bateria 18650
+4. **🐟 Aquicultura (tanque de peixes)**
+   - Mede pH, oxigênio, temperatura
+   - Sem sleep: 2 dias | Com sleep: **semanas**
 
-5. **🐟 Tanque de peixes (aquicultura)**
-   - Monitora pH, oxigênio e temperatura
-   - **Sem deep sleep:** bateria dura 2 dias
-
-6. **🌳 Sensor de queimada na floresta**
+5. **🌳 Sensor de queimada na floresta**
    - Local remoto na Amazônia
-   - **Crítico:** não pode trocar bateria todo mês
+   - **Deep sleep não é luxo — é viabilidade**
 
-7. **🗑️ Lixeira inteligente da cidade**
-   - Acorda 4x ao dia, envia para a prefeitura
+### 15-25 min: Os 3 Modos de Sleep
 
-**Pergunta de reflexão:**
-> "Qual desses projetos vocês acham que seria mais legal implementar aqui no IFSP?"
+| Modo | Consumo | Acorda com |
+|------|---------|------------|
+| Modem Sleep | ~15mA | Timer automático |
+| Light Sleep | ~0.4mA | Timer ou GPIO |
+| **Deep Sleep** | **~20µA** | **RST (GPIO 16 ou externo)** |
 
-#### 25-35 min: TEORIA — Como o ESP8266 dorme 💤
+> **Deep Sleep:** tudo desligado (CPU, Wi-Fi, RAM). Só o RTC continua. Quando acorda, `setup()` roda do zero.
 
-**Slide/Quadro: Os 3 modos de sleep do ESP8266**
+### 25-35 min: Como o ESP8266 Acorda
 
-| Modo | Consumo | Acordar com | Uso típico |
-|------|---------|-------------|------------|
-| **Modem Sleep** | ~15mA | Timer automático | Wi-Fi desligado entre transmissões |
-| **Light Sleep** | ~0.4mA | Timer ou GPIO | CPU pausada, RAM mantida |
-| **Deep Sleep** | ~20μA (0.02mA) | GPIO 16 (RST) | Tudo desligado, só RTC funciona |
+**3 formas de acordar:**
 
-**Ponto crucial — o pino RST:**
-- GPIO 16 deve ser conectado ao RST
-- **Sem esse fio, o ESP8266 dorme para sempre**
+| Forma | Como | Quando usar |
+|-------|------|-------------|
+| **Timer** | `ESP.deepSleep(10e6)` → D0→RST pulsa | Acordar a cada X minutos |
+| **Botão** | Pressionar RST-GND | Wake manual |
+| **Transistor** | KSP2222A + LDR puxam RST LOW | Sensor de luz, PIR, etc |
 
-#### 35-42 min: DEMONSTRAÇÃO — "Pisca-Dorme" ao Vivo
+**⏱️ Limite:** deep sleep máximo = ~71 minutos (2³² µs)
+
+> Para projetos mais longos: ciclos de deep sleep + contador persistente
+
+### 35-42 min: Demonstração ao Vivo — "Pisca-Dorme"
 
 ```cpp
+#define LED_PIN 2
+
 void setup() {
   Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
   Serial.println("Acordei!");
-  for(int i=0; i<3; i++) {
+
+  // Feedback visual: pisca 3x
+  for (int i = 0; i < 3; i++) {
     digitalWrite(LED_PIN, LOW);
     delay(200);
     digitalWrite(LED_PIN, HIGH);
     delay(200);
   }
-  ESP.deepSleep(10e6);  // 10 segundos
+
+  Serial.println("Dormindo 10 segundos...");
+  ESP.deepSleep(10e6); // 10 segundos (em microssegundos!)
+}
+
+void loop() {
+  // NUNCA executa após deep sleep — o ESP reinicia!
 }
 ```
 
-**Pergunta-chave:**
-> "Se o ESP reinicia do zero, como ele lembra que horas são? Que dados já leu?"
+**Testar:**
+1. Carregar código → LED pisca → Serial Monitor mostra "Acordei" → "Dormindo"
+2. Após 10 segundos → ESP acorda sozinho? (Se não: verificar fio D0→RST!)
+3. Ciclo repete infinitamente
 
-→ Resposta: **LittleFS + ArduinoJson** (não RTC_DATA_ATTR!)
+### 42-45 min: Exercício — Calculadora de Autonomia
 
-#### 42-45 min: EXERCÍCIO RÁPIDO — "Calculadora de Autonomia"
+| Cenário | Consumo contínuo | Com Sleep (5s acordado / 30min) | Ganho |
+|---------|------------------|--------------------------------|-------|
+| Pilha AA (2500mAh) | 31 horas | **~517 dias** | 400x |
 
-| Cenário | Sem Sleep | Com Sleep | Ganho |
-|---------|-----------|-----------|-------|
-| LED piscando (contínuo) | 15h | - | — |
-| Leitura a cada 1 hora (5s acordado) | 15h | 517 dias | 827x |
+> "Com 5 segundos de trabalho a cada 30 minutos, uma pilha AA dura **mais de 1 ano!**"
 
 ---
 
-### AULA 2: MÃO NA MASSA — INTERRUPT POR LUZ (45 min)
+## AULA 2: Hands-on 1 (GUIADO) — "Pisca → Sleep → Botão" (45 min)
 
-#### 0-5 min: RECAPITULAÇÃO RÁPIDA
-1. "Qual o consumo do deep sleep?" (~20μA)
-2. "Qual pino precisa ser conectado ao RST?" (GPIO 16 / D0)
-3. "O que acontece com o código ao acordar?" (Reinicia do zero)
-4. "RTC_DATA_ATTR funciona no ESP8266?" (⚠️ NÃO! LittleFS!)
+### Objetivo: Entender o ciclo completo com wake manual por botão
 
-#### 5-15 min: O PROBLEMA DO RTC_DATA_ATTR — "Não Funciona no ESP8266!"
+### 0-5 min: Revisão Rápida
+1. "O que acontece quando `ESP.deepSleep()` é chamado?" → Reinicia do zero
+2. "Qual pino acorda o ESP?" → RST
+3. "Quanto consome em deep sleep?" → ~20µA
+4. "Por que D0→RST?" → GPIO16 é o pino do RTC que envia o pulso de wake
 
-**Explicação:**
-> "Muita gente usa `RTC_DATA_ATTR` no ESP32. Mas aqui no ESP8266, essa memória NÃO persiste em power-off! O que significa que se a bateria morrer, você perde tudo."
-
-**Solução: LittleFS + ArduinoJson**
-- Funciona no ESP8266 ✅
-- Persiste em power-off ✅
-- Estruturas dinâmicas ✅
-
-#### 15-30 min: HANDS-ON 1 — "Acorda por Luz" 💡
-
-**Montar o circuito do transistor KSP2222A:**
+### 5-10 min: Circuito do Botão de Wake
 
 ```
-   3.3V ─── LDR ──── ◬─── Base do KSP2222A (via resistor 10kΩ)
-                      │
-                 Trimpot
-                      │
-                     GND
-                     
-   Coletor (C) ──── RST do ESP8266
-   Emissor (E) ──── GND
+┌─────────────────────────────────────┐
+│         NodeMCU ESP8266             │
+│                                     │
+│   3.3V ─── 10kΩ ──── RST           │
+│                            │        │
+│                      Botão push     │
+│                            │        │
+│                           GND       │
+│                                     │
+│   D0 (GPIO16) ──────── RST         │  ← OBRIGATÓRIO para timer wake
+│                                     │
+└─────────────────────────────────────┘
 ```
 
-**Código 2: Demo do interrupt por luz**
+> ⚠️ **Sem pull-up de 10kΩ**, o RST pode dar resets aleatórios! O resistor mantém o RST em HIGH quando o botão não está pressionado.
+
+### 10-40 min: Montagem e Código (guiado passo a passo)
+
+**Código 2.1 — Pisca + Sleep + Botão (completo, entregar pronto):**
 
 ```cpp
-// Carregar e estudiar o Código 2: 2-acorda-luz-transistor.ino
-// Este código fica ACORDADO esperando o interrupt funcionar
-// Cobre/descovered o LDR para ver o transistor ligar/desligar
+/*
+ * Código 2.1: Pisca-Dorme-Botão
+ * Demonstrates deep sleep + manual wake via button
+ *
+ * Hardware:
+ * - NodeMCU ESP8266
+ * - LED onboard (GPIO 2, ativo em LOW)
+ * - Fio D0 → RST (OBRIGATÓRIO!)
+ * - Botão push entre RST e GND
+ * - Resistor 10kΩ entre 3.3V e RST (pull-up)
+ */
+
+#define LED_PIN 2
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+
+  Serial.println("\n=== ACORDEI ===");
+  Serial.printf("Ciclo #%d\n", ESP.getCycleCount());
+
+  // Feedback visual: pisca 3 vezes
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(LED_PIN, LOW);
+    delay(200);
+    digitalWrite(LED_PIN, HIGH);
+    delay(200);
+  }
+
+  Serial.println("Trabalho feito. Dormindo 30s...");
+  Serial.println("Use o botão (RST-GND) para acordar antes, se quiser.");
+  ESP.deepSleep(30e6); // 30 segundos
+}
+
+void loop() {
+  // NUNCA executa!
+}
+```
+
+**Fiação passo a passo (professor demonstra):**
+1. Conectar fio D0 → RST (esse é o fio do timer!)
+2. Conectar resistor 10kΩ entre 3.3V e RST
+3. Conectar botão entre RST e GND
+4. Conectar LED (opcional, para feedback visual)
+
+**Testes:**
+1. Carregar código → LED pisca 3x → ESP entra em deep sleep
+2. Esperar 30 segundos → ESP acorda sozinho? ✓
+3. Pressionar botão (RST-GND) antes dos 30s → acorda imediatamente? ✓
+4. Contador no Serial Monitor incrementa a cada ciclo
+
+### 40-45 min: Desafio Extra — "Contador de Boots"
+
+Modificar o código para contar e exibir o número de resets ao acordar:
+
+```cpp
+// Adicionar variável global (PERSISTE EM RTC memory se configurado, senão reinicia todo ciclo)
+int contador = 0;
+
+// No setup():
+contador++;
+Serial.printf("Boot #%d\n", contador);
+```
+
+> **Pergunta:** "Se eu tirar o cabo USB e plugar de novo, o contador volta a 0? Por quê?"
+
+---
+
+## AULA 3: Hands-on 2 (BASE A AJUSTAR) — "LittleFS + NTP + RTC Memory" (45 min)
+
+### Objetivo: Implementar persistência de dados — dois métodos
+
+### 0-5 min: Revisão — "O Problema"
+
+> "Deep sleep reinicia tudo. Variáveis normais são perdidas."
+> "Como lembrar quantos ciclos já rodaram? Como saber que horas são sem conectar Wi-Fi toda vez?"
+
+### 5-10 min: Duas Soluções para ESP8266
+
+| Método | Persiste Reset? | Persiste Power-off? | Complexidade |
+|--------|:---:|:---:|:---:|
+| **ESP.rtcUserMemoryWrite/Read** | ✅ Sim | ❌ Não | Baixa (~512 bytes) |
+| **LittleFS + ArduinoJson** | ✅ Sim | ✅ Sim | Média |
+
+> ⚠️ **RTC_DATA_ATTR** no ESP8266 NÃO funciona bem — não persite em power-off!
+> Para o ESP32 funciona, mas aqui no ESP8266 use **LittleFS** ou **rtcUserMemory**.
+
+### 10-15 min: Código Base — RTC Memory (entregar pronto)
+
+```cpp
+/*
+ * Código 3.1: RTC Memory — contador persistente
+ *
+ * 512 bytes que sobrevivem ao reset (mas NÃO a power-off!)
+ * Útil para: contadores, flags, pequenas estruturas
+ */
+
+struct State {
+  uint32_t ciclos;
+  uint32_t checksum;
+};
+
+uint32_t calcChecksum(State s) {
+  return s.ciclos ^ 0xDEADBEEF;
+}
+
+void setup() {
+  State state;
+
+  // Tenta ler estado anterior da RTC memory
+  ESP.rtcUserMemoryRead(0, &state, sizeof(state));
+
+  // Verifica se dados são válidos (checksum)
+  if (state.checksum != calcChecksum(state)) {
+    // Primeira vez ou dados corrompidos
+    state.ciclos = 0;
+  }
+
+  state.ciclos++;
+  state.checksum = calcChecksum(state);
+
+  // Salva novo estado
+  ESP.rtcUserMemoryWrite(0, &state, sizeof(state));
+
+  Serial.begin(115200);
+  Serial.printf("Ciclo #: %d\n", state.ciclos);
+
+  ESP.deepSleep(10e6);
+}
+
+void loop() {}
 ```
 
 **Teste:**
-1. Carregar código
-2. Observar LED piscando
-3. Cobrir LDR → LED para de piscar? (transistor OFF)
-4. Iluminar LDR → LED volta a piscar? (reset simula wake-up)
+1. Reset manual (botão RST) → contador incrementa? ✅
+2. Desligar USB e ligar de novo → contador volta a 0? ✅ (power-off apaga RTC memory!)
 
-#### 30-40 min: HANDS-ON 2 — "LittleFS Persistência"
+### 15-35 min: Desafio — LittleFS + NTP Inteligente (BASE A AJUSTAR)
 
-**Código 3: 3-littlefs-persistencia.ino**
+**给了骨架代码，学生需要完成的部分用 `TODO` 标注：**
 
 ```cpp
-// concepts:
-// - LittleFS.begin()
-// - File file = LittleFS.open("/dados.json", "w");
-// - StaticJsonDocument<512> doc;
-// - serializeJson() / deserializeJson()
-// - Persistência que sobrevive a power-off!
+/*
+ * Código 3.2: LittleFS + NTP Inteligente
+ *
+ * OBJETIVO: Salvar leituras de sensor + hora correta
+ * - LittleFS para persistir em flash (sobrevive a power-off!)
+ * - NTP inteligente: conecta UMA vez, calcula depois localmente
+ *
+ * ALUNOS PRECISAM COMPLETAR:
+ * 1. função horaAtual() — cálculo de hora local
+ * 2. função formatarHora() — formatação dd/mm HH:MM:SS
+ * 3. lógica de sincronização NTP — só na primeira vez
+ * 4. salvar/carregar estado com ArduinoJson
+ */
+
+#include <ESP8266WiFi.h>
+#include <LittleFS.h>
+#include <ArduinoJson.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+#define LED_PIN 2
+#define ARQUIVO_ESTADO "/estado.json"
+#define ARQUIVO_LEITURAS "/leituras.json"
+
+const char* ssid = "SUA_REDE_WIFI";
+const char* senha = "SUA_SENHA_WIFI";
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -10800, 60000); // GMT-3
+
+struct Estado {
+  bool ntpOk = false;
+  time_t epochBase = 0;
+  unsigned long millisBase = 0;
+  int ciclos = 0;
+};
+
+Estado estado;
+
+// ===== TODO 1: Completar função =====
+// Calcula hora local baseada em epochBase + millis transcurrido
+time_t horaAtual() {
+  if (!estado.ntpOk) return 0;
+  // Dica: epochBase + (millis() - millisBase) / 1000
+}
+
+// ===== TODO 2: Completar função =====
+// Formata time_t como "dd/mm HH:MM:SS"
+String formatarHora(time_t t) {
+  if (t == 0) return "---";
+  // Dica: usar localtime() + strftime()
+}
+
+// ===== TODO 3: Completar lógica de NTP =====
+bool sincronizarNTP() {
+  // Passos:
+  // 1. WiFi.begin(ssid, senha)
+  // 2. Aguarda conexão
+  // 3. timeClient.begin() + timeClient.update()
+  // 4. Salvar epochBase = timeClient.getEpochTime()
+  // 5. Salvar millisBase = millis()
+  // 6. WiFi.disconnect(true) + WiFi.mode(WIFI_OFF) // ECONOMIA!
+}
+
+// ===== TODO 4: LittleFS persistência =====
+// Funções carregarEstado() e salvarEstado() usando ArduinoJson
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+
+  // Inicializar LittleFS
+  if (!LittleFS.begin()) {
+    Serial.println("❌ LittleFS falhou!");
+    return;
+  }
+
+  // TODO: Carregar estado salvo (se existir)
+  // Dica: verificar se ARQUIVO_ESTADO existe, usar StaticJsonDocument
+
+  estado.ciclos++;
+
+  // TODO: Se ntpOk==false, chamar sincronizarNTP()
+
+  // Mostrar info
+  Serial.printf("Ciclo #: %d\n", estado.ciclos);
+  if (estado.ntpOk) {
+    Serial.printf("Hora: %s\n", formatarHora(horaAtual()).c_str());
+  }
+
+  // TODO: Salvar estado antes de dormir
+
+  // Pisca LED
+  digitalWrite(LED_PIN, LOW);
+  delay(500);
+  digitalWrite(LED_PIN, HIGH);
+
+  ESP.deepSleep(30e6);
+}
+
+void loop() {}
 ```
 
-**Desafio:** Modificar para salvar a leitura do LDR e recuperar ao reiniciar.
+**Avaliar:**
+- `horaAtual()` calcula corretamente?
+- `formatarHora()` formata como "dd/mm HH:MM:SS"?
+- NTP sincroniza na primeira vez e calcula localmente depois?
+- LittleFS persiste entre resets e power-off?
 
-#### 40-45 min: DISCUSSÃO — "Solar vs Timer"
+### 35-45 min: Teste e Discussão
 
-| Aspecto | Timer | Solar (Luz) |
-|---------|-------|-------------|
-| Acorda | A cada X segundos | Quando há luz |
-| Economia | Boa | Excelente (só de dia) |
-| Ideal para | Indoor | Outdoor com sol |
-| Noite | Continua gastando | Dorme de graça |
+| Teste | RTC Memory | LittleFS |
+|-------|:---:|:---:|
+| Reset manual → contador incrementou? | ✅ | ✅ |
+| Desligar USB → ligar → contador保留了? | ❌ | ✅ |
+| Dados de hora persistiram? | ❌ | ✅ |
 
 ---
 
-### AULA 3: NTP INTELIGENTE + LITTLEFS (45 min)
+## AULA 4: PROJETO — "Contador de Flashes via MQTT" (45 min)
 
-#### 0-5 min: O PROBLEMA — "Preciso conectar Wi-Fi toda vez?"
+### 0-5 min: Briefing
 
-**Demonstrar:**
-> "Conectar Wi-Fi = 5 segundos a 80mA = MUITA energia!"
-> "Solução: conecta UMA vez, calcula depois!"
+**O que o projeto faz:**
+1. Conectar ao broker MQTT **test.mosquitto.org:1883**
+2. Inscrever-se no tópico `ifsp-capivari/ciclos/[nome-da-dupla]`
+3. Receber último valor salvo (persistido pelo broker)
+4. Incrementar e publicar o novo valor
+5. Entrar em deep sleep
 
-#### 5-20 min: TEORIA — NTP Inteligente
+**Hardware:** Só ESP8266 + cabo USB (sem sensores, sem componentes extras!)
+
+### 5-10 min: Explicação do MQTT
+
+- **Broker público:** `test.mosquitto.org:1883` (Mosquitto test server)
+- **Tópico:** `ifsp-capivari/ciclos/NOME_DA_DUPLA` (cada dupla usa nome único)
+- **QoS 1:** "At least once" — garante que a mensagem chega, mas pode duplicar
+- **Fluxo:**
+  ```
+  ESP conecta → broker envia último valor → ESP incrementa → ESP publica → ESP dorme
+  ```
+
+### 10-15 min: Código Base (entregar pronto com gap para nome)
 
 ```cpp
-// Primeira vez: conecta, sincroniza, salva
-epochBase = timeClient.getEpochTime();
-millisBase = millis();
+/*
+ * Código 4: Contador de Flashes via MQTT
+ *
+ * Usa AsyncMQTTClient (marvinroger/async-mqtt-client)
+ * Broker: test.mosquitto.org:1883
+ *
+ * OBJETIVO: Demonstrar comunicação MQTT + persistência + deep sleep
+ *
+ * ALUNOS AJUSTAM:
+ * - Nome no tópico MQTT (uma dupla = um nome único)
+ * - ssid/senha do WiFi
+ */
 
-// Ciclos seguintes: calcula sem Wi-Fi!
-agora = epochBase + (millis() - millisBase) / 1000;
+#include <ESP8266WiFi.h>
+#include <AsyncMQTTClient.h>
+
+const char* ssid = "SUA_REDE_WIFI";
+const char* senha = "SUA_SENHA_WIFI";
+
+const char* mqtt_host = "test.mosquitto.org";
+const uint16_t mqtt_port = 1883;
+const char* mqtt_topic = "ifsp-capivari/ciclos/SEU_NOME_AQUI"; // ← MUDAR!
+
+int contador = 0;
+bool valorRecebido = false;
+
+void onMessage(char* topic, char* payload, AsyncMQTTClientMessageProperties properties, size_t len, size_t index, size_t total) {
+  // Callback quando chega mensagem MQTT
+  if (len > 0) {
+    payload[len] = '\0'; // null-terminate
+    contador = atoi(payload);
+    valorRecebido = true;
+    Serial.printf("📥 Recebido do broker: %d\n", contador);
+  }
+}
+
+void onConnect(bool sessionPresent) {
+  Serial.println("✅ MQTT conectado!");
+  // Inscreve no tópico para receber último valor
+  AsyncMQTTClient.subscribe(mqtt_topic, 1); // QoS 1
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("\n=== Contador MQTT ===");
+
+  // Conectar Wi-Fi
+  WiFi.begin(ssid, senha);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(100);
+    Serial.print(".");
+  }
+  Serial.println("\n✅ Wi-Fi conectado!");
+
+  // Configurar MQTT
+  AsyncMQTTClient.onConnect(onConnect);
+  AsyncMQTTClient.onMessage(onMessage);
+
+  AsyncMQTTClient.begin(mqtt_host, mqtt_port);
+
+  // Aguarda receber valor (max 5 segundos)
+  unsigned long start = millis();
+  while (!valorRecebido && millis() - start < 5000) {
+    delay(10);
+  }
+
+  contador++;
+  char msg[16];
+  snprintf(msg, sizeof(msg), "%d", contador);
+  Serial.printf("📤 Enviando: %s\n", msg);
+  AsyncMQTTClient.publish(mqtt_topic, 1, false, msg);
+
+  delay(500);
+  Serial.println("💤 Dormindo 60s...");
+  ESP.deepSleep(60e6);
+}
+
+void loop() {}
 ```
 
-**Código 4: 4-sincronizacao-ntp.ino**
+### 15-40 min: Implementação em Duplas
 
-#### 20-30 min: HANDS-ON — Testar NTP + LittleFS
+**Checklist:**
+- [ ] Ajustar nome no tópico MQTT (cada dupla = nome único!)
+- [ ] Ajustar ssid/senha do WiFi
+- [ ] Carregar código
+- [ ] Observar Serial Monitor: conecta → recebe → incrementa → publica → dorme
+- [ ] Verificar se contador incrementa a cada ciclo
 
-**Código completo:**
-```cpp
-// - Carrega estado do arquivo JSON
-// - Se não tem NTP, sincroniza
-// - Se já tem, usa cálculo local
-// - Salva antes de dormir
-```
+**Testar persistência MQTT:**
+1. Dupla A: observa o contador subir
+2. Dupla B: quandoogar, observa se recebe o último valor de A
+3. Desligar USB e ligar de novo: o contador do broker foi mantido?
 
-#### 30-40 min: COMPARAÇÃO — RTC_DATA_ATTR vs LittleFS
+**Verificação (opcional, se houver tempo):**
+- MQTT Explorer no celular/computador: `http://test.mosquitto.org:1880`
+- Ou comando `mosquitto_sub`:
+  ```bash
+  mosquitto_sub -h test.mosquitto.org -t "ifsp-capivari/ciclos/#" -v
+  ```
 
-| Critério | RTC_DATA_ATTR | LittleFS + JSON |
-|----------|---------------|-----------------|
-| ESP8266 | ⚠️ Funciona mal | ✅ Perfeito |
-| Power-off | ❌ Perde | ✅ Mantém |
-| Estruturas | Apenas primitivos | ✅ JSON completo |
-| EEPROM | — | ✅ Usa flash |
-| Código | Simples | ⭐ Um pouco mais |
+### 40-45 min: Apresentações Rápidas
 
-#### 40-45 min: DESAFIO
-
-**Guardar histórico de 10 leituras na flash:**
-- Array circular de structs Leitura
-- Salvar em `/leituras.json`
-- Carregar e imprimir ao acordar
+Cada dupla mostra:
+1. Serial Monitor com contador incrementando
+2. Explain: conecta → recebe → incrementa → publica → dorme
 
 ---
 
-### AULA 4: PROJETO INTEGRADOR — "Estação Solar" ☀️ (45 min)
+## 📦 Materiais por Dupla
 
-#### 0-5 min: BRIEFING DO PROJETO
+### Aula 2
+- NodeMCU ESP8266 + cabo micro USB
+- Protoboard + jumpers
+- Botão push (ou usar botão FLASH do NodeMCU — GPIO0)
+- Resistor 10kΩ (pull-up para RST)
+- Fio D0 → RST (OBRIGATÓRIO!)
 
-**O projeto:** Estação solar de monitoramento que:
-1. Acorda por luz (transistor KSP2222A + LDR)
-2. Lê temperatura e umidade (DHT11)
-3. Timestamp correto (NTP inteligente)
-4. Dados persistem via LittleFS + ArduinoJson
-5. Só trabalha durante o dia!
-6. Deep sleep entre ciclos
+### Aula 3
+- Tudo da Aula 2
+- + LittleFS.begin() já configurado no código base
 
-#### 5-35 min: IMPLEMENTAÇÃO EM DUPLAS
-
-**Código 5: 5-projeto-estacao-solar.ino**
-
-**Checklist do projeto:**
-
-- [ ] Conexão D0 → RST para deep sleep funcionar
-- [ ] Circuito do transistor + LDR montado
-- [ ] Trimpot ajustado para limiar de luz
-- [ ] LED pisca como feedback visual ao acordar
-- [ ] DHT11 lendo corretamente
-- [ ] LittleFS salvando dados (estado.json + leituras.json)
-- [ ] NTP sincroniza na primeira vez
-- [ ] Hora mantida corretamente entre ciclos
-- [ ] Leituras com timestamp formatado no Serial
-- [ ] Deep sleep configurado
-- [ ] Contador de ciclos persiste entre ciclos
-
-**Testes:**
-1. Cubra o LDR → ESP deveria dormir
-2. Ilumine o LDR → ESP deveria acordar
-3. Observe os ciclos no Serial Monitor
-
-#### 35-40 min: APRESENTAÇÕES RÁPIDAS (2 min por dupla)
-- Mostrar o Serial Monitor com os ciclos
-- Explicar o circuito do transistor
-- Ajustar o trimpot para mostrar limiar
-
-#### 40-45 min: ENCERRAMENTO + GANCHO
-
-**Resumo:**
-1. Deep Sleep = 4000x menos consumo
-2. LittleFS + ArduinoJson = persistência no ESP8266
-3. Transistor + LDR = interrupt por luz
-4. NTP = conecta 1 vez, lê depois
-5. Solar = só trabalha de dia!
-
-**Gancho para próxima aula:**
-> "Hoje nosso sensor dorme sozinho. Mas e se ele precisasse tomar DECISÕES? Tipo: 'se a temperatura passou de 30°C, liga o cooler'. Isso é uma **Máquina de Estados**!"
+### Aula 4
+- NodeMCU ESP8266 + cabo micro USB
+- Rede WiFi do laboratório
+- Acesso ao broker `test.mosquitto.org:1883`
 
 ---
 
-## 📦 MATERIAIS NECESSÁRIOS (por dupla)
+## 🎯 Rúbrica de Avaliação
 
-- [ ] NodeMCU ESP8266
-- [ ] Cabo micro USB
-- [ ] 1x DHT11 (sensor de temperatura/umidade)
-- [ ] 1x LED (qualquer cor)
-- [ ] 1x resistor 220Ω (para o LED)
-- [ ] 1x **LDR** (sensor de luz)
-- [ ] 1x **Transistor KSP2222A** (NPN)
-- [ ] 1x **Trimpot** 10kΩ ou 100kΩ
-- [ ] 1x **Resistor** 10kΩ
-- [ ] Jumpers variados
-- [ ] Protoboard
-- [ ] **Fio D0 → RST** (obrigatório!)
+| Critério | Peso | Descrição |
+|----------|------|-----------|
+| Deep Sleep funcionando | 20% | Acorda e dorme corretamente |
+| Wake por botão | 15% | Botão funciona para acordar manualmente |
+| RTC Memory | 20% | Contador persiste entre resets |
+| LittleFS Persistência | 20% | Dados persistem entre power-off |
+| NTP Inteligente | 15% | Sincroniza 1x, calcula depois sem Wi-Fi |
+| MQTT (Aula 4) | 10% | Contador funciona via MQTT |
 
-## 🔌 Pinagem do KSP2222A (vista de frente)
+---
 
+## 🔌 Pinagem de Referência
+
+### Wake por Botão
+```
+3.3V ─── 10kΩ ──── RST
+                  │
+             Botão push
+                  │
+                 GND
+
+D0 (GPIO16) ────── RST    ← OBRIGATÓRIO para timer wake
+```
+
+### Wake por Transistor (LDR + KSP2222A)
+```
+3.3V ─── LDR ──────┬─────── Base do KSP2222A (via resistor 10kΩ)
+                   │
+              Trimpot
+                   │
+                  GND
+
+Coletor (C) ──────── RST
+Emissor (E) ─────── GND
+```
+
+### KSP2222A Pinout (vista de frente)
 ```
       ┌──────────────┐
       │  B    C      │
       │  │    │      │
       └──│────│──────┘
          │    │
-         E    └──────────→ RST do ESP8266
+         E    └──→ RST
          │
-         └────── GND
+         └──→ GND
 ```
-
-## ⚠️ PONTOS DE ATENÇÃO
-
-1. **D0→RST obrigatório:** Sem esse fio o deep sleep é permanente
-2. **Transistor não satura?**: Verifique resistor de base (10kΩ)
-3. **Trimpot:** Ajuste fino do limiar de luz
-4. **LittleFS.format():** Se corromper, formate antes de begin()
-5. **Wi-Fi.mode(WIFI_OFF):** Só desligue DEPOIS de sincronizar NTP
-6. **NTP demora:** Primeira sincronização pode levar 5-10 segundos
-
-## 🎯 RÚBRICA DE AVALIAÇÃO
-
-| Critério | Peso | Descrição |
-|----------|------|-----------|
-| Deep Sleep funcionando | 20% | Acorda e dorme corretamente |
-| Interrupt por luz | 25% | Transistor + LDR + trimpot funcionando |
-| LittleFS Persistência | 20% | Dados persistem entre ciclos |
-| Leitura de sensor | 15% | DHT11 lendo dados válidos |
-| Timestamp correto | 10% | NTP + cálculo de hora local |
-| Código organizado | 10% | Comentado, limpo |
 
 ---
 
-*Tempo estimado de preparação do professor: 30 min (testar circuito do transistor!)*
+*Criado em: 22/04/2026*
+*Versão seguindo Roteiro_resumido.md — sequência: contexto → exemplos → solução → 2 hands-on*

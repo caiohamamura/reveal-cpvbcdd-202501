@@ -1,160 +1,105 @@
-# ✅ CHECKLIST DO PROJETO — Estação Solar de Monitoramento
-
-## Nome do Grupo: _______________
-## Integrantes: _______________, _______________
+# 📋 CHECKLIST DO PROJETO — Contador de Flashes via MQTT
+## Versão Professor Caio — 22/04/2026
 
 ---
 
-## 📋 Requisitos Obrigatórios (100 pontos)
+## Projeto: O que o ESP faz
 
-### Interrupt por Luz — Transistor KSP2222A (25 pontos)
-- [ ] Fio D0 → RST conectado (3 pts)
-- [ ] Transistor KSP2222A montado corretamente (E→GND, C→RST, B→divisor) (5 pts)
-- [ ] LDR conectado no divisor de tensão (3 pts)
-- [ ] Trimpot ajustável para regular limiar de luz (3 pts)
-- [ ] Resistor 10kΩ na base do transistor (3 pts)
-- [ ] LED pisca como feedback visual ao acordar (3 pts)
-- [ ] ESP acorda quando LDR é iluminado (5 pts)
-
-### Deep Sleep (20 pontos)
-- [ ] ESP entra em deep sleep corretamente (5 pts)
-- [ ] Ciclo repetir quando LDR iluminado novamente (5 pts)
-- [ ] ESP fica dormindo quando LDR coberto (escuro) (5 pts)
-- [ ] Contador de ciclos implementado (5 pts)
-
-### LittleFS + ArduinoJson (20 pontos)
-- [ ] LittleFS inicializado corretamente (3 pts)
-- [ ] Arquivo `/estado.json` salvo e carregado (5 pts)
-- [ ] Estrutura `Estado` persistida (4 pts)
-- [ ] Histórico de leituras em `/leituras.json` (5 pts)
-- [ ] Array circular de leituras funcionando (3 pts)
-
-### Leitura de Sensor (15 pontos)
-- [ ] DHT11 conectado e funcionando (4 pts)
-- [ ] Temperatura lida corretamente (4 pts)
-- [ ] Umidade lida corretamente (4 pts)
-- [ ] Tratamento de erro (isnan) implementado (3 pts)
-
-### Timestamp e NTP (10 pontos)
-- [ ] NTP sincroniza com sucesso (3 pts)
-- [ ] Hora calculada corretamente sem Wi-Fi (4 pts)
-- [ ] Formato legível (dd/mm/aaaa hh:mm:ss) (3 pts)
-
-### Código e Documentação (10 pontos)
-- [ ] Código bem comentado (3 pts)
-- [ ] README no GitHub com descrição e fotos (4 pts)
-- [ ] Print do Serial Monitor com 5+ ciclos (3 pts)
+1. **Conecta ao Wi-Fi**
+2. **Conecta ao broker MQTT** `test.mosquitto.org:1883`
+3. **Inscreve-se** no tópico `ifsp-capivari/ciclos/[NOME_DA_DUPLA]`
+4. **Recebe** o último valor salvo (ou 0 se não existir)
+5. **Incrementa** o valor em 1
+6. **Publica** o novo valor no mesmo tópico
+7. **Dorme** deep sleep
+8. **Repete** infinitamente
 
 ---
 
-## 🚀 Desafios Extras (+10 pontos cada, máx 30)
+## ✅ Checklist de Verificação
 
-### Desafio 1: Medição de Autonomia Real
-- [ ] Medir consumo com multímetro em deep sleep
-- [ ] Comparar com consumo acordado
-- [ ] Calcular autonomia real vs teórica
-- [ ] Ajustar intervalos para autonomia > 100 dias
+### Hardware e Fiação
+- [ ] Cabo micro USB conectado
+- [ ] Wi-Fi do laboratório disponível
+- [ ] Fio D0 → RST conectado (para wake por timer, se usar)
 
-### Desafio 2: Alerta Visual por Temperatura
-- [ ] LED piscando rápido se temperatura > 30°C
-- [ ] Mensagem de alerta no Serial
-- [ ] Limiar configurável
+### Código
+- [ ] Nome da dupla ajustado no tópico MQTT (único!)
+- [ ] ssid e senha do WiFi configurados
+- [ ] Código carregado sem erros
+- [ ] Bibliotecas instaladas:
+  - [ ] `AsyncMQTTClient` (marvinroger/async-mqtt-client)
+  - [ ] `NTPClient` (já vem com ESP8266)
 
-### Desafio 3: DashboardThingSpeak
-- [ ] Enviar dados para ThingSpeak
-- [ ] Gráfico de temperatura/umidade
-- [ ] Mostrar timestamps corretos
+### Testes
+- [ ] Wi-Fi conectou (Serial Monitor mostra "Wi-Fi conectado!")
+- [ ] MQTT conectou (Serial Monitor mostra "MQTT conectado!")
+- [ ] Recebeu valor do broker (Serial Monitor mostra "📥 Recebido: X")
+- [ ] Enviou valor incrementado (Serial Monitor mostra "📤 Enviando: Y")
+- [ ] Entrou em deep sleep (Serial Monitor mostra "💤 Dormindo...")
+- [ ] Acordou após deep sleep e contador incrementou?
 
-### Desafio 4: MQTT
-- [ ] Enviar dados para broker MQTT
-- [ ] Tópico organizado (ex: estacao/temp)
-- [ ] Conexão rápida + envio + desconexão
-
-### Desafio 5: Configuração Wi-Fi via AP
-- [ ] Cria Wi-Fi hotspot se não conectar
-- [ ] Página web para configurar SSID/senha
-- [ ] Salva configuração na flash
-
----
-
-## 📝 Autoavaliação
-
-| Pergunta | Nota (1-5) |
-|----------|------------|
-| Entendi o conceito de deep sleep? | ___ |
-| Consigo explicar o circuito do transistor? | ___ |
-| Sei por que usamos LittleFS em vez de RTC_DATA_ATTR? | ___ |
-| O código está funcionando corretamente? | ___ |
-| Meu projeto está bem documentado? | ___ |
+### Verificação de Persistência
+- [ ] Reset manual → contador incrementa? (deep sleep wake = reset)
+- [ ] Desligar USB → ligar → **MQTT broker mantém o último valor!**
 
 ---
 
-## 🔧 Problemas Comuns e Soluções
+## 📊 Rubrica de Avaliação
 
-| Problema | Causa Provável | Solução |
+| Critério | Peso | Verificação |
+|----------|------|-------------|
+| **Conexão Wi-Fi** | 10% | Conecta corretamente |
+| **Conexão MQTT** | 15% | Conecta ao broker test.mosquitto.org |
+| **Subscribe** | 10% | Recebe último valor do tópico |
+| **Publish** | 15% | Publica valor incremented |
+| **Deep Sleep** | 15% | Dorme e acorda corretamente |
+| **Persistência MQTT** | 20% | Broker mantém valor entre ciclos |
+| **Código organizado** | 15% | Comentado, limpo, nome da dupla no tópico |
+
+---
+
+## 🔍 Como Testar a Persistência MQTT
+
+### Opção 1: Serial Monitor
+1. Observar o contador subindo a cada ciclo
+2. Desligar USB
+3. Ligar USB novamente
+4. Verificar se o contador continua de onde parou (não reinicia em 0!)
+
+### Opção 2: MQTT Explorer (web)
+1. Abrir: http://test.mosquitto.org:1880
+2. Inscrever-se no tópico `ifsp-capivari/ciclos/#`
+3. Observar os valores aparecendo em tempo real
+
+### Opção 3: Comando mosquitto_sub
+```bash
+# No computador com mosquitto instalado:
+mosquitto_sub -h test.mosquitto.org -t "ifsp-capivari/ciclos/#" -v
+```
+
+---
+
+## 💡 Dicas para Debugging
+
+| Problema | Possível Causa | Solução |
 |----------|----------------|---------|
-| ESP dorme e não acorda | Fio D0→RST não conectado | Ligar D0 ao RST |
-| Transistor não desliga | Resistor de base muito baixo | Usar 10kΩ |
-| Transistor não liga | LDR ou trimpot mal conectado | Verificar circuito divisor |
-| LittleFS não inicializa | Filesystem corrompido | `LittleFS.format()` antes de begin() |
-| NTP não sincroniza | Wi-Fi 5GHz ou senha errada | Usar rede 2.4GHz |
-| Hora errada após horas | Drift do millis() | Re-sincronizar periodicamente |
-| JSON parse error | Arquivo corrompido | Apagar e recriar com `LittleFS.format()` |
+| "Wi-Fi failed" | ssid/senha errados | Verificar credenciais |
+| "MQTT timeout" | Rede bloqueando porta 1883 | Testar com celular como hotspot |
+| Contador reinicia em 0 | Broker não recebeu valor anterior | Verificar se publish foi bem sucedido |
+| ESP não acorda | Fio D0→RST solto | Verificar conexão D0→RST |
 
 ---
 
-## 📊 Nota Final
+## 🎯 Critério de Sucesso
 
-| Categoria | Pontos |
-|-----------|--------|
-| Interrupt por Luz | ___ / 25 |
-| Deep Sleep | ___ / 20 |
-| LittleFS + ArduinoJson | ___ / 20 |
-| Sensor | ___ / 15 |
-| Timestamp/NTP | ___ / 10 |
-| Código/Docs | ___ / 10 |
-| **Subtotal** | **___ / 100** |
-| Desafios extras | ___ / 30 |
-| **TOTAL** | **___ / 130** |
+**O projeto funciona se:**
+1. Ao plugar o ESP, ele conecta ao Wi-Fi e MQTT
+2. O Serial Monitor mostra o contador incrementando a cada ciclo
+3. O contador **não reinicia em 0** mesmo após power-off (broker mantém!)
+4. O deep sleep funciona (ESP dorme e acorda sozinho)
 
 ---
 
-## 🔌 Circuito de Referência — Interrupt por Luz
-
-```
-    NodeMCU ESP8266
-    ┌─────────────────────────────────────────┐
-    │                                         │
-    │   3.3V ────────────────────────────┐    │
-    │                                    │    │
-    │   RST ◄──────────────────┐        │    │
-    │                           │        │    │
-    │   D0/GPIO16 ──────────────┼────────┘    │
-    │                           │             │
-    │   A0 (debug) ─────────────┤             │
-    │                           │             │
-    │   D4 ──────────────────────┤             │
-    │   (DHT11)                  │             │
-    │                           │             │
-    │   2 ───────────────────────┤             │
-    │   (LED)                    │             │
-    │                           │             │
-    │   GND ─────────────────────┴─────────────┤
-    │                                         │
-    └─────────────────────────────────────────┘
-    
-    KSP2222A Circuit:
-    
-         3.3V ──── LDR ──── ◬─── Base (via R 10kΩ)
-                            │
-                       Trimpot
-                            │
-                           GND
-                           
-         Coletor (C) ──── RST do ESP8266
-         Emissor (E) ──── GND
-```
-
----
-
-*Avaliação formativa — o objetivo é aprender, não apenas pontuar!*
+*Criado em: 22/04/2026*
+*Projeto simplificado seguindo Roteiro_resumido.md*

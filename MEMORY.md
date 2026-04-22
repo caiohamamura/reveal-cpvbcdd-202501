@@ -142,3 +142,16 @@ Este é o registro das aulas planejadas, decisões pedagógicas, feedback recebi
 - `Aula RTC e Deep Sleep/materiais/resumo-executivo.md`
 - `Aula RTC e Deep Sleep/materiais/roteiro-aula-detalhado.md`
 - `Aula RTC e Deep Sleep/projeto/checklist-projeto.md`
+
+## Promoted From Short-Term Memory (2026-04-22)
+
+<!-- openclaw-memory-promotion:memory:memory/2026-04-15.md:449:449 -->
+- - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.845 recalls=0 avg=0.620 source=memory/2026-04-15.md:78-78]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-16.md:373:376 -->
+- - Candidate: Reflections: Theme: `assistant` kept surfacing across 98 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-16.md:373-376 - recalls: 0 [score=0.838 recalls=0 avg=0.620 source=memory/2026-04-16.md:3-6]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-16.md:379:379 -->
+- - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.838 recalls=0 avg=0.620 source=memory/2026-04-16.md:358-358]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-17.md:378:381 -->
+- - Candidate: Reflections: Theme: `assistant` kept surfacing across 100 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-17.md:378-381 - recalls: 0 [score=0.832 recalls=0 avg=0.620 source=memory/2026-04-17.md:3-6]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-17.md:384:384 -->
+- - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.832 recalls=0 avg=0.620 source=memory/2026-04-17.md:303-303]
