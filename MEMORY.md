@@ -108,3 +108,37 @@ Este é o registro das aulas planejadas, decisões pedagógicas, feedback recebi
 ---
 
 *Este arquivo será atualizado conforme o planejamento avança.*
+### 2026-04-22: Atualização da Aula de RTC, Deep Sleep e Autonomia
+
+**Mudanças solicitadas pelo Professor Caio:**
+
+1. **Substituição de RTC_DATA_ATTR por LittleFS + ArduinoJson**
+   - RTC_DATA_ATTR só funciona corretamente no ESP32
+   - No ESP8266: não persiste em power-off
+   - Solução: LittleFS (filesystem) + ArduinoJson para estruturas dinâmicas
+   - Vantagens: persiste em power-off, funciona em ambos, estruturas flexíveis
+
+2. **Interrupt por luz usando transistor KSP2222A**
+   - Novo projeto: "Estação Solar de Monitoramento"
+   - Usa LDR + trimpot + transistor KSP2222A para detectar luz
+   - De dia: transistor satura → RST LOW → ESP8266 acorda
+   - De noite: transistor corta → ESP8266 dorme
+   - Ideal para clima tropical com ciclos de 12h de luz
+
+3. **Materiais refeitos:**
+   - 5 códigos progressivos (do pisca-dorme ao projeto completo)
+   - Slides atualizados (31 slides)
+   - Roteiro detalhado (4 aulas)
+   - Checklist do projeto (rubrica + autoavaliação)
+   - Resumo executivo
+
+**Arquivos atualizados/criados:**
+- `Aula RTC e Deep Sleep/codigos/1-pisca-dorme.ino`
+- `Aula RTC e Deep Sleep/codigos/2-acorda-luz-transistor.ino` (NOVO)
+- `Aula RTC e Deep Sleep/codigos/3-littlefs-persistencia.ino` (NOVO)
+- `Aula RTC e Deep Sleep/codigos/4-sincronizacao-ntp.ino` (NOVO)
+- `Aula RTC e Deep Sleep/codigos/5-projeto-estacao-solar.ino` (NOVO)
+- `Aula RTC e Deep Sleep/slides/slides-rtc-deep-sleep.md`
+- `Aula RTC e Deep Sleep/materiais/resumo-executivo.md`
+- `Aula RTC e Deep Sleep/materiais/roteiro-aula-detalhado.md`
+- `Aula RTC e Deep Sleep/projeto/checklist-projeto.md`

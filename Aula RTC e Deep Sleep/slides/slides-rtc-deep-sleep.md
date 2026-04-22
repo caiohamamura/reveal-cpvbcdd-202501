@@ -54,20 +54,20 @@ IFSP Capivari — 4º ano
 ---
 
 ## Slide 7 — Exemplo 3
+# ☀️ Monitoramento Solar
+- Acorda só quando há sol
+- Transistor + LDR como sensor de luz
+- Bateria durante o dia, descansa à noite
+- **Perfeito para clima tropical!**
+
+---
+
+## Slide 8 — Exemplo 4
 # 🚨 Sensor de Intrusão
 - Acelerômetro na porta do galpão
 - Acorda por **movimento** (não por timer!)
 - Manda alerta no Telegram
 - **1 ano** com bateria 18650
-
----
-
-## Slide 8 — Exemplo 4
-# 🐝 Monitoramento de Colmeias
-- Peso + temperatura + som
-- Projeto real da **Embrapa**
-- Apiário no meio do mato
-- Acorda a cada hora, transmite, dorme
 
 ---
 
@@ -90,14 +90,6 @@ IFSP Capivari — 4º ano
 ---
 
 ## Slide 11 — Exemplo 7
-# 🅿️ Vaga Inteligente
-- Sensor magnético detecta carro
-- Acorda quando campo magnético muda
-- **3 anos com 2 pilhas AA!**
-
----
-
-## Slide 12 — Exemplo 8
 # 🌳 Sensor de Queimada
 - Gás + temperatura + umidade
 - Floresta Amazônica, local remoto
@@ -106,13 +98,13 @@ IFSP Capivari — 4º ano
 
 ---
 
-## Slide 13 — Pausa para Reflexão
+## Slide 12 — Pausa para Reflexão
 # 🤔 Qual projeto vocês fariam?
 > "Qual desses seria mais legal implementar aqui no IFSP ou em Capivari?"
 
 ---
 
-## Slide 14 — Os 3 Modos de Sleep
+## Slide 13 — Os 3 Modos de Sleep
 # 💤 Como o ESP8266 Dorme
 
 | Modo | Consumo | Acordar com |
@@ -123,7 +115,7 @@ IFSP Capivari — 4º ano
 
 ---
 
-## Slide 15 — Deep Sleep em Detalhe
+## Slide 14 — Deep Sleep em Detalhe
 # 💤 Deep Sleep
 - **Tudo** é desligado (CPU, Wi-Fi, RAM)
 - Só o **RTC** continua rodando
@@ -135,7 +127,7 @@ IFSP Capivari — 4º ano
 
 ---
 
-## Slide 16 — O Pino Mágico
+## Slide 15 — O Pino Mágico
 # ⚡ GPIO 16 → RST
 - **Conexão obrigatória:** D0 (GPIO 16) → RST
 - É o RTC que "cutuca" o RST para acordar
@@ -143,6 +135,19 @@ IFSP Capivari — 4º ano
 - Com resistor de 10kΩ entre RST e 3.3V (pull-up) é mais estável
 
 > ⚠️ Primeira coisa a verificar: "Meu ESP não acorda?" → Verifique o fio D0→RST!
+
+---
+
+## Slide 16 — Como Acordar
+# ⏰ Três Formas de Acordar
+
+| Forma | Como | Uso |
+|-------|------|-----|
+| **Timer** | `ESP.deepSleep(10e6)` | Acorda a cada X segundos |
+| **Botão** | Pulso em RST | Wake-up manual |
+| **Transistor** | RST puxado LOW pelo transistor | **Sensor externo (luz, PIR, etc)** |
+
+> Hoje: Vamos usar **transistor** para acordar com luz!
 
 ---
 
@@ -205,22 +210,21 @@ void loop() {
 
 ---
 
-## Slide 21 — Acordar por Botão
-# 🔘 Deep Sleep com Interrupt
+## Slide 21 — Acordar por Transistor
+# 💡 Interrupt Externo via KSP2222A
 ```cpp
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Acordei por botão!");
-  delay(3000);
-  Serial.println("Voltando a dormir...");
-  ESP.deepSleep(0);  // "infinito" — só botão
-}
+// Transistor KSP2222A:
+// - Emissor → GND
+// - Base → LDR + Trimpot (divisor de tensão)
+// - Coletor → RST do ESP8266
 
-void loop() {}
+// No escuro: transistor OFF → ESP dorme
+// Na luz: transistor ON → RST LOW → ESP ACORDA!
 ```
-- Botão entre **RST** e **GND**
-- `deepSleep(0)` = só acorda por RST externo
-- Aplicação: sensor de porta, alerta de movimento
+- **Luz alta** → LDR resistência baixa → transistor satura → RST LOW → **ACORDA**
+- **Luz baixa** → transistor corta → ESP **DORME**
+
+> 🌞 Projeto solar: só trabalha durante o dia!
 
 ---
 
@@ -234,35 +238,57 @@ void loop() {}
 
 ---
 
-## Slide 23 — RTC Memory
-# 📝 O "Post-it" do ESP8266
-- **512 bytes** que sobrevivem ao deep sleep
-- Declarado com `RTC_DATA_ATTR`
-- Rápido como RAM (sem desgaste de flash)
-- **Não** sobrevive a desconexão de energia
+## Slide 23 — O Problema do ESP32 vs ESP8266
+# ⚠️ RTC_DATA_ATTR Só Funciona no ESP32!
+- `RTC_DATA_ATTR` é uma feature do **ESP32**
+- No **ESP8266**: `RTC_DATA_ATTR` existe mas é limitado
+- **Solução para ESP8266**: LittleFS + ArduinoJson
+
+| Solução | ESP32 | ESP8266 | Persiste Power-off? |
+|---------|-------|---------|---------------------|
+| `RTC_DATA_ATTR` | ✅ Sim | ⚠️ Limitado | ❌ Não |
+| **LittleFS + ArduinoJson** | ✅ Sim | ✅ Sim | ✅ Sim |
+
+---
+
+## Slide 24 — LittleFS: O Filesystem do ESP8266
+# 📂 LittleFS é Melhor que SPIFFS!
+- **LittleFS**: mais novo, mais eficiente, wear-leveling melhor
+- **Funciona no ESP8266 e ESP32**
+- Resiste a **power-off** (dados persistem!)
+- Arquivos JSON = estruturas **dinâmicas**
 
 ```cpp
-RTC_DATA_ATTR int contador = 0;  // Persiste!
-RTC_DATA_ATTR float ultimaTemperatura = 0;
+#include <LittleFS.h>
+#include <ArduinoJson.h>
+
+// Salvar dados
+File file = LittleFS.open("/dados.json", "w");
+StaticJsonDocument<512> doc;
+doc["ciclos"] = 42;
+serializeJson(doc, file);
+file.close();
 ```
 
 ---
 
-## Slide 24 — Comparação de Memórias
+## Slide 25 — Comparação de Memórias
 # 🧠 O Que Sobrevive?
 
-| Tipo | Deep Sleep? | Power-off? | Velocidade |
-|------|-------------|------------|------------|
-| RAM normal | ❌ | ❌ | Rápida |
-| **RTC memory** | ✅ | ❌ | Rápida |
-| EEPROM | ✅ | ✅ | Média |
-| SPIFFS | ✅ | ✅ | Lenta |
+| Tipo | Deep Sleep? | Power-off? | Velocidade | ESP8266? |
+|------|-------------|------------|------------|----------|
+| RAM normal | ❌ | ❌ | Rápida | ✅ |
+| `RTC_DATA_ATTR` | ✅ | ❌ | Rápida | ⚠️ |
+| **LittleFS** | ✅ | ✅ | Média | ✅ |
+| EEPROM | ✅ | ✅ | Lenta | ✅ |
+
+> **LittleFS = o melhor dos dois mundos!**
 
 ---
 
-## Slide 25 — NTP Inteligente
-# ⏰ Conecta Uma Vez, Lempra Para Sempre
-1. **Primeira vez:** Conecta Wi-Fi → sincroniza NTP → salva epoch
+## Slide 26 — NTP Inteligente
+# ⏰ Conecta Uma Vez, Lê Para Sempre
+1. **Primeira vez:** Conecta Wi-Fi → sincroniza NTP → salva epoch no JSON
 2. **Depois:** Calcula hora via `millis() - millisBase + epochBase`
 3. **Economia:** Não conecta Wi-Fi a cada ciclo!
 
@@ -270,51 +296,39 @@ RTC_DATA_ATTR float ultimaTemperatura = 0;
 
 ---
 
-## Slide 26 — Código: NTP + RTC Memory
-```cpp
-RTC_DATA_ATTR bool ntpOk = false;
-RTC_DATA_ATTR time_t epochBase = 0;
-RTC_DATA_ATTR unsigned long millisBase = 0;
+## Slide 27 — Projeto Integrador
+# 🚀 Estação Solar de Monitoramento
+**Requisitos:**
+1. ✅ Acorda por luz (transistor KSP2222A + LDR)
+2. ✅ Lê DHT11 (temperatura + umidade)
+3. ✅ Timestamp correto via NTP inteligente
+4. ✅ **LittleFS + ArduinoJson** para persistência
+5. ✅ Deep sleep entre ciclos
+6. ✅ Só trabalha durante o dia!
 
-void setup() {
-  if (!ntpOk) {
-    WiFi.begin(ssid, senha);
-    // ... sincroniza NTP ...
-    epochBase = time(nullptr);
-    millisBase = millis();
-    ntpOk = true;
-    WiFi.disconnect(true);
-  }
-  
-  time_t agora = epochBase + (millis() - millisBase) / 1000;
-  Serial.printf("Hora: %s", ctime(&agora));
-  
-  ESP.deepSleep(300e6);  // 5 min
-}
+**Hardware especial:**
+- LDR + Trimpot + Transistor KSP2222A
+- Sem timer — desperta por interrupt!
+
+---
+
+## Slide 28 — Circuito do Sensor de Luz
+# 💡 Como Funciona o Interrupt por Luz
+
+```
+   3.3V ─── LDR ──── ◬─── Base do KSP2222A
+                      │
+                 Trimpot
+                      │
+                     GND
+                     
+   Coletor (C) ──── RST do ESP8266
+   Emissor (E) ──── GND
 ```
 
----
-
-## Slide 27 — Sensor com Timestamp
-# 🌡️ Logger Completo
-- DHT11 lê temperatura e umidade
-- RTC memory guarda hora da sincronização
-- Cada leitura tem **timestamp correto**
-- Sem Wi-Fi na maioria dos ciclos
-
----
-
-## Slide 28 — Projeto Integrador
-# 🚀 Estação Autônoma de Monitoramento
-**Requisitos:**
-1. ✅ Acorda a cada 5 minutos
-2. ✅ Lê DHT11 (temperatura + umidade)
-3. ✅ Timestamp correto em cada leitura
-4. ✅ NTP sincroniza só 1 vez
-5. ✅ RTC memory para contadores e hora
-6. ✅ Deep sleep entre leituras
-
-**Desafio extra:** Enviar via MQTT
+**Ajuste do trimpot:**
+- Mais para LDR → acorda com menos luz (amanhecer cedo)
+- Mais para GND → só acorda com sol forte
 
 ---
 
@@ -324,11 +338,11 @@ void setup() {
 - [ ] DHT11 lendo dados válidos
 - [ ] NTP sincroniza na primeira vez
 - [ ] Hora correta entre ciclos
-- [ ] Timestamps no Serial
-- [ ] Deep sleep de 5 minutos
-- [ ] Contador de ciclos funciona
+- [ ] LittleFS salvando dados na flash
+- [ ] Transistor + LDR funcionando
+- [ ] Deep sleep entre ciclos
+- [ ] Contador de ciclos persiste
 - [ ] Wi-Fi desligado após uso
-- [ ] Código limpo e comentado
 
 ---
 
@@ -336,9 +350,10 @@ void setup() {
 # ✅ O Que Aprendemos Hoje
 1. Deep Sleep reduz consumo em **~4000x**
 2. Conexão **D0→RST** é obrigatória
-3. **RTC memory** persiste dados entre ciclos
-4. NTP só precisa **1 vez** — depois calcula local
-5. Autonomia depende de: **tempo acordado × intervalo**
+3. **LittleFS + ArduinoJson** para persistência no ESP8266
+4. Transistor KSP2222A + LDR = **interrupt por luz**
+5. NTP só precisa **1 vez** — depois calcula local
+6. Projeto solar: só trabalha durante o **dia**
 
 > "Sem deep sleep, IoT em campo é **impossível**."
 
