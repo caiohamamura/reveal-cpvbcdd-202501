@@ -143,6 +143,34 @@ Este é o registro das aulas planejadas, decisões pedagógicas, feedback recebi
 - `Aula RTC e Deep Sleep/materiais/roteiro-aula-detalhado.md`
 - `Aula RTC e Deep Sleep/projeto/checklist-projeto.md`
 
+### 2026-04-22 (bis): Novo replanejamento seguindo Roteiro_resumido.md
+
+**Mudanças solicitadas pelo Professor Caio:**
+
+O professor solicitou novo ajuste seguindo `Roteiro_resumido.md`:
+- **Sequência pedagógica:** contexto → exemplos → solução → 2 hands-on
+- **Hands-on 1 (guiado):** código completo entregue — Pisca → Sleep → Botão wake
+- **Hands-on 2 (base a ajustar):** skeleton code com TODOs — alunos completam
+- **Projeto integrador:** Contador de flashes via MQTT (test.mosquitto.org)
+- **Remove:** projeto estação solar complexa (transistor KSP2222A removido do projeto)
+- **Simplifica:** sem DHT11, sem LittleFS pesado — foco em MQTT + persistência via broker
+- **Circuitos:** botão wake (RST-GND com pull-up 10kΩ) — mais simples que transistor
+- **MQTT broker:** test.mosquitto.org:1883 — público e sem autenticação
+
+**Materiais atualizados:**
+- `roteiro-aula-detalhado.md` — reescrito seguindo sequência proposta
+- `checklist-projeto.md` — projeto MQTT com instruções de debug
+- `resumo-executivo.md` — atualizado com nova estrutura
+- `fontes/Roteiro_resumido.md` e `fontes/Circuito acordar.md` — fontes de referência
+
+**Estrutura final:**
+| Aula | Tema | Tipo |
+|------|------|------|
+| 1 | Engajamento + Teoria + Pisca-Dorme | 45 min |
+| 2 | Hands-on 1 (guiado): Botão wake | 45 min |
+| 3 | Hands-on 2 (base a ajustar): RTC Memory + NTP | 45 min |
+| 4 | Projeto: Contador MQTT | 45 min |
+
 ## Promoted From Short-Term Memory (2026-04-22)
 
 <!-- openclaw-memory-promotion:memory:memory/2026-04-15.md:449:449 -->
