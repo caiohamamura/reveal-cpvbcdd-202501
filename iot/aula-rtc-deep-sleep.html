@@ -25,9 +25,9 @@
 
     <!-- SLIDE 1: Capa -->
     <section data-auto-animate>
-      <header1 aula="2" curso="Programação Avançada IoT" title-size="24"
+      <header1 aula="11" curso="Programação Avançada IoT" title-size="24"
         title="RTC, Deep Sleep e Autonomia no ESP8266">
-        <div class="mermaid" data-id="sleep-diagram">
+        <div class="mermaid" data-id="sleep-diagram" style="width:450px">
           <pre>
 graph LR
   A["🔄 Acorda"] -->|"5 seg"| B["📊 Lê Sensor"]
@@ -35,52 +35,54 @@ graph LR
   C -->|"5 min"| A
           </pre>
         </div>
+        <div><img src="https://i.imgur.com/ljwnRxF.png" width="400"></div>
       </header1>
     </section>
 
     <!-- SLIDE 2: Revisão Rápida -->
-    <section data-auto-animate>
-      <h2>📋 Revisão: Aula Passada</h2>
+    <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.1">
+      <h2>Revisão: Aula Passada</h2>
       <ls-u>
         <li><code>millis()</code> substitui <code>delay()</code></li>
         <li>Timer (Ticker) para tarefas periódicas</li>
-        <li>Interrupts para eventos instantâneos</li>
         <li>NTP sincroniza relógio via Wi-Fi</li>
       </ls-u>
       <div class="fragment" style="background: rgba(189,147,249,0.15); border-left: 4px solid #bd93f9; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
         <p style="font-size: 22pt; color: #bd93f9;">⚡ Hoje: E se o dispositivo precisar rodar <b>meses</b> sem tomada?</p>
       </div>
-    </section>
-
-    <!-- SLIDE 3: O Desafio da Bateria -->
-    <section data-auto-animate>
-      <h2>🔋 O Desafio da Bateria</h2>
-      <div style="display: flex; align-items: center; gap: 1.5em;">
-        <div style="flex: 1;">
-          <ls-u>
-            <li>ESP8266 ligado consome <b style="color: #ff5555">~80 mA</b></li>
-            <li>Pilha AA alcalina: <b style="color: #8be9fd">~2500 mAh</b></li>
-            <li>Autonomia: 2500 ÷ 80 = <b style="color: #ff5555">~31 horas</b></li>
-          </ls-u>
-        </div>
-        <div style="flex: 1; text-align: center;">
-          <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
-            <div class="mermaid" data-id="battery-basic">
-              <pre>
-graph TD
-  A["🔋 2500 mAh"] -->|"÷ 80 mA"| B["⏰ 31 horas"]
-  style A fill:#44475a,color:#f8f8f2
-  style B fill:#ff5555,color:#f8f8f2
-              </pre>
+      </section>
+      <section data-background-image="https://i.imgur.com/AtZT3zO.jpeg" data-background-opacity="0.1">
+      
+      <!-- SLIDE 3: O Desafio da Bateria -->
+      <section data-auto-animate>
+        <h2>O Desafio da Bateria 🔋</h2>
+        <div style="display: flex; align-items: center; gap: 1.5em;">
+          <div style="flex: 1;">
+            <ls-u>
+              <li>ESP8266 ligado consome <b style="color: #ff5555">~80 mA</b></li>
+              <li>Pilha AA alcalina: <b style="color: #8be9fd">~2500 mAh</b></li>
+              <li>Autonomia: 2500 ÷ 80 = <b style="color: #ff5555">~31 horas</b></li>
+            </ls-u>
+          </div> 
+          <div class="fragment" style="flex: 1; text-align: center;">
+            <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+              <div class="mermaid" data-id="battery-basic">
+                <pre>
+                  graph TD
+                  A["🔋 2500 mAh"] -->|"÷ 80 mA"| B["⏰ 31 horas"]
+                  style A fill:#44475a,color:#f8f8f2
+                  style B fill:#ff5555,color:#f8f8f2
+                </pre>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="fragment" style="text-align: center; margin-top: 15px;">
-        <p style="font-size: 26pt; color: #ff79c6;">E se eu precisasse de <b>6 meses</b> no meio do mato?</p>
-      </div>
-    </section>
-
+        <div class="fragment" style="text-align: center; margin-top: 15px;">
+          <p style="font-size: 26pt; color: #ff79c6;">E se eu precisasse de <b>6 meses</b> no meio do mato?</p>
+        </div>
+      </section>
+      
+    
     <!-- SLIDE 4: A Resposta — Deep Sleep -->
     <section data-auto-animate>
       <h2>💤 A Resposta: Deep Sleep</h2>
@@ -92,12 +94,12 @@ graph TD
             <li>Autonomia: de 31 horas → <b style="color: #50fa7b">anos</b></li>
           </ls-u>
         </div>
-        <div style="flex: 1; text-align: center;">
+        <div style="flex: 1; text-align: center;" class="fragment"> 
           <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
             <div class="mermaid" data-id="sleep-gain">
               <pre>
 graph LR
-  A["⚡ 80 mA<br/>31 horas"] -->|"Deep Sleep"| B["💤 0,02 mA<br/>meses/anos"]
+  A["⚡ 80 mA" ] -->|"Deep Sleep"| B["💤 0,02 mA"] 
   style A fill:#ff5555,color:#f8f8f2
   style B fill:#50fa7b,color:#282a36
               </pre>
@@ -106,56 +108,51 @@ graph LR
         </div>
       </div>
     </section>
+    </section>
 
     <!-- ============================================================
          SEÇÃO 2: EXEMPLOS DO MUNDO REAL
          ============================================================ -->
 
+    <section data-background-image="https://i.imgur.com/SKZdzq2.jpeg" data-background-opacity="0.1">
     <!-- SLIDE 5: Capa da Seção -->
     <section>
-      <h2>🌍 Quem Dorme, Vive Mais</h2>
+      <h2>Quem Dorme, Vive Mais</h2>
       <p style="font-size: 28pt; text-align: center; color: #bd93f9;">8 projetos reais que <b>dependem</b> de Deep Sleep</p>
     </section>
 
     <!-- SLIDE 6: Estação Meteorológica -->
     <section data-auto-animate>
-      <h2>🏠 Estação Meteorológica na Fazenda</h2>
+      <h2>🌡️ Estação Meteorológica na Fazenda</h2>
       <div style="display: flex; align-items: center; gap: 1.5em;">
         <div style="flex: 1;">
-          <ls-u>
+          <ul>
             <li>Mede temperatura a cada 30 min</li>
             <li>Envia para dashboard via Wi-Fi</li>
             <li>Local sem energia elétrica</li>
             <li>Painel solar + bateria</li>
-          </ls-u>
+          </ul>
         </div>
-        <div style="flex: 0 0 200px; text-align: center;">
-          <div style="background: #44475a; border-radius: 12px; padding: 1em;">
-            <p><b style="color: #ff5555">Sem sleep:</b> 1 dia</p>
-            <p style="font-size: 36pt;">⚡</p>
-            <p><b style="color: #50fa7b">Com sleep:</b> 8 meses</p>
-          </div>
+        <div style="flex: 0 0 400px; text-align: center;">
+          <img src="https://imgs.search.brave.com/yb3yOHy_7-3pVQfiRblvOSoWW-oUOaNwteTHqSgIDgo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ibG9n/Z2VyLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9pbWcvYi9SMjl2/WjJ4bC9BVnZYc0Vn/eEUwdFp1UjBFdUNU/angzNFg4Vml6Umcz/NFNURVFxRVhLQl82/YVF0ZGRGTnZ2MFda/d0xCUWI0T0dnLVI1/NlJBRkUxZ3ppaXBz/Z2VRU1hZZndjSmxH/MVBfM0xTTm1TVWdK/eWlyN3o5aUZ3c1RQ/REZUR1p4eWVnX0NQ/VExGekRiN1FWZzM4/SmJiZzRfS3U0L3Mx/NjAwL21pbmktZXN0/YWNhby1tZXRlb3Jv/bG9naWNhLmpwZw" alt="">
         </div>
       </div>
     </section>
 
     <!-- SLIDE 7: Irrigação Inteligente -->
     <section data-auto-animate>
-      <h2>🌾 Irrigação Inteligente</h2>
-      <ls-u>
-        <li>Sensor de umidade do solo</li>
-        <li>Acorda → mede → decide → dorme</li>
-        <li>5 seg acordado, 1 hora dormindo</li>
-        <li>Consumo: <b style="color: #50fa7b">4.000x menos!</b></li>
-      </ls-u>
-      <div class="fragment">
+      <h2>Irrigação Inteligente</h2>
+      <center>
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FciD3ILxgXzU%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=26fc09533c71158d9865f6b449d6bed4e0b9b1539bab87464eee6ca20228b60d" height="400" alt="">
+      </center>
+      <div>
         <div class="mermaid" data-id="irrig-flow">
           <pre>
 graph LR
-  A["💤 Dorme 1h"] -->|"Timer"| B["🔄 Acorda"]
-  B -->|"5 seg"| C["💧 Mede Umidade"]
+  A["Dorme 💤 "] -->|"1 hora"| B["Acorda 🌞 "]
+  B -->|"5 seg"| C["Umidade 💧"]
   C --> D{"Solo seco?"}
-  D -->|"Sim"| E["🚿 Irriga"]
+  D -->|"Sim"| E["Irriga 🚿"]
   D -->|"Não"| A
   E --> A
           </pre>
@@ -165,81 +162,76 @@ graph LR
 
     <!-- SLIDE 8: Sensor de Intrusão -->
     <section data-auto-animate>
-      <h2>🚨 Sensor de Intrusão</h2>
-      <ls-u>
-        <li>Acelerômetro na porta do galpão</li>
-        <li>Acorda por <b style="color: #8be9fd">movimento</b> (não por timer!)</li>
-        <li>Manda alerta no Telegram</li>
-        <li><b style="color: #50fa7b">1 ano</b> com bateria 18650</li>
-      </ls-u>
+      <h2>Sensor de Intrusão 🥷🏻</h2>
+      <center>
+        <img src="https://imgs.search.brave.com/c7GCfbU__9Prgg5aAv8tKSZNvEKe58f88cBYEg3Qw74/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/YXJkdWlub2ludHJv/LmNvbS9pbWFnZXMv/cGlyL3Bpcl9waWV6/b19sY2RfY292ZXJf/OTAwLmpwZw" height="400">
+      </center>
+        <div class="mermaid" data-id="irrig-flow">
+          <pre>
+            graph LR
+  A["Dorme 💤 "] --> B{Presença}
+  B --> |"Sim"| C["Acorda 🌅 "]
+  C --> D["Alarme 🚨 "]
+  D --> A
+  
+  
+          </pre>
+        </div>
+      
     </section>
 
     <!-- SLIDE 9: Colmeias -->
     <section data-auto-animate>
-      <h2>🐝 Monitoramento de Colmeias</h2>
-      <ls-u>
-        <li>Peso + temperatura + som da colmeia</li>
-        <li>Projeto real da <b style="color: #bd93f9">Embrapa</b></li>
-        <li>Apiário no meio do mato</li>
-        <li>Acorda a cada hora, transmite, dorme</li>
-      </ls-u>
-    </section>
-
-    <!-- SLIDE 10: Lixeira -->
-    <section data-auto-animate>
-      <h2>🗑️ Lixeira Inteligente</h2>
-      <ls-u>
-        <li>Ultrassom mede nível de enchimento</li>
-        <li>Acorda 4x ao dia</li>
-        <li>Prefeitura roteiriza coleta</li>
-        <li><b style="color: #50fa7b">Economia de diesel e rotas otimizadas</b></li>
-      </ls-u>
-    </section>
-
-    <!-- SLIDE 11: Aquicultura -->
-    <section data-auto-animate>
-      <h2>🐟 Aquicultura (Tanque de Peixes)</h2>
-      <ls-u>
-        <li>pH, oxigênio e temperatura do tanque</li>
-        <li>Se oxigênio baixo → aciona aerador</li>
-        <li>Acorda a cada 15 minutos</li>
-        <li><b style="color: #ff5555">Sem deep sleep:</b> bateria dura 2 dias</li>
-      </ls-u>
-    </section>
-
-    <!-- SLIDE 12: Vaga Inteligente -->
-    <section data-auto-animate>
-      <h2>🅿️ Vaga Inteligente</h2>
-      <ls-u>
-        <li>Sensor magnético detecta carro</li>
-        <li>Acorda quando campo magnético muda</li>
-      </ls-u>
-      <div class="fragment" style="text-align: center; margin-top: 20px;">
-        <p style="font-size: 36pt; color: #50fa7b;"><b>3 anos com 2 pilhas AA!</b></p>
+      <h2 style="margin-bottom: 0">🐝 Monitoramento de Colmeias</h2>
+      <a style="margin-bottom: 15px" href="https://sol.sbc.org.br/index.php/ercemapi/article/view/30197">Embrapa (Marques et al., 2024)</a>
+      <div style="display:flex; width:100%; justify-content: space-evenly;flex-shrink: 1;"> 
+      <div class="mermaid" data-id="irrig-flow" style="min-width:300px;">
+          <pre>
+flowchart TD 
+    Hive["Colmeia + Sensores + ESP32"] -->|"LoRa"| Gateway["Servidor"]
+    Gateway -->|"Internet"| Internet["Página Web"]
+  
+          </pre>
+        </div>
+        <center>
+        <img src="https://i.imgur.com/RYtavpm.png" alt="">
+        </center>
       </div>
     </section>
 
-    <!-- SLIDE 13: Queimada -->
+    <!-- SLIDE 10: Aquicultura -->
     <section data-auto-animate>
-      <h2>🌳 Sensor de Queimada</h2>
-      <ls-u>
-        <li>Gás + temperatura + umidade</li>
-        <li>Floresta Amazônica, local remoto</li>
-        <li><b style="color: #ff5555">Não pode trocar bateria todo mês</b></li>
-        <li>Deep sleep é questão de <b style="color: #bd93f9">viabilidade</b></li>
-      </ls-u>
+      <h2>🐟 Aquicultura (Tanque de Peixes)</h2>
+      <center><img src="https://i.imgur.com/rbnKd8Y.png" alt=""></center>
+      <div class="mermaid" data-id="irrig-flow" style="min-width:300px;">
+        <pre> 
+          flowchart LR
+    Wake["Acorda 🌅 "] --> Read["Lê sensor O2"]
+    Read --> Check{Oxigênio baixo} 
+    
+    Check -- Sim --> Aerador[Liga aerador 💨]
+    Check -- Não --> Skip[Não faz nada]
+    
+    Aerador -- 15 minutos --> Sleep[Deep Sleep 💤 ]
+    Skip --> Sleep
+    
+    Sleep --> Wake
+        </pre>
+      </div>
+      
+      
     </section>
+
 
     <!-- SLIDE 14: Reflexão -->
     <section>
       <h2>🤔 Qual projeto vocês fariam?</h2>
-      <p style="font-size: 26pt; text-align: center; color: #bd93f9;">Qual desses seria mais legal implementar<br>aqui no IFSP ou em Capivari?</p>
     </section>
-
+</section>
     <!-- ============================================================
          SEÇÃO 3: OS 3 MODOS DE SLEEP
          ============================================================ -->
-
+<section data-background-image="https://4kwallpapers.com/images/wallpapers/hacker-binary-3840x2160-13671.jpg" data-background-opacity="0.1">
     <!-- SLIDE 15: Capa da Seção -->
     <section>
       <h2>💤 Como o ESP8266 Dorme</h2>
@@ -295,26 +287,21 @@ graph LR
         <div style="flex: 1;">
           <ls-u>
             <li><b style="color: #ff5555">Tudo</b> é desligado (CPU, Wi-Fi, RAM)</li>
-            <li>Só o <b style="color: #8be9fd">RTC</b> continua rodando</li>
+            <li>Só o <b style="color: #8be9fd">RTC</b> continua rodando
+              <ol>
+                <li>Permite acordar após tempo</li>
+                <li>Mantém memória RTC</li> 
+              </ol></li>
+              
             <li>Consome apenas <b style="color: #50fa7b">20 μA</b> (0,02 mA)</li>
             <li>Acorda como <b>ligado do zero</b></li>
             <li>Roda <code>setup()</code> novamente</li>
           </ls-u>
         </div>
-        <div style="flex: 1; text-align: center;">
+        <div style="flex: 0.7; text-align: center;" class="fragment"> 
           <div style="background: #44475a; border-radius: 12px; padding: 1em; border: 2px dashed #6272a4;">
-            <span style="color: #bd93f9; font-size: 1.1em;">📐 Analogia: desligar o celular — o despertador continua, mas tudo mais reinicia</span>
+            <span style="color: #bd93f9; font-size: 1.1em;">Analogia 🔁: desligar o celular — o despertador continua</span>
           </div>
-        </div>
-      </div>
-      <div class="fragment">
-        <div class="mermaid" data-id="deep-sleep-cycle">
-          <pre>
-graph LR
-  A["🔄 setup()"] -->|"Trabalha"| B["📊 Lê/Envia"]
-  B -->|"ESP.deepSleep()"| C["💤 Dorme 20 μA"]
-  C -->|"RST pulso"| A
-          </pre>
         </div>
       </div>
     </section>
@@ -324,19 +311,19 @@ graph LR
       <h2>⚡ O Pino Mágico: GPIO 16 → RST</h2>
       <div style="display: flex; align-items: center; gap: 1.5em;">
         <div style="flex: 1;">
-          <ls-u>
-            <li>Conexão <b style="color: #ff5555">obrigatória:</b> D0 (GPIO 16) → RST</li>
-            <li>É o RTC que "cutuca" o RST para acordar</li>
+          <ul class="fragment auto slide-up">
+            <li>Conexão <b style="color: #ff5555">obrigatória:</b> D0 → RST</li> 
+            <li>É o D0 que "cutuca" o RST para acordar após tempo</li>
             <li><b style="color: #ff5555">Sem esse fio:</b> o ESP dorme para sempre</li>
             <li>Resistor <b>10kΩ</b> entre RST e 3.3V (pull-up)</li>
-          </ls-u>
+          </ul>
         </div>
-        <div style="flex: 1; text-align: center;">
+        <div style="flex: 1; text-align: center;" class="fragment auto slide-up">
           <div style="background: #44475a; border-radius: 12px; padding: 1em; border: 2px dashed #6272a4;">
             <div class="mermaid" data-id="pin-diagram">
               <pre>
 graph TD
-  A["ESP8266<br/>GPIO 16 (D0)"] -->|"Fio"| B["RST"]
+  A["NodeMCU (D0)"] -->|"Fio"| B["RST"]
   B -->|"10kΩ"| C["3.3V"]
   style A fill:#44475a,color:#f8f8f2
   style B fill:#ff79c6,color:#282a36
@@ -345,38 +332,23 @@ graph TD
             </div>
           </div>
         </div>
-      </div>
-      <div class="fragment" style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+      </div> 
+      <div class="fragment auto slide-up" style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
         <p style="font-size: 22pt; color: #ff79c6;">⚠️ "Meu ESP não acorda?" → Verifique o fio D0→RST!</p>
-      </div>
+      </div> 
     </section>
+
 
     <!-- ============================================================
          SEÇÃO 4: MÃO NA MASSA — CÓDIGO
          ============================================================ -->
 
-    <!-- SLIDE 19: Primeiro Código -->
-    <section data-auto-animate>
-      <h2>👋 "Olá, Acordei!"</h2>
-      <pre><code class="lang-cpp" data-trim data-line-numbers>
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Acordei!");     // Primeira mensagem
-  delay(2000);                     // Simula "trabalho"
-  Serial.println("Dormindo 10s...");
-  ESP.deepSleep(10e6);            // Dorme 10 segundos
-}
-
-void loop() {
-  // NUNCA executa após deep sleep!
-}
-      </code></pre>
-    </section>
+    
 
     <!-- SLIDE 20: Primeiro Código — Destaque -->
-    <section data-auto-animate>
+    <section>
       <h2>👋 "Olá, Acordei!" — Entendendo</h2>
-      <pre><code class="lang-cpp" data-trim data-line-numbers="6-8">
+      <pre class="code-wrapper"><code class="code-wrapper lang-cpp" data-trim data-fragment-index="1" data-line-numbers="1-11|6|6|1-7">
 void setup() {
   Serial.begin(115200);
   Serial.println("Acordei!");
@@ -389,11 +361,12 @@ void loop() {
   // NUNCA executa após deep sleep!
 }
       </code></pre>
-      <div class="fragment fade-in">
+      <copy-btn class="mr-49"></copy-btn>
+      <div>
         <ls-u font-size="20">
-          <li><code>10e6</code> = 10 × 10⁶ μs = 10 segundos</li>
-          <li>Após <code>deepSleep()</code>, o ESP <b>reinicia completamente</b></li>
-          <li><code>loop()</code> nunca roda — tudo vai em <code>setup()</code></li>
+          <li data-fragment-index = "1"><code>10e6</code> = 10 × 10⁶ μs = 10 segundos</li>
+          <li data-fragment-index = "2">Após <code>deepSleep()</code>, o ESP <b>reinicia completamente</b></li>
+          <li data-fragment-index = "3"><code>loop()</code> nunca roda — tudo vai em <code>setup()</code></li>
         </ls-u>
       </div>
     </section>
@@ -418,9 +391,9 @@ void loop() {
           <tr><td class="tg-bf9e">1 hora</td><td class="tg-bf9e"><code>3600e6</code></td><td class="tg-bf9e">3600 × 1.000.000</td></tr>
         </tbody>
       </table>
-      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 20pt; color: #50fa7b;">💡 Dica: use a fórmula <code>segundos * 1e6</code> para nunca errar</p>
-      </div>
+      <div class="fragment auto" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+        <p  style="font-size: 20pt; color: #50fa7b;">💡 Dica: use a fórmula <code>segundos * 1e6</code> para nunca errar</p>
+      </div> 
     </section>
 
     <!-- SLIDE 22: Calculadora de Autonomia -->
@@ -429,21 +402,21 @@ void loop() {
       <div style="display: flex; align-items: flex-start; gap: 1.5em;">
         <div style="flex: 1;">
           <p><b>Dados:</b></p>
-          <ls-u font-size="20">
+          <ul font-size="20">
             <li>Bateria 18650: <b style="color: #8be9fd">3000 mAh</b></li>
             <li>Acordado (Wi-Fi): <b style="color: #ff5555">80 mA</b> por 5 seg</li>
             <li>Dormindo: <b style="color: #50fa7b">0,02 mA</b></li>
             <li>Ciclo: a cada 30 minutos</li>
-          </ls-u>
+          </ul>
         </div>
         <div style="flex: 1;">
           <p><b>Cálculo por dia:</b></p>
-          <ls-u font-size="20">
+          <ul font-size="20">
             <li>48 ciclos/dia (24h ÷ 30min)</li>
             <li>Acordado: 80 × 4min/60 = <b>5,3 mAh</b></li>
             <li>Dormindo: 0,02 × 23,93h = <b>0,48 mAh</b></li>
             <li>Total: <b style="color: #8be9fd">~5,8 mAh/dia</b></li>
-          </ls-u>
+          </ul>
         </div>
       </div>
       <div class="fragment" style="text-align: center; margin-top: 20px;">
@@ -495,26 +468,10 @@ void loop() {
       </div>
     </section>
 
-    <!-- SLIDE 24: Acordar por Botão -->
-    <section data-auto-animate>
-      <h2>🔘 Acordar por Botão (Interrupt Externo)</h2>
-      <pre><code class="lang-cpp" data-trim data-line-numbers>
-void setup() {
-  Serial.begin(115200);
-  Serial.println("Acordei por botão!");
-  delay(3000);
-  Serial.println("Voltando a dormir...");
-  ESP.deepSleep(0);  // "infinito" — só botão
-}
-
-void loop() {}
-      </code></pre>
-    </section>
-
     <!-- SLIDE 25: Acordar por Botão — Destaque -->
     <section data-auto-animate>
       <h2>🔘 Acordar por Botão — Detalhes</h2>
-      <pre><code class="lang-cpp" data-trim data-line-numbers="6">
+      <pre><code class="lang-cpp" data-trim data-line-numbers="1-9|6"  data-fragment-index="1">
 void setup() {
   Serial.begin(115200);
   Serial.println("Acordei por botão!");
@@ -525,13 +482,23 @@ void setup() {
 
 void loop() {}
       </code></pre>
-      <div class="fragment fade-in">
-        <ls-u font-size="20">
+      <copy-btn></copy-btn>
+      <div class="fade-in">
+        <ul font-size="20">
           <li>Botão entre <b>RST</b> e <b>GND</b> — pula o pino para LOW</li>
-          <li><code>deepSleep(0)</code> = só acorda por RST externo</li>
-          <li>Aplicações: sensor de porta, botão de pânico, alerta</li>
-        </ls-u>
+          <li class="fragment" data-fragment-index="1"><code>deepSleep(0)</code> = só acorda por RST externo</li>
+          <li class="fragment" data-fragment-index="2">Aplicações: sensor de porta, botão de pânico, alerta</li>
+        </ul>
       </div>
+    </section>
+    </section>
+
+    <section>
+      <md md="
+      ## Ligação acorda por botão
+      ">
+      </md>
+      <img src="https://i.imgur.com/LO3hw0D.png" alt="">
     </section>
 
     <!-- ============================================================
@@ -539,8 +506,9 @@ void loop() {}
          ============================================================ -->
 
     <!-- SLIDE 26: O Problema da Memória -->
+     <section data-background-image="https://i.imgur.com/7c6MFno.png" data-background-opacity="0.1">
     <section data-auto-animate>
-      <h2>🕐 O Problema: "Que Horas São?"</h2>
+      <h2>O Problema: "o que aconteceu antes (estado)?"</h2>
       <ls-u>
         <li>Deep sleep reinicia <b style="color: #ff5555">TUDO</b></li>
         <li>Variáveis normais são <b style="color: #ff5555">perdidas</b></li>
@@ -553,275 +521,289 @@ void loop() {}
 
     <!-- SLIDE 27: RTC Memory -->
     <section data-auto-animate>
-      <h2>📝 RTC Memory — O "Post-it" do ESP8266</h2>
-      <ls-u>
-        <li><b style="color: #8be9fd">512 bytes</b> que sobrevivem ao deep sleep</li>
-        <li>Declarado com <code>RTC_DATA_ATTR</code></li>
-        <li>Rápido como RAM (sem desgaste de flash)</li>
-        <li><b style="color: #ff5555">Não</b> sobrevive a desconexão de energia</li>
-      </ls-u>
-      <div class="fragment">
-        <pre><code class="lang-cpp" data-trim>
-RTC_DATA_ATTR int contador = 0;            // Persiste ao acordar!
-RTC_DATA_ATTR float ultimaTemperatura = 0;  // Persiste ao acordar!
-RTC_DATA_ATTR bool primeiraVez = true;      // Persiste ao acordar!
-        </code></pre>
-      </div>
+     <h2>📝 RTC Memory — O "Post-it" do ESP8266</h2>
+<ls-u>
+  <li><b style="color: #8be9fd">512 bytes</b> que sobrevivem ao deep sleep</li>
+  <li>Acesso manual via <code>ESP.rtcUserMemoryRead/Write</code></li>
+  <li>Rápido como RAM (sem desgaste de flash)</li>
+  <li><b style="color: #ff5555">Não</b> sobrevive a reset externo ou perda de energia</li>
+</ls-u>
     </section>
 
-    <!-- SLIDE 28: Comparação de Memórias -->
-    <section data-auto-animate>
-      <h2>🧠 O Que Sobrevive?</h2>
-      <table>
-        <thead>
-          <tr>
-            <th class="tg-bf9e">Tipo</th>
-            <th class="tg-bf9e">Deep Sleep?</th>
-            <th class="tg-bf9e">Power-off?</th>
-            <th class="tg-bf9e">Velocidade</th>
-            <th class="tg-bf9e">Limite</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="tg-bf9e">RAM normal</td>
-            <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
-            <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
-            <td class="tg-bf9e">Rápida</td>
-            <td class="tg-bf9e">~80 KB</td>
-          </tr>
-          <tr>
-            <td class="tg-bf9e" style="color: #50fa7b"><b>RTC memory</b></td>
-            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
-            <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
-            <td class="tg-bf9e">Rápida</td>
-            <td class="tg-bf9e">512 bytes</td>
-          </tr>
-          <tr>
-            <td class="tg-bf9e">EEPROM</td>
-            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
-            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
-            <td class="tg-bf9e">Média</td>
-            <td class="tg-bf9e">4 KB</td>
-          </tr>
-          <tr>
-            <td class="tg-bf9e">SPIFFS</td>
-            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
-            <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
-            <td class="tg-bf9e">Lenta</td>
-            <td class="tg-bf9e">~3 MB</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 20pt; color: #50fa7b;">💡 Para deep sleep, RTC memory é ideal: rápida e persiste. Para dados críticos, use SPIFFS.</p>
-      </div>
-    </section>
 
-    <!-- SLIDE 29: NTP Inteligente — Fluxo -->
-    <section data-auto-animate>
-      <h2>⏰ NTP Inteligente — Fluxo</h2>
-      <div class="mermaid" data-id="ntp-flow">
-        <pre>
-graph TD
-  A["🔄 Acorda"] --> B{"ntpOk?"}
-  B -->|"Não<br/>1ª vez"| C["📡 Conecta Wi-Fi"]
-  C --> D["🌐 Sincroniza NTP"]
-  D --> E["💾 Salva epochBase<br/>+ millisBase"]
-  E --> F["📅 Calcula Hora"]
-  B -->|"Sim"| F
-  F --> G["📊 Lê Sensor + Timestamp"]
-  G --> H["💤 Deep Sleep"]
-  H --> A
-  style C fill:#ff5555,color:#f8f8f2
-  style E fill:#50fa7b,color:#282a36
-  style F fill:#8be9fd,color:#282a36
-        </pre>
-      </div>
-    </section>
+    <section>
+      <md md="### Código RTC Memory">
+      </md>
+<div>
+<pre><code class="lang-cpp code-block" style="min-height:max-content" 
+  data-line-numbers="1-16|1-7|10|12-13|15" data-fragment-index="1">struct Dados {
+  int contador;
+  float ultimaTemperatura;
+  bool primeiraVez;
+};
 
-    <!-- SLIDE 30: NTP — A Economia -->
-    <section data-auto-animate>
-      <h2>⏰ NTP Inteligente — A Economia</h2>
-      <ls-u>
-        <li><b style="color: #50fa7b">1ª vez:</b> conecta Wi-Fi → sincroniza NTP → salva epoch</li>
-        <li><b style="color: #8be9fd">Depois:</b> calcula hora via <code>millis() - millisBase + epochBase</code></li>
-        <li><b style="color: #50fa7b">Economia:</b> Wi-Fi ligado só no primeiro ciclo!</li>
-      </ls-u>
-      <div class="fragment" style="background: rgba(80,250,123,0.1); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 20pt; color: #50fa7b;">⚡ Com Wi-Fi: 5 seg × 80mA = 400 mA·s. Sem Wi-Fi: 5ms × 20mA = 0,1 mA·s → <b>4.000x menos por ciclo!</b></p>
-      </div>
-    </section>
-
-    <!-- SLIDE 31: Código NTP + RTC -->
-    <section data-auto-animate>
-      <h2>⏰ Código: NTP + RTC Memory</h2>
-      <pre><code class="lang-cpp" data-trim data-line-numbers>
-RTC_DATA_ATTR bool ntpOk = false;
-RTC_DATA_ATTR time_t epochBase = 0;
-RTC_DATA_ATTR unsigned long millisBase = 0;
+Dados dados;
 
 void setup() {
-  Serial.begin(115200);
+  ESP.rtcUserMemoryRead(0, (uint32_t*)&dados, sizeof(dados));
 
-  if (!ntpOk) {
-    // Primeira vez: conecta e sincroniza
-    WiFi.begin(ssid, senha);
-    configTime(0, 0, "pool.ntp.org");
-    while (time(nullptr) < 1000) delay(100);
-    epochBase = time(nullptr);
-    millisBase = millis();
-    ntpOk = true;
-    WiFi.disconnect(true);  // Desliga Wi-Fi!
-  }
+  dados.contador++;
+  dados.primeiraVez = false;
 
-  // Calcula hora sem Wi-Fi
-  time_t agora = epochBase + (millis() - millisBase) / 1000;
-  Serial.printf("Hora: %s", ctime(&agora));
-
-  ESP.deepSleep(300e6);  // 5 minutos
+  ESP.rtcUserMemoryWrite(0, (uint32_t*)&dados, sizeof(dados));
 }
-
-void loop() {}
-      </code></pre>
+</code></pre><copy-btn></copy-btn>
+</div>
+<div>
+  <ls-u>
+    <li data-fragment-index="1">Cria uma estrutura de dados</li>
+    <li data-fragment-index="2">Leitura</li>
+    <li data-fragment-index="3">Usa</li>
+    <li data-fragment-index="4">Escreve</li>
+  </ls-u>
+</div>
     </section>
 
-    <!-- SLIDE 32: Código NTP — Destaque -->
-    <section data-auto-animate>
-      <h2>⏰ Código NTP — Linhas-Chave</h2>
-      <pre><code class="lang-cpp" data-trim data-line-numbers="10-11,20-21">
-RTC_DATA_ATTR bool ntpOk = false;
-RTC_DATA_ATTR time_t epochBase = 0;
-RTC_DATA_ATTR unsigned long millisBase = 0;
+<section>
+  <md md="### Código RTC Memory — Esperando 2h">
+</md>
+<div style="display:flex">
+<div>
+<pre style="font-size:12pt !important"><code class="lang-cpp code-block" style="min-height:max-content;font-size:12pt !important"  
+  data-line-numbers="1-24|1-6|11-13|15|16-17|19-22" 
+  data-fragment-index="1">#define SLEEP_CHUNK_US 3600000000ULL
+#define TOTAL_CICLOS 2
+
+struct Dados {
+  int ciclos;
+};
+
+Dados dados;
 
 void setup() {
-  Serial.begin(115200);
+  ESP.rtcUserMemoryRead(0, (uint32_t*)&dados, sizeof(dados));
 
-  if (!ntpOk) {
-    WiFi.begin(ssid, senha);
-    configTime(0, 0, "pool.ntp.org");       // ⬅ sincroniza
-    while (time(nullptr) < 1000) delay(100); // ⬅ espera NTP
-    epochBase = time(nullptr);
-    millisBase = millis();
-    ntpOk = true;
-    WiFi.disconnect(true);
+  dados.ciclos++;
+
+  if (dados.ciclos < TOTAL_CICLOS) {
+    ESP.rtcUserMemoryWrite(0, (uint32_t*)&dados, sizeof(dados));
+    ESP.deepSleep(SLEEP_CHUNK_US);
+  } else {
+    dados.ciclos = 0; // reset para próximo ciclo longo
+    ESP.rtcUserMemoryWrite(0, (uint32_t*)&dados, sizeof(dados));
+
+    // 👉 Aqui executa a tarefa após ~2h
   }
-
-  time_t agora = epochBase +                // ⬅ calcula sem Wi-Fi
-    (millis() - millisBase) / 1000;          // ⬅ diferença de tempo
-  Serial.printf("Hora: %s", ctime(&agora));
-  ESP.deepSleep(300e6);
 }
-      </code></pre>
+</code></pre><copy-btn></copy-btn>
+</div>
+<div>
+  <ls-u> 
+    <li class="fade-in-then-semi-out" data-fragment-index="1">Divide o tempo em blocos (60 min)</li>
+    <li class="fade-in-then-semi-out" data-fragment-index="2">Conta ciclos na RTC memory</li>
+    <li class="fade-in-then-semi-out" data-fragment-index="3">Verifica quantos ciclos já passaram</li>
+    <li class="fade-in-then-semi-out" data-fragment-index="4">Atualiza ciclos e volta a dormir</li>
+    <li class="" data-fragment-index="5">Executa ação após atingir o tempo total</li>
+  </ls-u>
+</div>
+</div>
+</section>
+
     </section>
 
     <!-- ============================================================
          SEÇÃO 6: PROJETO INTEGRADOR
          ============================================================ -->
+         <!-- SLIDE 33: Fluxo MQTT Simples -->
+          <section data-background-image="https://i.imgur.com/BjgRxjw.png" data-background-opacity="0.1">
+<section data-auto-animate>
+  <h2>🔄 Fluxo — Contador MQTT</h2>
+  <center>
+  <div class="mermaid" data-id="mqtt-flow">
+    <pre>
+graph TD 
+  A["🔄 Acorda"] --> B["📡 Wi-Fi"]
+  B --> C["🔗 MQTT Connect"]
+  C --> D["📥 Subscribe tópico"]
+  D --> E["➕ Incrementa valor"]
+  E --> F["📤 Publish valor"]
+  F --> G["💤 Deep Sleep"]
+    </pre>
+  </div>
+  </dcenteriv>
+</section>
 
-    <!-- SLIDE 33: Logger Completo — Fluxo -->
-    <section data-auto-animate>
-      <h2>🌡️ Logger Completo — Fluxo</h2>
-      <div class="mermaid" data-id="logger-flow">
-        <pre>
-graph LR
-  A["🔄 Acorda"] --> B{"NTP<br/>sincronizado?"}
-  B -->|"Não"| C["📡 WiFi + NTP"]
-  C --> D["🌡️ Lê DHT11"]
-  B -->|"Sim"| D
-  D --> E["📅 Timestamp RTC"]
-  E --> F["📋 Serial Log"]
-  F --> G["💤 Deep Sleep 5 min"]
-        </pre>
-      </div>
-    </section>
+<!-- SLIDE 34: Projeto Integrador -->
+<section data-auto-animate>
+  <h2>🚀 Projeto: Contador via MQTT</h2>
+  <ls-u>
+    <li>Conecta ao <b style="color: #8be9fd">Wi-Fi</b></li>
+    <li>Usa broker público <b style="color: #8be9fd">broker.emqx.io</b></li>
+    <li><b style="color: #50fa7b">Lê valor</b> salvo no tópico</li>
+    <li><b style="color: #50fa7b">Incrementa</b> contador</li>
+    <li><b style="color: #ffb86c">Publica</b> novo valor</li>
+    <li>Deep sleep entre ciclos</li>
+    <li><b style="color: #bd93f9">Persistência via MQTT</b> (não precisa RTC!)</li>
+  </ls-u>
 
-    <!-- SLIDE 34: Projeto Integrador -->
-    <section data-auto-animate>
-      <h2>🚀 Projeto: Estação Autônoma</h2>
-      <ls-u>
-        <li>Acorda a cada <b>5 minutos</b></li>
-        <li>Lê <b style="color: #8be9fd">DHT11</b> (temperatura + umidade)</li>
-        <li><b style="color: #50fa7b">Timestamp</b> correto em cada leitura</li>
-        <li>NTP sincroniza só <b>1 vez</b></li>
-        <li>RTC memory para contadores e hora</li>
-        <li>Deep sleep entre leituras</li>
-      </ls-u>
-      <div class="fragment" style="background: rgba(189,147,249,0.15); border-left: 4px solid #bd93f9; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 22pt; color: #bd93f9;">🚀 <b>Desafio extra:</b> Enviar dados via MQTT para um dashboard!</p>
-      </div>
-    </section>
+  <div class="fragment" style="background: rgba(80,250,123,0.15); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+    <p style="font-size: 22pt; color: #50fa7b;">💡 <b>Insight:</b> O "estado" está na nuvem, não no ESP!</p>
+  </div>
+</section>
 
-    <!-- SLIDE 35: Checklist do Projeto -->
-    <section data-auto-animate>
-      <h2>✅ Checklist do Projeto</h2>
-      <ls-u font-size="20">
-        <li>Fio D0 → RST conectado (com pull-up 10kΩ)</li>
-        <li>LED pisca ao acordar (feedback visual)</li>
-        <li>DHT11 lendo dados válidos</li>
-        <li>NTP sincroniza na primeira vez</li>
-        <li>Hora correta entre ciclos (RTC memory)</li>
-        <li>Timestamps no Serial</li>
-        <li>Deep sleep de 5 minutos</li>
-        <li>Contador de ciclos (<code>RTC_DATA_ATTR</code>)</li>
-        <li>Wi-Fi desligado após uso</li>
-        <li>Código limpo e comentado</li>
-      </ls-u>
-    </section>
+<!-- SLIDE 35: Checklist do Projeto -->
+<section data-auto-animate>
+  <h2>✅ Checklist do Projeto</h2>
+  <ls-u font-size="20">
+    <li>Wi-Fi conecta corretamente</li>
+    <li>MQTT conecta ao broker</li>
+    <li>Subscribe recebe valor anterior</li>
+    <li>Publish envia valor incrementado</li>
+    <li>Serial mostra 📥 e 📤</li>
+    <li>Deep sleep funcionando</li>
+    <li>ESP acorda e continua contagem</li>
+    <li><b style="color:#50fa7b">Contador não zera após desligar!</b></li>
+    <li>Tópico MQTT único por dupla</li>
+    <li>Código organizado e comentado</li>
+  </ls-u>
+</section>
+ 
+<section>
+  <pre><code class="lang-cpp"  style="min-height:max-content;font-size:12pt">#include "ESP8266WiFi.h"
+#include "AsyncMqttClient.h"
+#include "Ticker.h"
 
+  
+#define WIFI_SSID "LAB6"
+
+#define MQTT_HOST "broker.emqx.io"
+#define MQTT_PORT 1883
+
+// ==============================
+// CADA DUPLA DEVE MUDAR ISSO
+// ==============================
+#define TOPICO "aula11/ciclos/Caio"
+  
+Ticker naoRecebeMQTT;
+AsyncMqttClient mqttClient;
+
+int contador = 0;
+bool recebeuValor = false;
+
+
+void conectaWiFi() {
+  Serial.println("Conectando Wi-Fi...");
+  WiFi.begin(WIFI_SSID);
+}
+
+void onWiFiConnect(const WiFiEventStationModeGotIP& event) {
+  Serial.println("Wi-Fi conectado!");
+  mqttClient.connect();
+}
+
+void onMqttConnect(bool sessionPresent) {
+  Serial.println("MQTT conectado!");
+  
+  mqttClient.subscribe(TOPICO, 0);
+  // Depois de 10 segundos sem receber valor assumir 0
+  naoRecebeMQTT.once(10, []() {
+    recebeuValor = true;
+    contador = 0;
+  })
+}
+
+void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties,
+                   size_t len, size_t index, size_t total) {
+  String msg;
+  for (size_t i = 0; i < len; i++) {
+    msg += (char)payload[i];
+  }
+
+  Serial.println("📥 Recebido: " + msg);
+
+  // Converter mensagem para número
+  contador = msg.toInt();
+  recebeuValor = true;
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(100);
+
+  WiFi.onStationModeGotIP(onWiFiConnect);
+
+  mqttClient.onConnect(onMqttConnect);
+  mqttClient.onMessage(onMqttMessage);
+
+  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
+
+  conectaWiFi();
+}
+
+void loop() {
+  // ==========================
+  // Esperar receber valor antes de continuar
+  // ==========================
+  
+  // ==========================
+  // Incrementar contador
+  // ==========================
+
+  Serial.println("📤 Enviando: " + String(contador));
+
+  // Publicar novo valor do contador
+  mqttClient.publish(TOPICO, 0, true, String(contador).c_str());
+
+  delay(1000); // garante envio
+
+  Serial.println("💤 Dormindo...");
+
+  // ==========================
+  // Colocar em deep sleep
+  // ==========================
+
+}
+  </code></pre><copy-btn></copy-btn> 
+</section>
+  
+ 
     <!-- ============================================================
          SEÇÃO 7: ENCERRAMENTO
          ============================================================ -->
 
-    <!-- SLIDE 36: Resumo -->
-    <section data-auto-animate>
-      <h2>✅ O Que Aprendemos Hoje</h2>
-      <div style="display: flex; flex-wrap: wrap; gap: 1em;">
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #8be9fd;">💤 Deep Sleep</h3>
-          <p style="font-size: 18pt;">~4.000x menos consumo (80mA → 20μA)</p>
-        </div>
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #50fa7b;">⚡ D0 → RST</h3>
-          <p style="font-size: 18pt;">Conexão obrigatória para acordar</p>
-        </div>
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #bd93f9;">📝 RTC Memory</h3>
-          <p style="font-size: 18pt;">512 bytes persistentes entre ciclos</p>
-        </div>
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #ff79c6;">⏰ NTP 1x</h3>
-          <p style="font-size: 18pt;">Sincroniza 1 vez, depois calcula</p>
-        </div>
-      </div>
-      <div class="fragment" style="text-align: center; margin-top: 20px;">
-        <p style="font-size: 24pt; color: #ff79c6;"><b>"Sem deep sleep, IoT em campo é impossível."</b></p>
-      </div>
-    </section>
+     <section data-auto-animate>
+  <h2>✅ O Que Aprendemos Hoje</h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 1em;">
+    
+    <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+      <h3 style="font-size:20pt;color: #8be9fd;">💤 Deep Sleep</h3>
+      <p style="font-size: 18pt;">ESP acorda, executa e dorme sozinho</p>
+    </div>
 
-    <!-- SLIDE 37: Próxima Aula -->
-    <section>
-      <h2>🔮 Próxima Aula: Máquinas de Estado</h2>
-      <p style="font-size: 24pt; margin: 20px 40px;">E se ao acordar, o sensor precisasse <b style="color: #bd93f9">decidir</b> o que fazer?</p>
-      <div class="fragment">
-        <div class="mermaid" data-id="fsm-preview">
-          <pre>
-graph TD
-  A["🔄 Acorda"] --> B{"Temp > 30°C?"}
-  B -->|"Sim"| C["❄️ Liga Cooler"]
-  B -->|"Não"| D{"Umidade < 40%?"}
-  D -->|"Sim"| E["💧 Liga Irrigação"]
-  D -->|"Não"| F["💤 Dorme"]
-  C --> F
-  E --> F
-          </pre>
-        </div>
-      </div>
-      <div class="fragment" style="text-align: center; margin-top: 15px;">
-        <p style="font-size: 28pt; color: #50fa7b;"><b>Isso é uma Máquina de Estados Finitos (FSM)!</b></p>
-      </div>
-    </section>
+    <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+      <h3 style="font-size:20pt;color: #50fa7b;">⚡ D0 → RST</h3>
+      <p style="font-size: 18pt;">Permite acordar por timer</p>
+    </div>
 
+    <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+      <h3 style="font-size:20pt;color: #bd93f9;">📡 MQTT</h3>
+      <p style="font-size: 18pt;">Estado salvo na nuvem (broker)</p>
+    </div>
+
+    <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+      <h3 style="font-size:20pt;color: #ff79c6;">🔁 Loop Inteligente</h3>
+      <p style="font-size: 18pt;">Acorda → incrementa → publica → dorme</p>
+    </div>
+
+  </div>
+
+  <div class="fragment" style="text-align: center; margin-top: 20px;">
+    <p style="font-size: 24pt; color: #ff79c6;">
+      <b>"Sem persistência externa, o ESP esquece tudo."</b>
+    </p>
+  </div>
+</section>
+</section>
   </div>
 </div>
 
@@ -840,7 +822,7 @@ graph TD
 <script src="../components/components.js"></script>
 
 <script>
-  window.app = Vue.createApp({
+  const app = Vue.createApp({
     setup() {
       Vue.onMounted(() => {
         initializeReveal();
@@ -848,6 +830,10 @@ graph TD
       return {};
     },
   });
+
+  initializeComponents(app);
+  initializeHeader(app);
+
 
   function initializeReveal() {
     var deck1 = new Reveal(document.querySelector(".reveal"), {
@@ -862,8 +848,19 @@ graph TD
       plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
     });
     deck1.initialize();
+    deck1.on('slidechanged', event => {
+      console.log("Mudou slide")
+    const auto = event.currentSlide.querySelectorAll('.fragment.auto');
+
+    auto.forEach((el, i) => {
+      setTimeout(() => {
+        el.classList.add('visible');
+      }, i * 300); 
+    });
+  });
   }
-  window.app.mount("#app");
+  
+  app.mount("#app"); 
 </script>
 
 </body>

@@ -1,4 +1,4 @@
-window.app.component("header1", {
+const headerComponent = {
   props: ["curso", "aula", "titleSize", "title"],
   setup(props) {
     const count = Vue.ref(0);
@@ -10,77 +10,86 @@ window.app.component("header1", {
   },
   /*html*/
   template: `
-        <div
-        style="
-          display: grid;
-          grid-template-rows: 75% 25%;
-          height: 700px;
-        "
-      >
-        <!-- r1: Top section -->
-        <div
+          <div
           style="
-            background: url('../img/fundo.png') no-repeat center/cover;
             display: grid;
-            grid-template-rows: auto 1fr auto;
+            grid-template-rows: 75% 25%;
+            height: 700px;
           "
         >
-          <!-- Top bar -->
+          <!-- r1: Top section -->
           <div
             style="
-              display: flex;
-              justify-content: space-between;
-              margin: 30px 30px 0 30px;
+              background: url('../img/fundo.png') no-repeat center/cover;
+              display: grid;
+              grid-template-rows: auto 1fr auto;
             "
           >
-            <span style="font-size: 24pt">{{ curso }}</span>
-            <span style="font-size: 24pt">Aula {{ aula }}</span>
-          </div>
-          <!-- Images middle -->
-          <div
+            <!-- Top bar -->
+            <div
               style="
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
-                margin: 0 30px;
+                margin: 30px 30px 0 30px;
               "
             >
-            <div v-for="slot in slots" >
-              <component :is="slot" style="max-height:260px;" />
+              <span style="font-size: 24pt">{{ curso }}</span>
+              <span style="font-size: 24pt">Aula {{ aula }}</span>
             </div>
+            <!-- Images middle -->
+            <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin: 0 30px;
+                "
+              >
+              <div v-for="slot in slots" >
+                <component :is="slot" style="max-height:260px;" />
+              </div>
+            </div>
+      
+            <!-- Bottom heading -->
+            <h2
+              style="
+                margin: 0 30px 60px 30px;
+                align-self: end;
+              "
+              :style="{fontSize: (titleSize || 40) +  'pt'}"
+            >
+              {{title}}
+            </h2>
           </div>
-    
-          <!-- Bottom heading -->
-          <h2
+      
+          <!-- r2: Bottom info bar -->
+          <div
             style="
-              margin: 0 30px 60px 30px;
-              align-self: end;
+              display: grid;
+              grid-template-columns: 1fr auto;
+              align-items: center;
+              margin: 0 30px 64px 30px;
             "
-            :style="{fontSize: (titleSize || 40) +  'pt'}"
           >
-            {{title}}
-          </h3>
-        </div>
-    
-        <!-- r2: Bottom info bar -->
-        <div
-          style="
-            display: grid;
-            grid-template-columns: 1fr auto;
-            align-items: center;
-            margin: 0 30px 64px 30px;
-          "
-        >
-          <div style="text-align: left;"
-           :style="{fontSize: '27px'}">
-            <p>Prof. Caio Hamamura</p>
-            <p>hamamura.caio@ifsp.edu.br</p>
+            <div style="text-align: left;"
+            :style="{fontSize: '27px'}">
+              <p>Prof. Caio Hamamura</p>
+              <p>hamamura.caio@ifsp.edu.br</p>
+            </div>
+            <img src="../img/Artboard 1 copy 2.png" height="135" alt="" />
           </div>
-          <img src="../img/Artboard 1 copy 2.png" height="135" alt="" />
         </div>
-      </div>
-      `,
-});
+        `,
+};
+
+
+function initializeHeader(app) {
+  app.component("header1", headerComponent);
+}
+
+if (window.app?.component) {
+  initializeHeader(window.app);
+}
 
 function addCopyButtons() {
   document.querySelectorAll("pre > code.copy").forEach((codeBlock) => {

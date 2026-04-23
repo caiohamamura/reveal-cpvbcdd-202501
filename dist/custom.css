@@ -92,8 +92,7 @@ table td {
     /* Cor da borda da célula */
     border-style: solid;
     border-width: 1px;
-    font-family: Arial, sans-serif;
-    font-size: 20px;
+    
     overflow: hidden;
     padding: 10px 5px;
     word-break: normal;
@@ -106,8 +105,6 @@ table th {
     /* Cor da borda do cabeçalho */
     border-style: solid;
     border-width: 1px;
-    font-family: Arial, sans-serif;
-    font-size: 20px;
     font-weight: normal;
     overflow: hidden;
     padding: 10px 5px;
@@ -138,21 +135,23 @@ table .tg-bf9e {
     background-color: cyan;
 }
 
+.reveal pre {
+    width: max-content;
+}
+
 pre.code-inline {
     display: inline-block;
     width: min-content;
-    font-size: 20pt;
     margin: 0;
 }
 
 pre.code-inline code {
-    padding: 2px !important;
-    margin: 0 0 0 0 !important;
     position: relative;
     top: 10px;
 }
 
-pre.smaller, .smaller table td {
+pre.smaller,
+.smaller table td {
     margin: 0;
     padding: 0;
     width: max-content;
@@ -160,7 +159,8 @@ pre.smaller, .smaller table td {
 
 
 pre>code {
-    width: max-content;
+    width: max-content !important;
+    position: relative;
 }
 
 section {
@@ -178,7 +178,7 @@ section {
 
 
 
-.mermaid > svg {
+.mermaid>svg {
     max-height: 600px;
     overflow: auto;
 }
@@ -281,7 +281,7 @@ section {
 
 .architecture-box {
     background: #44475a;
-    font-size:24pt;
+    font-size: 24pt;
     padding: 10px;
     border-radius: 8px;
     margin: 10px;
@@ -316,6 +316,65 @@ div {
 }
 
 
-.mr-49 {
-    margin-right:49px;
+.copy-button {
+    right: 0;
+    position: absolute;
+    z-index: 1;
+}
+
+.edge-thickness-normal {
+    stroke-width: 4px !important;
+}
+
+.edgeLabel p {
+    background-color: #66bb6a !important;
+}
+
+.node rect,
+.node circle,
+.node polygon,
+.node path {
+    stroke-width: 4px !important;
+    fill: #2f9e44 !important;
+    stroke: #1b5e20 !important;
+}
+
+.flowchart-link {
+    stroke: #fff !important;
+    stroke-width: 4px !important;
+    fill: none !important;
+}
+
+.nodeLabel,
+.edgeLabel {
+    color: white !important;
+}
+
+.reveal a {
+    color: #d1fae5;
+    /* soft mint (fits green palette) */
+    font-size: 18pt;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    transition: all 0.2s ease;
+}
+
+.reveal a:hover {
+    color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+}
+
+.reveal a:active {
+    opacity: 0.8;
+}
+
+.fragment.slide-up {
+    opacity: 0;
+    transform: translateY(30px) !important;
+    transition: all 1.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.fragment.slide-up.visible {
+    opacity: 1;
+    transform: translateY(0) !important;
 }
