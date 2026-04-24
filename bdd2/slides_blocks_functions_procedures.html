@@ -764,30 +764,56 @@ $$ LANGUAGE plpgsql;
       </section>
 
       <!-- SLIDE 30: Desafio -->
-      <section data-auto-animate>
-        <h2>Desafio Extra</h2>
-        <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
-          <p><strong>Objetivo:</strong> Crie <code>fn_produtos_por_faixa</code> que:</p>
-          <ul>
-            <li>Use <code>RETURNS TABLE</code> para retornar id, nome, preço</li>
-            <li>Valide que <code>p_min <= p_max</code></li>
-            <li>Levante exceção se inválido</li>
-          </ul>
-        </div>
-        <div>
-          <code-block lang="pgsql">
-CREATE OR REPLACE FUNCTION fn_produtos_por_faixa(
-    -- parâmetros de entrada
-) RETURNS TABLE(
-    -- colunas de retorno
+      <section data-auto-animate style="transform:scale(0.7) translateY(-20%)">
+  <h2>Exercício 4 — Função de Resumo de Clientes</h2>
+  <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 20px;">
+    <multi-col>
+      <div style="align-self:start">
+    <p><strong>Objetivo:</strong> Crie a função <code>resumo_clientes</code> que retorne uma tabela contendo:</p>
+    <ul>
+      <li><code>cliente_id</code></li>
+      <li><code>nome_cliente</code></li>
+      <li><code>cidade</code></li>
+      <li><code>total_pedidos</code> (não pendentes)</li>
+      <li><code>total_gasto</code></li>
+      <li><code>ticket_medio</code></li>
+      <li><code>produto_mais_comprado</code> (em qde)</li>
+    </ul>
+    </div>
+    <div style="align-self:start"> 
+    <p><strong>Regras:</strong></p>
+    <ul>
+      <li>Utilize dados de múltiplas tabelas</li>
+      <li>Ignore pedidos com status <code>'PENDENTE'</code></li>
+      <li>Considere o produto mais comprado pela soma das quantidades</li>
+      <li>Em caso de empate, pode retornar qualquer produto</li>
+    </ul>
+    </div>
+    </multi-col>
+  </div>
+  <div>
+    <center>
+    <code-block lang="sql" style="max-height:200px;">
+CREATE OR REPLACE FUNCTION resumo_clientes()
+RETURNS TABLE (
+    cliente_id INTEGER,
+    nome_cliente VARCHAR,
+    cidade VARCHAR,
+    total_pedidos INTEGER,
+    total_gasto DECIMAL,
+    produto_mais_comprado VARCHAR
 ) AS $$
 BEGIN
-    -- sua lógica aqui
+    RETURN QUERY
+    -- sua query aqui
+    ;
 END;
 $$ LANGUAGE plpgsql;
-          </code-block>
-        </div>
-      </section>
+    </code-block>
+    </center>
+  </div>
+</section>
+
 
       <!-- ============================================================
          SEÇÃO 8: ENCERRAMENTO
