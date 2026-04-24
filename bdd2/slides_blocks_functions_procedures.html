@@ -743,9 +743,10 @@ $$ LANGUAGE plpgsql;
         <div style="background: #282a36; border-left: 4px solid #ff79c6; padding: 20px;">
           <p><strong>Objetivo:</strong> Crie <code>sp_transferir_estoque</code> que:</p>
           <ul>
-            <li>Verifique se ambos os produtos existem</li>
-            <li>Verifique estoque suficiente na origem</li>
-            <li>Reduza da origem e aumente no destino</li>
+            <li>Crie uma tabela cópia da tabela produtos vazia denominada <code>produtos_prateleira</code></li>
+            <li>Verifique se o produto existe</li>
+            <li>Verifique se há estoque suficiente na origem</li>
+            <li>Reduza da origem e aumente no destino (defina em um parâmetro qual origem e o destino)</li>
             <li>Levante exceção se não for possível</li>
           </ul>
         </div>
