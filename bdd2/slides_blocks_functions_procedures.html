@@ -208,17 +208,17 @@ END $$;</code></pre>
             </ul>
           </div>
           <div style="flex: .5;">
-            <div class="fragment" style="background: #282a36; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+            <div style="background: #282a36; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
               <p style="color: #ff5555; font-size: 16pt; margin: 0;">Sem dollar quoting:</p>
               <pre style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT 'It''s a ''test''';</code></pre>
             </div>
-            <div class="fragment" style="background: #282a36; border-radius: 8px; padding: 15px;">
+            <div style="background: #282a36; border-radius: 8px; padding: 15px;">
               <p style="color: #50fa7b; font-size: 16pt; margin: 0;">Com dollar quoting:</p>
               <pre style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT $$It's a 'test'$$;</code></pre>
             </div>
           </div>
         </multi-col>
-        <div class="fragment" style="text-align: center; margin-top: 15px;">
+        <div style="text-align: center; margin-top: 15px;">
           <p style="font-size: 20pt; color: #6272a4;">Em DO blocks e functions, <code style="color:#ff79c6">$$</code> delimita o corpo do código PL/pgSQL</p>
         </div>
       </section>
@@ -232,7 +232,7 @@ BEGIN
     RAISE NOTICE 'Olá, Banco de Dados II!';
 END $$;
         </code-block>
-        <div class="fragment" style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px; margin-top: 15px;">
+        <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px; margin-top: 15px;">
           <p style="font-size: 18pt; color: #8be9fd; margin: 0;">Resultado:</p>
           <pre style="margin: 5px 0 0 0; font-size: 16pt;"><code>NOTICE:  Olá, Banco de Dados II!</code></pre>
         </div>
@@ -275,7 +275,7 @@ BEGIN
     RAISE NOTICE 'E-mails normalizados: %', count_updated;
 END $$;
         </code-block>
-        <div class="fragment" style="text-align: center; margin-top: 15px;">
+        <div style="text-align: center; margin-top: 15px;">
           <p style="font-size: 20pt; color: #ff79c6;"><b>DO block = execução imediata, sem reuso, sem parâmetros de saída</b></p>
         </div>
       </section>
@@ -341,7 +341,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
         </code-block>
-        <div class="fragment" style="margin-top: 10px;">
+        <div style="margin-top: 10px;">
           <pre style="font-size: 16pt;"><code class="sql">CALL sp_novo_cliente('Eduardo Lima', 'eduardo@email.com', 'São Paulo', 4500);</code></pre>
         </div>
       </section>
@@ -452,7 +452,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
         </code-block>
-        <div class="fragment" style="margin-top: 15px;">
+        <div style="margin-top: 15px;">
           <pre style="font-size: 16pt;"><code class="sql">SELECT somar(3, 5);  -- resultado: 8</code></pre>
         </div>
       </section>
@@ -473,7 +473,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STRICT;
         </code-block>
-        <div class="fragment" style="margin-top: 15px;">
+        <div style="margin-top: 15px;">
           <pre style="font-size: 16pt;"><code class="sql">SELECT calcular_comissao(1000.00);  -- 50.00</code></pre>
         </div>
       </section>
@@ -691,13 +691,13 @@ graph TD
         <h2>Exercício 1 — DO Block</h2>
         <div class="highlight-box" style="background: #282a36; border-left: 4px solid #8be9fd; padding: 20px;">
           <p><strong>Objetivo:</strong> Crie um DO block que:</p>
-          <ls-u>
+          <ul>
             <li data-fragment-index="1">Conte quantos produtos existem na tabela <code>produtos</code></li>
             <li data-fragment-index="2">Calcule a média de preços</li>
             <li data-fragment-index="3">Exiba mensagem formatada com <code>RAISE NOTICE</code></li>
-          </ls-u>
+          </ul>
 
-          <div class="fragment" data-fragment-index="3" >
+          <div>
           <code-block>
 -- Criar bloco DO
 
@@ -718,13 +718,13 @@ RAISE NOTICE 'Média preços R$%', media;
         <h2>Exercício 2 — Function com OUT</h2>
         <div class="highlight-box" style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
           <p><strong>Objetivo:</strong> Crie <code>fn_estatisticas_categoria</code> que retorna:</p>
-          <ls-u>
+          <ul>
             <li><code>total_produtos</code> — count de produtos</li>
             <li><code>preco_medio</code> — preço médio</li>
             <li><code>preco_max</code> — maior preço</li>
-          </ls-u>
+          </ul>
         </div>
-        <div class="fragment">
+        <div>
           <code-block lang="sql">
 CREATE OR REPLACE FUNCTION fn_estatisticas_categoria(
     -- parâmetros de entrada e saída (OUT)
@@ -740,16 +740,16 @@ $$ LANGUAGE plpgsql;
       <!-- SLIDE 29: Exercício 3 - Procedure -->
       <section data-auto-animate>
         <h2>Exercício 3 — Procedure com Transação</h2>
-        <div class="highlight-box" style="background: #282a36; border-left: 4px solid #ff79c6; padding: 20px;">
+        <div style="background: #282a36; border-left: 4px solid #ff79c6; padding: 20px;">
           <p><strong>Objetivo:</strong> Crie <code>sp_transferir_estoque</code> que:</p>
-          <ls-u>
+          <ul>
             <li>Verifique se ambos os produtos existem</li>
             <li>Verifique estoque suficiente na origem</li>
             <li>Reduza da origem e aumente no destino</li>
             <li>Levante exceção se não for possível</li>
-          </ls-u>
+          </ul>
         </div>
-        <div class="fragment">
+        <div>
           <code-block lang="sql">
 CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
     -- parâmetros de entrada
@@ -765,16 +765,16 @@ $$ LANGUAGE plpgsql;
       <!-- SLIDE 30: Desafio -->
       <section data-auto-animate>
         <h2>Desafio Extra</h2>
-        <div class="highlight-box" style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
+        <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
           <p><strong>Objetivo:</strong> Crie <code>fn_produtos_por_faixa</code> que:</p>
-          <ls-u>
+          <ul>
             <li>Use <code>RETURNS TABLE</code> para retornar id, nome, preço</li>
             <li>Valide que <code>p_min <= p_max</code></li>
             <li>Levante exceção se inválido</li>
-          </ls-u>
+          </ul>
         </div>
-        <div class="fragment">
-          <code-block lang="sql">
+        <div>
+          <code-block lang="pgsql">
 CREATE OR REPLACE FUNCTION fn_produtos_por_faixa(
     -- parâmetros de entrada
 ) RETURNS TABLE(
