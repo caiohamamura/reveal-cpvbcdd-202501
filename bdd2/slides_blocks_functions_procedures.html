@@ -401,13 +401,13 @@ $$ LANGUAGE plpgsql;
       <!-- SLIDE 21: Quando usar Procedures -->
       <section data-auto-animate>
         <h2>Quando usar Procedures?</h2>
-        <ls-u>
+        <ul>
           <li>Operações de <b>mutação</b> (INSERT, UPDATE, DELETE)</li>
           <li>Processos em <b>lote</b> que precisam de transações</li>
           <li>Quando precisa usar <code>COMMIT</code>/<code>ROLLBACK</code> interno</li>
           <li>Processos que alteram múltiplas tabelas atomicamente</li>
           <li>Tarefas de <b>importação</b> ou <b>migração de dados</b></li>
-        </ls-u>
+        </ul>
       </section>
 
 
@@ -489,7 +489,6 @@ $$ LANGUAGE plpgsql STRICT;
             <tr><td><code>RETURNS tipo</code></td><td>Escalar</td><td>INTEGER, TEXT, BOOLEAN</td></tr>
             <tr><td><code>RETURNS TABLE(...)</code></td><td>Tabela virtual</td><td>Relatórios, filtros</td></tr>
             <tr><td><code>RETURNS SETOF tabela</code></td><td>Conjunto de linhas</td><td>Listagens</td></tr>
-            <tr><td><code>RETURNS TRIGGER</code></td><td>Trigger function</td><td>Auditoria (já visto!)</td></tr>
           </tbody>
         </table>
       </section>
@@ -524,14 +523,14 @@ $$ LANGUAGE plpgsql;
         <multi-col style="gap:15px">
           <div style="flex: 1;">
             <ls-u>
-              <li><b style="color:#8be9fd">IN</b> — recebe valor (padrão)</li>
-              <li><b style="color:#50fa7b">OUT</b> — retorna valor pela assinatura</li>
-              <li><b style="color:#ff79c6">INOUT</b> — entrada e saída</li>
-              <li><b style="color:#f1fa8c">VARIADIC</b> — número variável de args</li>
+              <li data-fragment-index="1" class="auto"><b style="color:#8be9fd">IN</b> — recebe valor (padrão)</li>
+              <li data-fragment-index="2"><b style="color:#50fa7b">OUT</b> — retorna valor pela assinatura</li>
+              <li data-fragment-index="3"><b style="color:#ff79c6">INOUT</b> — entrada e saída</li>
+              <li data-fragment-index="4"><b style="color:#f1fa8c">VARIADIC</b> — número variável de args</li>
             </ls-u>
           </div>
           <div style="flex: 1;">
-            <code-block lang="sql">
+            <code-block lang="pgsql" data-line-numbers="1-11|3|4-5|1-11" data-fragment-index="1">
 -- OUT: retorna sem RETURN
 CREATE FUNCTION dividir(
     a NUMERIC, b NUMERIC,
@@ -574,6 +573,47 @@ $$ LANGUAGE plpgsql;
         </code-block>
         <div class="fragment" style="margin-top: 10px;">
           <pre style="font-size: 16pt;"><code class="sql">SELECT * FROM fn_estatisticas_cliente(1);</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 15.5: INOUT -->
+      <section data-auto-animate>
+        <h2>INOUT — Entrada e Saída</h2>
+        <code-block lang="pgsql">
+-- INOUT: recebe, modifica e retorna
+CREATE FUNCTION dobro_inout(
+    INOUT valor NUMERIC
+) AS $$
+BEGIN
+    valor := valor * 2;
+END;
+$$ LANGUAGE plpgsql;
+        </code-block>
+        <div class="fragment" style="margin-top: 10px;">
+          <pre style="font-size: 16pt;"><code class="sql">SELECT dobro_inout(5);  -- resultado: 10</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 15.6: VARIADIC -->
+      <section data-auto-animate>
+        <h2>VARIADIC — Múltiplos Argumentos</h2>
+        <code-block lang="pgsql">
+-- VARIADIC: número variável de argumentos
+CREATE FUNCTION somar_varios(
+    VARIADIC nums NUMERIC[]
+) RETURNS NUMERIC AS $$
+DECLARE
+    total NUMERIC := 0;
+BEGIN
+    FOR i IN 1..array_length(nums, 1) LOOP
+        total := total + nums[i];
+    END LOOP;
+    RETURN total;
+END;
+$$ LANGUAGE plpgsql;
+        </code-block>
+        <div class="fragment" style="margin-top: 10px;">
+          <pre style="font-size: 16pt;"><code class="sql">SELECT somar_varios(1, 2, 3, 4, 5);  -- resultado: 15</code></pre>
         </div>
       </section>
 
@@ -769,11 +809,11 @@ graph TD
         const auto = event.currentSlide.querySelectorAll('.fragment.auto');
         auto.forEach((el, i) => {
           setTimeout(() => {
-            el.classList.add('visible');
+            deck1.nextFragment();
           }, i * 300);
         });
       });
-    }
+    } 
 
     app.mount("#app");
   </script>
