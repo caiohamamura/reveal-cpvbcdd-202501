@@ -283,12 +283,12 @@ END $$;
       <!-- SLIDE 8: Quando usar DO Blocks -->
       <section data-auto-animate>
         <h2>Quando usar DO Blocks?</h2>
-        <ls-u>
+        <ul>
           <li>Script de migração <b>único</b></li>
           <li>Atualização massiva de dados sem reaproveitamento</li>
           <li>Teste rápido de lógica PL/pgSQL</li>
           <li>Automação de tarefas administrativas (roles, schemas)</li>
-        </ls-u>
+        </ul>
       </section>
 
       <!-- ============================================================
@@ -300,12 +300,12 @@ END $$;
         <h2>Stored Procedures — O que são?</h2>
         <multi-col style="gap:15px">
           <div style="flex: 1;">
-            <ls-u>
+            <ul>
               <li>Objeto armazenado, <b>não retorna valor</b></li>
               <li>Chamada via <code>CALL</code></li>
               <li>Pode fazer <code>COMMIT</code>/<code>ROLLBACK</code> interno</li>
               <li>Ideal para operações de <b>mutação</b></li>
-            </ls-u>
+            </ul>
           </div>
           <div style="flex: 1; text-align: center;">
             <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
@@ -420,12 +420,12 @@ $$ LANGUAGE plpgsql;
         <h2>Functions — O que são?</h2>
         <multi-col style="gap:15px">
           <div style="flex: 1;">
-            <ls-u>
+            <ul>
               <li>Objeto <b>armazenado</b> no banco</li>
               <li>Recebe parâmetros e <b>retorna</b> um valor</li>
               <li>Pode ser usada em <code>SELECT</code>, <code>WHERE</code>, expressions</li>
               <li>Reutilizável em múltiplos lugares</li>
-            </ls-u>
+            </ul>
           </div>
           <div style="flex: 1; text-align: center;">
             <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
@@ -620,13 +620,13 @@ $$ LANGUAGE plpgsql;
       <!-- SLIDE 16: Quando usar Functions -->
       <section data-auto-animate>
         <h2>Quando usar Functions?</h2>
-        <ls-u>
+        <ul>
           <li>Reutilização em <code>SELECT</code>, <code>WHERE</code>, <code>CHECK</code> constraints</li>
           <li>Cálculos recorrentes (comissão, imposto, frete)</li>
           <li>Validação de dados em constraints</li>
           <li>Geração de relatórios complexos (<code>RETURNS TABLE</code>)</li>
           <li><b>Composable</b> — pode ser usada dentro de outras queries</li>
-        </ls-u>
+        </ul>
       </section>
 
       <!-- SLIDE 21: Functions vs Procedures -->
