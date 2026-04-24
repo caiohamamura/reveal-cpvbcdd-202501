@@ -2,3 +2,5 @@ node_modules
 pnpm-locl.yaml
 .claude
 .openclaude
+nao_enviar
+.openclaude-profile.json

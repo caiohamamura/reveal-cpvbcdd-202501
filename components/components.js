@@ -27,6 +27,7 @@ const lsUComponent = {
     // Initialize the list component
     this.$el.querySelectorAll("li").forEach((li) => {
       li.classList.add("fragment");
+      li.classList.add("fade-in-then-semi-out"); 
       li.style.fontSize = this.fontSize || "24pt";
     });
   },
