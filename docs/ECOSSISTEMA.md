@@ -17,6 +17,7 @@ Este repositório é um **framework de apresentação educacional** construído 
 | **Matemática** | KaTeX + MathJax | - | Equações |
 | **Animações** | CSS fragments + data-auto-animate | - | Transições |
 | **Estilização** | CSS customizado + temas Reveal.js | - | Visual temático |
+| **Linhas conectoras** | LeaderLine | - | Setas/linhas entre elementos |
 
 ---
 
@@ -39,7 +40,7 @@ reveal-cpvbcdd-202501/
 │   ├── notes/               # Speaker notes
 │   ├── search/              # Busca no slide
 │   ├── zoom/                # Zoom
-│   └── leader-line.min.js   # Linhas conectoras (??)
+│   └── leader-line.min.js   # Biblioteca LeaderLine (linhas conectoras)
 ├── components/              # Componentes Vue.js customizados
 │   ├── components.js        # Componentes de UI
 │   └── md.js                # (legacy/incompleto)
@@ -191,6 +192,56 @@ SELECT * FROM orders;
 ```html
 <md :md="'<strong>Texto</strong>'"></md>
 ```
+
+#### `copy-btn` — Botão Copiar Genérico
+```html
+<table>...</table>
+<copy-btn></copy-btn>
+```
+**Funcionalidades:**
+- Detecta o irmão anterior (tabela, bloco de texto) e copia seu conteúdo
+- Para tabelas: extrai células em texto separado por tabulação, remove linhas duplicadas do header
+- Feedback visual "Copiado!" por 2s
+
+#### `leader-line` — Linhas Conectoras entre Elementos
+```html
+<div id="el1">Elemento A</div>
+<div id="el2">Elemento B</div>
+
+<!-- Sempre visível -->
+<leader-line from="el1" to="el2"></leader-line>
+
+<!-- Aparece como fragment step -->
+<leader-line from="el1" to="el2" class="fragment"></leader-line>
+
+<!-- Com índice de fragmento -->
+<leader-line from="el1" to="el2" class="fragment" data-fragment-index="3"></leader-line>
+```
+
+> **Importante:** Use tag com fechamento explícito `</leader-line>`. Tag auto-fechada `<leader-line />` causa problemas no parser HTML do browser (consome elementos subsequentes como filhos).
+
+**Props:**
+| Prop | Tipo | Default | Descrição |
+|------|------|---------|-----------|
+| `from` | String | *obrigatório* | ID do elemento de origem |
+| `to` | String | *obrigatório* | ID do elemento de destino |
+| `color` | String | `'#ff79c6'` | Cor da linha |
+| `size` | Number | `3` | Espessura da linha |
+| `path` | String | `'fluid'` | Tipo de caminho (`fluid`, `straight`, `arc`, `grid`, `magnet`) |
+| `startSocket` | String | auto | Socket de saída (`top`, `bottom`, `left`, `right`) |
+| `endSocket` | String | auto | Socket de chegada |
+| `startLabel` | String | — | Texto no início da linha |
+| `middleLabel` | String | — | Texto no meio da linha |
+| `endLabel` | String | — | Texto no fim da linha |
+| `dash` | Boolean | `false` | Linha tracejada |
+| `animated` | Boolean | `true` | Animação `draw` ao mostrar/esconder |
+
+**Comportamento com Reveal.js Fragments:**
+- **Sem `class="fragment"`:** a linha aparece imediatamente quando a seção se torna `present`
+- **Com `class="fragment"`:** a linha só aparece quando Reveal adiciona `.visible` ao componente, e desaparece ao navegar de volta (quando `.visible` é removido)
+- O componente monitora mudanças de classe na `<section>` pai via `MutationObserver`, garantindo que a linha seja removida ao sair do slide e recriada ao retornar
+
+**Dependência:** Requer `plugin/leader-line.min.js` carregado via `<script>` antes do módulo principal.
 
 ---
 
@@ -375,7 +426,7 @@ Os arquivos em `dist/` são cópias manuais do Reveal.js para:
 3. Simplificar deploy (estrutura 100% estática)
 
 ### Leader-Line.js
-Arquivo `plugin/leader-line.min.js` presente mas não utilizado nos slides atuais — possibly reservado para anotações visuais futuras.
+Biblioteca `plugin/leader-line.min.js` para desenhar linhas/setas SVG entre elementos DOM. Integrada ao ecossistema via componente Vue `<leader-line>`, com suporte a fragments do Reveal.js. Não é um plugin Reveal — é carregada como script standalone e consumida pelo componente.
 
 ---
 

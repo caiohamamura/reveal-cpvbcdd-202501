@@ -75,12 +75,12 @@ const copyBtnComponent = {
   setup() {
     const btn = Vue.ref('btn');
 
-    Vue.onMounted(function() {
+    Vue.onMounted(function () {
       let anterior = btn.value?.previousSibling;
       console.log(anterior);
       anterior.insertBefore(btn.value, anterior.firstChild);
 
- 
+
     });
 
     async function copiar() {
@@ -89,7 +89,7 @@ const copyBtnComponent = {
       // Process each row into a tab-separated string
       let rows = Array.from(conteudo.querySelectorAll('tr'));
 
-      
+
       if (rows.length === 0) {
         text = conteudo.textContent || '';
       }
@@ -146,6 +146,128 @@ const mdComponent = {
         `,
 };
 
+const leaderLineComponent = {
+  props: {
+    from: { type: String, required: true },
+    to: { type: String, required  : true },
+    color: { type: String, default: '#ff79c6' },
+    size: { type: Number, default: 3 },
+    path: { type: String, default: 'fluid' },
+    startSocket: { type: String },
+    endSocket: { type: String },
+    startLabel: { type: String },
+    endLabel: { type: String },
+    middleLabel: { type: String },
+    dash: { type: Boolean, default: false },
+    animated: { type: Boolean, default: true },
+  },
+  setup(props, { attrs }) {
+    const root = Vue.ref(null);
+    let line = null;
+
+    // Is this component itself marked as a fragment?
+    function isFragment() {
+      return root.value?.classList.contains('fragment');
+    }
+
+    // Is this fragment revealed by Reveal?
+    function isRevealed() {
+      return !isFragment() || root.value?.classList.contains('visible');
+    }
+
+    function makeLabel(text) {
+      if (!text) return undefined;
+      return typeof LeaderLine.captionLabel === 'function'
+        ? LeaderLine.captionLabel(text)
+        : text;
+    }
+
+    function ensureLine() {
+      if (line) return line;
+      if (typeof LeaderLine === 'undefined') return null;
+      const startEl = document.getElementById(props.from);
+      const endEl = document.getElementById(props.to);
+      if (!startEl || !endEl) return null;
+
+      const opts = {
+        color: props.color,
+        size: props.size,
+        path: props.path,
+        hide: true,
+      };
+      if (props.startSocket) opts.startSocket = props.startSocket;
+      if (props.endSocket) opts.endSocket = props.endSocket;
+      if (props.startLabel) opts.startLabel = makeLabel(props.startLabel);
+      if (props.endLabel) opts.endLabel = makeLabel(props.endLabel);
+      if (props.middleLabel) opts.middleLabel = makeLabel(props.middleLabel);
+      if (props.dash) opts.dash = true;
+
+      line = new LeaderLine(startEl, endEl, opts);
+      return line;
+    }
+
+    function show() {
+      if (!isRevealed()) return;
+      const l = ensureLine();
+      if (!l) return;
+      props.animated ? l.show('draw') : l.show();
+    }
+
+    function hide() {
+      if (!line) return;
+      props.animated ? line.hide('draw') : line.hide();
+    }
+
+    let observer = null;
+
+    function setup() {
+      // Not a fragment — show immediately
+      if (root.value?.closest("section")?.classList?.contains("present")) {
+        show();
+        return;
+      } else {
+        line?.remove();
+      }
+      // Already visible — show now
+      if (root.value.classList.contains('visible')) {
+        show();
+      }
+      // Watch this component's own element for .visible being added by Reveal
+      observer = new MutationObserver(() => {
+        if (root.value.closest("section").classList.contains("present")) {
+          if (root.value.classList.contains('visible') || (
+            root.value.classList.contains('fragment') == false && 
+            (
+              (root.value.closest(".fragment.visible") ?? false) ||
+              (root.value.closest(".fragment") === null)
+            ))
+          ) {
+            show();
+          } else {
+            hide();
+          }
+          return;
+        } else {
+          line.remove();
+          line = null;
+        }
+      });
+      observer.observe(root.value.closest("section"), { attributes: true, attributeFilter: ['class'] });
+    }
+
+    function cleanup() {
+      if (observer) { observer.disconnect(); observer = null; }
+      if (line) { line.remove(); line = null; }
+    }
+
+    Vue.onMounted(() => Vue.nextTick(setup));
+    Vue.onBeforeUnmount(cleanup);
+
+    return { root };
+  },
+  template: `<span ref="root" style="display:none"></span>`,
+};
+
 function initializeComponents(app) {
   app.component('copy-btn', copyBtnComponent);
   app.component('code-block', codeBlockComponent);
@@ -154,6 +276,7 @@ function initializeComponents(app) {
   app.component('highlight-box', highlightBoxComponent);
   app.component("ls-u", lsUComponent);
   app.component("md", mdComponent);
+  app.component("leader-line", leaderLineComponent);
 }
 
 
