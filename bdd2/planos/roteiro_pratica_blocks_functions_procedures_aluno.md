@@ -129,10 +129,7 @@ END $$;
 
 ```sql
 CREATE OR REPLACE FUNCTION fn_estatisticas_categoria(
-    p_categoria VARCHAR,
-    OUT total_produtos INTEGER,
-    OUT preco_medio    DECIMAL(10,2),
-    OUT preco_max      DECIMAL(10,2)
+    -- parâmetros de entrada e saída (OUT)
 ) AS $$
 BEGIN
     -- sua lógica aqui
@@ -153,12 +150,8 @@ $$ LANGUAGE plpgsql;
 
 ```sql
 CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
-    p_origem  INTEGER,
-    p_destino INTEGER,
-    p_qtd     INTEGER
+    -- parâmetros de entrada
 ) AS $$
-DECLARE
-    v_estoque INTEGER;
 BEGIN
     -- sua lógica aqui
 END;
@@ -188,12 +181,9 @@ SELECT id, nome, estoque FROM produtos WHERE id IN (2, 7);
 
 ```sql
 CREATE OR REPLACE FUNCTION fn_produtos_por_faixa(
-    p_min DECIMAL(10,2),
-    p_max DECIMAL(10,2)
+    -- parâmetros de entrada
 ) RETURNS TABLE(
-    id    INTEGER,
-    nome  VARCHAR,
-    preco DECIMAL(10,2)
+    -- colunas de retorno
 ) AS $$
 BEGIN
     -- sua lógica aqui
