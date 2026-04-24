@@ -38,7 +38,14 @@
 5. **Recursos acessíveis**: Considera orçamento e disponibilidade de equipamentos
 6. **Escalonamento**: Começa simples e aumenta complexidade gradualmente
 
-## Recursos disponíveis (presumidos)
+## Hardware do Curso
+- **Microcontrolador**: NodeMCU ESP8266 (não é ESP32)
+-placa com Wi-Fi integrada, programável via Arduino IDE
+- Kits básicos de eletrônica: Arduino/Raspberry Pi (quantidade limitada)
+- Sensores: DHT11/22 (temperatura/umidade), LDR (luz), PIR (movimento), etc.
+- Atuadores: LEDs, relés, servo motores, buzzers
+
+## Recursos disponíveis
 
 - **Laboratório de informática**: Computadores com acesso a internet
 - **Kits básicos de eletrônica**: Arduino/Raspberry Pi (quantidade limitada)
@@ -46,7 +53,7 @@
 - **Acesso a plataformas cloud**: AWS Educate, Google Cloud credits educacionais
 - **Redes**: Wi-Fi no campus, possibilidade de montar redes locais
 
-## Objetivos para o curso de IoT
+### Objetivos para o curso de IoT
 
 1. **Competências técnicas**: Programação embarcada, protocolos de comunicação, sensores, atuadores
 2. **Competências profissionais**: Trabalho em equipe, documentação, apresentação de projetos

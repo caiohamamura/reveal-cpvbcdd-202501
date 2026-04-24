@@ -105,6 +105,17 @@ Este é o registro das aulas planejadas, decisões pedagógicas, feedback recebi
 **Duração:** 4 aulas de 45 minutos (3 horas)
 **Próxima aula:** Máquina de Estados Finitos (FSM)
 
+**Correção crítica descoberta na aula (24/04/2026):**
+- D0→RST apenas NÃO é suficiente — ESP8266 travará no bootstrap pós-deep sleep
+- **GPIO7 (SD0) → pull-up de 10kΩ para VCC é OBRIGATÓRIO** — sem isto o chip não completa o boot
+- GPIO2 (D4) → pull-up de 10kΩ recomendado por segurança
+- Sem o pull-up em GPIO7: o ESP mostra caracteres garbage na serial e não inicializa correctamente
+- Com o pull-up em GPIO7: o ESP boots normalmente e mostra "wake by deep sleep" como reset reason
+- Alguns NodeMCUs mais stubborn podem necesitar de um segundo reset manual (reset reason = "External System" no segundo boot)
+- Hardware do curso é ESP8266 (NodeMCU), NÃO ESP32
+- RTC_DATA_ATTR só funciona em ESP32 — no ESP8266 usar LittleFS + ArduinoJson
+- Mesmo artigo sobre abelhas (2026-04-22) usou ESP32 — adaptar para ESP8266 se for usar como projeto
+
 ---
 
 *Este arquivo será atualizado conforme o planejamento avança.*
@@ -183,3 +194,10 @@ O professor solicitou novo ajuste seguindo `Roteiro_resumido.md`:
 - - Candidate: Reflections: Theme: `assistant` kept surfacing across 100 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-17.md:378-381 - recalls: 0 [score=0.832 recalls=0 avg=0.620 source=memory/2026-04-17.md:3-6]
 <!-- openclaw-memory-promotion:memory:memory/2026-04-17.md:384:384 -->
 - - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.832 recalls=0 avg=0.620 source=memory/2026-04-17.md:303-303]
+
+## Promoted From Short-Term Memory (2026-04-23)
+
+<!-- openclaw-memory-promotion:memory:memory/2026-04-18.md:378:381 -->
+- - Candidate: Reflections: Theme: `assistant` kept surfacing across 102 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-18.md:378-381 - recalls: 0 [score=0.854 recalls=0 avg=0.620 source=memory/2026-04-18.md:3-6]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-18.md:384:384 -->
+- - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.854 recalls=0 avg=0.620 source=memory/2026-04-18.md:93-93]

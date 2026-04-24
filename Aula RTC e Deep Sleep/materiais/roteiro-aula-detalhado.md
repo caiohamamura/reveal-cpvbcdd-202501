@@ -5,7 +5,7 @@
 
 ### 📍 Context
 - **Módulo:** Programação Avançada em IoT (Aula 11)
-- **Sequência:** Depois de Timing/NTP → Antes de Máquina de Estados
+- **Sequência:** Depois de Timing/NTP
 - **Foco:** Economia de energia + persistência de dados + interrupt por luz
 
 ### 🎯 Objetivos
@@ -38,7 +38,7 @@
 |------|------|------|---------|
 | 1 | Engajamento + Teoria + Pisca-Dorme | Expositiva + Demo | 45 min |
 | 2 | Hands-on 1 (guiado): Pisca → Sleep → Botão wake → loop | Prática guiada | 45 min |
-| 3 | Hands-on 2 (base a ajustar): LittleFS + NTP + RTC memory | Prática mandiri | 45 min |
+| 3 | Hands-on 2 (base a ajustar): LittleFS + NTP + RTC memory | Prática | 45 min |
 | 4 | Projeto: Contador de flashes via MQTT | Projeto em duplas | 45 min |
 
 ---
@@ -49,7 +49,7 @@
 > "Quanto tempo dura um ESP8266 ligado 24/7 com uma pilha AA (2500mAh)?"
 > — ~31 horas (80mA × 2500mAh)
 
-> "E se precisasse funcionar por 6 meses numa fazenda, sem tomada?"
+> "E se precisasse funcionar por 6 meses numa fazenda, sem tomada, ou até para sempre?"
 > → Hoje vocês aprendem a fazer o ESP durar **meses**, não horas.
 
 ### 5-15 min: Exemplos Reais (5 exemplos)

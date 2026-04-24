@@ -128,13 +128,15 @@ IFSP Capivari — 4º ano
 ---
 
 ## Slide 15 — O Pino Mágico
-# ⚡ GPIO 16 → RST
+# ⚡ GPIO 16 → RST + GPIO 7 → Pull-up
 - **Conexão obrigatória:** D0 (GPIO 16) → RST
+- **Pull-up obrigatório:** SD0 (GPIO 7) → VCC via resistor 10kΩ
+- **Pull-up recomendado:** GPIO2 (D4) → VCC via resistor 10kΩ
 - É o RTC que "cutuca" o RST para acordar
 - **Sem esse fio:** o ESP dorme **para sempre**
-- Com resistor de 10kΩ entre RST e 3.3V (pull-up) é mais estável
+- **Sem pull-up em GPIO7:** o ESP tenta bootar mas trava com caracteres garbage na serial
 
-> ⚠️ Primeira coisa a verificar: "Meu ESP não acorda?" → Verifique o fio D0→RST!
+> ⚠️ **Erro mais comum em aula:** "Meu ESP não acorda direito, mostra caracteres estranhos!" → Faltou o pull-up em GPIO7 (SD0)!
 
 ---
 
@@ -147,7 +149,7 @@ IFSP Capivari — 4º ano
 | **Botão** | Pulso em RST | Wake-up manual |
 | **Transistor** | RST puxado LOW pelo transistor | **Sensor externo (luz, PIR, etc)** |
 
-> Hoje: Vamos usar **transistor** para acordar com luz!
+> ⚠️ **IMPORTANTE:** Além do D0→RST, SEMPRE adicione pull-up de 10kΩ em SD0 (GPIO7) para VCC!
 
 ---
 
@@ -333,7 +335,9 @@ file.close();
 ---
 
 ## Slide 29 — Checklist do Projeto
-- [ ] Fio D0 → RST conectado
+- [ ] **D0 (GPIO16) → RST** conectado
+- [ ] **SD0 (GPIO7) → VCC via pull-up 10kΩ** ← OBRIGATÓRIO!
+- [ ] **GPIO2 (D4) → VCC via pull-up 10kΩ** ← Recomendado
 - [ ] LED pisca ao acordar (feedback)
 - [ ] DHT11 lendo dados válidos
 - [ ] NTP sincroniza na primeira vez
@@ -343,6 +347,7 @@ file.close();
 - [ ] Deep sleep entre ciclos
 - [ ] Contador de ciclos persiste
 - [ ] Wi-Fi desligado após uso
+- [ ] **ATENÇÃO:** Sem pull-up em GPIO7, o ESP pode mostrar caracteres garbage e não completar o boot!
 
 ---
 
