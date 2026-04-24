@@ -106,6 +106,15 @@ INSERT INTO pedidos_itens (pedido_id, produto_id, quantidade, preco_unitario) VA
 2. Calcule a média de preços
 3. Exiba mensagem formatada com `RAISE NOTICE`
 
+```sql
+DO $$
+DECLARE
+    -- declare suas variáveis aqui
+BEGIN
+    -- sua lógica aqui
+END $$;
+```
+
 ---
 
 ## Exercício 2 — Function com OUT
@@ -118,6 +127,19 @@ INSERT INTO pedidos_itens (pedido_id, produto_id, quantidade, preco_unitario) VA
 
 **Dica:** Use parâmetros `OUT` para retornar múltiplos valores.
 
+```sql
+CREATE OR REPLACE FUNCTION fn_estatisticas_categoria(
+    p_categoria VARCHAR,
+    OUT total_produtos INTEGER,
+    OUT preco_medio    DECIMAL(10,2),
+    OUT preco_max      DECIMAL(10,2)
+) AS $$
+BEGIN
+    -- sua lógica aqui
+END;
+$$ LANGUAGE plpgsql;
+```
+
 ---
 
 ## Exercício 3 — Procedure com Transação
@@ -128,6 +150,20 @@ INSERT INTO pedidos_itens (pedido_id, produto_id, quantidade, preco_unitario) VA
 2. Verifique estoque suficiente na origem
 3. Reduza da origem e aumente no destino
 4. Levante exceção se não for possível
+
+```sql
+CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
+    p_origem  INTEGER,
+    p_destino INTEGER,
+    p_qtd     INTEGER
+) AS $$
+DECLARE
+    v_estoque INTEGER;
+BEGIN
+    -- sua lógica aqui
+END;
+$$ LANGUAGE plpgsql;
+```
 
 **Teste:**
 ```sql
@@ -149,6 +185,21 @@ SELECT id, nome, estoque FROM produtos WHERE id IN (2, 7);
 1. Use `RETURNS TABLE` para retornar id, nome, preço
 2. Valide que `p_min <= p_max`
 3. Levante exceção se inválido
+
+```sql
+CREATE OR REPLACE FUNCTION fn_produtos_por_faixa(
+    p_min DECIMAL(10,2),
+    p_max DECIMAL(10,2)
+) RETURNS TABLE(
+    id    INTEGER,
+    nome  VARCHAR,
+    preco DECIMAL(10,2)
+) AS $$
+BEGIN
+    -- sua lógica aqui
+END;
+$$ LANGUAGE plpgsql;
+```
 
 ---
 
