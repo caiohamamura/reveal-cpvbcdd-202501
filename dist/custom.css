@@ -179,8 +179,9 @@ section {
 
 
 .mermaid>svg {
-    max-height: 600px;
-    overflow: auto;
+    max-height: none;
+    width: 100%;
+    height: auto;
 }
 
 .multi-col {
