@@ -398,7 +398,19 @@ $$ LANGUAGE plpgsql;
         </code-block>
       </section>
 
-      
+      <!-- SLIDE 21: Quando usar Procedures -->
+      <section data-auto-animate>
+        <h2>Quando usar Procedures?</h2>
+        <ls-u>
+          <li>Operações de <b>mutação</b> (INSERT, UPDATE, DELETE)</li>
+          <li>Processos em <b>lote</b> que precisam de transações</li>
+          <li>Quando precisa usar <code>COMMIT</code>/<code>ROLLBACK</code> interno</li>
+          <li>Processos que alteram múltiplas tabelas atomicamente</li>
+          <li>Tarefas de <b>importação</b> ou <b>migração de dados</b></li>
+        </ls-u>
+      </section>
+
+
       <!-- ============================================================
          SEÇÃO 4: FUNCTIONS
          ============================================================ -->
