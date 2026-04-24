@@ -35,12 +35,12 @@ graph LR
   C -->|"5 min"| A
           </pre>
           </div>
-          <div><img src="https://i.imgur.com/ljwnRxF.png" width="400"></div>
+          <div><img src="https://i.imgur.com/ljwnRxF.png" width="400" alt="Ciclo Deep Sleep: ESP8266 acorda a cada 5 minutos"></div>
         </header1>
       </section>
 
       <!-- SLIDE 2: Revisão Rápida -->
-      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.1">
+      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.3">
         <h2>Revisão: Aula Passada</h2>
         <ls-u>
           <li><code>millis()</code> substitui <code>delay()</code></li>
@@ -53,7 +53,7 @@ graph LR
           </p>
         </div>
       </section>
-      <section data-background-image="https://i.imgur.com/AtZT3zO.jpeg" data-background-opacity="0.1">
+      <section data-background-image="https://i.imgur.com/AtZT3zO.jpeg" data-background-opacity="0.3">
 
         <!-- SLIDE 3: O Desafio da Bateria -->
         <section data-auto-animate>
@@ -120,7 +120,7 @@ graph LR
          SEÇÃO 2: EXEMPLOS DO MUNDO REAL
          ============================================================ -->
 
-      <section data-background-image="https://i.imgur.com/SKZdzq2.jpeg" data-background-opacity="0.1">
+      <section data-background-image="https://i.imgur.com/SKZdzq2.jpeg" data-background-opacity="0.3">
         <!-- SLIDE 5: Capa da Seção -->
         <section>
           <h2>Quem Dorme, Vive Mais</h2>
@@ -142,7 +142,7 @@ graph LR
             </div>
             <div style="flex: 0 0 400px; text-align: center;">
               <img src="https://imgs.search.brave.com/yb3yOHy_7-3pVQfiRblvOSoWW-oUOaNwteTHqSgIDgo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ibG9n/Z2VyLmdvb2dsZXVz/ZXJjb250ZW50LmNv/bS9pbWcvYi9SMjl2/WjJ4bC9BVnZYc0Vn/eEUwdFp1UjBFdUNU/angzNFg4Vml6Umcz/NFNURVFxRVhLQl82/YVF0ZGRGTnZ2MFda/d0xCUWI0T0dnLVI1/NlJBRkUxZ3ppaXBz/Z2VRU1hZZndjSmxH/MVBfM0xTTm1TVWdK/eWlyN3o5aUZ3c1RQ/REZUR1p4eWVnX0NQ/VExGekRiN1FWZzM4/SmJiZzRfS3U0L3Mx/NjAwL21pbmktZXN0/YWNhby1tZXRlb3Jv/bG9naWNhLmpwZw"
-                   alt="">
+                   alt="Estação meteorológica com painel solar e bateria">
             </div>
           </div>
         </section>
@@ -152,7 +152,7 @@ graph LR
           <h2>Irrigação Inteligente</h2>
           <center>
             <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.ytimg.com%2Fvi%2FciD3ILxgXzU%2Fmaxresdefault.jpg&f=1&nofb=1&ipt=26fc09533c71158d9865f6b449d6bed4e0b9b1539bab87464eee6ca20228b60d"
-                 height="400" alt="">
+                 height="400" alt="Sistema de irrigação inteligente automático">
           </center>
           <div>
             <div class="mermaid" data-id="irrig-flow">
@@ -174,7 +174,7 @@ graph LR
           <h2>Sensor de Intrusão 🥷🏻</h2>
           <center>
             <img src="https://imgs.search.brave.com/c7GCfbU__9Prgg5aAv8tKSZNvEKe58f88cBYEg3Qw74/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/YXJkdWlub2ludHJv/LmNvbS9pbWFnZXMv/cGlyL3Bpcl9waWV6/b19sY2RfY292ZXJf/OTAwLmpwZw"
-                 height="400">
+                 height="400" alt="Sensor PIR de movimento para detecção de intrusão">
           </center>
           <div class="mermaid" data-id="irrig-flow">
             <pre>
@@ -205,7 +205,7 @@ flowchart TD
           </pre>
             </div>
             <center>
-              <img src="https://i.imgur.com/RYtavpm.png" alt="">
+              <img src="https://i.imgur.com/RYtavpm.png" alt="Esquema de monitoramento de colmeias com sensores">
             </center>
           </div>
         </section>
@@ -213,7 +213,7 @@ flowchart TD
         <!-- SLIDE 10: Aquicultura -->
         <section data-auto-animate>
           <h2>🐟 Aquicultura (Tanque de Peixes)</h2>
-          <center><img src="https://i.imgur.com/rbnKd8Y.png" alt=""></center>
+          <center><img src="https://i.imgur.com/rbnKd8Y.png" alt="Tanque de peixes com sensores IoT para aquicultura"></center>
           <div class="mermaid" data-id="irrig-flow" style="min-width:300px;">
             <pre>
           flowchart LR
@@ -243,7 +243,7 @@ flowchart TD
          SEÇÃO 3: OS 3 MODOS DE SLEEP
          ============================================================ -->
       <section data-background-image="https://4kwallpapers.com/images/wallpapers/hacker-binary-3840x2160-13671.jpg"
-               data-background-opacity="0.1">
+               data-background-opacity="0.3">
         <!-- SLIDE 15: Capa da Seção -->
         <section>
           <h2>💤 Como o ESP8266 Dorme</h2>
@@ -538,7 +538,7 @@ void loop() {}
       ## Ligação acorda por botão
       ">
         </md>
-        <img src="https://i.imgur.com/LO3hw0D.png" alt="">
+        <img src="https://i.imgur.com/LO3hw0D.png" alt="Ligação do botão entre RST e GND para acordar o ESP8266">
       </section>
 
       <!-- ============================================================
@@ -546,7 +546,7 @@ void loop() {}
          ============================================================ -->
 
       <!-- SLIDE 26: O Problema da Memória -->
-      <section data-background-image="https://i.imgur.com/7c6MFno.png" data-background-opacity="0.1">
+      <section data-background-image="https://i.imgur.com/7c6MFno.png" data-background-opacity="0.3">
         <section data-auto-animate>
           <h2>O Problema: "o que aconteceu antes (estado)?"</h2>
           <ls-u>
@@ -655,7 +655,7 @@ void setup() {
          SEÇÃO 6: PROJETO INTEGRADOR
          ============================================================ -->
       <!-- SLIDE 33: Fluxo MQTT Simples -->
-      <section data-background-image="https://i.imgur.com/BjgRxjw.png" data-background-opacity="0.1">
+      <section data-background-image="https://i.imgur.com/BjgRxjw.png" data-background-opacity="0.3">
         <section data-auto-animate>
           <h2>🔄 Fluxo — Contador MQTT</h2>
           <center>
