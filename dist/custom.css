@@ -55,6 +55,10 @@ li {
     margin: 5px 40px;
 }
 
+svg * {
+    font-size: inherit;
+}
+
 img {
     font-size: 16pt
 }
