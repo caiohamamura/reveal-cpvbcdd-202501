@@ -184,8 +184,7 @@ section {
 }
 
 .multi-col {
-    display: grid;
-    grid-template-columns: repeat(var(--col-count), 1fr);
+    display: flex;
     align-items: center;
 }
 
@@ -377,4 +376,12 @@ div {
 .fragment.slide-up.visible {
     opacity: 1;
     transform: translateY(0) !important;
+}
+
+.transparent {
+    opacity: 0;
+}
+
+.semi-out { 
+    opacity: 0.5;
 }

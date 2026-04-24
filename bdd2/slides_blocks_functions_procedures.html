@@ -1,389 +1,771 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Blocks, Functions e Procedures</title>
+
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
-  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
-  <title>Blocks, Functions e Procedures - Banco de Dados 2</title>
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
 </head>
 
 <body>
 
-<div id="app" class="reveal">
-  <div class="slides">
+  <div id="app" class="reveal">
+    <div class="slides">
 
-    <!-- SLIDE: TÍTULO -->
-    <section>
-      <h2>Blocks, Functions e Procedures</h2>
-      <p>Banco de Dados 2 — IFSP Capivari</p>
-      <p style="font-size: 0.6em; color: #6272a4;">Programação em Banco de Dados · Professor Caio Hamamura</p>
-    </section>
+      <!-- ============================================================
+         SEÇÃO 1: CAPA E MOTIVAÇÃO
+         ============================================================ -->
 
-    <!-- SLIDE: AGENDA -->
-    <section>
-      <h2>Roteiro</h2>
-      <ol>
-        <li>DO Blocks — blocos anônimos</li>
-        <li>Functions — funções escalares e tabelares</li>
-        <li>Stored Procedures — procedimentos armazenados</li>
-        <li>Comparação e quando usar cada um</li>
-        <li>Prática hands-on</li>
-      </ol>
-    </section>
-
-    <!-- SLIDE: DO BLOCKS - CONCEITO -->
-    <section>
-      <h2>🔧 DO Blocks — Blocos Anônimos</h2>
-      <div style="display: flex; align-items: center; gap: 1.5em;">
-        <div style="flex: 1;">
-          <ul>
-            <li>Blocos de código <strong>sem nome</strong>, executados uma vez</li>
-            <li>Úteis para scripts de migração e testes rápidos</li>
-            <li>Não armazenados no banco — executa e pronto</li>
-            <li>Suportado nativamente no PostgreSQL</li>
-          </ul>
-        </div>
-        <div style="flex: 1; text-align: center;">
-          <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
-            <span style="color: #8be9fd;">💡 Script de uso único</span>
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="09" curso="Banco de Dados 2" title-size="22"
+                 title="Blocks, Functions e Procedures">
+          <div class="mermaid" data-id="cover-overview" style="width:500px">
+            <pre> 
+graph LR
+  B["⚡ Function"] --> A["📝 DO Block"]
+  C["📦 Procedure"] --> A
+  D["💾 Banco"] --> |"CALL"| C
+  D -->|"SELECT"| B
+  style A fill:#44475a,color:#8be9fd
+  style B fill:#44475a,color:#50fa7b
+  style C fill:#44475a,color:#ff79c6
+  style D fill:#282a36,color:#f1fa8c
+            </pre>
           </div>
-        </div>
-      </div>
-    </section>
+        </header1>
+      </section>
 
-    <!-- SLIDE: DO BLOCKS - EXEMPLO -->
-    <section data-auto-animate>
-      <h2>DO Block — Exemplo Prático</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
+      <!-- SLIDE 2: Por que programar no banco? -->
+      <section data-auto-animate>
+        <h2>Por que programar <em>dentro</em> do banco?</h2>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <ls-u>
+              <li>Lógica de negócio <b>centralizada</b></li>
+              <li>Evita duplicação entre aplicações</li>
+              <li>Performance: executa <b>próximo aos dados</b></li>
+              <li>Validação consistente para qualquer cliente</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+              <div class="mermaid" data-id="why-plpgsql">
+                <pre>
+graph TB
+  App1["🌐 App Web"] --> DB["🐘 PostgreSQL"]
+  App2["📱 App Mobile"] --> DB
+  App3["📊 BI"] --> DB
+  DB --> F["fn_calcular_total()"]
+  style F fill:#50fa7b,color:#282a36
+                </pre>
+              </div>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3: Roteiro -->
+      <!-- SLIDE 3a: Roteiro - DO Blocks -->
+      <section data-auto-animate>
+        <h2>Roteiro</h2>
+        <multi-col>
+        <ul>
+          <li>DO Blocks — blocos anônimos</li>
+          <li class="transparent">Stored Procedures — procedimentos armazenados</li>
+          <li class="transparent">Functions — funções escalares e tabelares</li>
+          <li class="transparent">Comparação e quando usar cada um</li>
+          <li class="transparent">Prática hands-on</li>
+        </ul>
+        <div style="align-self: flex-start; max-width: 45%;">
+          <p style="color: #8be9fd; font-weight: bold;">📝 DO Blocks</p>
+          <p style="font-size: 18pt;">Blocos de código <b>descartáveis</b> — executam uma vez e somem. Ideais para migrações e testes rápidos.</p>
+        </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3b: Roteiro - Procedures -->
+      <section data-auto-animate>
+        <h2>Roteiro</h2>
+        <multi-col>
+        <ul>
+          <li class="semi-out">DO Blocks — blocos anônimos</li>
+          <li>Stored Procedures — procedimentos armazenados</li>
+          <li class="transparent">Functions — funções escalares e tabelares</li>
+          <li class="transparent">Comparação e quando usar cada um</li>
+          <li class="transparent">Prática hands-on</li>
+        </ul>
+        <div style="align-self: flex-start; max-width: 45%;">
+          <p style="color: #ff79c6; font-weight: bold;">📦 Procedures</p>
+          <p style="font-size: 18pt;">Procedimentos que <b>mutam dados</b> e controlam transações. Chamados via <code>CALL</code>.</p>
+        </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3c: Roteiro - Functions -->
+      <section data-auto-animate>
+        <h2>Roteiro</h2>
+        <multi-col>
+        <ul>
+          <li class="semi-out">DO Blocks — blocos anônimos</li>
+          <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
+          <li>Functions — funções escalares e tabelares</li>
+          <li class="transparent">Comparação e quando usar cada um</li>
+          <li class="transparent">Prática hands-on</li>
+        </ul>
+        <div style="align-self: flex-start; max-width: 45%;">
+          <p style="color: #50fa7b; font-weight: bold;">⚡ Functions</p>
+          <p style="font-size: 18pt;">Funções armazenadas que <b>retornam valores</b> e podem ser usadas em <code>SELECT</code>, <code>WHERE</code> e constraints.</p>
+        </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3d: Roteiro - Comparação -->
+      <section data-auto-animate>
+        <h2>Roteiro</h2>
+        <multi-col>
+        <ul>
+          <li class="semi-out">DO Blocks — blocos anônimos</li>
+          <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
+          <li class="semi-out">Functions — funções escalares e tabelares</li>
+          <li>Comparação e quando usar cada um</li>
+          <li class="transparent">Prática hands-on</li>
+        </ul>
+        <div style="align-self: flex-start; max-width: 45%;">
+          <p style="color: #f1fa8c; font-weight: bold;">⚖️ Comparação</p>
+          <p style="font-size: 18pt;">Fluxo de decisão: preciso reutilizar? Retornar valor? Mutar estado? Vamos montar um guia prático.</p>
+        </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3e: Roteiro - Prática -->
+      <section data-auto-animate>
+        <h2>Roteiro</h2>
+        <multi-col>
+        <ul>
+          <li class="semi-out">DO Blocks — blocos anônimos</li>
+          <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
+          <li class="semi-out">Functions — funções escalares e tabelares</li>
+          <li class="semi-out">Comparação e quando usar cada um</li>
+          <li>Prática hands-on</li>
+        </ul>
+        <div style="align-self: flex-start; max-width: 45%;">
+          <p style="color: #ffb86c; font-weight: bold;">🔧 Prática</p>
+          <p style="font-size: 18pt;">Mão na massa!</p>
+        </div>
+        </multi-col>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 2: DO BLOCKS
+         ============================================================ -->
+
+      <!-- SLIDE 4: DO Blocks - Conceito -->
+      <section data-auto-animate>
+        <h2>DO Blocks — Blocos Anônimos</h2>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <ul>
+              <li>Bloco de código <b>sem nome</b>, executado uma vez</li>
+              <li>Não é armazenado no banco</li>
+              <li>Útil para migrações e testes rápidos</li>
+              <li>Suportado nativamente no PostgreSQL</li>
+              <li>Permite criar variáveis</li>
+            </ul>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            
+              <span style="color: #8be9fd;">Estrutura:</span>
+              <pre>
+                <code class="lang-sql code-wrapper" data-line-numbers data-trim>DO $$
+DECLARE
+  -- variáveis
+BEGIN
+  -- lógica
+  RAISE NOTICE '...';
+END $$;</code></pre>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE: Dollar Quoting -->
+      <section data-auto-animate>
+        <h2>O que são os <code style="color:#ff79c6">$$</code> ?</h2>
+        <multi-col style="display:flex;gap:15px"> 
+          <div style="flex: 1;">
+            <ul>
+              <li><b>Dollar quoting</b> — alternativa a aspas simples para strings</li>
+              <li>Evita escapar <code>'</code> dentro de strings grandes</li>
+              <li>Pode ter tag: <code>$body$...$body$</code>, <code>$func$...$func$</code></li>
+              <li><code>$$</code> = tag vazia — o mais comum</li>
+            </ul>
+          </div>
+          <div style="flex: .5;">
+            <div class="fragment" style="background: #282a36; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+              <p style="color: #ff5555; font-size: 16pt; margin: 0;">Sem dollar quoting:</p>
+              <pre style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT 'It''s a ''test''';</code></pre>
+            </div>
+            <div class="fragment" style="background: #282a36; border-radius: 8px; padding: 15px;">
+              <p style="color: #50fa7b; font-size: 16pt; margin: 0;">Com dollar quoting:</p>
+              <pre style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT $$It's a 'test'$$;</code></pre>
+            </div>
+          </div>
+        </multi-col>
+        <div class="fragment" style="text-align: center; margin-top: 15px;">
+          <p style="font-size: 20pt; color: #6272a4;">Em DO blocks e functions, <code style="color:#ff79c6">$$</code> delimita o corpo do código PL/pgSQL</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: DO Block - Olá Mundo -->
+      <section data-auto-animate>
+        <h2>DO Block — Olá, PostgreSQL!</h2>
+        <code-block lang="pgsql" data-line-numbers>
+DO $$
+BEGIN
+    RAISE NOTICE 'Olá, Banco de Dados II!';
+END $$;
+        </code-block>
+        <div class="fragment" style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px; margin-top: 15px;">
+          <p style="font-size: 18pt; color: #8be9fd; margin: 0;">Resultado:</p>
+          <pre style="margin: 5px 0 0 0; font-size: 16pt;"><code>NOTICE:  Olá, Banco de Dados II!</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: DO Block - Variáveis -->
+      <section data-auto-animate>
+        <h2>DO Block — Variáveis e Lógica</h2>
+        <code-block lang="pgsql" data-line-numbers>
 DO $$
 DECLARE
-  total INTEGER;
+    nome_aluno VARCHAR(50) := 'ADS 3º';
+    total_clientes INTEGER;
 BEGIN
-  SELECT COUNT(*) INTO total FROM customers;
-  RAISE NOTICE 'Total de clientes: %', total;
+    SELECT COUNT(*) INTO total_clientes FROM clientes;
+
+    IF total_clientes > 10 THEN
+        RAISE NOTICE 'Turma % tem % clientes!', nome_aluno, total_clientes;
+    ELSE
+        RAISE NOTICE 'Turma % — poucos clientes ainda', nome_aluno;
+    END IF;
 END $$;
-      </code></pre>
-    </section>
-    <section data-auto-animate>
-      <h2>DO Block — Exemplo Prático</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
+        </code-block>
+      </section>
+
+      <!-- SLIDE 7: DO Block - Migração prática -->
+      <section data-auto-animate>
+        <h2>DO Block — Exemplo Prático</h2>
+        <p style="font-size: 20pt; color: #6272a4; margin-bottom: 10px;">Migrar emails para minúsculo e contar atualizações</p>
+        <code-block lang="pgsql">
 DO $$
 DECLARE
-  total INTEGER;
+    count_updated INTEGER;
 BEGIN
-  SELECT COUNT(*) INTO total FROM customers;
-  RAISE NOTICE 'Total de clientes: %', total;
+    UPDATE clientes
+    SET email = LOWER(email)
+    WHERE email != LOWER(email);
+
+    GET DIAGNOSTICS count_updated = ROW_COUNT;
+    RAISE NOTICE 'E-mails normalizados: %', count_updated;
 END $$;
-      </code></pre>
-      <p class="fragment fade-in">Saída: <code>NOTICE: Total de clientes: 91</code></p>
-      <p class="fragment fade-in" style="font-size: 0.8em; color: #6272a4;">
-        <code>RAISE NOTICE</code> exibe mensagens no console.<br/>
-        <code>INTO variável</code> armazena resultado de SELECT na variável.
-      </p>
-    </section>
-
-    <!-- SLIDE: FUNCTIONS - CONCEITO -->
-    <section>
-      <h2>⚡ Functions — Funções Armazenadas</h2>
-      <div style="display: flex; align-items: center; gap: 1.5em;">
-        <div style="flex: 1;">
-          <ul>
-            <li>Blocos de código <strong>armazenados</strong> no banco</li>
-            <li>Podem ser <strong>reutilizados</strong> em múltiplas chamadas</li>
-            <li>Retornam valores (escalares ou tabelas)</li>
-            <li>Podem receber parâmetros de entrada</li>
-            <li>Suportam <strong>LANGUAGE SQL</strong> ou <strong>LANGUAGE plpgsql</strong></li>
-          </ul>
+        </code-block>
+        <div class="fragment" style="text-align: center; margin-top: 15px;">
+          <p style="font-size: 20pt; color: #ff79c6;"><b>DO block = execução imediata, sem reuso, sem parâmetros de saída</b></p>
         </div>
-        <div style="flex: 1; text-align: center;">
-          <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
-            <span style="color: #50fa7b;">📦 Código reutilizável</span>
+      </section>
+
+      <!-- SLIDE 8: Quando usar DO Blocks -->
+      <section data-auto-animate>
+        <h2>Quando usar DO Blocks?</h2>
+        <ls-u>
+          <li>Script de migração <b>único</b></li>
+          <li>Atualização massiva de dados sem reaproveitamento</li>
+          <li>Teste rápido de lógica PL/pgSQL</li>
+          <li>Automação de tarefas administrativas (roles, schemas)</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 3: PROCEDURES
+         ============================================================ -->
+
+      <!-- SLIDE 17: Procedures - O que são -->
+      <section data-auto-animate>
+        <h2>Stored Procedures — O que são?</h2>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <ls-u>
+              <li>Objeto armazenado, <b>não retorna valor</b></li>
+              <li>Chamada via <code>CALL</code></li>
+              <li>Pode fazer <code>COMMIT</code>/<code>ROLLBACK</code> interno</li>
+              <li>Ideal para operações de <b>mutação</b></li>
+            </ls-u>
           </div>
-        </div>
-      </div>
-    </section>
+          <div style="flex: 1; text-align: center;">
+            <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+              <pre style="text-align:left; font-size: 14pt; margin: 0;"><code class="sql">CREATE PROCEDURE nome(pars)
+AS $$
+BEGIN
+    -- lógica de mutação
+END;
+$$ LANGUAGE plpgsql;
 
-    <!-- SLIDE: FUNCTION ESCALAR -->
-    <section data-auto-animate>
-      <h2>Function Escalar — Exemplo</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
-CREATE OR REPLACE FUNCTION total_pedidos(p_customer_id INT)
-RETURNS NUMERIC(10,2) AS $$
+-- Chamada:
+CALL nome(1, 2);</code></pre>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 18: Procedure básica -->
+      <section data-auto-animate>
+        <h2>Procedure — Inserir Cliente</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE PROCEDURE sp_novo_cliente(
+    p_nome   VARCHAR,
+    p_email  VARCHAR,
+    p_cidade VARCHAR,
+    p_limite DECIMAL(10,2)
+) AS $$
+BEGIN
+    INSERT INTO clientes (nome, email, cidade, limite_credito)
+    VALUES (p_nome, p_email, p_cidade, p_limite);
+
+    RAISE NOTICE 'Cliente % inserido com sucesso!', p_nome;
+END;
+$$ LANGUAGE plpgsql;
+        </code-block>
+        <div class="fragment" style="margin-top: 10px;">
+          <pre style="font-size: 16pt;"><code class="sql">CALL sp_novo_cliente('Eduardo Lima', 'eduardo@email.com', 'São Paulo', 4500);</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 19: Procedure com validação -->
+      <section data-auto-animate>
+        <h2>Procedure — Validação e Exceção</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE PROCEDURE sp_atualizar_status(
+    p_pedido_id    INTEGER,
+    p_novo_status  VARCHAR
+) AS $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pedidos WHERE id = p_pedido_id
+    ) THEN
+        RAISE EXCEPTION 'Pedido #% não encontrado!', p_pedido_id;
+    END IF;
+
+    UPDATE pedidos SET status = p_novo_status
+    WHERE id = p_pedido_id;
+
+    RAISE NOTICE 'Pedido #% → %', p_pedido_id, p_novo_status;
+END;
+$$ LANGUAGE plpgsql;
+        </code-block>
+      </section>
+
+      <!-- SLIDE 20: Procedure com transação -->
+      <section data-auto-animate>
+        <h2>Procedure — Transferência de Estoque</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
+    p_origem    INTEGER,
+    p_destino   INTEGER,
+    p_qtd       INTEGER
+) AS $$
 DECLARE
-  total NUMERIC(10,2);
+    v_estoque INTEGER;
 BEGIN
-  SELECT COALESCE(SUM(quantity * unit_price), 0)
-  INTO total
-  FROM order_details
-  WHERE customer_id = p_customer_id;
-  
-  RETURN total;
+    SELECT estoque INTO v_estoque
+    FROM produtos WHERE id = p_origem;
+
+    IF v_estoque < p_qtd THEN
+        RAISE EXCEPTION 'Estoque insuficiente! Disponível: %', v_estoque;
+    END IF;
+
+    UPDATE produtos SET estoque = estoque - p_qtd WHERE id = p_origem;
+    UPDATE produtos SET estoque = estoque + p_qtd WHERE id = p_destino;
+
+    RAISE NOTICE 'Transferidos % itens: #% → #%', p_qtd, p_origem, p_destino;
 END;
 $$ LANGUAGE plpgsql;
-      </code></pre>
-    </section>
-    <section data-auto-animate>
-      <h2>Function Escalar — Uso</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
--- Chamada da função
-SELECT total_pedidos(1);
+        </code-block>
+      </section>
 
--- Uso em consulta
-SELECT company_name, total_pedidos(customer_id) AS total
-FROM customers
-ORDER BY total DESC;
-      </code></pre>
-      <p class="fragment fade-in" style="font-size: 0.8em; color: #6272a4;">
-        Funções escalares retornam <strong>um valor único</strong>.<br/>
-        Podem ser usadas em SELECT, WHERE, ORDER BY, etc.
-      </p>
-    </section>
+      
+      <!-- ============================================================
+         SEÇÃO 4: FUNCTIONS
+         ============================================================ -->
 
-    <!-- SLIDE: FUNCTION TABULAR -->
-    <section data-auto-animate>
-      <h2>Function Tabelar — Retorna Tabela</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
-CREATE OR REPLACE FUNCTION clientes_por_cidade(p_city VARCHAR(50))
-RETURNS TABLE(
-  customer_id INT,
-  company_name VARCHAR(100),
-  city VARCHAR(50)
-) AS $$
-BEGIN
-  RETURN QUERY
-    SELECT customer_id, company_name, city
-    FROM customers
-    WHERE city ILIKE '%' || p_city || '%';
-END;
-$$ LANGUAGE plpgsql;
-      </code></pre>
-    </section>
-    <section data-auto-animate>
-      <h2>Function Tabelar — Uso</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
--- Chamada: treated like a table
-SELECT * FROM clientes_por_cidade('London');
-
--- Junto com outras tabelas
-SELECT c.company_name, p.product_name
-FROM clientes_por_cidade('London') c
-JOIN orders o ON c.customer_id = o.customer_id
-JOIN order_details od ON o.order_id = od.order_id
-JOIN products p ON od.product_id = p.product_id;
-      </code></pre>
-      <p class="fragment fade-in" style="font-size: 0.8em; color: #8be9fd;">
-        <code>RETURN TABLE</code> permite usar a função como se fosse uma tabela real!
-      </p>
-    </section>
-
-    <!-- SLIDE: PROCEDURES - CONCEITO -->
-    <section>
-      <h2>📋 Stored Procedures</h2>
-      <div style="display: flex; align-items: center; gap: 1.5em;">
-        <div style="flex: 1;">
-          <ul>
-            <li>Semelhante a Functions, mas com <strong>diferenças-chave</strong></li>
-            <li><strong>Procedures</strong> não retornam valores diretamente</li>
-            <li>Suportam <strong>transações</strong> (COMMIT/ROLLBACK)</li>
-            <li>Chamadas com <code>CALL</code>, não SELECT</li>
-            <li>Ideais para operações de <strong>escrita complexa</strong></li>
-          </ul>
-        </div>
-        <div style="flex: 1; text-align: center;">
-          <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
-            <span style="color: #ffb86c;">🔄 Transações completas</span>
+      <!-- SLIDE 9: Functions - O que são -->
+      <section data-auto-animate>
+        <h2>Functions — O que são?</h2>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <ls-u>
+              <li>Objeto <b>armazenado</b> no banco</li>
+              <li>Recebe parâmetros e <b>retorna</b> um valor</li>
+              <li>Pode ser usada em <code>SELECT</code>, <code>WHERE</code>, expressions</li>
+              <li>Reutilizável em múltiplos lugares</li>
+            </ls-u>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE: PROCEDURES - EXEMPLO -->
-    <section data-auto-animate>
-      <h2>Procedure — Exemplo Completo</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
-CREATE OR REPLACE PROCEDURE atualizar_estoque(
-  p_product_id INT,
-  p_quantidade INT,
-  p_tipo_mov CHAR(1) -- 'E' = entrada, 'S' = saída
-) AS $$
+          <div style="flex: 1; text-align: center;">
+            <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+              <pre style="text-align:left; font-size: 14pt; margin: 0;"><code class="sql">CREATE FUNCTION nome(pars)
+RETURNS tipo AS $$
 BEGIN
-  IF p_tipo_mov = 'E' THEN
-    UPDATE products
-    SET units_in_stock = units_in_stock + p_quantidade
-    WHERE product_id = p_product_id;
-  ELSIF p_tipo_mov = 'S' THEN
-    UPDATE products
-    SET units_in_stock = units_in_stock - p_quantidade
-    WHERE product_id = p_product_id;
-  END IF;
-  
-  COMMIT;
+    RETURN valor;
+END;
+$$ LANGUAGE plpgsql;</code></pre>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 10: Function - Escalar simples -->
+      <section data-auto-animate>
+        <h2>Function Escalar — Soma</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE FUNCTION somar(
+    a INTEGER, b INTEGER
+) RETURNS INTEGER AS $$
+BEGIN
+    RETURN a + b;
 END;
 $$ LANGUAGE plpgsql;
-      </code></pre>
-    </section>
-    <section data-auto-animate>
-      <h2>Procedure — Chamada</h2>
-      <pre><code class="lang-sql" data-trim data-line-numbers>
--- Entrada de 50 unidades
-CALL atualizar_estoque(1, 50, 'E');
+        </code-block>
+        <div class="fragment" style="margin-top: 15px;">
+          <pre style="font-size: 16pt;"><code class="sql">SELECT somar(3, 5);  -- resultado: 8</code></pre>
+        </div>
+      </section>
 
--- Saída de 10 unidades
-CALL atualizar_estoque(1, 10, 'S');
+      <!-- SLIDE 11: Function - Comissão -->
+      <section data-auto-animate>
+        <h2>Function — Calculadora de Comissão</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE FUNCTION calcular_comissao(
+    p_venda  NUMERIC(10,2),
+    p_taxa   NUMERIC(3,2) DEFAULT 0.05
+) RETURNS NUMERIC(10,2) AS $$
+BEGIN
+    IF p_venda < 0 THEN
+        RAISE EXCEPTION 'Venda não pode ser negativa: %', p_venda;
+    END IF;
+    RETURN p_venda * p_taxa;
+END;
+$$ LANGUAGE plpgsql STRICT;
+        </code-block>
+        <div class="fragment" style="margin-top: 15px;">
+          <pre style="font-size: 16pt;"><code class="sql">SELECT calcular_comissao(1000.00);  -- 50.00</code></pre>
+        </div>
+      </section>
 
--- Verificar resultado
-SELECT product_name, units_in_stock
-FROM products
-WHERE product_id = 1;
-      </code></pre>
-      <p class="fragment fade-in" style="font-size: 0.8em; color: #50fa7b;">
-        <code>CALL</code> invoca a procedure. Transactions garantem integridade!
-      </p>
-    </section>
+      <!-- SLIDE 12: Tipos de Retorno -->
+      <section data-auto-animate>
+        <h2>Tipos de Retorno</h2>
+        <table>
+          <thead>
+            <tr><th>Tipo</th><th>Descrição</th><th>Exemplo de uso</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>RETURNS tipo</code></td><td>Escalar</td><td>INTEGER, TEXT, BOOLEAN</td></tr>
+            <tr><td><code>RETURNS TABLE(...)</code></td><td>Tabela virtual</td><td>Relatórios, filtros</td></tr>
+            <tr><td><code>RETURNS SETOF tabela</code></td><td>Conjunto de linhas</td><td>Listagens</td></tr>
+            <tr><td><code>RETURNS TRIGGER</code></td><td>Trigger function</td><td>Auditoria (já visto!)</td></tr>
+          </tbody>
+        </table>
+      </section>
 
-    <!-- SLIDE: COMPARAÇÃO -->
-    <section>
-      <h2>Comparando as Três Abordagens</h2>
-      <div style="display: flex; flex-wrap: wrap; gap: 1em;">
-        <div style="flex: 1; min-width: 180px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #8be9fd;">🔧 DO Block</h3>
-          <ul style="font-size: 0.75em;">
-            <li>Executa uma vez</li>
-            <li>Sem nome</li>
-            <li>Não armazenado</li>
-            <li>Migrações, testes</li>
-          </ul>
+      <!-- SLIDE 13: Function - Retorna TABLE -->
+      <section data-auto-animate>
+        <h2>Function que Retorna Tabela</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE FUNCTION fn_produtos_por_categoria(
+    p_categoria VARCHAR
+) RETURNS TABLE(
+    id    INTEGER,
+    nome  VARCHAR,
+    preco DECIMAL(10,2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pro.id, pro.nome, pro.preco
+    FROM produtos pro
+    WHERE pro.categoria = p_categoria;
+END;
+$$ LANGUAGE plpgsql;
+        </code-block>
+        <div class="fragment" style="margin-top: 15px;">
+          <pre style="font-size: 16pt;"><code class="sql">SELECT * FROM fn_produtos_por_categoria('Eletrônicos');</code></pre>
         </div>
-        <div style="flex: 1; min-width: 180px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #50fa7b;">⚡ Function</h3>
-          <ul style="font-size: 0.75em;">
-            <li>Reutilizável</li>
-            <li>Retorna valor</li>
-            <li>Em SELECT/WHERE</li>
-            <li>Cálculos, consultas</li>
-          </ul>
-        </div>
-        <div style="flex: 1; min-width: 180px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #ffb86c;">📋 Procedure</h3>
-          <ul style="font-size: 0.75em;">
-            <li>Reutilizável</li>
-            <li>Sem retorno direto</li>
-            <li>Transações</li>
-            <li>Escrita, atualização</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- SLIDE: MERCADO -->
-    <section>
-      <h2>💼 Aplicações no Mercado</h2>
-      <div style="display: flex; gap: 2em;">
-        <div style="flex: 1;">
-          <h3 style="color: #ffb86c;">Bancos & Fintechs</h3>
-          <ul style="font-size: 0.8em;">
-            <li>Stored Procedures para transferências</li>
-            <li>Functions para cálculos de juros</li>
-            <li>Triggers para auditoria transacional</li>
-          </ul>
-        </div>
-        <div style="flex: 1;">
-          <h3 style="color: #8be9fd;">E-commerce</h3>
-          <ul style="font-size: 0.8em;">
-            <li>Cálculo de frete por região</li>
-            <li>Atualização de estoque automatizada</li>
-            <li>Processamento de pedidos</li>
-          </ul>
-        </div>
-      </div>
-      <p style="margin-top: 1em; font-size: 0.75em; color: #6272a4;">
-        "80% das empresas Fortune 500 usam stored procedures para lógica de negócio crítica"
-      </p>
-    </section>
+      <!-- SLIDE 14: Parâmetros IN, OUT, INOUT -->
+      <section data-auto-animate>
+        <h2>Modos de Parâmetros</h2>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <ls-u>
+              <li><b style="color:#8be9fd">IN</b> — recebe valor (padrão)</li>
+              <li><b style="color:#50fa7b">OUT</b> — retorna valor pela assinatura</li>
+              <li><b style="color:#ff79c6">INOUT</b> — entrada e saída</li>
+              <li><b style="color:#f1fa8c">VARIADIC</b> — número variável de args</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1;">
+            <code-block lang="sql">
+-- OUT: retorna sem RETURN
+CREATE FUNCTION dividir(
+    a NUMERIC, b NUMERIC,
+    OUT resultado NUMERIC,
+    OUT resto NUMERIC
+) AS $$
+BEGIN
+    resultado := a / b;
+    resto     := a % b;
+END;
+$$ LANGUAGE plpgsql;
+            </code-block>
+          </div>
+        </multi-col>
+      </section>
 
-    <!-- SLIDE: PRÁTICA -->
-    <section>
-      <h2>🎯 Mão na Massa!</h2>
-      <p>Chegou a hora de colocar em prática!</p>
-      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
-        <p><strong>Exercício:</strong> Implementar um sistema de controle de estoque</p>
-        <ol style="font-size: 0.85em;">
-          <li>Criar função para verificar estoque mínimo</li>
-          <li>Criar procedure para registrar movimentação</li>
-          <li>Testar com DO block</li>
-        </ol>
-      </div>
-      <p style="font-size: 0.7em; color: #6272a4; margin-top: 1em;">📁 Ver roteiro completo: <code>roteiro_pratica_blocks_functions_procedures.md</code></p>
-    </section>
+      <!-- SLIDE 15: Function com OUT -->
+      <section data-auto-animate>
+        <h2>Function — Estatísticas com OUT</h2>
+        <code-block lang="sql">
+CREATE OR REPLACE FUNCTION fn_estatisticas_cliente(
+    p_cliente_id INTEGER,
+    OUT total_pedidos INTEGER,
+    OUT valor_gasto   DECIMAL(10,2),
+    OUT total_itens   INTEGER
+) AS $$
+BEGIN
+    SELECT COUNT(*), COALESCE(SUM(valor_total), 0)
+    INTO total_pedidos, valor_gasto
+    FROM pedidos
+    WHERE cliente_id = p_cliente_id;
 
-    <!-- SLIDE: RESUMO -->
-    <section>
-      <h2>Resumo da Aula</h2>
-      <div style="display: flex; flex-wrap: wrap; gap: 1em;">
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #8be9fd;">📌 DO Blocks</h3>
-          <p style="font-size: 0.8em;">Scripts únicos, migrações, testes rápidos. Executa e pronto.</p>
+    SELECT COALESCE(SUM(pi.quantidade), 0)
+    INTO total_itens
+    FROM pedidos p
+    JOIN pedidos_itens pi ON p.id = pi.pedido_id
+    WHERE p.cliente_id = p_cliente_id;
+END;
+$$ LANGUAGE plpgsql;
+        </code-block>
+        <div class="fragment" style="margin-top: 10px;">
+          <pre style="font-size: 16pt;"><code class="sql">SELECT * FROM fn_estatisticas_cliente(1);</code></pre>
         </div>
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #50fa7b;">📌 Functions</h3>
-          <p style="font-size: 0.8em;">Código reutilizável. Retorna valor. Usadas em SELECT.</p>
-        </div>
-        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
-          <h3 style="color: #ffb86c;">📌 Procedures</h3>
-          <p style="font-size: 0.8em;">Transações completas. CALL. Operações de escrita.</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
+      <!-- SLIDE 16: Quando usar Functions -->
+      <section data-auto-animate>
+        <h2>Quando usar Functions?</h2>
+        <ls-u>
+          <li>Reutilização em <code>SELECT</code>, <code>WHERE</code>, <code>CHECK</code> constraints</li>
+          <li>Cálculos recorrentes (comissão, imposto, frete)</li>
+          <li>Validação de dados em constraints</li>
+          <li>Geração de relatórios complexos (<code>RETURNS TABLE</code>)</li>
+          <li><b>Composable</b> — pode ser usada dentro de outras queries</li>
+        </ls-u>
+      </section>
+
+      <!-- SLIDE 21: Functions vs Procedures -->
+      <section data-auto-animate>
+        <h2>Functions vs Procedures</h2>
+        <table>
+          <thead>
+            <tr><th>Característica</th><th style="color:#50fa7b">Function</th><th style="color:#ff79c6">Procedure</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Retorno</td><td>Obrigatório</td><td>Não retorna</td></tr>
+            <tr><td>Chamada</td><td><code>SELECT fn()</code></td><td><code>CALL sp()</code></td></tr>
+            <tr><td>Transação</td><td>Não pode COMMIT/ROLLBACK</td><td>Pode COMMIT/ROLLBACK</td></tr>
+            <tr><td>Uso em SQL</td><td>Em expressions</td><td>Só CALL</td></tr>
+            <tr><td>Melhor para</td><td>Cálculos, validações</td><td>Mutações, batch</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SLIDE 22: Fluxo de decisão -->
+      <section data-auto-animate>
+        <h2>Quando usar cada um?</h2>
+        <div class="mermaid" data-id="decision-flow">
+          <pre>
+graph TD
+    Start["Preciso de código no banco?"] -->|"Não"| SQL["SQL puro"]
+    Start -->|"Sim"| Reuse["Vou reutilizar?"]
+    Reuse -->|"Não"| DO["📝 DO Block"]
+    Reuse -->|"Sim"| Retorno["Preciso retornar valor?"]
+    Retorno -->|"Sim"| Fn["⚡ Function"]
+    Retorno -->|"Não"| Proc["📦 Procedure"]
+    style DO fill:#8be9fd,color:#282a36
+    style Fn fill:#50fa7b,color:#282a36
+    style Proc fill:#ff79c6,color:#282a36
+    style SQL fill:#6272a4,color:#f8f8f2
+          </pre>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 7: EXERCÍCIOS
+         ============================================================ -->
+
+      <!-- SLIDE 26: Setup -->
+      <section data-auto-animate>
+        <h2>Exercícios — Setup</h2>
+        <p style="font-size: 20pt; margin-bottom: 10px;">Execute o script de setup do roteiro de prática para criar o schema <b>e-commerce</b>:</p>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <ls-u>
+              <li><code>clientes</code> — nome, email, cidade, limite_credito</li>
+              <li><code>produtos</code> — nome, categoria, preço, estoque</li>
+              <li><code>pedidos</code> — cliente, data, status, valor_total</li>
+              <li><code>pedidos_itens</code> — pedido, produto, qtd, preço</li>
+            </ls-u>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 27: Exercício 1 - DO Block -->
+      <section data-auto-animate>
+        <h2>Exercício 1 — DO Block</h2>
+        <div class="fragment highlight-box" style="background: #282a36; border-left: 4px solid #8be9fd; padding: 20px;">
+          <p><strong>Objetivo:</strong> Crie um DO block que:</p>
+          <ls-u>
+            <li>Conte quantos filmes existem na tabela <code>produtos</code></li>
+            <li>Calcule a média de preços</li>
+            <li>Exiba mensagem formatada com <code>RAISE NOTICE</code></li>
+          </ls-u>
+        </div>
+      </section>
+
+      <!-- SLIDE 28: Exercício 2 - Function com OUT -->
+      <section data-auto-animate>
+        <h2>Exercício 2 — Function com OUT</h2>
+        <div class="fragment highlight-box" style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+          <p><strong>Objetivo:</strong> Crie <code>fn_estatisticas_categoria(p_categoria_id)</code> que retorna:</p>
+          <ls-u>
+            <li><code>total_produtos</code> — count de produtos</li>
+            <li><code>preco_medio</code> — preço médio</li>
+            <li><code>preco_max</code> — maior preço</li>
+          </ls-u>
+        </div>
+      </section>
+
+      <!-- SLIDE 29: Exercício 3 - Procedure -->
+      <section data-auto-animate>
+        <h2>Exercício 3 — Procedure com Transação</h2>
+        <div class="fragment highlight-box" style="background: #282a36; border-left: 4px solid #ff79c6; padding: 20px;">
+          <p><strong>Objetivo:</strong> Crie <code>sp_transferir_estoque(origem, destino, qtd)</code> que:</p>
+          <ls-u>
+            <li>Verifique se ambos os produtos existem</li>
+            <li>Verifique estoque suficiente na origem</li>
+            <li>Reduza da origem e aumente no destino</li>
+            <li>Levante exceção se não for possível</li>
+          </ls-u>
+        </div>
+      </section>
+
+      <!-- SLIDE 30: Desafio -->
+      <section data-auto-animate>
+        <h2>Desafio Extra</h2>
+        <div class="fragment highlight-box" style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
+          <p><strong>Objetivo:</strong> Crie <code>fn_produtos_por_faixa(p_min, p_max)</code> que:</p>
+          <ls-u>
+            <li>Use <code>RETURNS TABLE</code> para retornar id, nome, preço</li>
+            <li>Valide que <code>p_min <= p_max</code></li>
+            <li>Levante exceção se inválido</li>
+          </ls-u>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 8: ENCERRAMENTO
+         ============================================================ -->
+
+      <!-- SLIDE 31: Resumo -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li><b style="color:#8be9fd">DO Block</b> — executa uma vez, sem nome, sem reuso</li>
+          <li><b style="color:#ff79c6">Procedure</b> — mutação de estado, CALL, transações</li>
+          <li><b style="color:#50fa7b">Function</b> — retorna valor, composável em SQL</li>
+          <li>Escolha baseada em <b>reuso</b> e <b>retorno</b></li>
+        </ls-u>
+      </section>
+
+      <!-- SLIDE 32: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul style="font-size: 18pt;">
+          <li><a href="https://www.postgresql.org/docs/current/plpgsql.html" target="_blank">PostgreSQL PL/pgSQL Documentation</a></li>
+          <li><a href="https://www.postgresql.org/docs/current/sql-createfunction.html" target="_blank">CREATE FUNCTION</a></li>
+          <li><a href="https://www.postgresql.org/docs/current/sql-createprocedure.html" target="_blank">CREATE PROCEDURE</a></li>
+        </ul>
+      </section>
+
+    </div>
   </div>
-</div>
 
-<!-- SCRIPT SECTION: Must be immediately before </body> -->
-<script src="../dist/reveal.js"></script>
-<script src="../plugin/notes/notes.js"></script>
-<script src="../plugin/math/math.js"></script>
-<script src="../plugin/markdown/markdown.js"></script>
-<script src="../plugin/highlight/highlight.js"></script>
-<script src="../plugin/zoom/zoom.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
-<script src="../dist/vue.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
+  <script src="../components/components.js"></script>
 
-<script>
-  window.app = Vue.createApp({
-    setup() {
-      Vue.onMounted(() => {
-        initializeReveal();
-      });
-      return {};
-    },
-  });
-</script>
-<script src="../plugin/leader-line.min.js"></script>
-<script src="../slides_template/header1.js"></script>
-<script src="../components/md.js"></script>
-<script src="../components/components.js"></script>
-
-<script>
-  function initializeReveal() {
-    var deck1 = new Reveal(document.querySelector(".reveal"), {
-      controls: true,
-      controlsLayout: 'edges',
-      hash: true,
-      respondToHashChanges: true,
-      history: true,
-      keyboardCondition: "focused",
-      theme: "dracula",
-      slideNumber: "h.v",
-      navigationMode: "linear",
-      plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+  <script>
+    const app = Vue.createApp({
+      setup() {
+        Vue.onMounted(() => {
+          initializeReveal();
+        });
+        return {};
+      },
     });
-    deck1.initialize();
-  }
-  window.app.mount("#app");
-</script>
+
+    initializeComponents(app);
+    initializeHeader(app);
+
+    function initializeReveal() {
+      var deck1 = new Reveal(document.querySelector(".reveal"), {
+        controls: true,
+        controlsLayout: 'edges',
+        hash: true,
+        respondToHashChanges: true,
+        history: true,
+        keyboardCondition: "focused",
+        slideNumber: "h.v",
+        navigationMode: "linear",
+        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+      });
+      deck1.initialize();
+      deck1.on('slidechanged', event => {
+        const auto = event.currentSlide.querySelectorAll('.fragment.auto');
+        auto.forEach((el, i) => {
+          setTimeout(() => {
+            el.classList.add('visible');
+          }, i * 300);
+        });
+      });
+    }
+
+    app.mount("#app");
+  </script>
 
 </body>
+
 </html>

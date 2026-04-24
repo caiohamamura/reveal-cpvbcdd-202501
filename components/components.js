@@ -27,7 +27,6 @@ const lsUComponent = {
     // Initialize the list component
     this.$el.querySelectorAll("li").forEach((li) => {
       li.classList.add("fragment");
-      li.classList.add("fade-in-then-semi-out");
       li.style.fontSize = this.fontSize || "24pt";
     });
   },
@@ -39,34 +38,57 @@ const lsUComponent = {
         `,
 }
 
+// Global store for raw code-block HTML, populated before Vue mounts
+window.__codeBlockRaw = {};
+window.__codeBlockCounter = 0;
+
+// Capture raw innerHTML of all <code-block> elements before Vue processes them
+(function captureCodeBlocks() {
+  document.querySelectorAll('code-block').forEach(el => {
+    const id = '__cb_' + (window.__codeBlockCounter++);
+    // Prefer <script type="text/plain"> child to avoid HTML parser mangling
+    // (e.g. #include <Arduino.h> becomes <arduino.h>)
+    const plain = el.querySelector('script[type="text/plain"]');
+    window.__codeBlockRaw[id] = plain ? plain.textContent.trim() : el.innerHTML.trim();
+    el.setAttribute('data-cb-id', id);
+  });
+})();
+
 const codeBlockComponent = {
-  setup(props) {
+  props: {
+    lang: { type: String, default: '' },
+  },
+  setup(props, { attrs }) {
     const btnMsg = Vue.ref('Copiar');
     const pre = Vue.useTemplateRef('pre');
+    const root = Vue.useTemplateRef('root');
+    const rawCode = Vue.ref('');
+
+    Vue.onMounted(() => {
+      const id = root.value?.getAttribute('data-cb-id');
+      if (id && window.__codeBlockRaw[id]) {
+        rawCode.value = window.__codeBlockRaw[id];
+      }
+    });
+
     function copiar() {
       const conteudo = pre.value?.textContent;
-
       navigator.clipboard.writeText(conteudo || '')
         .then(() => {
           btnMsg.value = 'Copiado!';
-          setTimeout(() => {
-            btnMsg.value = 'Copiar';
-          }, 2000);
+          setTimeout(() => { btnMsg.value = 'Copiar'; }, 2000);
         })
-        .catch(err => {
-          console.error('Erro ao copiar:', err);
-        });
+        .catch(err => console.error('Erro ao copiar:', err));
     }
-    return { copiar, btnMsg };
-  },
-  style: {
-    width: 'max-content',
+    const codeClass = props.lang ? `lang-${props.lang} code-wrapper` : 'code-wrapper';
+    return { copiar, btnMsg, codeClass, attrs, rawCode };
   },
   /*html*/
   template: `
+  <div ref="root" style="display:none" v-bind="attrs"><slot></slot></div>
   <div style="position: relative; margin: 0; padding: 0;display:block; width: min-content;">
-  <pre ref="pre" class="code-wrapper" style="min-width: max-content; padding:0; margin: 0;"><code data-trim v-bind="$attrs" v-html="$slots.default().map(el=>el.children).join('')"></code></pre>
-  <button class="copy-button" @click=copiar>{{btnMsg}}</button>
+  <pre ref="pre" class="code-wrapper" style="min-width: max-content; padding:0; margin: 0;"><code :class="codeClass" data-trim v-bind="attrs" v-html="rawCode"></code></pre>
+  <button class="copy-button" style="position:absolute; top:5px; right:5px;" @click=copiar>{{btnMsg}}</button>
   </div>
   `,
 }
