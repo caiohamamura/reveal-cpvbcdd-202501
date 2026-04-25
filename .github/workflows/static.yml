@@ -1,0 +1,75 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate index.html
+        run: |
+          python3 << 'EOF'
+          import os
+
+          root = "."
+          links = []
+
+          for dirpath, _, filenames in os.walk(root):
+              for f in filenames:
+                  if f.endswith(".html") and f != "index.html":
+                      full_path = os.path.join(dirpath, f)
+                      rel_path = os.path.relpath(full_path, root)
+                      links.append(rel_path)
+
+          links.sort()
+
+          with open("index.html", "w") as f:
+              f.write("<!DOCTYPE html>\n<html>\n<head>\n")
+              f.write("<meta charset='utf-8'>\n")
+              f.write("<title>Index</title>\n")
+              f.write("</head>\n<body>\n")
+              f.write("<h1>Available Pages</h1>\n<ul>\n")
+
+              for link in links:
+                  f.write(f"<li><a href='{link}'>{link}</a></li>\n")
+
+              f.write("</ul>\n</body>\n</html>\n")
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
