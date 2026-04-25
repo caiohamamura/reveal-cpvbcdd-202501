@@ -869,7 +869,13 @@ $$ LANGUAGE plpgsql;
     initializeHeader(app);
 
     function initializeReveal() {
-      var deck1 = new Reveal(document.querySelector(".reveal"), {
+      const hljs = RevealHighlight().hljs;
+      hljs.configure({
+        languages: ['pgsql'], 
+        cssSelector: 'code' 
+      }); 
+      
+      const deck1 = new Reveal(document.querySelector(".reveal"), {
         controls: true,
         controlsLayout: 'edges',
         hash: true,
@@ -880,6 +886,7 @@ $$ LANGUAGE plpgsql;
         navigationMode: "linear",
         plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
       });
+      hljs.highlightAll();
       deck1.initialize();
       deck1.on('slidechanged', event => {
         const auto = event.currentSlide.querySelectorAll('.fragment.auto');
