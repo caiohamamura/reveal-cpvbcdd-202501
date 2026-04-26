@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Ciência de Dados - Projeto Completo de Data Science</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="9" curso="Ciência de Dados" title-size="22"
+                 title="Estrutura Completa de um Projeto de Data Science">
+          <div class="mermaid" data-id="cover-pipeline" style="width:480px">
+            <pre>
+graph LR
+  A["📊 Dados"] --> B["🧹 Limpeza"]
+  B --> C["🔧 Features"]
+  C --> D["✂️ Split"]
+  D --> E["🏋️ Treino"]
+  E --> F["✅ Validação"]
+  F --> G["🧪 Teste"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#44475a,color:#f8f8f2
+  style C fill:#44475a,color:#f8f8f2
+  style D fill:#44475a,color:#f8f8f2
+  style E fill:#44475a,color:#f8f8f2
+  style F fill:#44475a,color:#f8f8f2
+  style G fill:#50fa7b,color:#f8f8f2
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: Revisão -->
+      <section data-auto-animate>
+        <h2>Revisão: Aulas Anteriores</h2>
+        <ls-u>
+          <li><strong>K-NN</strong> — classificação por vizinhos mais próximos</li>
+          <li><strong>Árvores de Decisão</strong> — particionamento recursivo do espaço</li>
+          <li><strong>Métricas</strong> — acurácia, precisão, recall, F1</li>
+        </ls-u>
+        <div class="fragment" style="margin-top: 20px;">
+          <p style="font-size: 22pt; color: #8be9fd;">Hoje: como essas peças se encaixam num <strong>pipeline real</strong>?</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 1: O FLUXO COMPLETO
+         ============================================================ -->
+
+      <!-- SLIDE 3: Motivação -->
+      <section data-auto-animate>
+        <h2>Por que um Pipeline? 🤔</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <ul>
+              <li>Cada aula viu uma <strong>peça isolada</strong></li>
+              <li>Na prática, tudo roda <strong>junto e na ordem certa</strong></li>
+              <li>Pular etapas = resultados ruins</li>
+              <li>Precisamos de <strong>disciplina</strong> no processo</li>
+            </ul>
+          </div>
+          <div style="flex: 1;">
+            <div class="mermaid" data-id="pipeline-simple" style="width:100%">
+              <pre>
+graph TD
+  A["Dados brutos"] --> B["Limpeza"]
+  B --> C["Feature Engineering"]
+  C --> D["Split"]
+  D --> E["Treino"]
+  E --> F["Validação"]
+  F --> G["Teste final"]
+  style A fill:#ff5555,color:#f8f8f2
+  style G fill:#50fa7b,color:#f8f8f2
+              </pre>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 4: Pipeline Visual -->
+      <section data-auto-animate>
+        <h2>O Pipeline de Data Science</h2>
+        <div class="mermaid" data-id="pipeline-full" style="width:100%">
+          <pre>
+graph LR
+  A["📊 Dados<br/>Brutos"] --> B["🧹 Limpeza<br/>Missing, Outliers"]
+  B --> C["🔧 Feature<br/>Engineering"]
+  C --> D["✂️ Split<br/>Train/Test"]
+  D --> E["🏋️ Treino<br/>do Modelo"]
+  E --> F["✅ Validação<br/>Cruzada"]
+  F --> G["🧪 Teste<br/>Final"]
+  style A fill:#6272a4,color:#f8f8f2
+  style B fill:#44475a,color:#f8f8f2
+  style C fill:#44475a,color:#f8f8f2
+  style D fill:#ff79c6,color:#f8f8f2
+  style E fill:#8be9fd,color:#f8f8f2
+  style F fill:#f1fa8c,color:#282a36
+  style G fill:#50fa7b,color:#282a36
+          </pre>
+        </div>
+        <p style="margin-top: 15px; font-size: 20pt; color: #ff79c6;">Cada etapa já foi vista — hoje é a primeira vez que vemos <strong>tudo junto</strong>.</p>
+      </section>
+
+      <!-- SLIDE 5: Discussão -->
+      <section data-auto-animate>
+        <h2>Perguntas Fundamentais</h2>
+        <ul>
+          <li>"O que acontece se você testar no dado que <strong>treinou</strong>?" <span style="color: #ff79c6;">(memória vs generalização)</span></li>
+          <li>"Por que não usamos <strong>TODOS</strong> os dados para treinar?" <span style="color: #ff79c6;">(overfitting)</span></li>
+          <li>"O que é o teste invisível e por que ele importa?"</li>
+        </ul>
+      </section>
+
+      <!-- SLIDE 6: Dataset German Credit -->
+      <section data-auto-animate>
+        <h2>Dataset: German Credit Data 🏦</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <ul>
+              <li><strong>Origem:</strong> UCI Repository</li>
+              <li><strong>Tarefa:</strong> risco de crédito (bom/ruim)</li>
+              <li>1000 registros, 20 variáveis</li>
+              <li>Dados reais e <strong>imperfeitos</strong></li>
+            </ul>
+          </div>
+          <div style="flex: 1;">
+            <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
+              <p style="color: #ff5555;"><strong>Problemas propositalmente inclusos:</strong></p>
+              <ul>
+                <li>Colunas com <strong>missing values</strong></li>
+                <li>Variáveis categóricas com muitas categorias</li>
+                <li>Feature de renda com <strong>outliers</strong></li>
+              </ul>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 7: Desafio - Identificar Problemas -->
+      <section data-auto-animate>
+        <h2>Desafio: O Que Você Vê? 🔍</h2>
+        <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
+          <p><strong>Instruções:</strong> Abra o dataset e <strong>liste os problemas</strong> que encontrar.</p>
+          <p style="color: #f1fa8c;">Não resolva ainda — só identifique!</p>
+        </div>
+        <div style="margin-top: 15px;">
+          <code-block lang="python" data-trim><script type="text/plain">
+import pandas as pd
+df = pd.read_csv('german_credit_data.csv')
+print(df.shape)
+print(df.head())
+print(df.isnull().sum())
+print(df.dtypes)
+</script></code-block>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 2: TREINAMENTO / TESTE / VALIDAÇÃO
+         ============================================================ -->
+
+      <!-- SLIDE 8: Train/Test Split -->
+      <section data-auto-animate>
+        <h2>Train/Test Split ✂️</h2>
+        <div class="mermaid" data-id="train-test-split" style="width:100%">
+          <pre>
+graph LR
+  A["Dataset<br/>100%"] --> B["Treino<br/>80%"]
+  A --> C["Teste<br/>20%"]
+  B --> D["fit()"]
+  C --> E["score()"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#ff5555,color:#f8f8f2
+  style D fill:#8be9fd,color:#282a36
+  style E fill:#ff5555,color:#f8f8f2
+          </pre>
+        </div>
+        <ul>
+          <li><strong>80/20 ou 70/30</strong> — trade-off: mais treino vs mais validação</li>
+          <li><code>random_state=42</code> — reprodutibilidade (mesmo split toda vez)</li>
+          <li><code>stratify=y</code> — manter proporção da classe (importante para dados desbalanceados)</li>
+        </ul>
+      </section>
+
+      <!-- SLIDE 9: Por que stratify -->
+      <section data-auto-animate>
+        <h2>Por que stratify=y?</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <p>Dataset desbalanceado: <strong>70% bom</strong>, <strong>30% ruim</strong></p>
+            <p style="color: #ff5555;">Sem stratify:</p>
+            <ul>
+              <li>Teste pode ter 90%/10% por azar</li>
+              <li>Modelo parece melhor do que é</li>
+            </ul>
+            <p style="color: #50fa7b;">Com stratify:</p>
+            <ul>
+              <li>Teste mantém 70%/30%</li>
+              <li>Avaliação justa</li>
+            </ul>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div class="mermaid" data-id="stratify-diagram" style="width:100%">
+              <pre>
+graph TD
+  A["Dataset<br/>700 bom / 300 ruim"] --> B["Treino<br/>560 bom / 240 ruim"]
+  A --> C["Teste<br/>140 bom / 60 ruim"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#50fa7b,color:#282a36
+              </pre>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 10: Validação Cruzada -->
+      <section data-auto-animate>
+        <h2>Validação Cruzada (k-fold) 🔄</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <ul>
+              <li>k=5 ou k=10 (mais robusto que single split)</li>
+              <li>Cada fold: parcela diferente como validação</li>
+              <li>Resultado: <strong>média das k folds</strong> = score mais estável</li>
+            </ul>
+            <p style="color: #f1fa8c;">Single split muda muito → k-fold estabiliza</p>
+          </div>
+          <div style="flex: 1;">
+            <div class="mermaid" data-id="kfold-diagram" style="width:100%">
+              <pre>
+graph TD
+  subgraph Fold 1
+    V1["✅ Val"] --- T1["🏋️ Treino"]
+  end
+  subgraph Fold 2
+    T2["🏋️ Treino"] --- V2["✅ Val"]
+  end
+  subgraph Fold 3
+    T3["🏋️"] --- V3["✅"] --- T3b["🏋️"]
+  end
+              </pre>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 11: Holdout Final -->
+      <section data-auto-animate>
+        <h2>Holdout: O Teste é Blindado 🛡️</h2>
+        <div class="mermaid" data-id="holdout-flow" style="width:100%">
+          <pre>
+graph LR
+  A["Dados<br/>100%"] --> B["Treino<br/>80%"]
+  A --> C["Teste<br/>20% 🔒"]
+  B --> D["Validação<br/>Cruzada"]
+  D --> E["Escolher<br/>Melhor Modelo"]
+  E --> C
+  style C fill:#ff5555,color:#f8f8f2
+  style E fill:#50fa7b,color:#282a36
+          </pre>
+        </div>
+        <ul>
+          <li>O teste <strong>não existe</strong> durante o desenvolvimento</li>
+          <li>Você olha o teste só <strong>UMA vez</strong> — quando escolheu o melhor modelo na validação</li>
+          <li style="color: #ff5555;">Se você fica olhando o teste e ajustando, está <strong>trapaceando</strong></li>
+        </ul>
+      </section>
+
+      <!-- SLIDE 12: Código - Split -->
+      <section data-auto-animate>
+        <h2>Código: Train/Test Split</h2>
+        <code-block lang="python" data-trim><script type="text/plain">
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+
+# Split simples
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Árvore simples treinada
+tree = DecisionTreeClassifier(max_depth=3, random_state=42)
+tree.fit(X_train, y_train)
+
+# Acurácia no teste (invisível durante desenvolvimento)
+print(f"Teste: {tree.score(X_test, y_test):.3f}")
+
+# Validação cruzada (mais robusta)
+cv_scores = cross_val_score(tree, X, y, cv=5, scoring='accuracy')
+print(f"CV médio: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
+</script></code-block>
+      </section>
+
+      <!-- SLIDE 13: Armadilha comum -->
+      <section data-auto-animate>
+        <h2>⚠️ Armadilha Comum</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
+              <p style="color: #ff5555;"><strong>ERRADO:</strong></p>
+              <code-block lang="python" data-trim><script type="text/plain">
+tree.fit(X_train, y_train)
+# Isso é score no TREINO, não no teste!
+print(tree.score(X_train, y_train))
+# Resultado: 0.98 (inflado!)
+</script></code-block>
+            </div>
+          </div>
+          <div style="flex: 1;">
+            <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
+              <p style="color: #50fa7b;"><strong>CORRETO:</strong></p>
+              <code-block lang="python" data-trim><script type="text/plain">
+tree.fit(X_train, y_train)
+# Score no TESTE (dados nunca vistos)
+print(tree.score(X_test, y_test))
+# Resultado: 0.73 (realista)
+</script></code-block>
+            </div>
+          </div>
+        </multi-col>
+        <p style="margin-top: 15px; font-size: 20pt;">Achar que <code>score()</code> no modelo treinado já é o teste — na verdade é <strong>treino</strong>. O teste real é <code>score(X_test, y_test)</code>.</p>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 3: PIPELINE COMPLETO NO CÓDIGO
+         ============================================================ -->
+
+      <!-- SLIDE 14: Estrutura do Pipeline -->
+      <section data-auto-animate>
+        <h2>Estrutura do Pipeline Completo</h2>
+        <div class="mermaid" data-id="pipeline-steps" style="width:100%">
+          <pre>
+graph TD
+  S1["1️⃣ Importação e<br/>Carregamento"] --> S2["2️⃣ EDA Rápida"]
+  S2 --> S3["3️⃣ Tratamento"]
+  S3 --> S3a["3a. Categóricas → OneHot"]
+  S3 --> S3b["3b. Missing → Mediana"]
+  S3 --> S3c["3c. Normalização"]
+  S3a --> S4["4️⃣ Split Train/Test"]
+  S3b --> S4
+  S3c --> S4
+  S4 --> S5["5️⃣ Validação Cruzada"]
+  S5 --> S6["6️⃣ Teste Final 🔒"]
+  style S1 fill:#6272a4,color:#f8f8f2
+  style S4 fill:#ff79c6,color:#f8f8f2
+  style S6 fill:#50fa7b,color:#282a36
+          </pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 15: Código - Importação e EDA -->
+      <section data-auto-animate>
+        <h2>Passo 1-2: Importação e EDA</h2>
+        <code-block lang="python" data-trim><script type="text/plain">
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
+import warnings
+warnings.filterwarnings('ignore')
+
+df = pd.read_csv('german_credit_data.csv')
+print(f"Shape: {df.shape}")
+print(df.head())
+
+# EDA Rápida
+print("\n--- Missing values ---")
+print(df.isnull().sum())
+print("\n--- Dtypes ---")
+print(df.dtypes)
+</script></code-block>
+      </section>
+
+      <!-- SLIDE 16: Código - Tratamento -->
+      <section data-auto-animate>
+        <h2>Passo 3: Tratamento dos Dados</h2>
+        <code-block lang="python" data-trim><script type="text/plain">
+# 3a. Variáveis categóricas → OneHotEncoding
+df_encoded = pd.get_dummies(
+    df, columns=['Purpose', 'Housing'], drop_first=True
+)
+
+# 3b. Missing values → fill com mediana
+df_encoded['Credit_amount'].fillna(
+    df_encoded['Credit_amount'].median(), inplace=True
+)
+
+# 3c. Normalização
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+</script></code-block>
+        <p style="color: #f1fa8c;">⚠️ Tratamento ANTES do split = <strong>vazamento de informação</strong> (veremos depois)</p>
+      </section>
+
+      <!-- SLIDE 17: Código - Split e Treino -->
+      <section data-auto-animate>
+        <h2>Passo 4-5: Split e Validação Cruzada</h2>
+        <code-block lang="python" data-trim><script type="text/plain">
+# 4. Split (depois de tratar!)
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# 5. Validação cruzada ANTES do teste final
+tree = DecisionTreeClassifier(max_depth=4, random_state=42)
+
+cv_scores = cross_val_score(
+    tree, X_train, y_train, cv=5, scoring='accuracy'
+)
+print(f"CV Score: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
+
+# Fit final nos dados de treino
+tree.fit(X_train, y_train)
+</script></code-block>
+      </section>
+
+      <!-- SLIDE 18: Código - Teste Final -->
+      <section data-auto-animate>
+        <h2>Passo 6: Teste Final 🔒</h2>
+        <code-block lang="python" data-trim><script type="text/plain">
+# 6. Teste final — OLHAR SÓ AGORA!
+y_pred = tree.predict(X_test)
+
+print("\n--- Teste Final ---")
+print(classification_report(y_test, y_pred))
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+</script></code-block>
+        <p style="color: #ff79c6; font-size: 20pt;">Agora sim: o modelo foi avaliado em dados que <strong>nunca viu</strong>.</p>
+      </section>
+
+      <!-- SLIDE 19: Onde os alunos travam -->
+      <section data-auto-animate>
+        <h2>Onde os Alunos Travam 💥</h2>
+        <ul>
+          <li style="color: #ff5555;">Fazem split <strong>ANTES</strong> do tratamento → vazamento de informação</li>
+          <li style="color: #ff5555;">Avaliam no dado de treino achando que é o teste real</li>
+          <li style="color: #ff5555;">Esquecem <code>stratify=y</code> em dados desbalanceados</li>
+        </ul>
+        <div class="fragment" style="margin-top: 20px;">
+          <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 15px;">
+            <p style="color: #f1fa8c;"><strong>Ordem correta:</strong></p>
+            <p>Tratamento → Split → Validação Cruzada → Teste Final</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 4: OVERFITTING, UNDERFITTING E ÉTICA
+         ============================================================ -->
+
+      <!-- SLIDE 20: Overfitting vs Underfitting -->
+      <section data-auto-animate>
+        <h2>Overfitting vs Underfitting</h2>
+        <div class="mermaid" data-id="overfitting-chart" style="width:100%">
+          <pre>
+graph TD
+  U["Underfitting<br/>Treino baixo, Teste baixo<br/>Modelo simples demais"]
+  G["Bom Modelo 🎯<br/>Treino alto, Teste alto<br/>Equilíbrio ideal"]
+  O["Overfitting<br/>Treino alto, Teste baixo<br/>Modelo complexo demais"]
+  U --> G --> O
+  style U fill:#6272a4,color:#f8f8f2
+  style G fill:#50fa7b,color:#282a36
+  style O fill:#ff5555,color:#f8f8f2
+          </pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 21: Curva de Aprendizado -->
+      <section data-auto-animate>
+        <h2>Visualizando o Overfitting</h2>
+        <code-block lang="python" data-trim><script type="text/plain">
+import matplotlib.pyplot as plt
+
+depths = range(1, 15)
+train_scores = []
+test_scores = []
+
+for d in depths:
+    t = DecisionTreeClassifier(max_depth=d, random_state=42)
+    t.fit(X_train, y_train)
+    train_scores.append(t.score(X_train, y_train))
+    test_scores.append(t.score(X_test, y_test))
+
+plt.plot(depths, train_scores, label='Treino', marker='o')
+plt.plot(depths, test_scores, label='Teste', marker='x')
+plt.xlabel('Profundidade da Árvore')
+plt.ylabel('Acurácia')
+plt.title('Overfitting: treino sobe, teste estagna/cai')
+plt.legend()
+plt.show()
+</script></code-block>
+        <p style="font-size: 18pt;">Quanto mais profundo → treino sobe, teste estagna ou cai. O ponto ideal está no meio.</p>
+      </section>
+
+      <!-- SLIDE 22: Trade-off -->
+      <section data-auto-animate>
+        <h2>O Trade-off Viés-Variância</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <h3>Underfitting</h3>
+            <ul>
+              <li>Alto viés (bias)</li>
+              <li>Modelo simples demais</li>
+              <li>Não captura padrões</li>
+              <li style="color: #8be9fd;">Ex: max_depth=1</li>
+            </ul>
+          </div>
+          <div style="flex: 1;">
+            <h3>Equilíbrio Ideal</h3>
+            <ul>
+              <li>Viés e variância equilibrados</li>
+              <li>Generaliza bem</li>
+              <li>Captura padrões reais</li>
+              <li style="color: #50fa7b;">Ex: max_depth=4</li>
+            </ul>
+          </div>
+          <div style="flex: 1;">
+            <h3>Overfitting</h3>
+            <ul>
+              <li>Alta variância</li>
+              <li>Modelo complexo demais</li>
+              <li>Decora o treino</li>
+              <li style="color: #ff5555;">Ex: max_depth=None</li>
+            </ul>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 23: Ética em Data Science -->
+      <section data-auto-animate>
+        <h2>Ética em Data Science ⚖️</h2>
+        <ul>
+          <li>"Se o modelo erra mais em pessoas de baixa renda, isso é <strong>justo</strong>?"</li>
+          <li>"Quando usamos dados históricos, estamos <strong>perpetuando vieses</strong>?"</li>
+          <li>"O teste invisível existe para proteger o modelo de <strong>quê</strong>?"</li>
+          <li>"Quem é <strong>responsável</strong> quando o modelo erra?"</li>
+        </ul>
+      </section>
+
+      <!-- SLIDE 24: Viés de Seleção -->
+      <section data-auto-animate>
+        <h2>Viés de Seleção e Justiça</h2>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <ul>
+              <li><strong>Viés de seleção</strong> no split — dados não representativos</li>
+              <li>Modelo bom não é só acurácia alta</li>
+              <li>É acurácia alta para <strong>TODOS os grupos</strong></li>
+            </ul>
+          </div>
+          <div style="flex: 1;">
+            <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
+              <p style="color: #ff5555;"><strong>Caso real: COMPAS</strong></p>
+              <p>Algoritmo usado na justiça criminal dos EUA que demonstrou racismo — classificava pessoas negras como de alto risco com mais frequência, mesmo com histórico similar.</p>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 25: Exercício de Ética -->
+      <section data-auto-animate>
+        <h2>Exercício: Ética no Pipeline 🧭</h2>
+        <div style="background: #282a36; border-left: 4px solid #ff79c6; padding: 20px;">
+          <p><strong>Objetivo:</strong> Listar 3 decisões de design neste pipeline que poderiam causar viés, e como evitá-las.</p>
+          <ls-u>
+            <li>Pense na escolha das features</li>
+            <li>Pense na forma de tratar missing values</li>
+            <li>Pense na métrica de avaliação escolhida</li>
+          </ls-u>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 5: RESUMO E PRÓXIMA AULA
+         ============================================================ -->
+
+      <!-- SLIDE 26: Conceitos-Chave -->
+      <section data-auto-animate>
+        <h2>Conceitos-Chave</h2>
+        <table>
+          <thead>
+            <tr><th>Conceito</th><th>Bloco</th><th>Por que importa</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Pipeline completo</td><td>1-3</td><td>Nunca mais fazer código bagunçado</td></tr>
+            <tr><td>Train/Test Split</td><td>2</td><td>Separar dados vistos dos não vistos</td></tr>
+            <tr><td>Validação Cruzada</td><td>2</td><td>Escolher modelo sem trapaça</td></tr>
+            <tr><td>Holdout test</td><td>2</td><td>Medir generalização real</td></tr>
+            <tr><td>Overfitting/Underfitting</td><td>4</td><td>Entender limites do modelo</td></tr>
+            <tr><td>Ética</td><td>4</td><td>Responsabilidade do cientista</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SLIDE 27: Datasets Recomendados -->
+      <section data-auto-animate>
+        <h2>Datasets para Praticar</h2>
+        <table>
+          <thead>
+            <tr><th>Dataset</th><th>Uso</th><th>Fonte</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>German Credit Data</td><td>Pipeline completo + ética</td><td>UCI Repository</td></tr>
+            <tr><td>Telco Customer Churn</td><td>Classificação binária</td><td>IBM Kaggle</td></tr>
+            <tr><td>Heart Disease UCI</td><td>Numéricas + categóricas</td><td>UCI Repository</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SLIDE 28: Resumo e Próxima Aula -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Pipeline completo: Dados → Limpeza → Features → Split → Treino → Validação → Teste</li>
+          <li>Split com stratify mantém proporção das classes</li>
+          <li>Validação cruzada é mais robusta que single split</li>
+          <li>Teste final é blindado — olhar só uma vez</li>
+          <li>Overfitting: modelo decora treino, falha no teste</li>
+          <li>Ética: o modelo afeta vidas reais</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong style="color: #50fa7b;">Random Forest 🌲🌲🌲</strong></p>
+          <p style="font-size: 18pt; color: #6272a4;">Árvores de Decisão foram o modelo de hoje. E se combinarmos muitas árvores?</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
+  <script src="../components/components.js"></script>
+
+  <script>
+    const app = Vue.createApp({
+      setup() {
+        Vue.onMounted(() => {
+          initializeReveal();
+        });
+        return {};
+      },
+    });
+
+    initializeComponents(app);
+    initializeHeader(app);
+
+    function initializeReveal() {
+      var deck1 = new Reveal(document.querySelector(".reveal"), {
+        controls: true,
+        controlsLayout: 'edges',
+        hash: true,
+        respondToHashChanges: true,
+        history: true,
+        keyboardCondition: "focused",
+        slideNumber: "h.v",
+        navigationMode: "linear",
+        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+      });
+      deck1.initialize();
+      deck1.on('slidechanged', event => {
+        const auto = event.currentSlide.querySelectorAll('.fragment.auto');
+        auto.forEach((el, i) => {
+          setTimeout(() => {
+            el.classList.add('visible');
+          }, i * 300);
+        });
+      });
+    }
+
+    app.mount("#app");
+  </script>
+
+</body>
+
+</html>
