@@ -269,8 +269,9 @@ graph TD
       <h2>Código: randomForest em R</h2>
       <pre class="code-wrapper"><code class="code-wrapper lang-r" data-trim data-line-numbers>
 # ===== RandomForest em R =====
-library(randomForest)
+library(tidyverse)
 library(caret)
+library(randomForest)
 
 # Split dos dados
 set.seed(42)
@@ -282,9 +283,9 @@ y_test  <- y[-idx]
 
 # Criar e treinar RandomForest
 rf <- randomForest(
-  x = X_train, y = y_train,
+  x = X_train, y = as.factor(y_train),
   ntree = 100,
-  maxdepth = 10,
+  maxnodes = 30,
   importance = TRUE
 )
 
@@ -347,13 +348,13 @@ print(cv_results$results)
         <ls-u font-size="22">
           <li>Carregue o dataset German Credit Data</li>
           <li>Treine um <code>randomForest()</code> com <code>ntree=100</code></li>
-          <li>Use validação cruzada (k=5) com <code>train()</code> do caret</li>
-          <li>Compare com uma <code>DecisionTree()</code> do rpart</li>
+          <li>Use validação cruzada com <code>trainControl(method="cv", number=5)</code></li>
+          <li>Compare com uma <code>rpart()</code></li>
           <li>Plote o <code>varImpPlot()</code> ou <code>importance()</code></li>
         </ls-u>
       </div>
       <div class="fragment" style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 20pt; color: #ff79c6;">⚠️ Lembrete: trate features categóricas com <code>as.factor()</code> ou one-hot encoding antes do treino!</p>
+        <p style="font-size: 20pt; color: #ff79c6;">⚠️ Lembrete: converta features categóricas para <code>factor</code> — o <code>randomForest</code> trata automaticamente!</p>
       </div>
     </section>
 
