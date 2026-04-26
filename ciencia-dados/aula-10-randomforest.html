@@ -266,47 +266,56 @@ graph TD
 
     <!-- SLIDE: R CODE 1 -->
     <section data-auto-animate>
-      <h2>Código: randomForest em R</h2>
+      <h2>Código: tidymodels + ranger em R</h2>
       <pre class="code-wrapper"><code class="code-wrapper lang-r" data-trim data-line-numbers>
-# ===== RandomForest em R =====
-library(tidyverse)
-library(caret)
-library(randomForest)
+# ===== RandomForest com tidymodels + ranger =====
+library(tidymodels)
+library(ranger)
 
-# Split dos dados
+# Split dos dados com rsample
 set.seed(42)
-idx <- createDataPartition(y, p = 0.8, list = FALSE)
-X_train <- X[idx, ]
-X_test  <- X[-idx, ]
-y_train <- y[idx]
-y_test  <- y[-idx]
+df_split <- initial_split(df, prop = 0.8)
+df_train <- training(df_split)
+df_test  <- testing(df_split)
 
-# Criar e treinar RandomForest
-rf <- randomForest(
-  x = X_train, y = as.factor(y_train),
-  ntree = 100,
-  maxnodes = 30,
-  importance = TRUE
-)
+# Definir modelo com parsnip
+rf_spec <- rand_forest(
+  mode = "classification",
+  trees = 100,
+  mtry = floor(sqrt(ncol(df_train) - 1)),
+  min_n = 30
+) %>%
+  set_engine("ranger", importance = "permutation") %>%
+  set_mode("classification")
+
+# Treinar com tune (fit simple sem tuning)
+rf_fit <- rf_spec %>%
+  fit(class ~ ., data = df_train)
 
 # Predizer e avaliar
-y_pred <- predict(rf, X_test)
-print(confusionMatrix(y_pred, y_test))
+predictions <- rf_fit %>%
+  predict(df_test) %>%
+  bind_cols(df_test)
+
+accuracy(predictions, truth = class, estimate = .pred_class)
       </code></pre>
       <copy-btn class="mr-49"></copy-btn>
     </section>
 
     <!-- SLIDE: R CODE 2 -->
     <section data-auto-animate>
-      <h2>Feature Importance com randomForest</h2>
+      <h2>Feature Importance com vip + ranger</h2>
       <pre class="code-wrapper"><code class="code-wrapper lang-r" data-trim data-line-numbers>
-# Ver importância das features
-importance(rf)
-varImpPlot(rf, main = "Feature Importance")
+# Ver importância das features com vip
+rf_fit %>%
+  extract_fit_engine() %>%
+  vip(num_features = 10) +
+  theme_minimal() +
+  labs(title = "Feature Importance (ranger)")
       </code></pre>
       <copy-btn class="mr-49"></copy-btn>
       <div style="background: rgba(189,147,249,0.15); border-left: 4px solid #bd93f9; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 20pt; color: #bd93f9;">💡 Use <code>varImpPlot()</code> para visualização rápida!</p>
+        <p style="font-size: 20pt; color: #bd93f9;">💡 Use <code>vip::vip()</code> para visualização moderna das importâncias!</p>
       </div>
     </section>
 
@@ -324,16 +333,18 @@ varImpPlot(rf, main = "Feature Importance")
         </div>
         <div style="flex: 1; text-align: center;">
           <pre class="code-wrapper"><code class="code-wrapper lang-r" data-trim data-line-numbers>
-# 5-fold CV com randomForest + caret
+# 5-fold CV com tidymodels + ranger
 set.seed(42)
-cv_results <- train(
-  y ~ ., data = data,
-  method = "rf",
-  trControl = trainControl(
-    method = "cv", number = 5
+cv_results <- rand_forest(mode = "classification") %>%
+  set_engine("ranger") %>%
+  set_mode("classification") %>%
+  fit_resamples(
+    class ~ .,
+    resamples = vfold_cv(df, v = 5),
+    metrics = metric_set(accuracy, roc_auc)
   )
-)
-print(cv_results$results)
+print(cv_results)
+collect_metrics(cv_results)
           </code></pre>
           <copy-btn class="mr-49"></copy-btn>
         </div>
@@ -347,14 +358,14 @@ print(cv_results$results)
       <div style="background: #44475a; border-radius: 12px; padding: 1.5em; margin-top: 1em; border: 2px solid #6272a4;">
         <ls-u font-size="22">
           <li>Carregue o dataset German Credit Data</li>
-          <li>Treine um <code>randomForest()</code> com <code>ntree=100</code></li>
-          <li>Use validação cruzada com <code>trainControl(method="cv", number=5)</code></li>
-          <li>Compare com uma <code>rpart()</code></li>
-          <li>Plote o <code>varImpPlot()</code> ou <code>importance()</code></li>
+          <li>Use <code>initial_split()</code> do rsample para split 80/20</li>
+          <li>Treine um <code>rand_forest(mode = \"classification\")</code> com engine <code>\"ranger\"</code></li>
+          <li>Use <code>vfold_cv()</code> para validação cruzada (k=5)</li>
+          <li>Use <code>vip()</code> para plotar feature importance</li>
         </ls-u>
       </div>
       <div class="fragment" style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
-        <p style="font-size: 20pt; color: #ff79c6;">⚠️ Lembrete: converta features categóricas para <code>factor</code> — o <code>randomForest</code> trata automaticamente!</p>
+        <p style="font-size: 20pt; color: #ff79c6;">⚠️ Lembrete: use <code>step_dummy()</code> do recipes para features categóricas — o <code>ranger</code> exige variáveis numéricas!</p>
       </div>
     </section>
 
