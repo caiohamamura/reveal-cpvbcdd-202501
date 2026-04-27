@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - Light Sleep com Interrupt usando LDR</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/night.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SEÇÃO 1: INTRODUÇÃO AO LIGHT SLEEP COM INTERRUPT
+         ============================================================ -->
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="12" curso="Programação Avançada IoT" title-size="22"
+                 title="Light Sleep com Interrupt usando LDR">
+          <div class="mermaid" data-id="interrupt-diagram" style="width:400px">
+            <pre>
+graph LR
+  A["💤 Light Sleep"] -->|"Luz detectada"| B["☀️ Acorda"]
+  B -->|"5 seg"| C["💤 Volta a dormir"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#ff79c6,color:#282a36
+  style C fill:#44475a,color:#f8f8f2
+            </pre>
+          </div>
+          <div><img src="https://i.imgur.com/ljwnRxF.png" width="350" alt="Ciclo Light Sleep com Interrupt"></div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: O que é Light Sleep? -->
+      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.3">
+        <h2>💤 O que é Light Sleep?</h2>
+        <multi-col>
+          <div style="flex: 1;">
+            <ls-u>
+              <li>Modo de <b style="color: #ff79c6">baixo consumo</b>: ~0,4 mA</li>
+              <li>CPU <b style="color: #ff5555">pausada</b> (não reinicia)</li>
+              <li>Wi-Fi <b style="color: #ff5555">desligado</b></li>
+              <li>Consome <b style="color: #50fa7b">200x menos</b> que ligado normal (~80 mA)</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+              <div class="mermaid" data-id="light-sleep-compare">
+                <pre>
+graph LR
+  A["⚡ 80 mA"] -->|"Light Sleep"| B["💤 0,4 mA"]
+  style A fill:#ff5555,color:#f8f8f2
+  style B fill:#50fa7b,color:#282a36
+                </pre>
+              </div>
+            </div>
+          </div>
+        </multi-col>
+        <div class="fragment"
+             style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+          <p style="font-size: 20pt; color: #ff79c6;">⚡ Diferente do Deep Sleep: aqui o código <b>continua</b> após acordar!</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Light Sleep vs Deep Sleep -->
+      <section data-auto-animate>
+        <h2>⚖️ Light Sleep vs Deep Sleep</h2>
+        <table>
+          <thead>
+            <tr>
+              <th class="tg-bf9e">Característica</th>
+              <th class="tg-bf9e">Light Sleep</th>
+              <th class="tg-bf9e">Deep Sleep</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tg-bf9e">Consumo</td>
+              <td class="tg-bf9e">~0,4 mA</td>
+              <td class="tg-bf9e">~0,02 mA</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">CPU</td>
+              <td class="tg-bf9e" style="color: #ffb86c">⏸️ Pausada</td>
+              <td class="tg-bf9e" style="color: #ff5555">❌ Desligada</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Reinicia?</td>
+              <td class="tg-bf9e" style="color: #50fa7b">✅ Não</td>
+              <td class="tg-bf9e" style="color: #ff5555">❌ Sim</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Acorda com</td>
+              <td class="tg-bf9e">GPIO ou Timer</td>
+              <td class="tg-bf9e">GPIO 16 (RST)</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Uso de RAM</td>
+              <td class="tg-bf9e" style="color: #50fa7b">✅ Mantém</td>
+              <td class="tg-bf9e" style="color: #ff5555">❌ Perde</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SLIDE 4: Por que usar Interrupt? -->
+      <section data-auto-animate>
+        <h2>🔔 Por que usar Interrupt?</h2>
+        <ls-u>
+          <li><b style="color: #8be9fd">Economia inteligente:</b> só acorda quando algo acontece</li>
+          <li><b style="color: #50fa7b">Sem timer desperdiçado:</b> não precisa acordar só para verificar</li>
+          <li><b style="color: #ff79c6">Resposta imediata:</b> age no instante do evento</li>
+          <li>Perfeito para sensores ambientais (luz, som, movimento)</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 26pt; color: #bd93f9;"><b>Exemplo: detectar luz vs esperar 30 min para checar</b></p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 2: O SENSOR LDR
+         ============================================================ -->
+
+      <!-- SLIDE 5: O que é LDR? -->
+      <section data-auto-animate>
+        <h2>📷 LDR — Light Dependent Resistor</h2>
+        <multi-col>
+          <div style="flex: 1;">
+            <ls-u>
+              <li><b style="color: #8be9fd">Resistor dependente de luz</b></li>
+              <li>Quanto mais luz → <b style="color: #50fa7b">menor resistência</b></li>
+              <li>Quanto menos luz → <b style="color: #ff5555">maior resistência</b></li>
+              <li>Funciona como divisor de tensão</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Photo resistor symbol.svg" alt="Símbolo LDR" width="200">
+            <p style="font-size: 14pt; color: #6272a4;">Símbolo do LDR</p>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 6: Como o LDR funciona -->
+      <section data-auto-animate>
+        <h2>⚡ Divisor de Tensão com LDR</h2>
+        <div style="text-align: center;">
+          <div class="mermaid" data-id="ldr-circuit" style="display: inline-block;">
+            <pre>
+circuit LR
+  VCC["3.3V"] --> R1["LDR"]
+  R1 --> OUT["Pino ADC (A0)"]
+  OUT --> R2["Trimpot"]
+  R2 --> GND["GND"]
+  style VCC fill:#50fa7b,color:#282a36
+  style GND fill:#ff5555,color:#f8f8f2
+  style OUT fill:#8be9fd,color:#282a36
+            </pre>
+          </div>
+        </div>
+        <ls-u>
+          <li><b style="color: #50fa7b">Luz alta</b> → LDR baixa (~100Ω) → tensão alta no ADC</li>
+          <li><b style="color: #ff5555">Luz baixa</b> → LDR alta (~1MΩ) → tensão baixa no ADC</li>
+          <li>Trimpot ajusta a <b style="color: #ffb86c">sensibilidade</b></li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 3: CIRCUITO COMPLETO
+         ============================================================ -->
+
+      <!-- SLIDE 7: Circuito com Transistor (Interrupt) -->
+      <section data-auto-animate>
+        <h2>🔌 Circuito: LDR + Transistor → INTERRUPT</h2>
+        <multi-col>
+          <div style="flex: 1;">
+            <ls-u>
+              <li><b style="color: #8be9fd">LDR positivo</b> → Trimpot positivo</li>
+              <li><b style="color: #ff5555">Trimpot negativo</b> → GND</li>
+              <li><b style="color: #ffb86c">Wiper (centro)</b> → base do transistor</li>
+              <li><b style="color: #bd93f9">Coletor</b> → INTERRUPT pin (GPIO16/D0)</li>
+              <li><b style="color: #50fa7b">Emissor</b> → GND</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1; text-align: center;">
+            <div style="background: #44475a; border-radius: 12px; padding: 1.5em; border: 2px dashed #6272a4;">
+              <div class="mermaid" data-id="transistor-circuit">
+                <pre>
+graph TD
+  LDR["LDR (+)"] --> TRIMPOT["Trimpot (+)"]
+  TRIMPOT["Trimpot (-)"] --> GND1["GND"]
+  TRIMPOT["Wiper/Centro"] --> BASE["Base do Transistor"]
+  BASE -->|"Collector"| COL["Coletor → GPIO16"]
+  COL --> INT["INTERRUPT"]
+  EMIT["Emissor"] --> GND2["GND"]
+  
+  style LDR fill:#50fa7b,color:#282a36
+  style TRIMPOT fill:#ffb86c,color:#282a36
+  style GND1 fill:#ff5555,color:#f8f8f2
+  style GND2 fill:#ff5555,color:#f8f8f2
+  style INT fill:#8be9fd,color:#282a36
+                </pre>
+              </div>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 8: O Transistor KSP2222A -->
+      <section data-auto-animate>
+        <h2>🧊 O Transistor KSP2222A</h2>
+        <ls-u>
+          <li>Transistor NPN de <b style="color: #50fa7b">uso geral</b></li>
+          <li>Funciona como <b style="color: #8be9fd">interruptor eletrônico</b></li>
+          <li>Quando base recebe corrente → collector e emissor se conectam</li>
+          <li>Permite criar um sinal de interrupt no ESP8266</li>
+        </ls-u>
+        <div class="fragment"
+             style="background: rgba(80,250,123,0.15); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+          <p style="font-size: 20pt; color: #50fa7b;">💡 O transistor "traduz" o sinal analógico do LDR em um sinal digital para o INTERRUPT</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Pinagem do KSP2222A -->
+      <section data-auto-animate>
+        <h2>📋 Pinagem do KSP2222A</h2>
+        <center>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/2N2222A_TO-92.jpg/220px-2N2222A_TO-92.jpg" alt="Transistor 2N2222A (mesmo encapsulamento do KSP2222A)">
+        </center>
+        <ls-u>
+          <li><b style="color: #bd93f9">Pino 1 (Emissor)</b> → GND do circuito</li>
+          <li><b style="color: #8be9fd">Pino 2 (Base)</b> → Wiper do Trimpot (sinal do LDR)</li>
+          <li><b style="color: #50fa7b">Pino 3 (Coletor)</b> → GPIO16/D0 (INTERRUPT)</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 4: CÓDIGO
+         ============================================================ -->
+
+      <!-- SLIDE 10: Código Light Sleep com Interrupt -->
+      <section data-auto-animate>
+        <h2>👋 "Olá, Detive Luz!" — Código</h2>
+        <pre class="code-wrapper"><code class="code-wrapper lang-cpp" data-trim data-fragment-index="1" data-line-numbers="1-25|1-6|8-11|13-18|20-23">
+// Variáveis para controle
+volatile bool luzDetectada = false;
+unsigned long ultimoTempo = 0;
+
+// Função de interrupção
+voidICACHE_RAM_ATTRinterrompeLuz() {
+  luzDetectada = true;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Iniciando Light Sleep com Interrupt...");
+
+  // Configura pino de interrupção (GPIO16/D0)
+  pinMode(16, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(16), interrompeLuz, CHANGE);
+
+  Serial.println("Dormindo... (acorda com luz)");
+}
+
+void loop() {
+  // Entra em Light Sleep até detectar luz
+  if (!luzDetectada) {
+    WiFi.mode(WIFI_OFF);
+    wifi_fpm_set_sleep_type(LIGHT_SLEEP_T);
+    wifi_fpm_open();
+    wifi_fpm_set_wakeup_cb(callbackAcordou);
+    wifi_fpm_do_sleep(0xFFFFFFF); // Dormir indefinidamente
+    delay(10); // Necessário para ativar
+  }
+
+  // Ao acordar:
+  Serial.println("☀️ LUZ DETECTADA! Acordei!");
+  luzDetectada = false;
+
+  // Executa tarefa (ex: enviar dados, imprimir)
+  Serial.println("📡 Executando tarefa...");
+
+  delay(5000); // Tempo para executar tarefa
+
+  // Volta a dormir
+  Serial.println("💤 Voltando a dormir...");
+}
+        </code></pre>
+        <copy-btn class="mr-49"></copy-btn>
+        <ls-u font-size="18">
+          <li data-fragment-index="1"><code>attachInterrupt()</code> configura o pino GPIO16</li>
+          <li data-fragment-index="2"><code>wifi_fpm_do_sleep()</code> entra em Light Sleep</li>
+          <li data-fragment-index="3">Ao detectar luz, <code>luzDetectada = true</code> acorda o ESP</li>
+          <li data-fragment-index="4">O código <b>continua</b> de onde parou (diferente do Deep Sleep!)</li>
+        </ls-u>
+      </section>
+
+      <!-- SLIDE 11: Versão Simples (Serial Print) -->
+      <section data-auto-animate>
+        <h2>🔔 Versão Simples: Print ao Detectar Luz</h2>
+        <pre><code class="lang-cpp" data-trim data-line-numbers="1-20">
+volatile bool luzDetectada = false;
+
+voidICACHE_RAM_ATTRinterrompeLuz() {
+  luzDetectada = true;
+  Serial.println("☀️ LUZ DETECTADA!");
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(16, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(16), interrompeLuz, CHANGE);
+  Serial.println("💤 Dormindo... (aguarda luz)");
+}
+
+void loop() {
+  if (!luzDetectada) {
+    wifi_fpm_set_sleep_type(LIGHT_SLEEP_T);
+    wifi_fpm_open();
+    wifi_fpm_do_sleep(0xFFFFFFF);
+    delay(10);
+  }
+  luzDetectada = false;
+  
+  Serial.println("📡 Fazendo algo útil...");
+  delay(2000);
+}
+        </code></pre>
+        <copy-btn></copy-btn>
+        <ls-u font-size="18">
+          <li>Interrupção imprime <b style="color: #50fa7b">imediatamente</b> ao detectar luz</li>
+          <li>Código continua após acorda, <b style="color: #50fa7b">sem reiniciar</b></li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 5: APLICAÇÕES PRÁTICAS
+         ============================================================ -->
+
+      <!-- SLIDE 12: Aplicações -->
+      <section data-auto-animate>
+        <h2>🚀 Aplicações Práticas</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 1em;">
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:18pt;color: #8be9fd;">🌅 Despertador Solar</h3>
+            <p style="font-size: 16pt;">Acorda quando o sol nasce</p>
+          </div>
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:18pt;color: #50fa7b;">🚗 Sensor de Estacionamento</h3>
+            <p style="font-size: 16pt;">Detecta quando carro ocupa vaga</p>
+          </div>
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:18pt;color: #ffb86c;">🏠 Automação Residencial</h3>
+            <p style="font-size: 16pt;">Luz acende ao amanhecer</p>
+          </div>
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:18pt;color: #ff79c6;">🌡️ Estufa Inteligente</h3>
+            <p style="font-size: 16pt;">Monitora luz para plantas</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SLIDE 13: Light Sleep vs Deep Sleep - Quando usar -->
+      <section data-auto-animate>
+        <h2>⚖️ Quando usar cada modo?</h2>
+        <table>
+          <thead>
+            <tr>
+              <th class="tg-bf9e">Situação</th>
+              <th class="tg-bf9e">Recomendado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tg-bf9e">Sensor de luz que só precisa reagir</td>
+              <td class="tg-bf9e" style="color: #ffb86c">🌙 Light Sleep</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Estação meteorológica (envio periódico)</td>
+              <td class="tg-bf9e" style="color: #50fa7b">💤 Deep Sleep</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Interruptor inteligente (reage a eventos)</td>
+              <td class="tg-bf9e" style="color: #ffb86c">🌙 Light Sleep</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Sensor de porta (dormir por meses)</td>
+              <td class="tg-bf9e" style="color: #50fa7b">💤 Deep Sleep</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Contador de visitantes</td>
+              <td class="tg-bf9e" style="color: #50fa7b">💤 Deep Sleep</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 6: ENCERRAMENTO
+         ============================================================ -->
+
+      <section data-auto-animate>
+        <h2>✅ O Que Aprendemos Hoje</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 1em;">
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:20pt;color: #8be9fd;">💤 Light Sleep</h3>
+            <p style="font-size: 18pt;">CPU pausada, não reinicia, ~0,4 mA</p>
+          </div>
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:20pt;color: #50fa7b;">🔔 Interrupt</h3>
+            <p style="font-size: 18pt;">Acorda só quando algo acontece</p>
+          </div>
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:20pt;color: #bd93f9;">📷 LDR + Trimpot</h3>
+            <p style="font-size: 18pt;">Detecta luz com sensibilidade ajustável</p>
+          </div>
+
+          <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="font-size:20pt;color: #ff79c6;">🧊 Transistor</h3>
+            <p style="font-size: 18pt;">Traduz sinal analógico para digital</p>
+          </div>
+
+        </div>
+
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 24pt; color: #ff79c6;">
+            <b>"Light Sleep = economia + responsividade!"</b>
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>🤔 Exercício para a Próxima Aula</h2>
+        <ls-u>
+          <li>Monte o circuito LDR + Trimpot + Transistor</li>
+          <li>Teste o código de Light Sleep com Interrupt</li>
+          <li>Ajuste o trimpot para diferentes sensibilidade</li>
+          <li><b style="color:#50fa7b">Desafio:</b> combine com MQTT para publicar quando detectar luz!</li>
+        </ls-u>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT SECTION -->
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
+  <script src="../components/components.js"></script>
+
+  <script>
+    const app = Vue.createApp({
+      setup() {
+        Vue.onMounted(() => {
+          initializeReveal();
+        });
+        return {};
+      },
+    });
+
+    initializeComponents(app);
+    initializeHeader(app);
+
+
+    function initializeReveal() {
+      var deck1 = new Reveal(document.querySelector(".reveal"), {
+        controls: true,
+        controlsLayout: 'edges',
+        hash: true,
+        respondToHashChanges: true,
+        history: true,
+        keyboardCondition: "focused",
+        slideNumber: "h.v",
+        navigationMode: "linear",
+        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+      });
+      deck1.initialize();
+      deck1.on('slidechanged', event => {
+        console.log("Mudou slide")
+        const auto = event.currentSlide.querySelectorAll('.fragment.auto');
+
+        auto.forEach((el, i) => {
+          setTimeout(() => {
+            el.classList.add('visible');
+          }, i * 300);
+        });
+      });
+    }
+
+    app.mount("#app"); 
+  </script>
+
+</body>
+
+</html>
