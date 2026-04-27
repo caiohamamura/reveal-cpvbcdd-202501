@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+  <title>Triggers + PostGraphile - Banco de Dados 2</title>
+</head>
+
+<body>
+
+<div id="app" class="reveal">
+  <div class="slides">
+
+    <!-- SLIDE: TÍTULO -->
+    <section>
+      <h2>Triggers + PostGraphile</h2>
+      <p>Banco de Dados 2 — IFSP Capivari</p>
+      <p style="font-size: 0.6em; color: #6272a4;">2026-04-27 · Professor Caio Hamamura</p>
+    </section>
+
+    <!-- SLIDE: PARTE 1 - TRIGGERS -->
+    <section data-background-color="#282a36">
+      <h2 style="color: #ff5555;">PARTE 1</h2>
+      <h2 style="color: #ffb86c;">Triggers — Uso com Cautela</h2>
+    </section>
+
+    <!-- SLIDE: Retomada Functions -->
+    <section>
+      <h2>Retomada: Functions no PostgreSQL</h2>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-bottom: 1em;">
+        <p>Na aula anterior, aprendemos que <code>FUNCTION</code>s são blocos nomeados que:</p>
+      </div>
+      <ul>
+        <li>Retornam valores ou executam operações</li>
+        <li>São chamadas <strong>explicitamente</strong> via <code>SELECT</code> ou <code>PERFORM</code></li>
+        <li>Nos dão <strong>controle total</strong> sobre quando e como executam</li>
+      </ul>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #50fa7b;">
+        <p>Hoje: O que acontece quando a function é chamada <strong>automaticamente</strong>? 🤔</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: O que é Trigger -->
+    <section data-auto-animate>
+      <h2>O que é um Trigger?</h2>
+      <div style="display: flex; align-items: center; gap: 1.5em;">
+        <div style="flex: 1;">
+          <p>Um <strong>trigger</strong> é uma função que é executada <strong>automaticamente</strong> quando:</p>
+          <ul>
+            <li>Um <code>INSERT</code> ocorre numa tabela</li>
+            <li>Um <code>UPDATE</code> modifica dados</li>
+            <li>Um <code>DELETE</code> remove registros</li>
+          </ul>
+          <p style="margin-top: 1em; color: #bd93f9;">BEFORE ou AFTER de cada evento</p>
+        </div>
+        <div style="flex: 1;">
+          <div class="mermaid" data-id="trigger-flow">
+            <pre>
+graph LR
+  A["📝 INSERT/UPDATE/DELETE"] --> B["⚡ EVENTO"]
+  B --> C["🔔 TRIGGER"]
+  C --> D["📋 FUNÇÃO"]
+  D --> E["✅ RESULTADO"]
+  style A fill:#ffb86c,color:#282a36
+  style C fill:#ff5555,color:#f8f8f2
+  style D fill:#bd93f9,color:#f8f8f2
+            </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: Trigger em Ação -->
+    <section data-auto-animate>
+      <h2>Trigger em Ação: Atualização Automática</h2>
+      <pre><code class="lang-sql" data-trim data-line-numbers>
+-- Tabelas
+CREATE TABLE produtos (
+  id SERIAL PRIMARY KEY,
+  nome TEXT,
+  estoque INTEGER DEFAULT 0
+);
+
+CREATE TABLE pedidos (
+  id SERIAL PRIMARY KEY,
+  produto_id INTEGER REFERENCES produtos(id),
+  quantidade INTEGER
+);
+
+-- Trigger: atualiza estoque ao inserir pedido
+CREATE TRIGGER trg_atualiza_estoque
+  AFTER INSERT ON pedidos
+  FOR EACH ROW
+  EXECUTE FUNCTION atualizar_estoque();
+
+-- Função do trigger
+CREATE FUNCTION atualizar_estoque()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE produtos
+  SET estoque = estoque - NEW.quantidade
+  WHERE id = NEW.produto_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: WARNING Triggers -->
+    <section>
+      <h2>⚠️ Armadilhas dos Triggers</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em;">
+        <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+          <h3 style="color: #ff5555;">Efeitos Colaterais</h3>
+          <p>Triggers podem modificar dados em tabelas que você não esperava</p>
+        </div>
+        <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+          <h3 style="color: #ff5555;">Obscuros</h3>
+          <p>Difícil rastrear quando algo acontece "por trás"</p>
+        </div>
+        <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+          <h3 style="color: #ff5555;">Não Previsíveis</h3>
+          <p>Performance pode degradar de formas inesperadas</p>
+        </div>
+        <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+          <h3 style="color: #ff5555;">Debugging Difícil</h3>
+          <p>Erros em triggers são hard to trace back to source</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: Procedures vs Triggers -->
+    <section>
+      <h2>Procedures Explícitas vs Triggers</h2>
+      <table style="width: 100%; font-size: 0.85em;">
+        <thead>
+          <tr>
+            <th class="tg-bf9e">Aspecto</th>
+            <th class="tg-bf9e">Procedure Explícita</th>
+            <th class="tg-bf9e">Trigger</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tg-bf9e">Controle</td>
+            <td class="tg-bf9e" style="color: #50fa7b;">✅ TOTAL — você chama quando quer</td>
+            <td class="tg-bf9e" style="color: #ff5555;">❌ Automático — firing pode surpreender</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">Rastreamento</td>
+            <td class="tg-bf9e" style="color: #50fa7b;">✅ Simples — grep no código</td>
+            <td class="tg-bf9e" style="color: #ffb86c;">⚠️ Complexo — depende do estado do DB</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">Performance</td>
+            <td class="tg-bf9e" style="color: #50fa7b;">✅ Previsível</td>
+            <td class="tg-bf9e" style="color: #ff5555;">❌ Variável conforme carga</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">Quando usar</td>
+            <td class="tg-bf9e">Validações, operações controladas</td>
+            <td class="tg-bf9e">Auditoria leve, constraints complexas</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em; text-align: center;">
+        <p style="color: #bd93f9;">💡 <strong>Regra:</strong> Prefira procedures explícitas para lógica de negócio</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: Exercício Prático -->
+    <section>
+      <h2>🎯 Exercício: Identificando o Problema</h2>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff79c6;">
+        <p><strong>Cenário:</strong> Sistema de biblioteca com função <code>emprestar_livro(id_livro, id_membro)</code></p>
+      </div>
+      <ul style="font-size: 0.9em;">
+        <li>Insere registro em <code>emprestimos</code></li>
+        <li>Atualiza <code>disponivel = false</code> em <code>livros</code></li>
+        <li>Trigger <code>trg_log_emprestimo</code> insere em <code>log_auditoria</code></li>
+      </ul>
+      <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ff5555;">
+        <p>⚠️ <strong>Problema:</strong> A função do trigger executa um <code>SELECT</code> pesado com <code>JOIN</code> em <code>livros</code> + <code>autores</code> para "detalhes do livro" — isso roda para <strong>cada empréstimo</strong>, causando lentidão extrema.</p>
+      </div>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
+        <p><strong>Pergunta:</strong> Onde está o problema? O que deveria ser feito?</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: Resposta Exercício -->
+    <section>
+      <h2>✅ Resposta do Exercício</h2>
+      <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #50fa7b;">
+        <p><strong>O problema:</strong> O trigger executa SELECTs pesados desnecessariamente</p>
+      </div>
+      <ul>
+        <li>O trigger deve ser <strong>leve e atômico</strong></li>
+        <li>Informações já estão em <code>emprestimos</code> — não precisa buscar novamente</li>
+        <li>Para logs detalhados: usar procedure explícita chamada <strong>após</strong> a transação</li>
+        <li>Ou usar <code>NOTIFY</code> para desacoplar</li>
+      </ul>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em; text-align: center;">
+        <p style="color: #ffb86c;">📝 <strong>Regra prática:</strong> Se o trigger precisa de dados, passe-os como <code>NEW</code> — não haga SELECT!</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: Resumo Triggers -->
+    <section>
+      <h2>Resumo: Boas Práticas com Triggers</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 1em;">
+        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #50fa7b;">✅ Faça</h3>
+          <ul style="font-size: 0.85em;">
+            <li>Mantenha triggers simples</li>
+            <li>Use para auditoria leve</li>
+            <li>Valide dados com constraints</li>
+          </ul>
+        </div>
+        <div style="flex: 1; min-width: 200px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #ff5555;">❌ Evite</h3>
+          <ul style="font-size: 0.85em;">
+            <li>SELECTs pesados em triggers</li>
+            <li>Lógica complexa de negócio</li>
+            <li>Triggers em cascata</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: PARTE 2 - POSTGRAPHILE -->
+    <section data-background-color="#282a36">
+      <h2 style="color: #50fa7b;">PARTE 2</h2>
+      <h2 style="color: #8be9fd;">PostGraphile v5</h2>
+      <p>API GraphQL a partir do PostgreSQL</p>
+    </section>
+
+    <!-- SLIDE: O que é GraphQL -->
+    <section>
+      <h2>O que é GraphQL?</h2>
+      <div style="display: flex; align-items: center; gap: 1.5em;">
+        <div style="flex: 1;">
+          <p><strong>GraphQL</strong> é uma linguagem de query para APIs:</p>
+          <ul>
+            <li>Cliente especifica exatamente quais dados precisa</li>
+            <li>Um único endpoint para tudo</li>
+            <li>Retorna JSON estruturado</li>
+          </ul>
+        </div>
+        <div style="flex: 1;">
+          <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+            <p style="color: #bd93f9; font-size: 0.8em;">Exemplo de Query:</p>
+            <pre><code class="lang-graphql" data-trim>
+query {
+  usuarios {
+    id
+    nome
+    email
+  }
+}
+            </code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: GraphQL vs REST -->
+    <section>
+      <h2>GraphQL vs REST</h2>
+      <table style="width: 100%; font-size: 0.85em;">
+        <thead>
+          <tr>
+            <th class="tg-bf9e">Aspecto</th>
+            <th class="tg-bf9e">REST</th>
+            <th class="tg-bf9e">GraphQL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tg-bf9e">Endpoints</td>
+            <td class="tg-bf9e">Múltiplos: <code>/users</code>, <code>/orders</code></td>
+            <td class="tg-bf9e">Um único: <code>/graphql</code></td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">Dados</td>
+            <td class="tg-bf9e">Retorna tudo ou nada</td>
+            <td class="tg-bf9e">Retorna exatamente o pedido</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">Overfetching</td>
+            <td class="tg-bf9e" style="color: #ff5555;">⚠️ Comum</td>
+            <td class="tg-bf9e" style="color: #50fa7b;">✅ Não ocorre</td>
+          </tr>
+          <tr>
+            <td class="tg-bf9e">Documentação</td>
+            <td class="tg-bf9e">Manual ou Swagger</td>
+            <td class="tg-bf9e">Introspecção nativa</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SLIDE: Por que PostGraphile -->
+    <section>
+      <h2>Por que PostGraphile?</h2>
+      <div style="background: #44475a; padding: 1.5em; border-radius: 8px; margin-bottom: 1em;">
+        <p><strong>PostGraphile</strong> expõe seu schema PostgreSQL como API GraphQL automaticamente</p>
+      </div>
+      <ul>
+        <li>🔄 <strong>Zero código</strong> — tabelas viram tipos GraphQL automaticamente</li>
+        <li>🔒 <strong>Segurança nativa</strong> — suporta RLS, JWT, permissões</li>
+        <li>⚡ <strong>Performance</strong> — queries viram queries SQL otimizadas</li>
+        <li>🛠️ <strong>Flexibilidade</strong> — expõe functions, views, procedures</li>
+      </ul>
+      <div style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #8be9fd;">
+        <p>📦 <strong>v5 já estável</strong> — grandes melhorias em performance e DX</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: GraphiQL -->
+    <section>
+      <h2>GraphiQL: Explorando a API</h2>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-bottom: 1em;">
+        <p><strong>GraphiQL</strong> é a ferramenta de exploração GraphQL embutida no PostGraphile</p>
+        <p style="font-size: 0.8em; color: #6272a4;">Acesse: <code>http://localhost:5000/graphiql</code></p>
+      </div>
+      <div style="display: flex; gap: 1em;">
+        <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h4 style="color: #50fa7b;">✅ Benefícios</h4>
+          <ul style="font-size: 0.8em;">
+            <li>Autocompletar de queries</li>
+            <li>Documentação inline do schema</li>
+            <li>Histórico de queries</li>
+          </ul>
+        </div>
+        <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h4 style="color: #bd93f9;">📝 Features</h4>
+          <ul style="font-size: 0.8em;">
+            <li>Explorer visual</li>
+            <li>Variables panel</li>
+            <li>Headers panel</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: Instalação -->
+    <section>
+      <h2>Instalação: PostGraphile v5</h2>
+      <div style="display: flex; gap: 1em; margin-bottom: 1em;">
+        <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h4 style="color: #8be9fd;">Opção 1: npx</h4>
+          <pre><code class="lang-bash" data-trim>
+npx postgraphile@5 \
+  --connection "postgres://user:pass@localhost:5432/bddufop" \
+  --schema api \
+  --jwt-secret "segredo123" \
+  --watch \
+  --graphiql
+          </code></pre>
+        </div>
+      </div>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+        <h4 style="color: #ffb86c;">Opção 2: Docker (recomendado para consistência)</h4>
+        <pre><code class="lang-bash" data-trim>
+docker run -p 5000:5000 \
+  --env DATABASE_URL="postgres://postgres:pass@host.docker.internal:5433/bddufop" \
+  graphile/postgraphile:latest \
+  --schema api --jwt-secret segredo123 --graphiql
+        </code></pre>
+      </div>
+    </section>
+
+    <!-- SLIDE: Schema API -->
+    <section>
+      <h2>Criando o Schema <code>api</code></h2>
+      <pre><code class="lang-sql" data-trim>
+-- 1. Criar schema dedicado
+CREATE SCHEMA IF NOT EXISTS api;
+
+-- 2. Habilitar extensão pgcrypto (para hash de senhas)
+CREATE EXTENSION IF NOT EXISTS pgcrypto SCHEMA public;
+
+-- 3. Tabelas dentro do schema api
+CREATE TABLE api.usuarios (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  senha_hash TEXT NOT NULL
+);
+
+CREATE TABLE api.pedidos (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER REFERENCES api.usuarios(id),
+  produto TEXT NOT NULL,
+  quantidade INTEGER NOT NULL,
+  data_pedido TIMESTAMPTZ DEFAULT NOW()
+);
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: Views e Functions -->
+    <section>
+      <h2>Views e Functions Expostas</h2>
+      <p style="color: #bd93f9; margin-bottom: 1em;">Por que não expor tabelas diretamente?</p>
+      <ul>
+        <li>Views permitem <strong>seleção de colunas</strong> visíveis</li>
+        <li>Functions podem ter <strong>lógica de negócio</strong></li>
+        <li>Você controla <strong>o que o cliente pode ver e fazer</strong></li>
+      </ul>
+      <pre><code class="lang-sql" data-trim>
+-- View: expõe apenas dados necessários
+CREATE VIEW api.meus_pedidos AS
+SELECT
+  p.id,
+  p.produto,
+  p.quantidade,
+  p.data_pedido,
+  p.usuario_id
+FROM api.pedidos p;
+
+-- Function: operação controlada
+CREATE FUNCTION api.criar_pedido(
+  p_usuario_id INTEGER,
+  p_produto TEXT,
+  p_quantidade INTEGER
+) RETURNS api.pedidos AS $$
+  INSERT INTO api.pedidos (usuario_id, produto, quantidade)
+  VALUES (p_usuario_id, p_produto, p_quantidade)
+  RETURNING *;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: pgcrypto -->
+    <section>
+      <h2>Segurança: pgcrypto para Hash de Senhas</h2>
+      <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff5555;">
+        <p>⚠️ <strong>NUNCA</strong> almacene senhas em texto puro ou com hash genérico!</p>
+      </div>
+      <pre><code class="lang-sql" data-trim>
+-- Hash bcrypt via pgcrypto
+INSERT INTO api.usuarios (nome, email, senha_hash) VALUES
+  ('Ana', 'ana@email.com', crypt('senha123', gen_salt('bf'))),
+  ('Bruno', 'bruno@email.com', crypt('senha456', gen_salt('bf')));
+
+-- Verificação de senha
+CREATE FUNCTION api.login(email TEXT, senha TEXT)
+RETURNS TEXT AS $$
+DECLARE
+  usuario RECORD;
+BEGIN
+  SELECT * INTO usuario
+  FROM api.usuarios
+  WHERE email = login.email;
+
+  IF usuario IS NULL THEN
+    RAISE EXCEPTION 'Usuário não encontrado';
+  END IF;
+
+  -- Compara hash
+  IF crypt(login.senha, usuario.senha_hash) = usuario.senha_hash THEN
+    RETURN api.gerar_token(usuario.id);
+  ELSE
+    RAISE EXCEPTION 'Senha incorreta';
+  END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: JWT -->
+    <section>
+      <h2>JWT: Autenticação com Tokens</h2>
+      <pre><code class="lang-sql" data-trim>
+-- Geração simplificada de JWT
+CREATE FUNCTION api.gerar_token(usuario_id INTEGER)
+RETURNS TEXT AS $$
+DECLARE
+  header_base64 TEXT;
+  payload_base64 TEXT;
+  signature_base64 TEXT;
+  signing_input TEXT;
+  secret TEXT := 'segredo123';
+BEGIN
+  header_base64 := encode(
+    to_jsonb('{"alg":"HS256","typ":"JWT"}'::json)::text,
+    'base64url'
+  );
+  payload_base64 := encode(
+    to_jsonb(json_build_object(
+      'iat', extract(epoch from now())::INTEGER,
+      'user_id', usuario_id
+    ))::text,
+    'base64url'
+  );
+  signing_input := header_base64 || '.' || payload_base64;
+  signature_base64 := encode(
+    hmac(signing_input, secret, 'sha256'),
+    'base64url'
+  );
+  RETURN signing_input || '.' || signature_base64;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+      </code></pre>
+      <div style="background: #44475a; padding: 0.5em; border-radius: 4px; margin-top: 0.5em;">
+        <p style="font-size: 0.7em; color: #6272a4;">📝 Em produção, use extensão <code>pgjwt</code> para JWT completo</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: RLS -->
+    <section>
+      <h2>RLS: Row Level Security</h2>
+      <p style="color: #bd93f9; margin-bottom: 1em;">Isolamento por usuário — cada um vê apenas seus dados</p>
+      <pre><code class="lang-sql" data-trim>
+-- Habilitar RLS na tabela
+ALTER TABLE api.pedidos ENABLE ROW LEVEL SECURITY;
+
+-- Política: usuário vê apenas seus próprios pedidos
+CREATE POLICY usuarios_pedidos ON api.pedidos
+  FOR ALL
+  USING (
+    usuario_id = NULLIF(
+      current_setting('request.jwt.claim.user_id', true),
+      ''
+    )::INTEGER
+  );
+
+-- Para testar manualmente:
+SET request.jwt.claim.user_id = '1';
+SELECT * FROM api.pedidos;  -- só pedidos do usuário 1
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: RLS Debugging -->
+    <section>
+      <h2>RLS: Debugging com app.current_user_id</h2>
+      <div style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
+        <p>Dica: Use <code>app.current_user_id</code> via <code>set_config</code> para debugging</p>
+      </div>
+      <pre><code class="lang-sql" data-trim>
+-- =============================================
+-- DEBUGGING: app.current_user_id
+-- =============================================
+
+-- Simula usuário logado (para testar)
+SET app.current_user_id = '1';
+SELECT * FROM api.pedidos;  -- deve mostrar só usuário 1
+
+-- Ou via PostGraphile com JWT:
+SELECT set_config('request.jwt.claim.user_id', '1', false);
+
+-- Resetar
+RESET app.current_user_id;
+-- =============================================
+      </code></pre>
+      <div style="background: #44475a; padding: 0.5em; border-radius: 4px; margin-top: 0.5em;">
+        <p style="font-size: 0.7em; color: #50fa7b;">✅ Melhor que <code>request.jwt.claim.user_id</code> — mais fácil de testar</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: Demo - Passo 1 -->
+    <section>
+      <h2>Demo: Criando API com RLS (Passo a Passo)</h2>
+      <div style="display: flex; gap: 1em;">
+        <div style="flex: 1;">
+          <h4 style="color: #ffb86c;">1. Criar schema e tabelas</h4>
+          <pre><code class="lang-sql" data-trim>
+CREATE SCHEMA api;
+
+CREATE TABLE api.usuarios (
+  id SERIAL PRIMARY KEY,
+  nome TEXT,
+  email TEXT UNIQUE,
+  senha_hash TEXT
+);
+
+CREATE TABLE api.pedidos (
+  id SERIAL PRIMARY KEY,
+  usuario_id INTEGER,
+  produto TEXT,
+  quantidade INTEGER
+);
+          </code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE: Demo - Passo 2 -->
+    <section>
+      <h2>Demo: RLS + PostGraphile</h2>
+      <pre><code class="lang-sql" data-trim>
+-- 2. Habilitar RLS
+ALTER TABLE api.pedidos ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY rls_pedidos ON api.pedidos
+  USING (
+    usuario_id = current_setting(
+      'request.jwt.claim.user_id',
+      true
+    )::INTEGER
+  );
+
+-- 3. Inserir dados de exemplo
+INSERT INTO api.usuarios VALUES
+  (1, 'Ana', 'ana@email.com', crypt('123', gen_salt('bf'))),
+  (2, 'Bruno', 'bruno@email.com', crypt('456', gen_salt('bf')));
+
+INSERT INTO api.pedidos (usuario_id, produto, quantidade) VALUES
+  (1, 'Caneta', 10),
+  (1, 'Caderno', 5),
+  (2, 'Lápis', 20);
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: GraphiQL - Queries -->
+    <section>
+      <h2>GraphiQL: Testando Queries</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em;">
+        <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+          <p style="color: #50fa7b; font-size: 0.8em;">Query: Listar pedidos</p>
+          <pre><code class="lang-graphql" data-trim>
+query {
+  allPedidos {
+    nodes {
+      id
+      produto
+      quantidade
+    }
+  }
+}
+          </code></pre>
+        </div>
+        <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+          <p style="color: #bd93f9; font-size: 0.8em;">Mutation: Login</p>
+          <pre><code class="lang-graphql" data-trim>
+mutation {
+  login(
+    email: "ana@email.com"
+    senha: "123"
+  ) {
+    text
+  }
+}
+          </code></pre>
+        </div>
+      </div>
+      <div style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ffb86c;">
+        <p>💡 O token JWT retornado deve ser enviado no header <code>Authorization: Bearer &lt;token&gt;</code></p>
+      </div>
+    </section>
+
+    <!-- SLIDE: Mutations -->
+    <section>
+      <h2>Mutations via Functions PostgreSQL</h2>
+      <pre><code class="lang-sql" data-trim>
+-- Mutation: criar pedido com validação
+CREATE FUNCTION api.criar_pedido(
+  p_produto TEXT,
+  p_quantidade INTEGER
+) RETURNS api.pedidos AS $$
+DECLARE
+  v_usuario_id INTEGER;
+  v_resultado api.pedidos;
+BEGIN
+  -- Pegar user_id do JWT
+  v_usuario_id := NULLIF(
+    current_setting('request.jwt.claim.user_id', true),
+    ''
+  )::INTEGER;
+
+  -- Inserir com validação
+  IF p_quantidade <= 0 THEN
+    RAISE EXCEPTION 'Quantidade deve ser maior que 0';
+  END IF;
+
+  INSERT INTO api.pedidos (usuario_id, produto, quantidade)
+  VALUES (v_usuario_id, p_produto, p_quantidade)
+  RETURNING * INTO v_resultado;
+
+  RETURN v_resultado;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: httpOnly vs localStorage -->
+    <section>
+      <h2>Segurança: httpOnly Cookies vs localStorage</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1em; margin-bottom: 1em;">
+        <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+          <h4 style="color: #ff5555;">❌ localStorage</h4>
+          <ul style="font-size: 0.85em;">
+            <li>Vulnerável a XSS</li>
+            <li>JavaScript pode ler</li>
+            <li>Atacante injeta script → token roubado</li>
+          </ul>
+        </div>
+        <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+          <h4 style="color: #50fa7b;">✅ httpOnly Cookies</h4>
+          <ul style="font-size: 0.85em;">
+            <li>Inacessíveis ao JavaScript</li>
+            <li>Seguro contra XSS</li>
+            <li>PostGraphile suporta via <code>--cookies</code></li>
+          </ul>
+        </div>
+      </div>
+      <pre><code class="lang-javascript" data-trim>
+// localStorage (simplificado, menos seguro)
+localStorage.setItem('token', jwt);
+
+// httpOnly cookie (produção)
+res.cookie('token', jwt, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'strict'
+});
+      </code></pre>
+    </section>
+
+    <!-- SLIDE: Exercício -->
+    <section>
+      <h2>🎯 Exercício: Crie sua própria API</h2>
+      <div style="background: #44475a; padding: 1.5em; border-radius: 8px; margin-bottom: 1em;">
+        <p><strong>Objetivo:</strong> Criar uma API GraphQL com RLS no schema <code>api</code></p>
+      </div>
+      <ol style="font-size: 0.9em;">
+        <li style="margin-bottom: 0.5em;">Criar schema <code>api</code> com tabela <code>tarefas</code> (id, usuario_id, descricao, concluida)</li>
+        <li style="margin-bottom: 0.5em;">Habilitar RLS com política para isolar por <code>usuario_id</code></li>
+        <li style="margin-bottom: 0.5em;">Inserir 3 tarefas para cada usuário</li>
+        <li style="margin-bottom: 0.5em;">Testar no GraphiQL: fazer login e listar tarefas</li>
+        <li>Verificar que cada usuário vê apenas suas próprias tarefas</li>
+      </ol>
+    </section>
+
+    <!-- SLIDE: Resumo -->
+    <section>
+      <h2>Resumo da Aula</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 1em;">
+        <div style="flex: 1; min-width: 250px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #ff5555;">Triggers</h3>
+          <ul style="font-size: 0.85em;">
+            <li>Use com cautela</li>
+            <li>Prefira procedures explícitas</li>
+            <li>Evite SELECTs pesados</li>
+          </ul>
+        </div>
+        <div style="flex: 1; min-width: 250px; background: #44475a; padding: 1em; border-radius: 8px;">
+          <h3 style="color: #50fa7b;">PostGraphile</h3>
+          <ul style="font-size: 0.85em;">
+            <li>API GraphQL do PostgreSQL</li>
+            <li>Views > Tabelas diretas</li>
+            <li>RLS + JWT para segurança</li>
+          </ul>
+        </div>
+      </div>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em; text-align: center;">
+        <p style="color: #bd93f9;">📝 <strong>Entrega:</strong> Relatório no Moodle com prints das queries GraphQL funcionando</p>
+      </div>
+    </section>
+
+    <!-- SLIDE: Próximos Passos -->
+    <section>
+      <h2>Próximos Passos</h2>
+      <ul>
+        <li style="margin-bottom: 1em;">🔍 Aprofundar em <strong>subscriptions</strong> do GraphQL (tempo real)</li>
+        <li style="margin-bottom: 1em;">🛡️ Implementar <strong>permissões granulares</strong> por role</li>
+        <li style="margin-bottom: 1em;">🐳 Usar <strong>Docker Compose</strong> para Postgres + PostGraphile</li>
+        <li style="margin-bottom: 1em;">📊 Conectar com <strong>front-end React/Vue</strong> via Apollo Client</li>
+      </ul>
+      <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
+        <p style="color: #8be9fd;">💬 Dúvidas? Me procure no chat ou moodle!</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- SCRIPT SECTION -->
+<script src="../dist/reveal.js"></script>
+<script src="../plugin/notes/notes.js"></script>
+<script src="../plugin/math/math.js"></script>
+<script src="../plugin/markdown/markdown.js"></script>
+<script src="../plugin/highlight/highlight.js"></script>
+<script src="../plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+<script src="../dist/vue.js"></script>
+
+<script>
+  window.app = Vue.createApp({
+    setup() {
+      Vue.onMounted(() => {
+        initializeReveal();
+      });
+      return {};
+    },
+  });
+</script>
+<script src="../plugin/leader-line.min.js"></script>
+<script src="../slides_template/header1.js"></script>
+<script src="../components/md.js"></script>
+<script src="../components/components.js"></script>
+
+<script>
+  function initializeReveal() {
+    var deck1 = new Reveal(document.querySelector(".reveal"), {
+      controls: true,
+      controlsLayout: 'edges',
+      hash: true,
+      respondToHashChanges: true,
+      history: true,
+      keyboardCondition: "focused",
+      theme: "dracula",
+      slideNumber: "h.v",
+      navigationMode: "linear",
+      plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+    });
+    deck1.initialize();
+  }
+  window.app.mount("#app");
+</script>
+
+</body>
+</html>
