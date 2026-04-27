@@ -321,8 +321,8 @@ void loop() {
             </code-block>
           </div>
         </multi-col>
-        <leader-line from="#liga-esq" to="#liga-dir td[data-line-number='2'] span" color="#50fa7b" path="fluid" data-fragment-index="1" class="fragment fade-in-then-semi-out" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
-        <leader-line from="#liga-esq1" to="#liga-dir td[data-line-number='1'] span" color="#50fa7b" path="fluid" data-fragment-index="2" class="fragment fade-in-then-semi-out" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
+        <leader-line :animated="false" from="#liga-esq" to="#liga-dir td[data-line-number='2'] span" color="#50fa7b" path="fluid" data-fragment-index="1" class="fragment fade-in-then-semi-out" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
+        <leader-line :animated="false" from="#liga-esq1" to="#liga-dir td[data-line-number='1'] span" color="#50fa7b" path="fluid" data-fragment-index="2" class="fragment fade-in-then-semi-out" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
       </section>
 
     </div>
@@ -335,56 +335,14 @@ void loop() {
   <script src="../plugin/highlight/highlight.js"></script>
   <script src="../plugin/zoom/zoom.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
-  <script src="../dist/vue.js"></script>
-
-  <script>
-    window.app = Vue.createApp({
-      setup() {
-        Vue.onMounted(() => {
-          initializeReveal();
-        });
-        return {};
-      },
-    });
-  </script>
   <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
-  <script src="../components/md.js"></script>
   <script src="../components/components.js"></script>
+  <script src="../slides_template/init.js"></script>
 
   <script>
-    let animations = [];
-    function initializeReveal() {
-      window.deck = new Reveal(document.querySelector(".reveal"), {
-        controls: true,
-        controlsLayout: 'edges',
-        hash: true,
-        respondToHashChanges: true,
-        history: true,
-        keyboardCondition: "focused",
-        slideNumber: "h.v",
-        navigationMode: "linear",
-        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
-      });
-      deck.initialize();
-      deck.on('slidechanged', event => {
-        for (let animation of animations) {
-          clearTimeout(animation);
-        }
-        animations = [];
-        
-        let auto = event.currentSlide.querySelectorAll('.fragment.auto');
-
-        for (el of auto) {
-          if (el.dash) {
-            animations.push(setTimeout(deck.nextFragment,100));          }
-          animations.push(setTimeout(deck.nextFragment,100));
-        }
-        
-      });
-    }
-
-    window.app.mount("#app");
+    window.app = mountSlideApp();
   </script>
 </body>
 

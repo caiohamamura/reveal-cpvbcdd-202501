@@ -282,7 +282,7 @@ const leaderLineComponent = {
         const l = ensureLine();
         if (!l) return;
         props.animated ? l.show('draw') : l.show();
-      }, 1000));
+      }, 100));
     }
 
     function hide() {

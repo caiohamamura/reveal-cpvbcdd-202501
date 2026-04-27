@@ -43,7 +43,6 @@ reveal-cpvbcdd-202501/
 │   └── leader-line.min.js   # Biblioteca LeaderLine (linhas conectoras)
 ├── components/              # Componentes Vue.js customizados
 │   ├── components.js        # Componentes de UI
-│   └── md.js                # (legacy/incompleto)
 ├── slides_template/         # Templates reutilizáveis
 │   └── header1.js           # Componente header de aula
 ├── bdd1/                    # Módulo Banco de Dados I
