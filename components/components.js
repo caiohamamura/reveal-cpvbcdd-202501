@@ -43,14 +43,36 @@ const lsUComponent = {
 window.__codeBlockRaw = {};
 window.__codeBlockCounter = 0;
 
-// Capture raw innerHTML of all <code-block> elements before Vue processes them
+// Strip common leading whitespace from all non-empty lines
+function stripIndentation(text) {
+  const lines = text.split('\n');
+  let minIndent = Infinity;
+  for (const line of lines) {
+    if (line.trim().length === 0) continue;
+    const indent = line.match(/^(\s*)/)[1].length;
+    if (indent < minIndent) minIndent = indent;
+  }
+  if (minIndent === Infinity || minIndent === 0) return text.trim();
+  return lines.map(line => line.substring(minIndent)).join('\n').trim();
+}
+
+// HTML-escape text so v-html renders it as-is (prevents <Arduino.h> → <arduino.h>)
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// Capture raw content of all <code-block> elements before Vue processes them
 (function captureCodeBlocks() {
   document.querySelectorAll('code-block').forEach(el => {
     const id = '__cb_' + (window.__codeBlockCounter++);
     // Prefer <script type="text/plain"> child to avoid HTML parser mangling
     // (e.g. #include <Arduino.h> becomes <arduino.h>)
     const plain = el.querySelector('script[type="text/plain"]');
-    window.__codeBlockRaw[id] = plain ? plain.textContent.trim() : el.innerHTML.trim();
+    const raw = plain ? plain.textContent : el.textContent;
+    window.__codeBlockRaw[id] = escapeHtml(stripIndentation(raw));
     el.setAttribute('data-cb-id', id);
   });
 })();
@@ -271,7 +293,7 @@ const leaderLineComponent = {
           }
           return;
         } else {
-          line.remove();
+          line?.remove();
           line = null;
         }
       });
