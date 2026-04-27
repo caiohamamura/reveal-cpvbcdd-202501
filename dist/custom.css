@@ -189,7 +189,7 @@ section {
 }
 
 .multi-col {
-    display: flex;
+    display: grid;
     align-items: center;
 }
 

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Teste de Componentes</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/night.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/panda-syntax-dark.min.css" />
+
+  <style>
+    .test-label {
+      position: absolute;
+      top: 8px;
+      left: 16px;
+      font-size: 14px;
+      color: #ff79c6;
+      opacity: 0.6;
+      font-family: monospace;
+    }
+    section.present {
+      overflow: auto !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================ -->
+      <!-- TITLE -->
+      <!-- ============================================================ -->
+      <section>
+        <h1>Teste de Componentes</h1>
+        <p style="color:#aaa">Página para validar todos os componentes Vue customizados</p>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 1. code-inline -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">code-inline</span>
+        <h2>&lt;code-inline&gt;</h2>
+
+        <p>SQL padrão (sem props):</p>
+        <code-inline>SELECT * FROM alunos;</code-inline>
+
+        <p>Com lang="python" e size="16":</p>
+        <code-inline lang="python" size="16">print("Hello World")</code-inline>
+
+        <p>Com lang="javascript" e size="24":</p>
+        <code-inline lang="javascript" size="24">const x = 42;</code-inline>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 2. code-block -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">code-block</span>
+        <h2>&lt;code-block&gt;</h2>
+
+        <p>lang="sql":</p>
+        <code-block lang="sql">
+          SELECT
+            id,
+            nome,
+            email
+          FROM alunos
+          WHERE ativo = true
+          ORDER BY nome;
+        </code-block>
+      </section>
+      <section>
+        <span class="test-label">code-block</span>
+        <h2>&lt;code-block&gt;</h2>
+
+        <p>lang="cpp":</p>
+        <pre><code-block lang="cpp" data-trim data-line-numbers>
+        <textarea>
+#include <Arduino.h>
+void setup() {
+
+}
+
+void loop() {
+
+}
+        </textarea>         
+        </code-block>
+        
+      </section>
+
+      <section>
+        <span class="test-label">code-block (cont.)</span>
+        <h2>&lt;code-block&gt; sem lang</h2>
+
+        <p>Sem lang (texto puro):</p>
+        <code-block>
+          Este é um bloco de código
+          sem destaque de sintaxe.
+          Linha 3.
+        </code-block>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 3. ls-u -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">ls-u</span>
+        <h2>&lt;ls-u&gt;</h2>
+
+        <p>Sem fontSize (padrão 24pt):</p>
+        <ls-u>
+          <li>Primeiro item com fade-in-then-semi-out</li>
+          <li>Segundo item</li>
+          <li>Terceiro item</li>
+        </ls-u>
+      </section>
+
+      <section>
+        <span class="test-label">ls-u (cont.)</span>
+        <h2>&lt;ls-u font-size="16"&gt;</h2>
+
+        <ls-u font-size="16"> 
+          <li>Item com fonte menor</li>
+          <li>Outro item menor</li>
+          <li>Mais um item</li>
+          <li>E mais um</li>
+          <li>Último item</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 4. multi-col -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">multi-col</span>
+        <h2>&lt;multi-col&gt;</h2>
+
+        <p>cols="2" (padrão):</p>
+        <multi-col>
+          <div style="background:#282a36; padding:16px; border-radius:8px;">
+            <h3>Coluna 1</h3>
+            <p>Conteúdo da primeira coluna</p>
+          </div>
+          <div style="background:#282a36; padding:16px; border-radius:8px;">
+            <h3>Coluna 2</h3>
+            <p>Conteúdo da segunda coluna</p>
+          </div>
+        </multi-col>
+      </section>
+
+      <section>
+        <span class="test-label">multi-col (cont.)</span>
+        <h2>&lt;multi-col cols="3"&gt;</h2>
+
+        <multi-col cols="3">
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>A</h3>
+          </div>
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>B</h3>
+          </div>
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>C</h3>
+          </div>
+        </multi-col>
+
+        <h2>&lt;multi-col cols="2"&gt;</h2>
+
+        <multi-col cols="2">
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>A</h3>
+          </div>
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>B</h3>
+          </div>
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>C</h3>
+          </div>
+        </multi-col>
+
+        <h2>&lt;multi-col cols="1fr 0.5fr 1fr"&gt;</h2>
+
+        <multi-col cols="1fr 0.5fr 1fr">
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>A</h3>
+          </div>
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>B</h3>
+          </div>
+          <div style="background:#282a36; padding:12px; border-radius:8px; text-align:center;">
+            <h3>C</h3>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 5. highlight-box -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">highlight-box</span>
+        <h2>&lt;highlight-box&gt;</h2>
+
+        <highlight-box index="1">
+          <p>Este é um highlight-box com index="1" — aparece como fragment</p>
+        </highlight-box>
+
+        <highlight-box index="2">
+          <p>Segundo box com index="2" — aparece depois</p>
+        </highlight-box>
+
+        <p>Texto normal fora do box</p>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 6. copy-btn -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">copy-btn</span>
+        <h2>&lt;copy-btn&gt;</h2>
+
+        <p>Botão de copiar tabela:</p>
+        <div style="position:relative">
+          <table class="tg" style="font-size:14px">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Maria</td>
+                <td>maria@email.com</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>João</td>
+                <td>joao@email.com</td>
+              </tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 7. md -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">md</span>
+        <h2>&lt;md&gt;</h2>
+
+        <md md="
+# Título Markdown
+
+- Item 1
+- Item 2
+- **Negrito**
+- *itálico*
+- `código inline`"></md>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 8. leader-line -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">leader-line</span>
+        <h2>&lt;leader-line&gt;</h2>
+
+        <div style="display:flex; justify-content:space-between; padding:40px 80px;">
+          <div id="ll-from" style="background:#44475a; padding:20px 30px; border-radius:8px;">De</div>
+          <div id="ll-to" style="background:#44475a; padding:20px 30px;margin-top:40px; border-radius:8px;">Para</div>
+        </div>
+
+        <leader-line from="#ll-from" to="#ll-to" color="#ff79c6" path="fluid" data-fragment-index="1" class="fragment auto" start-socket="right" end-socket="left"></leader-line>
+      </section>
+
+      <section>
+        <span class="test-label">leader-line (cont.)</span>
+        <h2>&lt;leader-line&gt; com fragment</h2>
+
+        <div style="display:flex; justify-content:space-around; padding:40px 80px;">
+          <div id="ll-from2" style="background:#44475a; padding:20px 30px; border-radius:8px;">A</div>
+          <div id="ll-to2" style="background:#44475a; padding:20px 30px; border-radius:8px;">B</div>
+        </div>
+
+        <leader-line from="#ll-from2" to="#ll-to2" color="#50fa7b" path="arc" class="fragment auto" data-fragment-index="1" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
+
+        <p class="fragment" data-fragment-index="1">A linha aparece com este fragment</p>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- COMBO: vários componentes juntos -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">combo</span>
+        <h2>Combo</h2>
+
+        <multi-col gap="100px">
+          <div>
+            <ls-u font-size="18">
+              <li id="liga-esq">Tabela alunos</li>
+              <li>Consulta SELECT</li>
+              <li>Resultado ao lado</li>
+            </ls-u>
+          </div>
+          <div id="liga-dir">
+            <code-block lang="sql" size="16" data-line-numbers>
+              SELECT * 
+              FROM alunos;
+            </code-block>
+          </div>
+        </multi-col>
+        <leader-line from="#liga-esq" to="#liga-dir td[data-line-number='2'] span" color="#50fa7b" path="fluid" class="fragment" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../dist/vue.js"></script>
+
+  <script>
+    window.app = Vue.createApp({
+      setup() {
+        Vue.onMounted(() => {
+          initializeReveal();
+        });
+        return {};
+      },
+    });
+  </script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
+  <script src="../components/components.js"></script>
+
+  <script>
+    function initializeReveal() {
+      var deck = new Reveal(document.querySelector(".reveal"), {
+        controls: true,
+        controlsLayout: 'edges',
+        hash: true,
+        respondToHashChanges: true,
+        history: true,
+        keyboardCondition: "focused",
+        slideNumber: "h.v",
+        navigationMode: "linear",
+        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
+      });
+      deck.initialize();
+      deck.on('slidechanged', event => {
+        let auto = event.currentSlide.querySelectorAll('.fragment.auto');
+
+        for (el of auto) {
+          if (el.dash) {
+            setTimeout(deck.nextFragment,1000);
+          }
+          setTimeout(deck.nextFragment,1000);
+        }
+        
+      });
+    }
+
+    window.app.mount("#app");
+  </script>
+</body>
+
+</html>

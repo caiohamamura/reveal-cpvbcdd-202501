@@ -11,9 +11,35 @@ const codeInlineComponent = {
         `,
 };
 
+
 const multiColComponent = {
-  template: `<div class="multi-col" :style="{ '--col-count': cols }"><slot></slot></div>`,
-  props: { cols: { type: Number, default: 2 } }
+  props: {
+    cols: {
+      type: [Number, String, Array],
+      default: '1fr 1fr'
+    },
+    gap: Number
+  },
+  computed: {
+    template() {
+      const c = this.cols;
+      if (Number(c) > 0) {
+        return `repeat(${c}, 1fr)`
+      }
+
+      return Array.isArray(c)
+        ? c.join(' ')
+        : c
+    }
+  },
+  template: `
+    <div
+      class="multi-col"
+      :style="{ gridTemplateColumns: template, gap: gap }"
+    >
+      <slot></slot>
+    </div>
+  `
 };
 
 const highlightBoxComponent = {
@@ -27,8 +53,8 @@ const lsUComponent = {
     // Initialize the list component
     this.$el.querySelectorAll("li").forEach((li) => {
       li.classList.add("fragment");
-      li.classList.add("fade-in-then-semi-out"); 
-      li.style.fontSize = this.fontSize || "24pt";
+      li.classList.add("fade-in-then-semi-out");
+      li.style.fontSize = (this.fontSize || "24") + "pt";
     });
   },
   /*html*/
@@ -70,12 +96,21 @@ function escapeHtml(text) {
     const id = '__cb_' + (window.__codeBlockCounter++);
     // Prefer <script type="text/plain"> child to avoid HTML parser mangling
     // (e.g. #include <Arduino.h> becomes <arduino.h>)
-    const plain = el.querySelector('script[type="text/plain"]');
-    const raw = plain ? plain.textContent : el.textContent;
+    const raw = el.textContent;
     window.__codeBlockRaw[id] = escapeHtml(stripIndentation(raw));
     el.setAttribute('data-cb-id', id);
   });
 })();
+
+function getCodeWithLineBreaks(preEl) {
+  const lines = preEl.querySelectorAll('.hljs-ln-code')
+  if (lines.length) {
+    return Array.from(lines)
+      .map(line => line.textContent)
+      .join('\n')
+  }
+  return preEl.textContent;
+}
 
 const codeBlockComponent = {
   props: {
@@ -95,7 +130,8 @@ const codeBlockComponent = {
     });
 
     function copiar() {
-      const conteudo = pre.value?.textContent;
+      const conteudo = getCodeWithLineBreaks(pre.value);
+
       navigator.clipboard.writeText(conteudo || '')
         .then(() => {
           btnMsg.value = 'Copiado!';
@@ -118,68 +154,56 @@ const codeBlockComponent = {
 
 const copyBtnComponent = {
   setup() {
-    const btn = Vue.ref('btn');
+    const btn = Vue.ref(null)
 
-    Vue.onMounted(function () {
-      let anterior = btn.value?.previousSibling;
-      console.log(anterior);
-      anterior.insertBefore(btn.value, anterior.firstChild);
+    function extractCode(codeEl) {
+      if (!codeEl) return ''
 
-
-    });
-
-    async function copiar() {
-      const conteudo = btn.value?.nextSibling;
-
-      // Process each row into a tab-separated string
-      let rows = Array.from(conteudo.querySelectorAll('tr'));
-
-
-      if (rows.length === 0) {
-        text = conteudo.textContent || '';
-      }
-      else {
-        let firstRow = '';
-        let remove = false;
-        for (row of rows) {
-          if (firstRow === '') {
-            firstRow = row.textContent;
-          } else if (row.textContent === firstRow) {
-            let index = rows.indexOf(row);
-            console.log(index);
-            while (rows.length > index) {
-              rows.pop();
-            }
-          }
-        }
-        console.log(rows);
-        text = rows.map(row => {
-          const cells = Array.from(row.querySelectorAll('td, th'));
-          return cells.map(cell => cell.innerText).join('');
-        });
-        text = text.join('\n');
+      // Case 1: highlight.js with line numbers (table)
+      const lines = codeEl.querySelectorAll('tr')
+      if (lines.length > 0) {
+        return [...lines]
+          .map(line => [...line.querySelectorAll("td,th")].map(e=>e.innerHTML).join('\t'))
+          .join('\n')
       }
 
-      // Copy to clipboard
-      try {
-        await navigator.clipboard.writeText(text);
-        btn.value.textContent = 'Copiado!';
-        setTimeout(() => {
-          btn.value.textContent = 'Copiar';
-        }, 2000);
-      } catch (err) {
-        console.error('Erro ao copiar:', err);
-      };
+      // Case 2: normal <code>
+      return codeEl.textContent || ''
     }
 
-    return { copiar, btn };
+    async function copiar() {
+      const container = btn.value?.previousSibling
+      const codeEl = container
+      console.log(codeEl);
 
+      const text = extractCode(codeEl)
+
+      try {
+        await navigator.clipboard.writeText(text)
+
+        btn.value.textContent = 'Copiado!'
+        setTimeout(() => {
+          btn.value.textContent = 'Copiar'
+        }, 2000)
+
+      } catch (err) {
+        console.error('Erro ao copiar:', err)
+      }
+    }
+
+    return { copiar, btn }
   },
-  /*html*/
+
   template: `
-  <button ref="btn" class="copy-button btn color-black" @click=copiar>Copiar</button>
+    <button
+      ref="btn"
+      class="copy-button btn color-black"
+      @click="copiar"
+    >
+      Copiar
+    </button>
   `
-};
+}
 
 const mdComponent = {
   props: ["md"],
@@ -194,7 +218,7 @@ const mdComponent = {
 const leaderLineComponent = {
   props: {
     from: { type: String, required: true },
-    to: { type: String, required  : true },
+    to: { type: String, required: true },
     color: { type: String, default: '#ff79c6' },
     size: { type: Number, default: 3 },
     path: { type: String, default: 'fluid' },
@@ -230,8 +254,8 @@ const leaderLineComponent = {
     function ensureLine() {
       if (line) return line;
       if (typeof LeaderLine === 'undefined') return null;
-      const startEl = document.getElementById(props.from);
-      const endEl = document.getElementById(props.to);
+      const startEl = document.querySelector(props.from);
+      const endEl = document.querySelector(props.to);
       if (!startEl || !endEl) return null;
 
       const opts = {
@@ -252,8 +276,10 @@ const leaderLineComponent = {
     }
 
     function show() {
+      console.log(isRevealed());
       if (!isRevealed()) return;
       const l = ensureLine();
+      console.log(l);
       if (!l) return;
       props.animated ? l.show('draw') : l.show();
     }
@@ -281,7 +307,7 @@ const leaderLineComponent = {
       observer = new MutationObserver(() => {
         if (root.value.closest("section").classList.contains("present")) {
           if (root.value.classList.contains('visible') || (
-            root.value.classList.contains('fragment') == false && 
+            root.value.classList.contains('fragment') == false &&
             (
               (root.value.closest(".fragment.visible") ?? false) ||
               (root.value.closest(".fragment") === null)
