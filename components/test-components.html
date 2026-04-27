@@ -309,8 +309,8 @@ void loop() {
         <multi-col gap="100px">
           <div>
             <ls-u font-size="18">
-              <li id="liga-esq">Tabela alunos</li>
-              <li>Consulta SELECT</li>
+              <li id="liga-esq" class="auto" data-fragment-index="1">Tabela alunos</li>
+              <li id="liga-esq1"  data-fragment-index="2">Consulta SELECT</li>
               <li>Resultado ao lado</li>
             </ls-u>
           </div>
@@ -321,7 +321,8 @@ void loop() {
             </code-block>
           </div>
         </multi-col>
-        <leader-line from="#liga-esq" to="#liga-dir td[data-line-number='2'] span" color="#50fa7b" path="fluid" class="fragment" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
+        <leader-line from="#liga-esq" to="#liga-dir td[data-line-number='2'] span" color="#50fa7b" path="fluid" data-fragment-index="1" class="fragment fade-in-then-semi-out" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
+        <leader-line from="#liga-esq1" to="#liga-dir td[data-line-number='1'] span" color="#50fa7b" path="fluid" data-fragment-index="2" class="fragment fade-in-then-semi-out" start-socket="right" end-socket="left" middle-label="relação"></leader-line>
       </section>
 
     </div>
@@ -352,8 +353,9 @@ void loop() {
   <script src="../components/components.js"></script>
 
   <script>
+    let animations = [];
     function initializeReveal() {
-      var deck = new Reveal(document.querySelector(".reveal"), {
+      window.deck = new Reveal(document.querySelector(".reveal"), {
         controls: true,
         controlsLayout: 'edges',
         hash: true,
@@ -366,13 +368,17 @@ void loop() {
       });
       deck.initialize();
       deck.on('slidechanged', event => {
+        for (let animation of animations) {
+          clearTimeout(animation);
+        }
+        animations = [];
+        
         let auto = event.currentSlide.querySelectorAll('.fragment.auto');
 
         for (el of auto) {
           if (el.dash) {
-            setTimeout(deck.nextFragment,1000);
-          }
-          setTimeout(deck.nextFragment,1000);
+            animations.push(setTimeout(deck.nextFragment,100));          }
+          animations.push(setTimeout(deck.nextFragment,100));
         }
         
       });

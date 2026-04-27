@@ -163,7 +163,7 @@ const copyBtnComponent = {
       const lines = codeEl.querySelectorAll('tr')
       if (lines.length > 0) {
         return [...lines]
-          .map(line => [...line.querySelectorAll("td,th")].map(e=>e.innerHTML).join('\t'))
+          .map(line => [...line.querySelectorAll("td,th")].map(e => e.innerHTML).join('\t'))
           .join('\n')
       }
 
@@ -231,6 +231,7 @@ const leaderLineComponent = {
     animated: { type: Boolean, default: true },
   },
   setup(props, { attrs }) {
+    let animations = [];
     const root = Vue.ref(null);
     let line = null;
 
@@ -276,12 +277,12 @@ const leaderLineComponent = {
     }
 
     function show() {
-      console.log(isRevealed());
-      if (!isRevealed()) return;
-      const l = ensureLine();
-      console.log(l);
-      if (!l) return;
-      props.animated ? l.show('draw') : l.show();
+      animations.push(setTimeout(() => {
+        if (!isRevealed()) return;
+        const l = ensureLine();
+        if (!l) return;
+        props.animated ? l.show('draw') : l.show();
+      }, 1000));
     }
 
     function hide() {
@@ -290,6 +291,19 @@ const leaderLineComponent = {
     }
 
     let observer = null;
+
+    function hasOutInTree(el) {
+      while (el) {
+        if (
+          el.classList &&
+          [...el.classList].some(cls => cls.endsWith('out'))
+        ) {
+          return true;
+        }
+        el = el.parentElement;
+      }
+      return false;
+    }
 
     function setup() {
       // Not a fragment — show immediately
@@ -305,25 +319,48 @@ const leaderLineComponent = {
       }
       // Watch this component's own element for .visible being added by Reveal
       observer = new MutationObserver(() => {
-        if (root.value.closest("section").classList.contains("present")) {
-          if (root.value.classList.contains('visible') || (
-            root.value.classList.contains('fragment') == false &&
-            (
-              (root.value.closest(".fragment.visible") ?? false) ||
-              (root.value.closest(".fragment") === null)
-            ))
-          ) {
-            show();
-          } else {
-            hide();
-          }
-          return;
-        } else {
+        for (animation of animations) {
+          clearTimeout(animation); 
+        }
+        animations = [];
+        
+        const section = root.value.closest("section");
+
+        if (!section.classList.contains("present")) {
           line?.remove();
           line = null;
+          return;
+        }
+
+        const isCurrent = root.value.classList.contains('current-fragment');
+        const hasOut = hasOutInTree(root.value);
+
+        // 🔴 THE RULE YOU WANT
+        if (hasOut && !isCurrent) {
+          hide();
+          return;
+        }
+
+        // fallback (your original behavior)
+        const isVisible = root.value.classList.contains('visible');
+        if (isVisible || !root.value.closest(".fragment")) {
+          show();
+        } else {
+          hide();
         }
       });
-      observer.observe(root.value.closest("section"), { attributes: true, attributeFilter: ['class'] });
+      observer.observe(root.value.closest("section"), {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+      const fragmentEl = root.value.closest(".fragment");
+
+      if (fragmentEl) {
+        observer.observe(fragmentEl, {
+          attributes: true,
+          attributeFilter: ['class']
+        });
+      }
     }
 
     function cleanup() {
@@ -331,7 +368,9 @@ const leaderLineComponent = {
       if (line) { line.remove(); line = null; }
     }
 
-    Vue.onMounted(() => Vue.nextTick(setup));
+    Vue.onMounted(() => {
+      Vue.nextTick(setup)
+    });
     Vue.onBeforeUnmount(cleanup);
 
     return { root };
