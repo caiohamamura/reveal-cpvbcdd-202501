@@ -327,7 +327,7 @@ flowchart TD
         <!-- SLIDE 18: Código Light Sleep com LDR -->
         <section data-auto-animate>
           <h2>👋 Código: Light Sleep com Interrupt (LDR)</h2>
-          <pre><code class="lang-cpp" data-trim data-line-numbers="1-20|1-7|9-12|14-19"  data-fragment-index="1">
+          <code-block lang="cpp" data-trim data-line-numbers="1-20|1-7|9-12|14-19"  data-fragment-index="1">
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #define INTERRUPT_PIN D6  // D7 no NodeMCU
@@ -352,16 +352,15 @@ void loop() {
     Serial.println("☀️ Luz detectada! Acordei por interrupt!");
     botaoDetectado = false;
   }
-  Serial.println("Dormindo Light Sleep...");
   delay(500);
   // Light sleep com wakeup por interrupt
   wifi_set_opmode(NULL_MODE);
-  wifi_fpm_set_sleep_type(LIGHT_SLEEP_T);  //This worked better and resulted in low sleep currents (495uA) but followed by high load periods (65mA) equaling the sleep periods.
+  wifi_fpm_set_sleep_type(LIGHT_SLEEP_T);  
   wifi_fpm_open();
-  wifi_fpm_do_sleep(sleep_time_in_ms * 1000); //This function requires time in us.
+  wifi_fpm_do_sleep(sleep_time_in_ms * 1000);
   delay(10);
 }
-      </code></pre>
+      </code-block>
           <copy-btn></copy-btn>
           <div class="fade-in">
             <ul font-size="18">
