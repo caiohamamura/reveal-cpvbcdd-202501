@@ -294,7 +294,118 @@ flowchart TD
           </div>
         </section>
 
-        <!-- SLIDE 17: Deep Sleep em Detalhe -->
+        <!-- SLIDE 17: Light Sleep com Interrupt -->
+        <section data-auto-animate>
+          <h2>💤 Light Sleep com Interrupt — Introdução</h2>
+          <div style="display: flex; align-items: center; gap: 1.5em;">
+            <div style="flex: 1;">
+              <ls-u>
+                <li><b style="color: #ffb86c">Light Sleep:</b> CPU pausada, ~0,4 mA</li>
+                <li><b style="color: #8be9fd">Vantagem:</b> Pode acordar por GPIO (interrupt)</li>
+                <li><b style="color: #50fa7b">Interrupt:</b> Pino detecta mudança de sinal</li>
+                <li>Não reinicia do zero — continua de onde parou</li>
+                <li>Ideal para sensores que reagem a eventos (luz, botão, movimento)</li>
+              </ls-u>
+            </div>
+            <div style="flex: 0.7; text-align: center;" class="fragment">
+              <div style="background: #44475a; border-radius: 12px; padding: 1em; border: 2px dashed #6272a4;">
+                <div class="mermaid" data-id="light-sleep-flow">
+                  <pre>
+flowchart TD
+  A["Dorme 💤 (Light)"] --> B{"Interrupt?"}
+  B -->|"Sim| luz"| C["Acorda! 🌞"]
+  B -->|"Não"| A
+  C --> D["Executa tarefa"]
+  D --> A
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 18: Código Light Sleep com LDR -->
+        <section data-auto-animate>
+          <h2>👋 Código: Light Sleep com Interrupt (LDR)</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-20|1-7|9-12|14-19"  data-fragment-index="1">
+#define INTERRUPT_PIN 13  // D7 no NodeMCU
+
+volatile bool luzDetectada = false;
+
+void callback_luz() {
+  luzDetectada = true;
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(INTERRUPT_PIN, INPUT_PULLUP);
+  attachInterrupt(INTERRUPT_PIN, callback_luz, FALLING);
+}
+
+void loop() {
+  if (luzDetectada) {
+    Serial.println("☀️ Luz detectada! Acordei por interrupt!");
+    luzDetectada = false;
+  }
+  Serial.println("Dormindo Light Sleep...");
+  delay(500);
+  // Light sleep com wakeup por interrupt
+  wifi_sleep_set_config(MODEM_SLEEP_T);
+  // ou: esp_light_sleep_start()
+}
+      </code></pre>
+          <copy-btn></copy-btn>
+          <div class="fade-in">
+            <ul font-size="18">
+              <li><code>attachInterrupt()</code> configura pino para acordar o ESP</li>
+              <li class="fragment" data-fragment-index="1"><code>FALLING</code> = detecta quando sinal vai de HIGH para LOW</li>
+              <li class="fragment" data-fragment-index="2">LDR detecta luz → transistor conduz → pino vai para LOW → acorda!</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE 19: Circuito Light Sleep com LDR -->
+        <section data-auto-animate>
+          <h2>🔌 Circuito: LDR + Transistor como Interrupt</h2>
+          <div style="display: flex; align-items: center; gap: 1.5em;">
+            <div style="flex: 1;">
+              <p style="font-size: 18pt; margin-bottom: 15px;">Conexões:</p>
+              <ls-u font-size="18">
+                <li><b>LDR (+)</b> → <b style="color: #50fa7b">Positivo do Trimpot</b></li>
+                <li><b>Trimpot (-)</b> → <b style="color: #ff5555">GND</b></li>
+                <li><b>Wiper (centro)</b> → <b style="color: #bd93f9">Base do transistor KSP2222A</b></li>
+                <li><b style="color: #8be9fd">Coletor do transistor</b> → <b>INTERRUPT (D7/GPIO13)</b></li>
+                <li><b>Emissor</b> → <b style="color: #ff5555">GND</b></li>
+              </ls-u>
+              <div class="fragment" style="background: rgba(255,184,108,0.15); border-left: 4px solid #ffb86c; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+                <p style="font-size: 16pt; color: #ffb86c;">⚡ Ajuste o trimpot para definir threshold de luz</p>
+              </div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div style="background: #44475a; border-radius: 12px; padding: 1em; border: 2px dashed #6272a4;">
+                <div class="mermaid" data-id="ldr-circuit">
+                  <pre>
+flowchart LR
+  LDR["LDR"] --> T["Trimpot"]
+  T --> TR["KSP2222A\nTransistor"]
+  TR --> INT["GPIO13\n(INTERRUPT)"]
+  TR --> GND["GND"]
+  style LDR fill:#ffb86c,color:#282a36
+  style T fill:#8be9fd,color:#282a36
+  style TR fill:#bd93f9,color:#282a36
+  style INT fill:#50fa7b,color:#282a36
+  style GND fill:#ff5555,color:#f8f8f2
+              </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fragment" style="background: rgba(139,233,253,0.15); border-left: 4px solid #8be9fd; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+            <p style="font-size: 16pt; color: #8be9fd;">💡 Quando luz incide no LDR → resistência cai → transistor satura → INTERRUPT pina para LOW → ESP acorda!</p>
+          </div>
+        </section>
+
+        <!-- SLIDE 20: Deep Sleep em Detalhe -->
         <section data-auto-animate>
           <h2>💤 Deep Sleep em Detalhe</h2>
           <div style="display: flex; align-items: flex-start; gap: 1.5em;">
