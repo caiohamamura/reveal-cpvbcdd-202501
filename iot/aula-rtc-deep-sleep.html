@@ -328,30 +328,38 @@ flowchart TD
         <section data-auto-animate>
           <h2>👋 Código: Light Sleep com Interrupt (LDR)</h2>
           <pre><code class="lang-cpp" data-trim data-line-numbers="1-20|1-7|9-12|14-19"  data-fragment-index="1">
-#define INTERRUPT_PIN 13  // D7 no NodeMCU
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#define INTERRUPT_PIN D6  // D7 no NodeMCU
 
-volatile bool luzDetectada = false;
-
-void callback_luz() {
-  luzDetectada = true;
+ 
+volatile bool botaoDetectado = false;
+ 
+IRAM_ATTR void callback_luz() {
+  botaoDetectado = true;
 }
-
+ 
 void setup() {
   Serial.begin(115200);
   pinMode(INTERRUPT_PIN, INPUT_PULLUP);
   attachInterrupt(INTERRUPT_PIN, callback_luz, FALLING);
 }
 
+int sleep_time_in_ms = 2000;
+ 
 void loop() {
-  if (luzDetectada) {
+  if (botaoDetectado) {
     Serial.println("☀️ Luz detectada! Acordei por interrupt!");
-    luzDetectada = false;
+    botaoDetectado = false;
   }
   Serial.println("Dormindo Light Sleep...");
   delay(500);
   // Light sleep com wakeup por interrupt
-  wifi_sleep_set_config(MODEM_SLEEP_T);
-  // ou: esp_light_sleep_start()
+  wifi_set_opmode(NULL_MODE);
+  wifi_fpm_set_sleep_type(LIGHT_SLEEP_T);  //This worked better and resulted in low sleep currents (495uA) but followed by high load periods (65mA) equaling the sleep periods.
+  wifi_fpm_open();
+  wifi_fpm_do_sleep(sleep_time_in_ms * 1000); //This function requires time in us.
+  delay(10);
 }
       </code></pre>
           <copy-btn></copy-btn>
