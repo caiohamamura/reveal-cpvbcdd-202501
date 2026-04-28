@@ -269,6 +269,7 @@ cat("OOB Error:", modelo$prediction.error)
                   <tr><td><strong>Precision</strong></td><td>TP / (TP+FP)</td><td>Das classificadas risco, quantas eram?</td></tr>
                   <tr><td><strong>Recall</strong></td><td>TP / (TP+FN)</td><td>Das que eram risco, quantas encontrou?</td></tr>
                   <tr><td><strong>F1 Score</strong></td><td>2×P×R / (P+R)</td><td>Harmônico entre precision e recall</td></tr>
+                  <tr><td><strong>AUC-ROC</strong></td><td>Área sob curva ROC</td><td>Probabilidade de classificar positivo maior que negativo</td></tr>
                 </tbody>
               </table>
             </div>
@@ -278,7 +279,7 @@ library(yardstick)
 
 predicoes <- predict(modelo, data = teste)
 pred_df <- data.frame(
-  truth = teste$Target,
+  truth = as.factor(teste$Target),
   estimate = predicoes$predictions
 )
 
@@ -291,8 +292,55 @@ recall(pred_df, truth, estimate,
        event_level = "second")
 f_meas(pred_df, truth, estimate,
        event_level = "second")
+
+# AUC - área sob curva ROC
+auc(pred_df, truth, estimate,
+    event_level = "second")
 </textarea></code-block>
+              <p style="color: #8be9fd; font-size: 14pt;"><strong>💡 as.factor():</strong> yarstick exige que <code>truth</code> seja fator — classe positiva deve ser o <em>segundo nível</em> para <code>event_level = "second"</code></p>
               <p style="color: #ff5555; font-size: 14pt;"><strong>⚠️ Sempre no teste — nunca no treino!</strong></p>
+            </div>
+          </multi-col>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 7.5: AUC EXPLAINED
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>AUC-ROC Explained 📈</h2>
+          <multi-col style="gap:20px">
+            <div style="flex: 1;">
+              <p style="color: #f1fa8c;"><strong>O que é AUC?</strong></p>
+              <p>Área sob a curva ROC — mede a <strong>capacidade discriminativa</strong> do modelo.</p>
+              <div style="background: #282a36; padding: 15px; margin-top: 15px; border-radius: 8px;">
+                <table style="font-size: 14pt;">
+                  <thead><tr><th>AUC</th><th>Interpretação</th></tr></thead>
+                  <tbody>
+                    <tr><td style="color: #ff5555;"><strong>= 0.5</strong></td><td>Azar (classificador aleatório)</td></tr>
+                    <tr><td style="color: #ffb86c;"><strong>&lt; 0.5</strong></td><td>Invertido (preve ao contrário!)</td></tr>
+                    <tr><td style="color: #50fa7b;"><strong>> 0.5</strong></td><td>Bom — mais perto de 1, melhor</td></tr>
+                    <tr><td style="color: #8be9fd;"><strong>> 0.9</strong></td><td>Excelente (cuidado com overfitting)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="mermaid center" data-id="auc-diagram" style="width:90%">
+                <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '24px', 'fontFamily': 'Inter'}}}%%
+graph TD
+  A["AUC = 0.5<br/>Linha diagonal"] --> B["AUC = 0.75<br/>Bom modelo"]
+  B --> C["AUC = 1.0<br/>Perfeito!"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#ffb86c,color:#282a36
+  style C fill:#50fa7b,color:#282a36
+                </pre>
+              </div>
+              <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
+                <p style="color: #50fa7b;"><strong>Pro tip:</strong> AUC = 0.5 significa que o modelo não sabe distinguir as classes. AUC > 0.8 geralmente é considerado bom.</p>
+              </div>
             </div>
           </multi-col>
         </section>
@@ -347,6 +395,51 @@ vip(modelo, num_features = 10, geom = "point") +
       </section>
 
       <!-- ============================================================
+           SLIDE 8.5: FEATURE SELECTION
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Feature Selection 🎯</h2>
+          <p>Nem toda feature ajuda — escolher bem melhora modelo e interpretabilidade.</p>
+          <multi-col style="gap:20px">
+            <div style="flex: 1;">
+              <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
+                <p style="color: #8be9fd;"><strong>Métodos Estatísticos:</strong></p>
+                <ul>
+                  <li><strong>AIC/BIC:</strong> penaliza complexidade (quanto menor, melhor)</li>
+                  <li><strong>p-value:</strong> testa significância de cada feature</li>
+                  <li><strong>VIF:</strong> detecta multicolinearidade</li>
+                </ul>
+              </div>
+              <code-block lang="r" data-trim style="font-size: 12pt; margin-top: 15px;"><textarea>
+# AIC stepwise (base R)
+modelo_step <- step(modelo, direction = "both")
+BIC(modelo_step)  # Quanto menor, melhor
+</textarea></code-block>
+            </div>
+            <div style="flex: 1;">
+              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
+                <p style="color: #50fa7b;"><strong>Conhecimento de Domínio:</strong></p>
+                <ul>
+                  <li>Expertise do domínio é insubstituível</li>
+                  <li>Remove features que não fazem sentido</li>
+                  <li>Adiciona features com lógica de negócio</li>
+                </ul>
+              </div>
+              <div style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px; margin-top: 15px;">
+                <p style="color: #ff5555;"><strong>⚠️ Armadilhas:</strong></p>
+                <ul>
+                  <li>Não adicionar features sem embasamento</li>
+                  <li>Não remover só porque "parece irrelevant"</li>
+                  <li>Validar depois de mudar o conjunto</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+      </section>
+
+      <!-- ============================================================
            SLIDE 9: ÉTICA COMPAS
            ============================================================ -->
       <section data-auto-animate>
@@ -381,6 +474,35 @@ vip(modelo, num_features = 10, geom = "point") +
           </multi-col>
           <div style="background: #44475a; padding: 15px; margin-top: 15px; border-radius: 8px;">
             <p style="font-size: 14pt;"><strong>Fairness Metrics:</strong> Além de accuracy, usar <strong>Precision</strong>, <strong>Recall</strong> e <strong>Disparate Impact</strong> (razão entre taxas de grupos). Se taxa_negativos/taxa_positivos &lt; 0.8, há possível viés.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 9.5: QUIZ INTERATIVO
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Quiz Interativo 🤔</h2>
+          <p style="color: #f1fa8c;">Pense antes de responder!</p>
+          <div style="background: #282a36; border-radius: 12px; padding: 20px; margin-top: 15px;">
+            <ls-u :font-size="20">
+              <li style="margin-bottom: 20px;"><strong style="color: #8be9fd;">1.</strong> Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?
+                <br/><span style="color: #ffb86c;">a) O modelo treina mais rápido</span><br/>
+                <span style="color: #ff5555;">b) Data leakage — informação do teste vaza para treino</span><br/>
+                <span style="color: #f1fa8c;">c) Accuracy melhora automaticamente</span></li>
+              <li style="margin-bottom: 20px;"><strong style="color: #8be9fd;">2.</strong> Um modelo tem AUC = 0.45. O que isso significa?
+                <br/><span style="color: #50fa7b;">a) Modelo excelente</span><br/>
+                <span style="color: #f1fa8c;">b) Modelo razoável</span><br/>
+                <span style="color: #ff5555;">c) Modelo worse than random — está invertendo previsões!</span></li>
+              <li style="margin-bottom: 20px;"><strong style="color: #8be9fd;">3.</strong> Por que usar <code>strata = Target</code> no split?
+                <br/><span style="color: #ff5555;">a) Para o modelo treinar mais rápido</span><br/>
+                <span style="color: #50fa7b;">b) Para manter a proporção das classes em treino e teste</span><br/>
+                <span style="color: #f1fa8c;">c) Para remover outliers automaticamente</span></li>
+            </ls-u>
+          </div>
+          <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #50fa7b;"><strong>💡 Dica:</strong> Reveja os slides de Data Leakage, AUC e Train/Test Split se tiver dúvida!</p>
           </div>
         </section>
       </section>
