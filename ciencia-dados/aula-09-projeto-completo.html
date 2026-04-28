@@ -106,14 +106,7 @@ cat("Treino:", nrow(treino), "| Teste:", nrow(teste))
             <li><code>prop = 0.8</code> — 80% treino, 20% teste</li>
             <li><code>set.seed(42)</code> — reprodutibilidade</li>
           </ul>
-          <div style="background: #8be9fd20; border: 2px solid #8be9fd; border-radius: 12px; padding: 15px; margin-top: 15px;">
-            <p style="color: #8be9fd;"><strong>⚠️ Por que usar strata?</strong></p>
-            <ul style="color: #f8f8f2; font-size: 14pt;">
-              <li>Se classes são desbalanceadas (70% bom, 30% mau), split aleatório pode gerar viés</li>
-              <li>Sem strata: treino pode ter 80% bom, teste 50% bom = modelo com viés</li>
-              <li>Com strata: proporções mantidas em ambos os conjuntos</li>
-            </ul>
-          </div>
+
         </section>
       </section>
 
@@ -344,7 +337,7 @@ auc(pred_df, truth, estimate,
     event_level = "second")
 </textarea></code-block>
               <p style="color: #8be9fd; font-size: 14pt;"><strong>💡 as.factor():</strong> yarstick exige que <code>truth</code> seja fator — classe positiva deve ser o <em>segundo nível</em> para <code>event_level = "second"</code></p>
-              <p style="color: #ff5555; font-size: 14pt;"><strong>⚠️ Sempre no teste — nunca no treino!</strong></p>
+
             </div>
           </multi-col>
         </section>
@@ -388,46 +381,14 @@ auc(pred_df, truth, estimate,
       <section data-auto-animate>
         <section>
           <h2>Feature Importance 📊</h2>
-          <ul>
+          <img src="images/feature-importance.png" alt="Feature Importance" style="width:65%; border-radius: 8px; display:block; margin:0 auto;">
+          <ul style="margin-top:15px">
             <li>Mede quanto cada feature <strong>reduz impureza de Gini</strong></li>
             <li>Features no topo = mais decisivas</li>
-            <li>Ajuda a <strong>interpretar</strong> e simplificar o modelo</li>
+            <li>Ajuda a interpretar e simplificar o modelo</li>
           </ul>
           <code-block lang="r" data-trim><textarea>
-library(vip)
-
-# Extrair importância
-importancia <- modelo$variable.importance
-importancia <- sort(importancia, decreasing = TRUE)
-
-# Plotar top 10
-vip(modelo, num_features = 10, geom = "point") +
-  labs(title = "Top 10 Features mais importantes",
-       y = "Importância (Gini)")
-</textarea></code-block>
-          <img src="images/feature-importance.png" alt="Feature Importance" style="width:70%; border-radius: 8px; margin-top: 15px;">
-</section>
-<section>
-          <multi-col style="gap:20px; margin-top: 15px;">
-            <div style="flex: 1;">
-              <div style="background: #282a36; padding: 10px;">
-                <p><strong>Exemplo German Credit:</strong></p>
-                <ul>
-                  <li><code>Duration</code> — duração do crédito</li>
-                  <li><code>Amount</code> — valor do crédito</li>
-                  <li><code>Age</code> — idade</li>
-                </ul>
-              </div>
-            </div>
-            <div style="flex: 1;">
-              <p style="color: #8be9fd;"><strong>Para que serve?</strong></p>
-              <ul>
-                <li>Identificar features mais importantes</li>
-                <li>Remover features irrelevantes</li>
-                <li>Explicar modelo para stakeholders</li>
-              </ul>
-            </div>
-          </multi-col>
+vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
         </section>
       </section>
 
@@ -437,58 +398,71 @@ vip(modelo, num_features = 10, geom = "point") +
       <section data-auto-animate>
         <section>
           <h2>Feature Selection 🎯</h2>
-          <p>Nem toda feature ajuda — escolher bem melhora modelo e interpretabilidade.</p>
+          <p>Escolher features certas melhora modelo e interpretabilidade.</p>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
-                <p style="color: #8be9fd;"><strong>Métodos Estatísticos:</strong></p>
-                <ul>
-                  <li><strong>AIC/BIC:</strong> penaliza complexidade (quanto menor, melhor)</li>
-                  <li><strong>p-value:</strong> testa significância de cada feature</li>
-                  <li><strong>VIF:</strong> detecta multicolinearidade</li>
-                </ul>
-              </div>
-              <code-block lang="r" data-trim style="font-size: 12pt; margin-top: 15px;"><textarea>
-# AIC stepwise (base R)
+              <p style="color: #8be9fd;"><strong>Métodos Estatísticos:</strong></p>
+              <ul>
+                <li><strong>AIC/BIC:</strong> penaliza complexidade (quanto menor, melhor)</li>
+                <li><strong>p-value:</strong> significância de cada feature</li>
+                <li><strong>VIF:</strong> detecta multicolinearidade</li>
+              </ul>
+              <code-block lang="r" data-trim style="font-size:11pt; margin-top:10px"><textarea>
 modelo_step <- step(modelo, direction = "both")
-BIC(modelo_step)  # Quanto menor, melhor
+BIC(modelo_step)
 </textarea></code-block>
             </div>
             <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
-                <p style="color: #50fa7b;"><strong>Conhecimento de Domínio:</strong></p>
-                <ul>
-                  <li>Expertise do domínio é insubstituível</li>
-                  <li>Remove features que não fazem sentido</li>
-                  <li>Adiciona features com lógica de negócio</li>
-                </ul>
-              </div>
-              <div style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px; margin-top: 15px;">
-                <p style="color: #ff5555;"><strong>⚠️ Armadilhas:</strong></p>
-                <ul>
-                  <li>Não adicionar features sem embasamento</li>
-                  <li>Não remover só porque "parece irrelevant"</li>
-                  <li>Validação depois de mudar o conjunto</li>
-                </ul>
-              </div>
+              <p style="color: #50fa7b;"><strong>Conhecimento de Domínio:</strong></p>
+              <ul>
+                <li>Expertise insubstituível</li>
+                <li>Remove features sem sentido lógico</li>
+                <li>Adiciona features com lógica de negócio</li>
+              </ul>
             </div>
           </multi-col>
-          <div style="background: #f1fa8c20; border: 2px solid #f1fa8c; border-radius: 12px; padding: 15px; margin-top: 15px;">
-            <p style="color: #f1fa8c;"><strong>🌲 Robustez do RandomForest:</strong></p>
-            <ul style="color: #f8f8f2;">
-              <li><strong>Árvores ignoram ruído:</strong> features irrelevantes são automaticamente "esquecidas" nas divisões</li>
-              <li><strong>Não precisa de normalização:</strong> RF baseado em splits categóricos, não em distâncias</li>
-              <li><strong>Feature selection pode ser mais arte que ciência:</strong> muitas combinações plausíveis podem performar similarmente — mas <strong>só testando</strong> você sabe qual funciona. Por isso: experimente, não assuma!</li>
-            </ul>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 8.75: ROBUSTEZ DO RANDOMFOREST
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>🌲 Robustez do RandomForest</h2>
+          <ul>
+            <li><strong>Ignora ruído:</strong> features irrelevantes são "esquecidas" nas divisões</li>
+            <li><strong>Não precisa de normalização:</strong> splits categóricos, não distâncias</li>
+            <li><strong>Paper de Breiman (2001):</strong> "Random Forests" — ensemble robusto</li>
+          </ul>
+          <div style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #ff5555;"><strong>⚠️ Não extrapola!</strong> Só prevê dentro do range dos dados de treino.</p>
           </div>
-          <div style="background: #bd93f920; border: 2px solid #bd93f9; border-radius: 12px; padding: 15px; margin-top: 15px;">
-            <p style="color: #bd93f9;"><strong>📊 Paramétrico vs Não-Paramétrico:</strong></p>
-            <ul style="color: #f8f8f2;">
-              <li><strong>Regressão Linear:</strong> paramétrica — assume distribuição normal dos resíduos</li>
-              <li><strong>RandomForest:</strong> não-paramétrico — não assume distribuição, funciona com qualquer formato</li>
-              <li><strong>Vantagem RF:</strong> não precisa de normalização, outliers têm menos impacto</li>
-            </ul>
-          </div>
+          <ul style="margin-top:15px">
+            <li>Feature selection: mais <strong>arte que ciência</strong> — teste diferentes combinações</li>
+          </ul>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 8.85: PARAMÉTRICO VS NÃO-PARAMÉTRICO
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Paramétrico vs Não-Paramétrico 📊</h2>
+          <table style="font-size: 15pt; width: 100%;">
+            <thead>
+              <tr><th></th><th>Paramétrico</th><th>Não-Paramétrico</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Exemplo</strong></td><td>Regressão Linear</td><td>RandomForest</td></tr>
+              <tr><td><strong>Assume distribuição</strong></td><td>Normal dos resíduos</td><td>Nenhuma</td></tr>
+              <tr><td><strong>Normalização</strong></td><td>Necessária</td><td>Não precisa</td></tr>
+              <tr><td><strong>Outliers</strong></td><td>Alto impacto</td><td>Baixo impacto</td></tr>
+              <tr><td><strong>Interpretabilidade</strong></td><td>Coeficientes diretos</td><td>Feature importance</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top: 15px; color: #8be9fd;"><strong>Vantagem RF:</strong> funciona com qualquer formato de dados —flexível e robusto.</p>
         </section>
       </section>
 
@@ -516,12 +490,12 @@ BIC(modelo_step)  # Quanto menor, melhor
             <div style="flex: 1;">
               <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
                 <p style="color: #8be9fd; font-size: 16pt;"><strong>Questões para Discussão:</strong></p>
-                <ls-u :font-size="18">
+                <ul>
                   <li>Se o modelo erra mais para um grupo, isso é justo?</li>
                   <li>Quem é responsável quando o algoritmo erra?</li>
                   <li>Podemos usar modelos assim em decisões de justiça?</li>
                   <li>Como mitigar vieses algorítmicos?</li>
-                </ls-u>
+                </ul>
               </div>
             </div>
           </multi-col>
@@ -566,7 +540,7 @@ BIC(modelo_step)  # Quanto menor, melhor
       <section data-auto-animate>
         <section>
           <h2>Resumo da Aula ✅</h2>
-          <ls-u font-size="18">
+          <ul font-size="18">
             <li><strong>Pipeline completo:</strong> Dados → Limpeza → Features → Split → Treino → Validação → Teste</li>
             <li><strong>Train/Test Split:</strong> <code>initial_split()</code> com <code>strata = Target</code></li>
             <li><strong>Data Leakage:</strong> Nunca fazer pré-processamento antes do split</li>
@@ -575,7 +549,7 @@ BIC(modelo_step)  # Quanto menor, melhor
             <li><strong>Métricas:</strong> accuracy, precision, recall, f1 (sempre no teste)</li>
             <li><strong>Feature Importance:</strong> <code>vip()</code> para interpretar modelo</li>
             <li><strong>Ética COMPAS:</strong> modelos afetam vidas — responsabilidade do cientista</li>
-          </ls-u>
+          </ul>
           <div style="background: #50fa7b20; border: 2px solid #50fa7b; border-radius: 12px; padding: 15px; margin-top: 20px;">
             <p style="color: #50fa7b; font-size: 18pt;"><strong>Exercício:</strong> Complete o pipeline no German Credit Data e analise fairness do modelo!</p>
           </div>
