@@ -5,13 +5,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <title>Ciência de Dados - Pipeline Completo e Random Forest</title>
+  <title>Ciência de Dados - Aula 09: Projeto Completo de Data Science em R</title>
 
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
-  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
 </head>
 
 <body>
@@ -19,161 +19,65 @@
   <div id="app" class="reveal">
     <div class="slides">
 
-      <!-- SLIDE: Capa -->
+      <!-- ============================================================
+           SLIDE 1: TÍTULO
+           ============================================================ -->
       <section data-auto-animate>
-        <header1 aula="9" curso="Ciência de Dados" title-size="22"
-                 title="Pipeline Completo e Random Forest">
-          <div class="mermaid" data-id="cover-pipeline" style="width:560px">
+        <header1
+          curso="Ciência de Dados"
+          aula="09"
+          title="Projeto Completo de Data Science em R"
+          title-size="22"
+        ></header1>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 2: PIPELINE VISUAL
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Pipeline Completo</h2>
+          <div class="mermaid" data-id="pipeline-complete" style="width:100%">
             <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '26px', 'fontFamily': 'Inter'}}}%%
 graph LR
-  A["📊 Dados"] --> B["🧹 Limpeza"]
-  B --> C["🔧 Features"]
-  C --> D["✂️ Split"]
-  D --> E["🏋️ Treino"]
-  E --> F["🌲🌲🌲 Random Forest"]
-  F --> G["🧪 Teste"]
+  A["📊 Dados<br/>German Credit"] --> B["🧹 Limpeza<br/>Missing, Outliers"]
+  B --> C["🔧 Feature<br/>Engineering"]
+  C --> D["✂️ Split<br/>Train/Test"]
+  D --> E["🏋️ Treino<br/>RandomForest"]
+  E --> F["✅ Validação<br/>Cruzada"]
+  F --> G["🧪 Teste<br/>Final"]
   style A fill:#44475a,color:#f8f8f2
   style B fill:#44475a,color:#f8f8f2
   style C fill:#44475a,color:#f8f8f2
-  style D fill:#44475a,color:#f8f8f2
-  style E fill:#44475a,color:#f8f8f2
-  style F fill:#50fa7b,color:#f8f8f2
-  style G fill:#50fa7b,color:#282a36
-            </pre>
-          </div>
-        </header1>
-      </section>
-
-      <!-- SLIDE: Revisão -->
-      <section data-auto-animate>
-        <h2>Revisão: Aulas Anteriores</h2>
-        <ls-u>
-          <li><strong>K-NN</strong> — classificação por vizinhos mais próximos</li>
-          <li><strong>Árvores de Decisão</strong> — particionamento recursivo do espaço</li>
-          <li><strong>Métricas</strong> — acurácia, precisão, recall, F1</li>
-        </ls-u>
-        <div class="fragment" style="margin-top: 20px;">
-          <p style="font-size: 22pt; color: #8be9fd;">Hoje: pipeline completo em R + <strong>Random Forest</strong></p>
-        </div>
-      </section>
-
-      <!-- ============================================================
-         ROTEIRO DA AULA
-         ============================================================ -->
-
-      <section data-auto-animate>
-        <h2>Roteiro da Aula</h2>
-        <multi-col style="gap:20px">
-          <div style="flex: 1;">
-            <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
-              <p style="color: #8be9fd;"><strong>Fase 1 — Pipeline Completo</strong></p>
-              <ul>
-                <li>Workflow end-to-end em R</li>
-                <li>Prática guiada em Colab</li>
-                <li>Train/Test, validação cruzada</li>
-                <li>Overfitting e underfitting</li>
-              </ul>
-            </div>
-          </div>
-          <div style="flex: 1;">
-            <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
-              <p style="color: #50fa7b;"><strong>Fase 2 — Random Forest</strong></p>
-              <ul>
-                <li>Ensemble de árvores (bagging)</li>
-                <li>Random Forest na prática</li>
-                <li>Feature importance</li>
-                <li>Comparação com árvore simples</li>
-              </ul>
-            </div>
-          </div>
-        </multi-col>
-      </section>
-
-      <!-- ============================================================
-         FASE 1: PIPELINE COMPLETO
-         ============================================================ -->
-      <section>
-
-        <!-- SLIDE: Fase 1 header -->
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 1: Pipeline Completo em R</h2>
-          <div class="mermaid" data-id="pipeline-full" style="width:100%">
-            <pre>
-graph LR
-  A["📊 Dados<br/>Brutos"] --> B["🧹 Limpeza<br/>Missing, Outliers"]
-  B --> C["🔧 Feature<br/>Engineering"]
-  C --> D["✂️ Split<br/>Train/Test"]
-  D --> E["🏋️ Treino<br/>do Modelo"]
-  E --> F["✅ Validação<br/>Cruzada"]
-  F --> G["🧪 Teste<br/>Final"]
-  style A fill:#6272a4,color:#f8f8f2
-  style B fill:#44475a,color:#f8f8f2
-  style C fill:#44475a,color:#f8f8f2
   style D fill:#ff79c6,color:#f8f8f2
-  style E fill:#8be9fd,color:#f8f8f2
+  style E fill:#8be9fd,color:#282a36
   style F fill:#f1fa8c,color:#282a36
   style G fill:#50fa7b,color:#282a36
             </pre>
           </div>
+          <ul>
+            <li>Dataset: <strong>German Credit Data</strong> (UCI)</li>
+            <li>Tarefa: classificar risco de crédito (bom/ruim)</li>
+            <li>1000 registros, 20 features, dados imperfeitos</li>
+          </ul>
         </section>
+      </section>
 
-        <!-- SLIDE: Motivação -->
-        <section data-auto-animate>
-          <h2>Por que um Pipeline? 🤔</h2>
-          <multi-col style="gap:20px">
-            <div style="flex: 1;">
-              <ul>
-                <li>Cada aula viu uma <strong>peça isolada</strong></li>
-                <li>Na prática, tudo roda <strong>junto e na ordem certa</strong></li>
-                <li>Pular etapas = resultados ruins</li>
-                <li>Precisamos de <strong>disciplina</strong> no processo</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
-                <p style="color: #8be9fd;"><strong>Prática guiada</strong></p>
-                <p>Vamos construir o pipeline passo a passo num <strong>caderno Colab em R</strong>.</p>
-                <p>Cada conceito → código imediato.</p>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Dataset -->
-        <section data-auto-animate>
-          <h2>Dataset: German Credit Data 🏦</h2>
-          <multi-col style="gap:20px">
-            <div style="flex: 1;">
-              <ul>
-                <li><strong>Origem:</strong> UCI Repository</li>
-                <li><strong>Tarefa:</strong> risco de crédito (bom/ruim)</li>
-                <li>1000 registros, 20 variáveis</li>
-                <li>Dados reais e <strong>imperfeitos</strong></li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
-                <p style="color: #ff5555;"><strong>Problemas propositalmente inclusos:</strong></p>
-                <ul>
-                  <li>Colunas com <strong>missing values</strong></li>
-                  <li>Variáveis categóricas com muitas categorias</li>
-                  <li>Feature de renda com <strong>outliers</strong></li>
-                </ul>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Train/Test Split -->
-        <section data-auto-animate>
+      <!-- ============================================================
+           SLIDE 3: TRAIN/TEST SPLIT
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
           <h2>Train/Test Split ✂️</h2>
-          <div class="mermaid" data-id="train-test-split" style="width:100%">
+          <div class="mermaid" data-id="train-test-split" style="width:90%">
             <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '26px', 'fontFamily': 'Inter'}}}%%
 graph LR
   A["Dataset<br/>100%"] --> B["Treino<br/>80%"]
   A --> C["Teste<br/>20%"]
-  B --> D["treino()"]
-  C --> E["predict()"]
+  B --> D["training(split)"]
+  C --> E["testing(split)"]
   style A fill:#44475a,color:#f8f8f2
   style B fill:#8be9fd,color:#282a36
   style C fill:#ff5555,color:#f8f8f2
@@ -181,629 +85,326 @@ graph LR
   style E fill:#ff5555,color:#f8f8f2
             </pre>
           </div>
+          <code-block lang="r" data-trim><textarea>
+# Split correto (ANTES de qualquer transformação!)
+library(rsample)
+
+split <- initial_split(dados, prop = 0.8, strata = Target)
+treino <- training(split)
+teste <- testing(split)
+
+cat("Treino:", nrow(treino), "| Teste:", nrow(teste))
+</textarea></code-block>
           <ul>
-            <li><strong>80/20 ou 70/30</strong> — trade-off: mais treino vs mais validação</li>
-            <li><code>set.seed(42)</code> — reprodutibilidade (mesmo split toda vez)</li>
-            <li>Em R: <code>initial_split()</code> do <strong>rsample</strong> com <code>strata = y</code></li>
+            <li><code>strata = Target</code> — mantém proporção das classes</li>
+            <li><code>prop = 0.8</code> — 80% treino, 20% teste</li>
+            <li><code>set.seed(42)</code> — reprodutibilidade</li>
           </ul>
         </section>
+      </section>
 
-        <!-- SLIDE: Por que stratify -->
-        <section data-auto-animate>
-          <h2>Por que stratify?</h2>
+      <!-- ============================================================
+           SLIDE 4: DATA LEAKAGE
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2 style="color: #ff5555;">⚠️ Data Leakage</h2>
+          <div style="background: #ff555520; border: 2px solid #ff5555; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+            <p style="color: #ff5555; font-size: 18pt;"><strong>WARNING:</strong> Informacao do teste vaza para o treino = resultados falsamente otimistas!</p>
+          </div>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
-              <p>Dataset desbalanceado: <strong>70% bom</strong>, <strong>30% ruim</strong></p>
-              <p style="color: #ff5555;">Sem estratificação:</p>
-              <ul>
-                <li>Teste pode ter 90%/10% por azar</li>
-                <li>Modelo parece melhor do que é</li>
-              </ul>
-              <p style="color: #50fa7b;">Com estratificação:</p>
-              <ul>
-                <li>Teste mantém 70%/30%</li>
-                <li>Avaliação justa</li>
-              </ul>
+              <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
+                <p style="color: #ff5555;"><strong>❌ ERRADO — Data Leakage:</strong></p>
+                <code-block lang="r" data-trim><textarea>
+# scale() USA media de TODOS os dados!
+dados_scaled <- scale(dados)
+split <- initial_split(dados_scaled)
+
+# O scaler viu o teste antes de separar!
+</textarea></code-block>
+              </div>
             </div>
-            <div style="flex: 1; text-align: center;">
-              <div class="mermaid" data-id="stratify-diagram" style="width:100%">
-                <pre>
-graph TD
-  A["Dataset<br/>700 bom / 300 ruim"] --> B["Treino<br/>560 bom / 240 ruim"]
-  A --> C["Teste<br/>140 bom / 60 ruim"]
-  style A fill:#44475a,color:#f8f8f2
-  style B fill:#8be9fd,color:#282a36
-  style C fill:#50fa7b,color:#282a36
-                </pre>
+            <div style="flex: 1;">
+              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
+                <p style="color: #50fa7b;"><strong>✅ CERTO — Sem Leakage:</strong></p>
+                <code-block lang="r" data-trim><textarea>
+# Split PRIMEIRO
+split <- initial_split(dados, prop = 0.8)
+treino <- training(split)
+teste <- testing(split)
+
+# Scale no treino, aplicar no teste
+treino_scaled <- scale(treino)
+teste_scaled <- scale(teste) # usa media do treino!
+</textarea></code-block>
               </div>
             </div>
           </multi-col>
+          <p style="color: #f1fa8c; font-size: 16pt; margin-top: 15px;">Regra: <strong>Split → Pré-processamento → Treino</strong></p>
         </section>
+      </section>
 
-        <!-- SLIDE: Validação Cruzada -->
-        <section data-auto-animate>
+      <!-- ============================================================
+           SLIDE 5: VALIDAÇÃO CRUZADA
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
           <h2>Validação Cruzada (k-fold) 🔄</h2>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
               <ul>
-                <li>k=5 ou k=10 (mais robusto que single split)</li>
+                <li><strong>k=5 ou k=10</strong> folds</li>
                 <li>Cada fold: parcela diferente como validação</li>
-                <li>Resultado: <strong>média das k folds</strong> = score mais estável</li>
+                <li>Resultado: média das k folds = score estável</li>
+                <li>Mais robusto que single split</li>
               </ul>
-              <p style="color: #f1fa8c;">Single split muda muito → k-fold estabiliza</p>
+              <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px; margin-top: 15px;">
+                <p style="color: #8be9fd;"><strong>Por que k-fold?</strong></p>
+                <p style="font-size: 14pt;">Single split varia muito. k-fold reduz variância na estimativa.</p>
+              </div>
             </div>
             <div style="flex: 1;">
               <div class="mermaid" data-id="kfold-diagram" style="width:100%">
                 <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '24px', 'fontFamily': 'Inter'}}}%%
 graph TD
   subgraph Fold 1
-    V1["✅ Val"] --- T1["🏋️ Treino"]
+    T1["🏋️ Treino"] --> V1["✅ Validação"]
   end
   subgraph Fold 2
-    T2["🏋️ Treino"] --- V2["✅ Val"]
+    T2["🏋️ Treino"] --> V2["✅ Validação"]
   end
   subgraph Fold 3
-    T3["🏋️"] --- V3["✅"] --- T3b["🏋️"]
+    T3["🏋️ Treino"] --> V3["✅ Validação"]
   end
+  subgraph Fold 4
+    T4["🏋️ Treino"] --> V4["✅ Validação"]
+  end
+  subgraph Fold 5
+    T5["🏋️ Treino"] --> V5["✅ Validação"]
+  end
+  V1 & V2 & V3 & V4 & V5 --> M["📊 Média"]
+  style V1 fill:#50fa7b,color:#282a36
+  style V2 fill:#50fa7b,color:#282a36
+  style V3 fill:#50fa7b,color:#282a36
+  style V4 fill:#50fa7b,color:#282a36
+  style V5 fill:#50fa7b,color:#282a36
+  style T1 fill:#8be9fd,color:#282a36
+  style T2 fill:#8be9fd,color:#282a36
+  style T3 fill:#8be9fd,color:#282a36
+  style T4 fill:#8be9fd,color:#282a36
+  style T5 fill:#8be9fd,color:#282a36
                 </pre>
               </div>
+              <code-block lang="r" data-trim><textarea>
+cv <- vfold_cv(treino, v = 5, strata = Target)
+</textarea></code-block>
             </div>
           </multi-col>
         </section>
-
-        <!-- SLIDE: Holdout Final -->
-        <section data-auto-animate>
-          <h2>Holdout: O Teste é Blindado 🛡️</h2>
-          <div class="mermaid" data-id="holdout-flow" style="width:100%">
-            <pre>
-graph LR
-  A["Dados<br/>100%"] --> B["Treino<br/>80%"]
-  A --> C["Teste<br/>20% 🔒"]
-  B --> D["Validação<br/>Cruzada"]
-  D --> E["Escolher<br/>Melhor Modelo"]
-  E --> C
-  style C fill:#ff5555,color:#f8f8f2
-  style E fill:#50fa7b,color:#282a36
-            </pre>
-          </div>
-          <ul>
-            <li>O teste <strong>não existe</strong> durante o desenvolvimento</li>
-            <li>Você olha o teste só <strong>UMA vez</strong> — quando escolheu o melhor modelo na validação</li>
-            <li style="color: #ff5555;">Se você fica olhando o teste e ajustando, está <strong>trapaceando</strong></li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Código R - Setup -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Setup</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Instalar pacotes (se necessário)
-install.packages(c("tidymodels", "rpart.plot", "randomForest"))
-
-# Carregar bibliotecas
-library(tidymodels)
-library(rpart.plot)
-library(randomForest)
-
-# Carregar dataset
-df <- read.csv("german_credit_data.csv")
-cat("Dimensões:", dim(df), "\n")
-str(df)
-colSums(is.na(df))
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Código R - Tratamento -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Tratamento</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Converter target para fator
-df$Risk <- factor(df$Risk, levels = c("good", "bad"))
-
-# Missing values: preencher com mediana
-df$Credit_amount[is.na(df$Credit_amount)] <-
-  median(df$Credit_amount, na.rm = TRUE)
-
-# One-hot encoding (recipe fará isso depois)
-# Verificar estrutura final
-cat("\nMissing após tratamento:\n")
-colSums(is.na(df))
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Código R - Split -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Split e Validação Cruzada</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-set.seed(42)
-
-# Split com estratificação
-data_split <- initial_split(df, prop = 0.8, strata = Risk)
-df_train <- training(data_split)
-df_test  <- testing(data_split)
-
-cat("Treino:", nrow(df_train), "| Teste:", nrow(df_test), "\n")
-
-# Validação cruzada (k=5)
-folds <- vfold_cv(df_train, v = 5, strata = Risk)
-folds
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Código R - Árvore de Decisão -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Árvore de Decisão</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Definir modelo
-tree_model <- decision_tree(max_depth = 4) |>
-  set_engine("rpart") |>
-  set_mode("classification")
-
-# Recipe (preprocessamento)
-rec <- recipe(Risk ~ ., data = df_train) |>
-  step_dummy(all_nominal_predictors()) |>
-  step_normalize(all_numeric_predictors())
-
-# Workflow
-tree_wf <- workflow() |>
-  add_recipe(rec) |>
-  add_model(tree_model)
-
-# Validação cruzada
-cv_results <- tree_wf |>
-  fit_resamples(folds, metrics = metric_set(accuracy, f_meas))
-collect_metrics(cv_results)
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Código R - Teste Final -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Teste Final 🔒</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Fit final e teste
-tree_fit <- tree_wf |> fit(df_train)
-tree_pred <- predict(tree_fit, df_test) |>
-  bind_cols(predict(tree_fit, df_test, type = "prob")) |>
-  bind_cols(df_test %>% select(Risk))
-
-# Métricas no teste (blindado!)
-metrics <- tree_pred |>
-  metrics(truth = Risk, estimate = .pred_class)
-print(metrics)
-
-# Matriz de confusão
-conf_mat(tree_pred, truth = Risk, estimate = .pred_class)
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Armadilha comum -->
-        <section data-auto-animate>
-          <h2>⚠️ Armadilha Comum</h2>
-          <multi-col style="gap:20px">
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
-                <p style="color: #ff5555;"><strong>ERRADO:</strong></p>
-                <code-block lang="r" data-trim><script type="text/plain">
-# Score no TREINO!
-pred_train <- predict(fit, df_train)
-mean(pred_train == df_train$Risk)
-# Resultado: 0.98 (inflado!)
-</script></code-block>
-              </div>
-            </div>
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
-                <p style="color: #50fa7b;"><strong>CORRETO:</strong></p>
-                <code-block lang="r" data-trim><script type="text/plain">
-# Score no TESTE (dados nunca vistos)
-pred_test <- predict(fit, df_test)
-mean(pred_test == df_test$Risk)
-# Resultado: 0.73 (realista)
-</script></code-block>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Overfitting vs Underfitting -->
-        <section data-auto-animate>
-          <h2>Overfitting vs Underfitting</h2>
-          <multi-col style="gap:15px">
-            <div style="flex: 1;">
-              <h3 style="color: #6272a4;">Underfitting</h3>
-              <ul>
-                <li>Alto viés (bias)</li>
-                <li>Modelo simples demais</li>
-                <li>Não captura padrões</li>
-                <li style="color: #8be9fd;">Ex: max_depth=1</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #50fa7b;">Equilíbrio Ideal</h3>
-              <ul>
-                <li>Viés e variância equilibrados</li>
-                <li>Generaliza bem</li>
-                <li>Captura padrões reais</li>
-                <li style="color: #50fa7b;">Ex: max_depth=4</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #ff5555;">Overfitting</h3>
-              <ul>
-                <li>Alta variância</li>
-                <li>Modelo complexo demais</li>
-                <li>Decora o treino</li>
-                <li style="color: #ff5555;">Ex: max_depth=NULL</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Curva de Overfitting em R -->
-        <section data-auto-animate>
-          <h2>Visualizando o Overfitting</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-library(purrr)
-
-depths <- 1:15
-results <- map_dfr(depths, function(d) {
-  m <- decision_tree(max_depth = d) |>
-    set_engine("rpart") |> set_mode("classification")
-  wf <- workflow() |> add_recipe(rec) |> add_model(m)
-  fit <- wf |> fit(df_train)
-  pred_train <- predict(fit, df_train)
-  pred_test  <- predict(fit, df_test)
-  tibble(
-    depth = d,
-    treino = mean(pred_train$.pred_class == df_train$Risk),
-    teste  = mean(pred_test$.pred_class  == df_test$Risk)
-  )
-})
-
-plot(results$depth, results$treino, type="b", col="cyan",
-     xlab="Profundidade", ylab="Acurácia", ylim=c(0.6, 1))
-lines(results$depth, results$teste, type="b", col="red")
-legend("bottomright", c("Treino","Teste"), col=c("cyan","red"), lty=1)
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Onde os alunos travam -->
-        <section data-auto-animate>
-          <h2>Onde os Alunos Travam 💥</h2>
-          <ul>
-            <li style="color: #ff5555;">Fazem split <strong>ANTES</strong> do tratamento → vazamento de informação</li>
-            <li style="color: #ff5555;">Avaliam no dado de treino achando que é o teste real</li>
-            <li style="color: #ff5555;">Esquecem estratificação em dados desbalanceados</li>
-          </ul>
-          <div style="margin-top: 20px; background: #282a36; border-left: 4px solid #f1fa8c; padding: 15px;">
-            <p style="color: #f1fa8c;"><strong>Ordem correta:</strong></p>
-            <p>Tratamento → Split → Validação Cruzada → Teste Final</p>
-          </div>
-        </section>
-
-      </section><!-- fim Fase 1 -->
+      </section>
 
       <!-- ============================================================
-         FASE 2: RANDOM FOREST
-         ============================================================ -->
-      <section>
-
-        <!-- SLIDE: Fase 2 header -->
-        <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Fase 2: Random Forest 🌲🌲🌲</h2>
-          <p style="font-size: 20pt;">Árvores de Decisão foram o modelo da Fase 1.</p>
-          <p style="font-size: 22pt; color: #ff79c6;">E se combinarmos <strong>muitas árvores</strong>?</p>
-          <div class="fragment">
-            <div class="mermaid" data-id="rf-intro" style="width:100%">
+           SLIDE 6: MODELO RANDOMFOREST
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Modelo RandomForest 🌲🌲🌲</h2>
+          <ul>
+            <li><strong>Ensemble</strong> de múltiplas árvores de decisão</li>
+            <li><strong>Bagging</strong>: cada árvore treina em amostra bootstrap</li>
+            <li><strong>Votação majoritária</strong>: classe mais votada vence</li>
+            <li>Menos overfitting que árvore única</li>
+          </ul>
+          <div style="margin-top: 15px;">
+            <div class="mermaid" data-id="rf-voting" style="width:90%">
               <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '24px', 'fontFamily': 'Inter'}}}%%
 graph TD
-  D["📊 Dataset"] --> S1["🏆 Árvore 1"]
-  D --> S2["🏆 Árvore 2"]
-  D --> S3["🏆 Árvore 3"]
-  D --> SN["🏆 Árvore N"]
-  S1 --> V["🗳️ Votação<br/>Majoritária"]
-  S2 --> V
-  S3 --> V
-  SN --> V
-  V --> R["🎯 Predição Final"]
-  style D fill:#44475a,color:#f8f8f2
+  D["📊 Dados"] --> T1["🌳 Árvore 1"]
+  D --> T2["🌳 Árvore 2"]
+  D --> T3["🌳 ... N"]
+  T1 --> V["🗳️ Votação"]
+  T2 --> V
+  T3 --> V
+  V --> P["🎯 Predição Final"]
+  style T1 fill:#50fa7b,color:#282a36
+  style T2 fill:#50fa7b,color:#282a36
+  style T3 fill:#50fa7b,color:#282a36
   style V fill:#f1fa8c,color:#282a36
-  style R fill:#50fa7b,color:#282a36
+  style P fill:#8be9fd,color:#282a36
               </pre>
             </div>
           </div>
+          <code-block lang="r" data-trim><textarea>
+library(ranger)
+
+# Treinar RandomForest com ranger
+modelo <- ranger(
+  formula = Target ~ .,
+  data = treino,
+  num.trees = 100,
+  seed = 42
+)
+
+cat("OOB Error:", modelo$prediction.error)
+</textarea></code-block>
         </section>
-
-        <!-- SLIDE: O problema de uma árvore -->
-        <section data-auto-animate>
-          <h2>O Problema de Uma Árvore</h2>
-          <ul>
-            <li>Uma árvore de decisão sofre de <strong>alta variância</strong></li>
-            <li>Mudar 1 registro no treino → árvore completamente diferente</li>
-            <li>Tende ao <strong>overfitting</strong> se ficar muito profunda</li>
-            <li>Sensível a <strong>outliers</strong> e ruído</li>
-          </ul>
-          <div class="fragment" style="margin-top: 15px;">
-            <p style="color: #ff79c6; font-size: 20pt;"><strong>Solução:</strong> construir muitas árvores e combinar as predições.</p>
-          </div>
-        </section>
-
-        <!-- SLIDE: Ensemble e Bagging -->
-        <section data-auto-animate>
-          <h2>Ensemble e Bagging 🎒</h2>
-          <multi-col style="gap:20px">
-            <div style="flex: 1;">
-              <p><strong>Ensemble</strong> = combinar vários modelos</p>
-              <ul>
-                <li>Modelos fracos individuais</li>
-                <li>Combinação forte coletiva</li>
-                <li>Reduz variância sem aumentar viés</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <p><strong>Bagging</strong> (Bootstrap Aggregating)</p>
-              <ul>
-                <li>Amostras com reposição (bootstrap)</li>
-                <li>Cada árvore vê um subset diferente</li>
-                <li>Predição por <strong>votação majoritária</strong></li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Como funciona -->
-        <section data-auto-animate>
-          <h2>Como o Random Forest Funciona</h2>
-          <div class="mermaid" data-id="rf-detail" style="width:100%">
-            <pre>
-graph TD
-  B1["Bootstrap 1<br/>Amostra c/ reposição"] --> T1["🌳 Árvore 1<br/>subset de features"]
-  B2["Bootstrap 2"] --> T2["🌳 Árvore 2<br/>subset de features"]
-  B3["Bootstrap N"] --> TN["🌳 Árvore N<br/>subset de features"]
-  T1 --> V["🗳️ Votação<br/>Majoritária"]
-  T2 --> V
-  TN --> V
-  V --> P["🎯 Predição"]
-  style B1 fill:#6272a4,color:#f8f8f2
-  style B2 fill:#6272a4,color:#f8f8f2
-  style B3 fill:#6272a4,color:#f8f8f2
-  style T1 fill:#50fa7b,color:#282a36
-  style T2 fill:#50fa7b,color:#282a36
-  style TN fill:#50fa7b,color:#282a36
-  style V fill:#f1fa8c,color:#282a36
-            </pre>
-          </div>
-          <ul>
-            <li><strong>Bootstrap</strong> — cada árvore treina numa amostra aleatória</li>
-            <li><strong>Feature randomness</strong> — cada split considera só √p features</li>
-            <li><strong>Votação</strong> — classe mais votada ganha</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Por que Random Forest é melhor -->
-        <section data-auto-animate>
-          <h2>Por que Random Forest é melhor?</h2>
-          <multi-col style="gap:20px">
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
-                <p style="color: #ff5555;"><strong>Árvore Única</strong></p>
-                <ul>
-                  <li>Alta variância</li>
-                  <li>Sensível ao treino</li>
-                  <li>Fácil de interpretar</li>
-                  <li>Overfitting fácil</li>
-                </ul>
-              </div>
-            </div>
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
-                <p style="color: #50fa7b;"><strong>Random Forest</strong></p>
-                <ul>
-                  <li>Baixa variância (média de N árvores)</li>
-                  <li>Robusta a ruído e outliers</li>
-                  <li>Menos overfitting</li>
-                  <li>Feature importance natural</li>
-                </ul>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Parâmetros -->
-        <section data-auto-animate>
-          <h2>Parâmetros do Random Forest</h2>
-          <table>
-            <thead>
-              <tr><th>Parâmetro</th><th>R</th><th>O que faz</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Número de árvores</td><td><code>num.trees</code></td><td>Mais árvores = mais estável (mas mais lento)</td></tr>
-              <tr><td>Variáveis por split</td><td><code>mtry</code></td><td>Controla aleatoriedade (√p padrão)</td></tr>
-              <tr><td>Tamanho mínimo do nó</td><td><code>min.node.size</code></td><td>Controla profundidade</td></tr>
-              <tr><td>Amostragem com reposição</td><td><code>replace</code></td><td>TRUE = bootstrap padrão</td></tr>
-            </tbody>
-          </table>
-        </section>
-
-        <!-- SLIDE: Código R - Random Forest -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Random Forest em R</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Definir modelo Random Forest
-rf_model <- rand_forest(
-  trees = 500,
-  mtry = tune(),       # vamos tunar!
-  min_n = tune()
-) |>
-  set_engine("ranger", importance = "impurity") |>
-  set_mode("classification")
-
-# Workflow
-rf_wf <- workflow() |>
-  add_recipe(rec) |>
-  add_model(rf_model)
-
-# Grid de hiperparâmetros
-grid <- grid_regular(mtry(range = c(2, 8)), min_n(), levels = 3)
-
-# Tuning com validação cruzada
-rf_tune <- rf_wf |>
-  tune_grid(folds, grid = grid, metrics = metric_set(accuracy, f_meas))
-show_best(rf_tune, metric = "accuracy")
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Código R - Fit Final RF -->
-        <section data-auto-animate>
-          <h2>Prática Colab: Fit Final e Teste</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Selecionar melhores hiperparâmetros
-best_params <- select_best(rf_tune, metric = "accuracy")
-
-# Fit final
-rf_final <- rf_wf |>
-  finalize_workflow(best_params) |>
-  fit(df_train)
-
-# Teste final 🔒
-rf_pred <- predict(rf_final, df_test) |>
-  bind_cols(predict(rf_final, df_test, type = "prob")) |>
-  bind_cols(df_test %>% select(Risk))
-
-# Métricas
-rf_pred |> metrics(truth = Risk, estimate = .pred_class)
-conf_mat(rf_pred, truth = Risk, estimate = .pred_class)
-</script></code-block>
-        </section>
-
-        <!-- SLIDE: Feature Importance -->
-        <section data-auto-animate>
-          <h2>Feature Importance 📊</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-library(vip)
-
-# Extrair importância do modelo final
-rf_final |>
-  extract_fit_parsnip() |>
-  vip(num_features = 10, geom = "point") +
-  labs(title = "Top 10 Features mais importantes",
-       y = "Importância (Gini impurity)")
-</script></code-block>
-          <ul>
-            <li>Mede quanto cada feature <strong>reduz a impureza</strong> nas árvores</li>
-            <li>Features no topo = mais decisivas para a predição</li>
-            <li>Útil para <strong>interpretar</strong> o modelo e simplificar features</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Comparação -->
-        <section data-auto-animate>
-          <h2>Árvore vs Random Forest</h2>
-          <code-block lang="r" data-trim><script type="text/plain">
-# Comparar resultados
-tree_metrics <- tree_pred |>
-  metrics(truth = Risk, estimate = .pred_class) |>
-  mutate(modelo = "Árvore")
-
-rf_metrics <- rf_pred |>
-  metrics(truth = Risk, estimate = .pred_class) |>
-  mutate(modelo = "Random Forest")
-
-bind_rows(tree_metrics, rf_metrics) |>
-  pivot_wider(names_from = modelo, values_from = .estimate)
-</script></code-block>
-          <p style="color: #f1fa8c;">Random Forest geralmente tem acurácia maior e menor overfitting.</p>
-        </section>
-
-      </section><!-- fim Fase 2 -->
+      </section>
 
       <!-- ============================================================
-         ÉTICA E ENCERRAMENTO
-         ============================================================ -->
-      <section>
-
-        <!-- SLIDE: Ética -->
-        <section data-auto-animate>
-          <h2>Ética em Data Science ⚖️</h2>
-          <ul>
-            <li>"Se o modelo erra mais em pessoas de baixa renda, isso é <strong>justo</strong>?"</li>
-            <li>"Quando usamos dados históricos, estamos <strong>perpetuando vieses</strong>?"</li>
-            <li>"Random Forest é menos transparente — isso é um <strong>problema</strong>?"</li>
-            <li>"Quem é <strong>responsável</strong> quando o modelo erra?"</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Viés de Seleção -->
-        <section data-auto-animate>
-          <h2>Viés de Seleção e Justiça</h2>
+           SLIDE 7: MÉTRICAS
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Métricas de Avaliação 📊</h2>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
-              <ul>
-                <li><strong>Viés de seleção</strong> no split — dados não representativos</li>
-                <li>Modelo bom não é só acurácia alta</li>
-                <li>É acurácia alta para <strong>TODOS os grupos</strong></li>
-              </ul>
+              <table style="font-size: 16pt;">
+                <thead>
+                  <tr><th>Métrica</th><th>Fórmula</th><th>Interpretação</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Accuracy</strong></td><td>TP+TN / Total</td><td>% total de acertos</td></tr>
+                  <tr><td><strong>Precision</strong></td><td>TP / (TP+FP)</td><td>Das classificadas risco, quantas eram?</td></tr>
+                  <tr><td><strong>Recall</strong></td><td>TP / (TP+FN)</td><td>Das que eram risco, quantas encontrou?</td></tr>
+                  <tr><td><strong>F1 Score</strong></td><td>2×P×R / (P+R)</td><td>Harmônico entre precision e recall</td></tr>
+                </tbody>
+              </table>
             </div>
             <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
-                <p style="color: #ff5555;"><strong>Caso real: COMPAS</strong></p>
-                <p>Algoritmo usado na justiça criminal dos EUA que demonstrou racismo — classificava pessoas negras como de alto risco com mais frequência, mesmo com histórico similar.</p>
-              </div>
+              <code-block lang="r" data-trim><textarea>
+library(yardstick)
+
+predicoes <- predict(modelo, data = teste)
+pred_df <- data.frame(
+  truth = teste$Target,
+  estimate = predicoes$predictions
+)
+
+# Métricas no TESTE (única vez!)
+accuracy(pred_df, truth, estimate,
+         event_level = "second")
+precision(pred_df, truth, estimate,
+          event_level = "second")
+recall(pred_df, truth, estimate,
+       event_level = "second")
+f_meas(pred_df, truth, estimate,
+       event_level = "second")
+</textarea></code-block>
+              <p style="color: #ff5555; font-size: 14pt;"><strong>⚠️ Sempre no teste — nunca no treino!</strong></p>
             </div>
           </multi-col>
         </section>
+      </section>
 
-        <!-- SLIDE: Conceitos-Chave -->
-        <section data-auto-animate>
-          <h2>Conceitos-Chave da Aula</h2>
-          <table>
-            <thead>
-              <tr><th>Conceito</th><th>Por que importa</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Pipeline completo</td><td>Nunca mais fazer código bagunçado</td></tr>
-              <tr><td>Train/Test Split</td><td>Separar dados vistos dos não vistos</td></tr>
-              <tr><td>Validação Cruzada</td><td>Escolher modelo sem trapaça</td></tr>
-              <tr><td>Holdout test</td><td>Medir generalização real</td></tr>
-              <tr><td>Overfitting/Underfitting</td><td>Entender limites do modelo</td></tr>
-              <tr><td>Random Forest</td><td>Ensemble robusto que reduz variância</td></tr>
-              <tr><td>Feature Importance</td><td>Interpretar qual feature mais importa</td></tr>
-              <tr><td>Ética</td><td>Responsabilidade do cientista</td></tr>
-            </tbody>
-          </table>
+      <!-- ============================================================
+           SLIDE 8: FEATURE IMPORTANCE
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Feature Importance 📊</h2>
+          <ul>
+            <li>Mede quanto cada feature <strong>reduz impureza de Gini</strong></li>
+            <li>Features no topo = mais decisivas</li>
+            <li>Ajuda a <strong>interpretar</strong> e simplificar o modelo</li>
+          </ul>
+          <code-block lang="r" data-trim><textarea>
+library(vip)
+
+# Extrair importância
+importancia <- modelo$variable.importance
+importancia <- sort(importancia, decreasing = TRUE)
+
+# Plotar top 10
+vip(modelo, num_features = 10, geom = "point") +
+  labs(title = "Top 10 Features mais importantes",
+       y = "Importância (Gini)")
+</textarea></code-block>
+          <multi-col style="gap:20px; margin-top: 15px;">
+            <div style="flex: 1;">
+              <div style="background: #282a36; padding: 10px;">
+                <p><strong>Exemplo German Credit:</strong></p>
+                <ul>
+                  <li><code>Duration</code> — duração do crédito</li>
+                  <li><code>Amount</code> — valor do crédito</li>
+                  <li><code>Age</code> — idade</li>
+                </ul>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <p style="color: #8be9fd;"><strong>Para que serve?</strong></p>
+              <ul>
+                <li>Identificar features mais importantes</li>
+                <li>Remover features irrelevantes</li>
+                <li>Explicar modelo para stakeholders</li>
+              </ul>
+            </div>
+          </multi-col>
         </section>
+      </section>
 
-        <!-- SLIDE: Datasets -->
-        <section data-auto-animate>
-          <h2>Datasets para Praticar</h2>
-          <table>
-            <thead>
-              <tr><th>Dataset</th><th>Uso</th><th>Fonte</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>German Credit Data</td><td>Pipeline completo + ética</td><td>UCI Repository</td></tr>
-              <tr><td>Telco Customer Churn</td><td>Classificação binária</td><td>IBM Kaggle</td></tr>
-              <tr><td>Heart Disease UCI</td><td>Numéricas + categóricas</td><td>UCI Repository</td></tr>
-            </tbody>
-          </table>
+      <!-- ============================================================
+           SLIDE 9: ÉTICA COMPAS
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Ética: O Caso COMPAS ⚖️</h2>
+          <multi-col style="gap:20px">
+            <div style="flex: 1;">
+              <div style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px;">
+                <p style="color: #ff5555; font-size: 16pt;"><strong>O que é COMPAS?</strong></p>
+                <p style="font-size: 14pt;">Correctional Offender Management Profiling for Alternative Sanctions — algoritmo usado na justiça criminal dos EUA para prever reincidência.</p>
+              </div>
+              <div style="background: #282a36; padding: 15px; margin-top: 10px;">
+                <p style="color: #f1fa8c; font-size: 16pt;"><strong>Descoberta da ProPublica (2016):</strong></p>
+                <ul>
+                  <li style="color: #ff5555;"><strong>Negros:</strong> 45% chance de alto risco mesmo sem reincidir</li>
+                  <li style="color: #50fa7b;"><strong>Brancos:</strong> 23% chance</li>
+                </ul>
+                <p style="font-size: 12pt; color: #888;">Mesmo controlando para histórico criminal!</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
+                <p style="color: #8be9fd; font-size: 16pt;"><strong>Questões para Discussão:</strong></p>
+                <ls-u>
+                  <li>Se o modelo erra mais para um grupo, isso é justo?</li>
+                  <li>Quem é responsável quando o algoritmo erra?</li>
+                  <li>Podemos usar modelos assim em decisões de justiça?</li>
+                  <li>Como mitigar vieses algorítmicos?</li>
+                </ls-u>
+              </div>
+            </div>
+          </multi-col>
+          <div style="background: #44475a; padding: 15px; margin-top: 15px; border-radius: 8px;">
+            <p style="font-size: 14pt;"><strong>Fairness Metrics:</strong> Além de accuracy, usar <strong>Precision</strong>, <strong>Recall</strong> e <strong>Disparate Impact</strong> (razão entre taxas de grupos). Se taxa_negativos/taxa_positivos &lt; 0.8, há possível viés.</p>
+          </div>
         </section>
+      </section>
 
-        <!-- SLIDE: Resumo -->
-        <section data-auto-animate>
-          <h2>Resumo da Aula</h2>
+      <!-- ============================================================
+           SLIDE 10: RESUMO
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Resumo da Aula ✅</h2>
           <ls-u>
-            <li>Pipeline completo: Dados → Limpeza → Features → Split → Treino → Validação → Teste</li>
-            <li>Split com estratificação mantém proporção das classes</li>
-            <li>Validação cruzada é mais robusta que single split</li>
-            <li>Teste final é blindado — olhar só uma vez</li>
-            <li>Overfitting: modelo decora treino, falha no teste</li>
-            <li>Random Forest: ensemble de árvores com bagging e feature randomness</li>
-            <li>Feature importance ajuda a interpretar o modelo</li>
-            <li>Ética: o modelo afeta vidas reais</li>
+            <li><strong>Pipeline completo:</strong> Dados → Limpeza → Features → Split → Treino → Validação → Teste</li>
+            <li><strong>Train/Test Split:</strong> <code>initial_split()</code> com <code>strata = Target</code></li>
+            <li><strong>Data Leakage:</strong> Nunca fazer pré-processamento antes do split</li>
+            <li><strong>Validação Cruzada:</strong> k-fold para estimativa estável</li>
+            <li><strong>RandomForest:</strong> ensemble robusto com <code>ranger()</code></li>
+            <li><strong>Métricas:</strong> accuracy, precision, recall, f1 (sempre no teste)</li>
+            <li><strong>Feature Importance:</strong> <code>vip()</code> para interpretar modelo</li>
+            <li><strong>Ética COMPAS:</strong> modelos afetam vidas — responsabilidade do cientista</li>
           </ls-u>
+          <div style="background: #50fa7b20; border: 2px solid #50fa7b; border-radius: 12px; padding: 15px; margin-top: 20px;">
+            <p style="color: #50fa7b; font-size: 18pt;"><strong>Exercício:</strong> Complete o pipeline no German Credit Data e analise fairness do modelo!</p>
+          </div>
         </section>
-
-      </section><!-- fim Ética e Encerramento -->
+      </section>
 
     </div>
   </div>
@@ -819,44 +420,10 @@ bind_rows(tree_metrics, rf_metrics) |>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
   <script src="../components/components.js"></script>
+  <script src="../slides_template/init.js"></script>
 
   <script>
-    const app = Vue.createApp({
-      setup() {
-        Vue.onMounted(() => {
-          initializeReveal();
-        });
-        return {};
-      },
-    });
-
-    initializeComponents(app);
-    initializeHeader(app);
-
-    function initializeReveal() {
-      var deck1 = new Reveal(document.querySelector(".reveal"), {
-        controls: true,
-        controlsLayout: 'edges',
-        hash: true,
-        respondToHashChanges: true,
-        history: true,
-        keyboardCondition: "focused",
-        slideNumber: "h.v",
-        navigationMode: "linear",
-        plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
-      });
-      deck1.initialize();
-      deck1.on('slidechanged', event => {
-        const auto = event.currentSlide.querySelectorAll('.fragment.auto');
-        auto.forEach((el, i) => {
-          setTimeout(() => {
-            el.classList.add('visible');
-          }, i * 300);
-        });
-      });
-    }
-
-    app.mount("#app");
+    window.app = mountSlideApp();
   </script>
 
 </body>
