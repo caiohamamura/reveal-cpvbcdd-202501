@@ -390,57 +390,96 @@ const pollQuestionComponent = {
   mounted() {
     const el = this.$el;
     const results = el.querySelector('.poll-results');
-    if (!results) return;
+    const pollEl = el.querySelector('.poll');
 
-    const updateBars = () => {
-      const bars = results.querySelectorAll('.poll-bar-fill');
-      let total = 0;
-      const counts = [];
-      bars.forEach(bar => {
-        const span = bar.querySelector('[data-value]');
-        const count = parseInt(span.textContent) || 0;
-        counts.push(count);
-        total += count;
+    const highlightAnswer = () => {
+      if (!this.answer || !pollEl) return;
+      // Highlight the correct button
+      pollEl.querySelectorAll('button').forEach(btn => {
+        btn.style.outline = '';
+        btn.style.fontWeight = '';
       });
-      bars.forEach((bar, i) => {
-        const pct = total > 0 ? Math.round(counts[i] / total * 100) : 0;
-        bar.style.width = Math.max(pct, 8) + '%';
-        bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#50fa7b' : '#bd93f9';
-      });
+      const correctBtn = pollEl.querySelector(`button[data-value="${this.answer}"]`);
+      if (correctBtn) {
+        correctBtn.style.outline = '3px solid #50fa7b';
+        correctBtn.style.fontWeight = 'bold';
+      }
+      // Highlight the correct bar
+      if (results) {
+        results.querySelectorAll('.poll-bar-fill').forEach(bar => {
+          const span = bar.querySelector('[data-value]');
+          if (span && span.getAttribute('data-value') === this.answer) {
+            bar.style.background = '#50fa7b';
+          }
+        });
+      }
     };
 
-    const observer = new MutationObserver(updateBars);
-    results.querySelectorAll('[data-value]').forEach(span => {
-      observer.observe(span, { childList: true, characterData: true, subtree: true });
-    });
+    if (results) {
+      const updateBars = () => {
+        const bars = results.querySelectorAll('.poll-bar-fill');
+        let total = 0;
+        const counts = [];
+        bars.forEach(bar => {
+          const span = bar.querySelector('[data-value]');
+          const count = parseInt(span.textContent) || 0;
+          counts.push(count);
+          total += count;
+        });
+        bars.forEach((bar, i) => {
+          const pct = total > 0 ? Math.round(counts[i] / total * 100) : 0;
+          bar.style.height = Math.max(pct, 8) + '%';
+          bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#50fa7b' : '#bd93f9';
+        });
+      };
+
+      const observer = new MutationObserver(updateBars);
+      results.querySelectorAll('[data-value]').forEach(span => {
+        observer.observe(span, { childList: true, characterData: true, subtree: true });
+      });
+    }
+
+    // Watch answer fragment for "visible" class to highlight correct answer
+    const answerRef = this.$refs.answerRef;
+    if (answerRef) {
+      const answerObserver = new MutationObserver(() => {
+        if (answerRef.classList.contains('visible')) {
+          highlightAnswer();
+        }
+      });
+      answerObserver.observe(answerRef, { attributes: true, attributeFilter: ['class'] });
+    }
   },
   /*html*/
   template: `
-    <section>
+  <div>
       <h3 v-if="title">{{ title }}</h3>
       <p v-if="question">{{ question }}</p>
+      <multi-col>
       <div class="poll" :data-poll="id">
         <button v-for="opt in options" :data-value="opt.value">
           {{ String(opt.value).toUpperCase() }}) {{ opt.label }}
         </button>
       </div>
-      <p>Total: <span class="voters" :data-poll="id">0</span> votos</p>
-      <div class="results poll-results" :data-poll="id">
-        <div class="poll-bar" v-for="opt in options">
-          <span class="poll-bar-label">{{ String(opt.value).toUpperCase() }}</span>
+      <div class="results poll-results" :data-poll="id" style="display:flex;justify-content:space-evenly;align-items:end;height:100%">
+        <div class="poll-bar" v-for="opt in options" style="display:flex;flex-flow:column;">
           <div class="poll-bar-track">
-            <div class="poll-bar-fill" style="width:0%">
+            <div class="poll-bar-fill" :style="{height:'0%'}">
               <span :data-value="opt.value">0</span>
             </div>
           </div>
+          <span class="poll-bar-label">{{ String(opt.value).toUpperCase() }}</span>
         </div>
-      </div>
-      <div v-if="answer" class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
+      </div> 
+      </multi-col>
+      <p>Total: <span class="voters" :data-poll="id">0</span> votos</p>
+      
+      <div v-if="answer" ref="answerRef" class="fragment" data-fragment-index="1" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
         <span style="color: #50fa7b;">
           Resposta: <strong>{{ String(answer).toUpperCase() }}</strong><span v-if="answerText"> — {{ answerText }}</span>
         </span>
       </div>
-    </section>
+    </div>
   `,
 };
 
