@@ -38,6 +38,12 @@
     .seminar-panel .btn-join { background: #8be9fd; color: #282a36; }
     .seminar-panel .btn-leave { background: #ff5555; color: #f8f8f2; }
     .seminar-status { margin-top: 10px; font-size: 13px; color: #6272a4; }
+    /* Poll results bar chart */
+    .poll-results { margin-top: 8px; }
+    .poll-bar { display: flex; align-items: center; margin: 4px 0; gap: 8px; }
+    .poll-bar-label { color: #bd93f9; font-weight: bold; min-width: 20px; text-align: center; font-size: 14px; }
+    .poll-bar-track { flex: 1; background: #44475a; border-radius: 4px; height: 24px; position: relative; overflow: hidden; }
+    .poll-bar-fill { background: #bd93f9; height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; min-width: 30px; transition: width 0.5s ease; color: #282a36; font-weight: bold; font-size: 13px; }
   </style>
 </head>
 
@@ -701,7 +707,7 @@ BIC(modelo_step)
           <h2>Quiz Interativo</h2>
           <p style="color: #f1fa8c;">Conecte-se à sala e vote!</p>
           <div style="background: #bd93f920; border: 1px solid #bd93f9; padding: 12px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #bd93f9;"><strong>Instruções:</strong> Host clica "Host" e compartilha o link — participantes clicam "Join" e votam</p>
+            <p style="color: #bd93f9;"><strong>Instruções:</strong> Host clica "Host" — participantes entram automaticamente e votam</p>
           </div>
         </section>
 
@@ -713,9 +719,14 @@ BIC(modelo_step)
             <button data-value="b">B) Data leakage — info do teste vaza para treino</button>
             <button data-value="c">C) Accuracy melhora automaticamente</button>
           </div>
-          <p>Votos: <span class="voters" data-poll="q1">0</span></p>
-          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;">
-            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Escalar antes do split causa data leakage. O scaler usa info do teste!</span>
+          <p>Total: <span class="voters" data-poll="q1">0</span> votos</p>
+          <div class="results poll-results" data-poll="q1">
+            <div class="poll-bar" data-label="A"><span class="poll-bar-label">A</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="a">0</span></div></div></div>
+            <div class="poll-bar" data-label="B"><span class="poll-bar-label">B</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="b">0</span></div></div></div>
+            <div class="poll-bar" data-label="C"><span class="poll-bar-label">C</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="c">0</span></div></div></div>
+          </div>
+          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
+            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Escalar antes do split causa data leakage!</span>
           </div>
         </section>
 
@@ -727,9 +738,14 @@ BIC(modelo_step)
             <button data-value="b">B) Modelo razoável</button>
             <button data-value="c">C) Pior que aleatório — inverteu as previsões!</button>
           </div>
-          <p>Votos: <span class="voters" data-poll="q2">0</span></p>
-          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;">
-            <span style="color: #50fa7b;">Resposta: <strong>C</strong> — AUC &lt; 0.5 significa que o modelo inverteu as previsões.</span>
+          <p>Total: <span class="voters" data-poll="q2">0</span> votos</p>
+          <div class="results poll-results" data-poll="q2">
+            <div class="poll-bar" data-label="A"><span class="poll-bar-label">A</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="a">0</span></div></div></div>
+            <div class="poll-bar" data-label="B"><span class="poll-bar-label">B</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="b">0</span></div></div></div>
+            <div class="poll-bar" data-label="C"><span class="poll-bar-label">C</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="c">0</span></div></div></div>
+          </div>
+          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
+            <span style="color: #50fa7b;">Resposta: <strong>C</strong> — AUC &lt; 0.5 significa previsões invertidas!</span>
           </div>
         </section>
 
@@ -741,9 +757,14 @@ BIC(modelo_step)
             <button data-value="b">B) Para manter a proporção das classes em treino e teste</button>
             <button data-value="c">C) Para remover outliers automaticamente</button>
           </div>
-          <p>Votos: <span class="voters" data-poll="q3">0</span></p>
-          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;">
-            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Stratified split garante mesma proporção de classes em treino e teste.</span>
+          <p>Total: <span class="voters" data-poll="q3">0</span> votos</p>
+          <div class="results poll-results" data-poll="q3">
+            <div class="poll-bar" data-label="A"><span class="poll-bar-label">A</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="a">0</span></div></div></div>
+            <div class="poll-bar" data-label="B"><span class="poll-bar-label">B</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="b">0</span></div></div></div>
+            <div class="poll-bar" data-label="C"><span class="poll-bar-label">C</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="c">0</span></div></div></div>
+          </div>
+          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
+            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Stratified split mantém proporção de classes!</span>
           </div>
         </section>
       </section>
@@ -805,6 +826,31 @@ BIC(modelo_step)
       const labels = {1:'Conectado', 2:'Aguardando sala...', 3:'Conectado como participante', 4:'Conectado como host', 5:'Conectado como chair'};
       el.textContent = labels[e.status] || 'Desconectado';
       el.style.color = e.status >= 3 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#6272a4';
+    });
+
+    // Animate poll bar charts when vote counts update
+    function updatePollBars() {
+      document.querySelectorAll('.poll-results').forEach(results => {
+        const pollId = results.getAttribute('data-poll');
+        const bars = results.querySelectorAll('.poll-bar-fill');
+        let total = 0;
+        const counts = [];
+        bars.forEach(bar => {
+          const span = bar.querySelector('[data-value]');
+          const count = parseInt(span.textContent) || 0;
+          counts.push(count);
+          total += count;
+        });
+        bars.forEach((bar, i) => {
+          const pct = total > 0 ? Math.round(counts[i] / total * 100) : 0;
+          bar.style.width = Math.max(pct, 8) + '%';
+          bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#50fa7b' : '#bd93f9';
+        });
+      });
+    }
+    const pollObserver = new MutationObserver(updatePollBars);
+    document.querySelectorAll('.poll-results [data-value]').forEach(el => {
+      pollObserver.observe(el, { childList: true, characterData: true, subtree: true });
     });
   </script>
 
