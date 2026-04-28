@@ -445,6 +445,19 @@ const pollQuestionComponent = {
       const answerObserver = new MutationObserver(() => {
         if (answerRef.classList.contains('visible')) {
           highlightAnswer();
+        } else {
+          // De-highlight
+          if (pollEl) {
+            pollEl.querySelectorAll('button').forEach(btn => {
+              btn.style.outline = '';
+              btn.style.fontWeight = '';
+            });
+          }
+          if (results) {
+            results.querySelectorAll('.poll-bar-fill').forEach(bar => {
+              bar.style.background = '#bd93f9';
+            });
+          }
         }
       });
       answerObserver.observe(answerRef, { attributes: true, attributeFilter: ['class'] });
