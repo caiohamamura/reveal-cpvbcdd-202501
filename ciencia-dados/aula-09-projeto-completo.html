@@ -13,9 +13,53 @@
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
   <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <style>
+    .seminar-toggle {
+      position: fixed; top: 20px; right: 20px; z-index: 100;
+      background: #bd93f9; color: #282a36; border: none; border-radius: 6px;
+      padding: 8px 16px; cursor: pointer; font-size: 16px; font-weight: bold;
+    }
+    .seminar-toggle:hover { background: #ff79c6; }
+    .seminar-panel {
+      display: none; position: fixed; top: 60px; right: 20px; z-index: 99;
+      background: #282a36; border: 1px solid #bd93f9; border-radius: 8px;
+      padding: 16px; min-width: 260px; color: #f8f8f2;
+    }
+    .seminar-panel.open { display: block; }
+    .seminar-panel input[type="text"], .seminar-panel input[type="password"] {
+      width: 100%; padding: 8px; margin: 6px 0 12px; border: 1px solid #bd93f9;
+      border-radius: 4px; background: #44475a; color: #f8f8f2; box-sizing: border-box;
+    }
+    .seminar-panel button {
+      padding: 8px 16px; margin: 4px 4px 4px 0; border: none; border-radius: 4px;
+      cursor: pointer; font-weight: bold;
+    }
+    .seminar-panel .btn-host { background: #50fa7b; color: #282a36; }
+    .seminar-panel .btn-join { background: #8be9fd; color: #282a36; }
+    .seminar-panel .btn-leave { background: #ff5555; color: #f8f8f2; }
+    .seminar-status { margin-top: 10px; font-size: 13px; color: #6272a4; }
+  </style>
 </head>
 
 <body>
+
+  <button class="seminar-toggle" onclick="document.getElementById('seminarPanel').classList.toggle('open')">&#9776; Seminar</button>
+  <div id="seminarPanel" class="seminar-panel">
+    <div id="seminarHost">
+      <label><strong>Host (apresentador)</strong></label>
+      <input type="password" id="seminarPassword" placeholder="Senha do host" />
+      <button class="btn-host" onclick="RevealSeminar.open_or_join_room(document.getElementById('seminarPassword').value)">Host</button>
+      <button class="btn-leave" onclick="RevealSeminar.close_room(document.getElementById('seminarPassword').value)">Fechar sala</button>
+    </div>
+    <hr style="border-color: #44475a; margin: 12px 0;"/>
+    <div id="seminarJoin">
+      <label><strong>Participante</strong></label>
+      <input type="text" id="seminarUsername" placeholder="Seu nome (opcional)" />
+      <button class="btn-join" onclick="RevealSeminar.join_room(document.getElementById('seminarUsername').value || undefined)">Join</button>
+      <button class="btn-leave" onclick="RevealSeminar.leave_room()">Sair</button>
+    </div>
+    <div class="seminar-status" id="seminarStatus">Desconectado</div>
+  </div>
 
   <div id="app" class="reveal">
     <div class="slides">
@@ -753,6 +797,14 @@ BIC(modelo_step)
     };
     window.pollConfig = {};
     window.app = mountSlideApp();
+
+    // Update seminar status display
+    document.addEventListener('seminar', function(e) {
+      const el = document.getElementById('seminarStatus');
+      const labels = {1:'Conectado', 2:'Aguardando sala...', 3:'Conectado como participante', 4:'Conectado como host', 5:'Conectado como chair'};
+      el.textContent = labels[e.status] || 'Desconectado';
+      el.style.color = e.status >= 3 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#6272a4';
+    });
   </script>
 
 </body>
