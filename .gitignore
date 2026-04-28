@@ -4,3 +4,7 @@ pnpm-locl.yaml
 .openclaude
 nao_enviar
 .openclaude-profile.json
+.vscode/
+__pycache__/
+*.pkl
+skills/
