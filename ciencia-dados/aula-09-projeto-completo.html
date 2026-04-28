@@ -107,7 +107,7 @@ cat("Treino:", nrow(treino), "| Teste:", nrow(teste))
            SLIDE 4: DATA LEAKAGE
            ============================================================ -->
       <section data-auto-animate>
-        <section>
+
           <h2 style="color: #ff5555;">⚠️ Data Leakage</h2>
           <div style="background: #ff555520; border: 2px solid #ff5555; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
             <p style="color: #ff5555; font-size: 18pt;"><strong>WARNING:</strong> Informacao do teste vaza para o treino = resultados falsamente otimistas!</p>
@@ -136,13 +136,12 @@ teste <- testing(split)
 
 # Scale no treino, aplicar no teste
 treino_scaled <- scale(treino)
-teste_scaled <- scale(teste) # usa media do treino!
+teste_scaled <- scale(teste)
 </textarea></code-block>
               </div>
             </div>
           </multi-col>
           <p style="color: #f1fa8c; font-size: 16pt; margin-top: 15px;">Regra: <strong>Split → Pré-processamento → Treino</strong></p>
-        </section>
       </section>
 
       <!-- ============================================================
@@ -165,39 +164,37 @@ teste_scaled <- scale(teste) # usa media do treino!
               </div>
             </div>
             <div style="flex: 1;">
-              <div class="mermaid" data-id="kfold-diagram" style="width:100%">
+              <div class="mermaid" data-id="kfold-diagram" style="width:90%">
                 <pre>
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '24px', 'fontFamily': 'Inter'}}}%%
+%%{init: {'theme': 'dark', 'themeVariables': { 'fontSize': '28px', 'fontFamily': 'Inter'}}}%%
 graph TD
   subgraph Fold 1
-    T1["🏋️ Treino"] --> V1["✅ Validação"]
+    T1["🏋️"] --- T1_2["🏋️"] --> V1["✅"]
   end
   subgraph Fold 2
-    T2["🏋️ Treino"] --> V2["✅ Validação"]
+    T2["🏋️"] --> V2["✅"] --- T2_2["🏋️"]
   end
   subgraph Fold 3
-    T3["🏋️ Treino"] --> V3["✅ Validação"]
+    V3["✅"] --- T3["🏋️"] --- T3_2["🏋️"]
   end
-  subgraph Fold 4
-    T4["🏋️ Treino"] --> V4["✅ Validação"]
-  end
-  subgraph Fold 5
-    T5["🏋️ Treino"] --> V5["✅ Validação"]
-  end
-  V1 & V2 & V3 & V4 & V5 --> M["📊 Média"]
-  style V1 fill:#50fa7b,color:#282a36
-  style V2 fill:#50fa7b,color:#282a36
-  style V3 fill:#50fa7b,color:#282a36
-  style V4 fill:#50fa7b,color:#282a36
-  style V5 fill:#50fa7b,color:#282a36
-  style T1 fill:#8be9fd,color:#282a36
-  style T2 fill:#8be9fd,color:#282a36
+
+  %% Position 1 (left block in each fold)
+  style T1 fill:#ffb86c,color:#282a36
+  style T2 fill:#ffb86c,color:#282a36
+  style V3 fill:#ffb86c,color:#282a36
+
+  %% Position 2 (middle block)
+  style T1_2 fill:#8be9fd,color:#282a36
+  style V2 fill:#8be9fd,color:#282a36
   style T3 fill:#8be9fd,color:#282a36
-  style T4 fill:#8be9fd,color:#282a36
-  style T5 fill:#8be9fd,color:#282a36
+
+  %% Position 3 (right block)
+  style V1 fill:#bd93f9,color:#282a36
+  style T2_2 fill:#bd93f9,color:#282a36
+  style T3_2 fill:#bd93f9,color:#282a36
                 </pre>
               </div>
-              <code-block lang="r" data-trim><textarea>
+              <code-block lang="r" data-trim style="font-size:10pt;padding-top:30px"><textarea>
 cv <- vfold_cv(treino, v = 5, strata = Target)
 </textarea></code-block>
             </div>
@@ -218,7 +215,7 @@ cv <- vfold_cv(treino, v = 5, strata = Target)
             <li>Menos overfitting que árvore única</li>
           </ul>
           <div style="margin-top: 15px;">
-            <div class="mermaid" data-id="rf-voting" style="width:90%">
+            <div class="mermaid center" data-id="rf-voting" style="width:90%">
               <pre>
 %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '24px', 'fontFamily': 'Inter'}}}%%
 graph TD
@@ -237,6 +234,8 @@ graph TD
               </pre>
             </div>
           </div>
+          </section>
+          <section>
           <code-block lang="r" data-trim><textarea>
 library(ranger)
 
@@ -322,6 +321,8 @@ vip(modelo, num_features = 10, geom = "point") +
   labs(title = "Top 10 Features mais importantes",
        y = "Importância (Gini)")
 </textarea></code-block>
+</section>
+<section>
           <multi-col style="gap:20px; margin-top: 15px;">
             <div style="flex: 1;">
               <div style="background: #282a36; padding: 10px;">
@@ -369,7 +370,7 @@ vip(modelo, num_features = 10, geom = "point") +
             <div style="flex: 1;">
               <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px;">
                 <p style="color: #8be9fd; font-size: 16pt;"><strong>Questões para Discussão:</strong></p>
-                <ls-u>
+                <ls-u :font-size="18">
                   <li>Se o modelo erra mais para um grupo, isso é justo?</li>
                   <li>Quem é responsável quando o algoritmo erra?</li>
                   <li>Podemos usar modelos assim em decisões de justiça?</li>
@@ -390,7 +391,7 @@ vip(modelo, num_features = 10, geom = "point") +
       <section data-auto-animate>
         <section>
           <h2>Resumo da Aula ✅</h2>
-          <ls-u>
+          <ls-u font-size="18">
             <li><strong>Pipeline completo:</strong> Dados → Limpeza → Features → Split → Treino → Validação → Teste</li>
             <li><strong>Train/Test Split:</strong> <code>initial_split()</code> com <code>strata = Target</code></li>
             <li><strong>Data Leakage:</strong> Nunca fazer pré-processamento antes do split</li>
