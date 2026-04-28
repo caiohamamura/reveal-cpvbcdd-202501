@@ -13,38 +13,6 @@
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
   <link rel="stylesheet" href="../plugin/poll/style.css" />
-  <style>
-    .seminar-toggle {
-      position: fixed; top: 20px; right: 20px; z-index: 100;
-      background: #bd93f9; color: #282a36; border: none; border-radius: 6px;
-      padding: 8px 16px; cursor: pointer; font-size: 16px; font-weight: bold;
-    }
-    .seminar-toggle:hover { background: #ff79c6; }
-    .seminar-panel {
-      display: none; position: fixed; top: 60px; right: 20px; z-index: 99;
-      background: #282a36; border: 1px solid #bd93f9; border-radius: 8px;
-      padding: 16px; min-width: 260px; color: #f8f8f2;
-    }
-    .seminar-panel.open { display: block; }
-    .seminar-panel input[type="text"], .seminar-panel input[type="password"] {
-      width: 100%; padding: 8px; margin: 6px 0 12px; border: 1px solid #bd93f9;
-      border-radius: 4px; background: #44475a; color: #f8f8f2; box-sizing: border-box;
-    }
-    .seminar-panel button {
-      padding: 8px 16px; margin: 4px 4px 4px 0; border: none; border-radius: 4px;
-      cursor: pointer; font-weight: bold;
-    }
-    .seminar-panel .btn-host { background: #50fa7b; color: #282a36; }
-    .seminar-panel .btn-join { background: #8be9fd; color: #282a36; }
-    .seminar-panel .btn-leave { background: #ff5555; color: #f8f8f2; }
-    .seminar-status { margin-top: 10px; font-size: 13px; color: #6272a4; }
-    /* Poll results bar chart */
-    .poll-results { margin-top: 8px; }
-    .poll-bar { display: flex; align-items: center; margin: 4px 0; gap: 8px; }
-    .poll-bar-label { color: #bd93f9; font-weight: bold; min-width: 20px; text-align: center; font-size: 14px; }
-    .poll-bar-track { flex: 1; background: #44475a; border-radius: 4px; height: 24px; position: relative; overflow: hidden; }
-    .poll-bar-fill { background: #bd93f9; height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; min-width: 30px; transition: width 0.5s ease; color: #282a36; font-weight: bold; font-size: 13px; }
-  </style>
 </head>
 
 <body>
@@ -711,62 +679,44 @@ BIC(modelo_step)
           </div>
         </section>
 
-        <section>
-          <h3>Questão 1: Data Leakage</h3>
-          <p>Se você escala <strong>TODOS</strong> os dados <strong>ANTES</strong> do split, qual problema pode ocorrer?</p>
-          <div class="poll" data-poll="q1">
-            <button data-value="a">A) O modelo treina mais rápido</button>
-            <button data-value="b">B) Data leakage — info do teste vaza para treino</button>
-            <button data-value="c">C) Accuracy melhora automaticamente</button>
-          </div>
-          <p>Total: <span class="voters" data-poll="q1">0</span> votos</p>
-          <div class="results poll-results" data-poll="q1">
-            <div class="poll-bar" data-label="A"><span class="poll-bar-label">A</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="a">0</span></div></div></div>
-            <div class="poll-bar" data-label="B"><span class="poll-bar-label">B</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="b">0</span></div></div></div>
-            <div class="poll-bar" data-label="C"><span class="poll-bar-label">C</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="c">0</span></div></div></div>
-          </div>
-          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
-            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Escalar antes do split causa data leakage!</span>
-          </div>
-        </section>
+        <poll-question
+          id="q1"
+          title="Questão 1: Data Leakage"
+          question="Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?"
+          answer="b"
+          answer-text="Escalar antes do split causa data leakage!"
+          :options="[
+            { value: 'a', label: 'O modelo treina mais rápido' },
+            { value: 'b', label: 'Data leakage — info do teste vaza para treino' },
+            { value: 'c', label: 'Accuracy melhora automaticamente' },
+          ]"
+        />
 
-        <section>
-          <h3>Questão 2: AUC = 0.45</h3>
-          <p>Um modelo tem AUC = 0.45. O que isso significa?</p>
-          <div class="poll" data-poll="q2">
-            <button data-value="a">A) Modelo excelente</button>
-            <button data-value="b">B) Modelo razoável</button>
-            <button data-value="c">C) Pior que aleatório — inverteu as previsões!</button>
-          </div>
-          <p>Total: <span class="voters" data-poll="q2">0</span> votos</p>
-          <div class="fragment results poll-results" data-poll="q2">
-            <div class="poll-bar" data-label="A"><span class="poll-bar-label">A</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="a">0</span></div></div></div>
-            <div class="poll-bar" data-label="B"><span class="poll-bar-label">B</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="b">0</span></div></div></div>
-            <div class="poll-bar" data-label="C"><span class="poll-bar-label">C</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="c">0</span></div></div></div>
-          </div>
-          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
-            <span style="color: #50fa7b;">Resposta: <strong>C</strong> — AUC &lt; 0.5 significa previsões invertidas!</span>
-          </div>
-        </section>
+        <poll-question
+          id="q2"
+          title="Questão 2: AUC = 0.45"
+          question="Um modelo tem AUC = 0.45. O que isso significa?"
+          answer="c"
+          answer-text="AUC < 0.5 significa previsões invertidas!"
+          :options="[
+            { value: 'a', label: 'Modelo excelente' },
+            { value: 'b', label: 'Modelo razoável' },
+            { value: 'c', label: 'Pior que aleatório — inverteu as previsões!' },
+          ]"
+        />
 
-        <section>
-          <h3>Questão 3: Stratified Split</h3>
-          <p>Por que usar <code>strata = Target</code> no split?</p>
-          <div class="poll" data-poll="q3">
-            <button data-value="a">A) Para o modelo treinar mais rápido</button>
-            <button data-value="b">B) Para manter a proporção das classes em treino e teste</button>
-            <button data-value="c">C) Para remover outliers automaticamente</button>
-          </div>
-          <p>Total: <span class="voters" data-poll="q3">0</span> votos</p>
-          <div class="results poll-results" data-poll="q3">
-            <div class="poll-bar" data-label="A"><span class="poll-bar-label">A</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="a">0</span></div></div></div>
-            <div class="poll-bar" data-label="B"><span class="poll-bar-label">B</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="b">0</span></div></div></div>
-            <div class="poll-bar" data-label="C"><span class="poll-bar-label">C</span><div class="poll-bar-track"><div class="poll-bar-fill" style="width:0%"><span data-value="c">0</span></div></div></div>
-          </div>
-          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
-            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Stratified split mantém proporção de classes!</span>
-          </div>
-        </section>
+        <poll-question
+          id="q3"
+          title="Questão 3: Stratified Split"
+          question="Por que usar strata = Target no split?"
+          answer="b"
+          answer-text="Stratified split mantém proporção de classes!"
+          :options="[
+            { value: 'a', label: 'Para o modelo treinar mais rápido' },
+            { value: 'b', label: 'Para manter a proporção das classes em treino e teste' },
+            { value: 'c', label: 'Para remover outliers automaticamente' },
+          ]"
+        />
       </section>
 
       <!-- ============================================================
@@ -826,31 +776,6 @@ BIC(modelo_step)
       const labels = {1:'Conectado', 2:'Aguardando sala...', 3:'Conectado como participante', 4:'Conectado como host', 5:'Conectado como chair'};
       el.textContent = labels[e.status] || 'Desconectado';
       el.style.color = e.status >= 3 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#6272a4';
-    });
-
-    // Animate poll bar charts when vote counts update
-    function updatePollBars() {
-      document.querySelectorAll('.poll-results').forEach(results => {
-        const pollId = results.getAttribute('data-poll');
-        const bars = results.querySelectorAll('.poll-bar-fill');
-        let total = 0;
-        const counts = [];
-        bars.forEach(bar => {
-          const span = bar.querySelector('[data-value]');
-          const count = parseInt(span.textContent) || 0;
-          counts.push(count);
-          total += count;
-        });
-        bars.forEach((bar, i) => {
-          const pct = total > 0 ? Math.round(counts[i] / total * 100) : 0;
-          bar.style.width = Math.max(pct, 8) + '%';
-          bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#50fa7b' : '#bd93f9';
-        });
-      });
-    }
-    const pollObserver = new MutationObserver(updatePollBars);
-    document.querySelectorAll('.poll-results [data-value]').forEach(el => {
-      pollObserver.observe(el, { childList: true, characterData: true, subtree: true });
     });
   </script>
 

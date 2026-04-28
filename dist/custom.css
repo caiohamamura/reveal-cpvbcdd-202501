@@ -392,6 +392,39 @@ div {
     opacity: 0;
 }
 
-.semi-out { 
+.semi-out {
     opacity: 0.5;
 }
+
+/* Seminar panel */
+.seminar-toggle {
+    position: fixed; top: 20px; right: 20px; z-index: 100;
+    background: #bd93f9; color: #282a36; border: none; border-radius: 6px;
+    padding: 8px 16px; cursor: pointer; font-size: 16px; font-weight: bold;
+}
+.seminar-toggle:hover { background: #ff79c6; }
+.seminar-panel {
+    display: none; position: fixed; top: 60px; right: 20px; z-index: 99;
+    background: #282a36; border: 1px solid #bd93f9; border-radius: 8px;
+    padding: 16px; min-width: 260px; color: #f8f8f2;
+}
+.seminar-panel.open { display: block; }
+.seminar-panel input[type="text"], .seminar-panel input[type="password"] {
+    width: 100%; padding: 8px; margin: 6px 0 12px; border: 1px solid #bd93f9;
+    border-radius: 4px; background: #44475a; color: #f8f8f2; box-sizing: border-box;
+}
+.seminar-panel button {
+    padding: 8px 16px; margin: 4px 4px 4px 0; border: none; border-radius: 4px;
+    cursor: pointer; font-weight: bold;
+}
+.seminar-panel .btn-host { background: #50fa7b; color: #282a36; }
+.seminar-panel .btn-join { background: #8be9fd; color: #282a36; }
+.seminar-panel .btn-leave { background: #ff5555; color: #f8f8f2; }
+.seminar-status { margin-top: 10px; font-size: 13px; color: #6272a4; }
+
+/* Poll results bar chart */
+.poll-results { margin-top: 8px; }
+.poll-bar { display: flex; align-items: center; margin: 4px 0; gap: 8px; }
+.poll-bar-label { color: #bd93f9; font-weight: bold; min-width: 20px; text-align: center; font-size: 14px; }
+.poll-bar-track { flex: 1; background: #44475a; border-radius: 4px; height: 24px; position: relative; overflow: hidden; }
+.poll-bar-fill { background: #bd93f9; height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; min-width: 30px; transition: width 0.5s ease; color: #282a36; font-weight: bold; font-size: 13px; }

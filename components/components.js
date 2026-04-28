@@ -378,6 +378,72 @@ const leaderLineComponent = {
   template: `<span ref="root" style="display:none"></span>`,
 };
 
+const pollQuestionComponent = {
+  props: {
+    id: { type: String, required: true },
+    title: { type: String, default: '' },
+    question: { type: String, default: '' },
+    options: { type: Array, required: true },
+    answer: { type: String, default: '' },
+    answerText: { type: String, default: '' },
+  },
+  mounted() {
+    const el = this.$el;
+    const results = el.querySelector('.poll-results');
+    if (!results) return;
+
+    const updateBars = () => {
+      const bars = results.querySelectorAll('.poll-bar-fill');
+      let total = 0;
+      const counts = [];
+      bars.forEach(bar => {
+        const span = bar.querySelector('[data-value]');
+        const count = parseInt(span.textContent) || 0;
+        counts.push(count);
+        total += count;
+      });
+      bars.forEach((bar, i) => {
+        const pct = total > 0 ? Math.round(counts[i] / total * 100) : 0;
+        bar.style.width = Math.max(pct, 8) + '%';
+        bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#50fa7b' : '#bd93f9';
+      });
+    };
+
+    const observer = new MutationObserver(updateBars);
+    results.querySelectorAll('[data-value]').forEach(span => {
+      observer.observe(span, { childList: true, characterData: true, subtree: true });
+    });
+  },
+  /*html*/
+  template: `
+    <section>
+      <h3 v-if="title">{{ title }}</h3>
+      <p v-if="question">{{ question }}</p>
+      <div class="poll" :data-poll="id">
+        <button v-for="opt in options" :data-value="opt.value">
+          {{ String(opt.value).toUpperCase() }}) {{ opt.label }}
+        </button>
+      </div>
+      <p>Total: <span class="voters" :data-poll="id">0</span> votos</p>
+      <div class="results poll-results" :data-poll="id">
+        <div class="poll-bar" v-for="opt in options">
+          <span class="poll-bar-label">{{ String(opt.value).toUpperCase() }}</span>
+          <div class="poll-bar-track">
+            <div class="poll-bar-fill" style="width:0%">
+              <span :data-value="opt.value">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="answer" class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
+        <span style="color: #50fa7b;">
+          Resposta: <strong>{{ String(answer).toUpperCase() }}</strong><span v-if="answerText"> — {{ answerText }}</span>
+        </span>
+      </div>
+    </section>
+  `,
+};
+
 function initializeComponents(app) {
   app.component('copy-btn', copyBtnComponent);
   app.component('code-block', codeBlockComponent);
@@ -387,6 +453,7 @@ function initializeComponents(app) {
   app.component("ls-u", lsUComponent);
   app.component("md", mdComponent);
   app.component("leader-line", leaderLineComponent);
+  app.component('poll-question', pollQuestionComponent);
 }
 
 
