@@ -480,17 +480,42 @@ BIC(modelo_step)
             </ol>
           </div>
         </multi-col>
+      </section>
 
-        <!-- BOX DE WARNING FORA DO multi-col - span completo -->
-        <div style="background: #ff79c620; border: 2px solid #ff79c6; padding: 15px; margin-top: 20px; border-radius: 8px;">
-          <p style="color: #ff79c6; font-size: 14pt;">
-            <strong>⚠️ AIC/BIC:</strong> Só funcionam com modelos que têm <strong>likelihood</strong>
+      <!-- ============================================================
+           SLIDE 8.65: STEPWISE WARNING BOX - SLIDE SEPARADO
+           ============================================================ -->
+      <section data-auto-animate>
+        <h2>⚠️ AIC/BIC: Quando Usar?</h2>
+        
+        <div style="background: #ff79c620; border: 2px solid #ff79c6; padding: 25px; border-radius: 12px; margin: 20px 40px;">
+          <p style="color: #ff79c6; font-size: 18pt; text-align: center;">
+            <strong>AIC e BIC só funcionam com modelos que têm likelihood</strong>
           </p>
-          <ul style="color: #f8f8f2; font-size: 13pt;">
-            <li>✅ <strong>Funciona:</strong> glm, regressão logística, modelos com distribuição</li>
-            <li>❌ <strong>Não funciona:</strong> RandomForest, KNN, SVM → usar AUC ou cross-validation</li>
-          </ul>
         </div>
+        
+        <multi-col style="gap: 40px; margin: 0 40px;">
+          <div style="flex: 1; background: #50fa7b20; padding: 20px; border-radius: 8px; border: 1px solid #50fa7b;">
+            <p style="color: #50fa7b; font-size: 16pt;"><strong>✅ Funcionam:</strong></p>
+            <ul style="color: #f8f8f2; font-size: 14pt;">
+              <li>Regressão logística (glm)</li>
+              <li>Regressão linear</li>
+              <li>Modelos com distribuição definida</li>
+            </ul>
+          </div>
+          
+          <div style="flex: 1; background: #ff555520; padding: 20px; border-radius: 8px; border: 1px solid #ff5555;">
+            <p style="color: #ff5555; font-size: 16pt;"><strong>❌ Não funcionam:</strong></p>
+            <ul style="color: #f8f8f2; font-size: 14pt;">
+              <li>RandomForest</li>
+              <li>KNN</li>
+              <li>SVM</li>
+            </ul>
+            <p style="color: #f1fa8c; font-size: 13pt; margin-top: 10px;">
+              → Usar AUC ou cross-validation score
+            </p>
+          </div>
+        </multi-col>
       </section>
 
       <!-- ============================================================
