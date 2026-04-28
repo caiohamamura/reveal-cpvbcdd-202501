@@ -327,8 +327,8 @@ flowchart TD
         <!-- SLIDE 18: Código Light Sleep com LDR -->
         <section data-auto-animate>
           <h2>👋 Código: Light Sleep com Interrupt (LDR)</h2>
-          <code-block lang="cpp" data-trim data-line-numbers="1-20|1-7|9-12|14-19"  data-fragment-index="1">
-<script type="text/plain">
+          <code-block lang="cpp" data-trim data-line-numbers="1-32|15|21-24"  data-fragment-index="1">
+<textarea>
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #define INTERRUPT_PIN D6  // D7 no NodeMCU
@@ -361,7 +361,7 @@ void loop() {
   wifi_fpm_do_sleep(sleep_time_in_ms * 1000);
   delay(10);
 }
-</script>
+</textarea>
       </code-block>
           <div class="fade-in">
             <ul font-size="18">
