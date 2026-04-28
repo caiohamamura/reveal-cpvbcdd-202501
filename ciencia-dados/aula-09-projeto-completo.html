@@ -89,17 +89,31 @@ graph LR
 # Split correto (ANTES de qualquer transformação!)
 library(rsample)
 
+# AMOSTRAGEM ESTRATIFICADA
+# Garante mesma proporção de classes em treino e teste
 split <- initial_split(dados, prop = 0.8, strata = Target)
 treino <- training(split)
 teste <- testing(split)
 
+# Verificar proporções (devem ser semelhantes!)
+table(treino$Target) %>% prop.table()
+table(teste$Target) %>% prop.table()
+
 cat("Treino:", nrow(treino), "| Teste:", nrow(teste))
 </textarea></code-block>
           <ul>
-            <li><code>strata = Target</code> — mantém proporção das classes</li>
+            <li><code>strata = Target</code> — <strong>amostragem estratificada</strong>: mantém proporção das classes</li>
             <li><code>prop = 0.8</code> — 80% treino, 20% teste</li>
             <li><code>set.seed(42)</code> — reprodutibilidade</li>
           </ul>
+          <div style="background: #8be9fd20; border: 2px solid #8be9fd; border-radius: 12px; padding: 15px; margin-top: 15px;">
+            <p style="color: #8be9fd;"><strong>⚠️ Por que usar strata?</strong></p>
+            <ul style="color: #f8f8f2; font-size: 14pt;">
+              <li>Se classes são desbalanceadas (70% bom, 30% mau), split aleatório pode gerar viés</li>
+              <li>Sem strata: treino pode ter 80% bom, teste 50% bom = modelo com viés</li>
+              <li>Com strata: proporções mantidas em ambos os conjuntos</li>
+            </ul>
+          </div>
         </section>
       </section>
 
