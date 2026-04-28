@@ -477,11 +477,27 @@ BIC(modelo_step)  # Quanto menor, melhor
                 <ul>
                   <li>Não adicionar features sem embasamento</li>
                   <li>Não remover só porque "parece irrelevant"</li>
-                  <li>Validar depois de mudar o conjunto</li>
+                  <li>Validação depois de mudar o conjunto</li>
                 </ul>
               </div>
             </div>
           </multi-col>
+          <div style="background: #f1fa8c20; border: 2px solid #f1fa8c; border-radius: 12px; padding: 15px; margin-top: 15px;">
+            <p style="color: #f1fa8c;"><strong>🌲 Robustez do RandomForest:</strong></p>
+            <ul style="color: #f8f8f2;">
+              <li><strong>Árvores ignoram ruído:</strong> features irrelevantes são automaticamente "esquecidas" nas divisões</li>
+              <li><strong>Não precisa de normalização:</strong> RF baseado em splits categóricos, não em distâncias</li>
+              <li><strong>Feature selection arbitrária:</strong> escolher 10 ou 20 features pode dar resultados similares — teste é essencial!</li>
+            </ul>
+          </div>
+          <div style="background: #bd93f920; border: 2px solid #bd93f9; border-radius: 12px; padding: 15px; margin-top: 15px;">
+            <p style="color: #bd93f9;"><strong>📊 Paramétrico vs Não-Paramétrico:</strong></p>
+            <ul style="color: #f8f8f2;">
+              <li><strong>Regressão Linear:</strong> paramétrica — assume distribuição normal dos resíduos</li>
+              <li><strong>RandomForest:</strong> não-paramétrico — não assume distribuição, funciona com qualquer formato</li>
+              <li><strong>Vantagem RF:</strong> não precisa de normalização, outliers têm menos impacto</li>
+            </ul>
+          </div>
         </section>
       </section>
 
