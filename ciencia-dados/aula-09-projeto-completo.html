@@ -436,74 +436,60 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
       </section>
 
       <!-- ============================================================
-           SLIDE 8.6: STEPWISE BIC - COMO FUNCIONA
+           SLIDE 8.6: STEPWISE AIC/BIC - LAYOUT CORRETO (2 colunas)
            ============================================================ -->
       <section data-auto-animate>
-        <section>
-          <h2>Stepwise AIC/BIC: Como Funciona 🔍</h2>
-          <p>Busca iterativa: começa vazio (ou cheio) e testa adicionar/remover cada feature.</p>
-          <div style="background: #282a36; padding: 15px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #f1fa8c;"><strong>Algoritmo:</strong></p>
-            <ul style="font-size: 15pt;">
-              <li><strong>1.</strong> Começa com modelo vazio (forward) ou todas features (backward)</li>
-              <li><strong>2.</strong> Para cada step: testa adicionar/remover cada feature restante</li>
-              <li><strong>3.</strong> Se AIC/BIC melhora → aceita mudança</li>
-              <li><strong>4.</strong> Repete até nenhuma mudança melhorar</li>
-            </ul>
-          </div>
-          <div style="background: #ff79c620; border: 2px solid #ff79c6; padding: 15px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #ff79c6;"><strong>⚠️ Importante:</strong> AIC e BIC <strong>só funcionam com modelos que têm likelihood</strong> (máxima verossimilhança).</p>
-            <ul>
-              <li>✅ Regressão logística, regressão linear, modelos glm</li>
-              <li>❌ RandomForest, KNN, SVM (não têm likelihood explícita)</li>
-            </ul>
-            <p>Alternativa para modelos sem likelihood: <strong>AUC, cross-validation score</strong></p>
-          </div>
-        </section>
-        <section>
-          <h2>Stepwise: Código em 4 Passos 📝</h2>
-          <p style="color: #f1fa8c;"><strong>Passo 1:</strong> Define modelo nulo (só intercepto)</p>
-          <code-block lang="r" data-trim data-line-numbers="1" class="fragment" data-fragment-index="1"><textarea>
-# Começa com modelo vazio
+        <h2>Stepwise AIC/BIC: Como Funciona</h2>
+        
+        <multi-col style="gap: 30px;">
+          <!-- COLUNA ESQUERDA: Código -->
+          <div style="flex: 1;">
+            <code-block lang="r" data-line-numbers="1|2|3|4">
+# 1. Começa com modelo vazio
 modelo_null <- glm(Target ~ 1, data = treino, family = "binomial")
-</textarea></code-block>
-          <p style="color: #8be9fd; margin-top:10px;"><strong>Passo 2:</strong> Define modelo completo (todas features)</p>
-          <code-block lang="r" data-trim data-line-numbers="2-3" class="fragment" data-fragment-index="2"><textarea>
-# Define modelo completo (todas as features)
+
+# 2. Define modelo completo
 modelo_full <- glm(Target ~ ., data = treino, family = "binomial")
-</textarea></code-block>
-          <p style="color: #50fa7b; margin-top:10px;"><strong>Passo 3:</strong> Stepwise com BIC</p>
-          <code-block lang="r" data-trim data-line-numbers="4-9" class="fragment" data-fragment-index="3"><textarea>
-# Stepwise: adiciona/remove features iterativamente
+
+# 3. Stepwise iterativo
 modelo_step <- step(modelo_null,
-                    scope = list(lower = modelo_null, upper = modelo_full),
-                    direction = "both",
-                    k = log(nrow(treino)))  # BIC: k = log(n)
-</textarea></code-block>
-          <p style="color: #ffb86c; margin-top:10px;"><strong>Passo 4:</strong> Avalia com BIC</p>
-          <code-block lang="r" data-trim data-line-numbers="10" class="fragment" data-fragment-index="4"><textarea>
-# Avalia: quanto menor, melhor
+  scope = list(lower = modelo_null, upper = modelo_full),
+  direction = "both",
+  k = log(nrow(treino)))  # BIC
+
+# 4. Avalia
 BIC(modelo_step)
-</textarea></code-block>
-        </section>
-        <section>
-          <h2>Stepwise: AIC vs BIC ⚖️</h2>
-          <table style="font-size: 15pt; width: 100%;">
-            <thead>
-              <tr><th></th><th>AIC</th><th>BIC</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Penalidade</strong></td><td>2 × k</td><td>k × log(n)</td></tr>
-              <tr><td><strong>n=100</strong></td><td>2k</td><td>4.6k</td></tr>
-              <tr><td><strong>n=1000</strong></td><td>2k</td><td>6.9k</td></tr>
-              <tr><td><strong>Resultado</strong></td><td>Modelo maior</td><td>Modelo menor</td></tr>
-              <tr><td><strong>Uso</strong></td><td>Predição</td><td>Interpretabilidade</td></tr>
-            </tbody>
-          </table>
-          <div style="background: #8be9fd20; padding: 15px; margin-top: 20px; border-radius: 8px;">
-            <p><strong>💡 Regra prática:</strong> BIC penaliza mais → prefira BIC quando quiser modelo mais simples e interpretável.</p>
+            </code-block>
           </div>
-        </section>
+          
+          <!-- COLUNA DIREITA: Lista sincronizada -->
+          <div style="flex: 1;">
+            <ul>
+              <li class="fragment" data-fragment-index="1">
+                <strong>Passo 1:</strong> Começa com modelo só intercepto
+              </li>
+              <li class="fragment" data-fragment-index="2">
+                <strong>Passo 2:</strong> Define modelo com todas features
+              </li>
+              <li class="fragment" data-fragment-index="3">
+                <strong>Passo 3:</strong> Adiciona/remove iterativamente
+              </li>
+              <li class="fragment" data-fragment-index="4">
+                <strong>Passo 4:</strong> Avalia: BIC menor = melhor
+              </li>
+            </ul>
+            
+            <!-- Nota sobre likelihood -->
+            <div style="background: #ff79c620; padding: 12px; margin-top: 20px; border-radius: 8px;">
+              <p style="color: #ff79c6; font-size: 12pt;">
+                <strong>⚠️ AIC/BIC:</strong> Só funcionam com modelos que têm likelihood<br>
+                <span style="font-size: 10pt;">
+                  ✅ glm, regressão logística | ❌ RF, KNN, SVM → usar AUC
+                </span>
+              </p>
+            </div>
+          </div>
+        </multi-col>
       </section>
 
       <!-- ============================================================
