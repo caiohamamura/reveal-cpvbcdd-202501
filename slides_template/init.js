@@ -17,9 +17,9 @@
  *   </script>
  *
  * Optional plugins (auto-detected when their <script> tags are included):
- *   - RevealSeminar + RevealQnA + RevealCustomControls
+ *   - RevealSeminar + RevealPoll + RevealCustomControls
  *   - Requires socket.io loaded before seminar plugin
- *   - Configure via window.seminarConfig in the HTML before init.js loads
+ *   - Configure via window.seminarConfig, window.pollConfig, etc.
  */
 
 window.inTransition = false;
@@ -29,7 +29,7 @@ function initializeReveal() {
 
   // Auto-detect optional plugins
   if (window.RevealSeminar) plugins.push(RevealSeminar);
-  if (window.RevealQnA) plugins.push(RevealQnA);
+  if (window.RevealPoll) plugins.push(RevealPoll);
   if (window.RevealCustomControls) plugins.push(RevealCustomControls);
 
   const config = {
@@ -46,7 +46,7 @@ function initializeReveal() {
 
   // Merge optional plugin configs from HTML
   if (window.seminarConfig) config.seminar = window.seminarConfig;
-  if (window.questionsConfig) config.questions = window.questionsConfig;
+  if (window.pollConfig) config.poll = window.pollConfig;
   if (window.customControlsConfig) config.customcontrols = window.customControlsConfig;
 
   window.deck = new Reveal(document.querySelector('.reveal'), config);

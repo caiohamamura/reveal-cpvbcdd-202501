@@ -12,8 +12,7 @@
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
-  <link rel="stylesheet" href="../plugin/questions/style.css" />
-  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
 </head>
 
 <body>
@@ -651,45 +650,56 @@ BIC(modelo_step)
       </section>
 
       <!-- ============================================================
-           SLIDE 9.5: QUIZ INTERATIVO
+           SLIDE 9.5: QUIZ INTERATIVO (Poll)
            ============================================================ -->
       <section data-auto-animate>
         <section>
-          <h2>🎯 Teste seu conhecimento!</h2>
-          <p style="color: #f1fa8c;">Discutam em grupo — 2 min por questão</p>
-          <div style="background: #282a36; border-radius: 12px; padding: 20px; margin-top: 15px;">
-            <ol font-size="18">
-              <li class="fragment" data-fragment-index="1" style="margin-bottom: 20px;">
-                <strong style="color: #8be9fd;">Questão 1:</strong> Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?
-                <br/><span style="color: #ffb86c;">a) O modelo treina mais rápido</span><br/>
-                <span style="color: #ff5555;">b) Data leakage — informação do teste vaza para treino</span><br/>
-                <span style="color: #f1fa8c;">c) Accuracy melhora automaticamente</span>
-                <div class="fragment explanation" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;" data-fragment-index="4">
-                  <span style="color: #50fa7b;">✅ <strong>Resposta: B</strong> — Escalar antes do split causa data leakage. O scaler usa info do teste!</span>
-                </div>
-              </li>
-              <li class="fragment" data-fragment-index="2" style="margin-bottom: 20px;">
-                <strong style="color: #8be9fd;">Questão 2:</strong> Um modelo tem AUC = 0.45. O que isso significa?
-                <br/><span style="color: #50fa7b;">a) Modelo excelente</span><br/>
-                <span style="color: #f1fa8c;">b) Modelo razoável</span><br/>
-                <span style="color: #ff5555;">c) Pior que aleatório — está invertendo previsões!</span>
-                <div class="fragment explanation" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;" data-fragment-index="5">
-                  <span style="color: #50fa7b;">✅ <strong>Resposta: C</strong> — AUC &lt; 0.5 significa que o modelo inverteu as previsões.</span>
-                </div>
-              </li>
-              <li class="fragment" data-fragment-index="3" style="margin-bottom: 20px;">
-                <strong style="color: #8be9fd;">Questão 3:</strong> Por que usar <code>strata = Target</code> no split?
-                <br/><span style="color: #ff5555;">a) Para o modelo treinar mais rápido</span><br/>
-                <span style="color: #50fa7b;">b) Para manter a proporção das classes em treino e teste</span><br/>
-                <span style="color: #f1fa8c;">c) Para remover outliers automaticamente</span>
-                <div class="fragment explanation" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;" data-fragment-index="6">
-                  <span style="color: #50fa7b;">✅ <strong>Resposta: B</strong> — Stratified split garante que treino e teste tenham mesma proporção de classes.</span>
-                </div>
-              </li>
-            </ol>
-          </div>
+          <h2>Quiz Interativo</h2>
+          <p style="color: #f1fa8c;">Conecte-se à sala e vote!</p>
           <div style="background: #bd93f920; border: 1px solid #bd93f9; padding: 12px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #bd93f9;"><strong>📝 Instruções:</strong> Reveja cada questão → Discuta 2 min → Mostre resposta → Próxima</p>
+            <p style="color: #bd93f9;"><strong>Instruções:</strong> Host clica "Host" e compartilha o link — participantes clicam "Join" e votam</p>
+          </div>
+        </section>
+
+        <section>
+          <h3>Questão 1: Data Leakage</h3>
+          <p>Se você escala <strong>TODOS</strong> os dados <strong>ANTES</strong> do split, qual problema pode ocorrer?</p>
+          <div class="poll" data-poll="q1">
+            <button data-value="a">A) O modelo treina mais rápido</button>
+            <button data-value="b">B) Data leakage — info do teste vaza para treino</button>
+            <button data-value="c">C) Accuracy melhora automaticamente</button>
+          </div>
+          <p>Votos: <span class="voters" data-poll="q1">0</span></p>
+          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;">
+            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Escalar antes do split causa data leakage. O scaler usa info do teste!</span>
+          </div>
+        </section>
+
+        <section>
+          <h3>Questão 2: AUC = 0.45</h3>
+          <p>Um modelo tem AUC = 0.45. O que isso significa?</p>
+          <div class="poll" data-poll="q2">
+            <button data-value="a">A) Modelo excelente</button>
+            <button data-value="b">B) Modelo razoável</button>
+            <button data-value="c">C) Pior que aleatório — inverteu as previsões!</button>
+          </div>
+          <p>Votos: <span class="voters" data-poll="q2">0</span></p>
+          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;">
+            <span style="color: #50fa7b;">Resposta: <strong>C</strong> — AUC &lt; 0.5 significa que o modelo inverteu as previsões.</span>
+          </div>
+        </section>
+
+        <section>
+          <h3>Questão 3: Stratified Split</h3>
+          <p>Por que usar <code>strata = Target</code> no split?</p>
+          <div class="poll" data-poll="q3">
+            <button data-value="a">A) Para o modelo treinar mais rápido</button>
+            <button data-value="b">B) Para manter a proporção das classes em treino e teste</button>
+            <button data-value="c">C) Para remover outliers automaticamente</button>
+          </div>
+          <p>Votos: <span class="voters" data-poll="q3">0</span></p>
+          <div class="fragment" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;">
+            <span style="color: #50fa7b;">Resposta: <strong>B</strong> — Stratified split garante mesma proporção de classes em treino e teste.</span>
           </div>
         </section>
       </section>
@@ -733,8 +743,7 @@ BIC(modelo_step)
   <script src="../slides_template/init.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
   <script src="../plugin/seminar/plugin.js"></script>
-  <script src="../plugin/questions/plugin.js"></script>
-  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
 
   <script>
     window.seminarConfig = {
@@ -742,15 +751,7 @@ BIC(modelo_step)
       room: 'ciencia-dados-aula09',
       hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
     };
-    window.questionsConfig = {};
-    window.customControlsConfig = {
-      controls: [
-        {
-          icon: '<span style="font-size:20px">Q&A</span>',
-          action: 'RevealQnA.toggleQnA();',
-        },
-      ],
-    };
+    window.pollConfig = {};
     window.app = mountSlideApp();
   </script>
 
