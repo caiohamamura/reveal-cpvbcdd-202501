@@ -1,10 +1,10 @@
 /*****************************************************************
 ** Author: Asvin Goel, goel@telematique.eu
 **
-** A plugin for reveal.js adding instant polls within an 
+** A plugin for reveal.js adding instant polls within an
 ** online seminar.
 **
-** Version: 0.1.1
+** Version: 0.1.1 (patched: allow vote changing)
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -37,7 +37,7 @@ const initPoll = function(Reveal){
 			var buttons = pollElements[i].querySelectorAll("button");
 			for (var j = 0; j < buttons.length; j++ ){
 				// initialize number of votes for button
-				votes[buttons[j].getAttribute('data-value')] = 0; 
+				votes[buttons[j].getAttribute('data-value')] = 0;
 
 				// make button clickable
 				buttons[j].addEventListener('click', function(evt){
@@ -46,13 +46,14 @@ const initPoll = function(Reveal){
 						return;
 					}
 					const button = evt.target;
-					const poll = button.parentElement;
-					var siblings = poll.querySelectorAll("button");
-					for (var i = 0; i < siblings.length; i++ ){
-						siblings[i].disabled = true;
+					const pollEl = button.parentElement;
+					// Clear previous selection — allow re-voting
+					var siblings = pollEl.querySelectorAll("button");
+					for (var k = 0; k < siblings.length; k++ ){
+						siblings[k].classList.remove("selected");
 					}
-					vote( poll.getAttribute('data-poll'), button.getAttribute('data-value') );
-					button.classList.add("selected"); 
+					vote( pollEl.getAttribute('data-poll'), button.getAttribute('data-value') );
+					button.classList.add("selected");
 					button.blur();
 				});
 			}
@@ -75,19 +76,27 @@ const initPoll = function(Reveal){
 			if ( message.content.type == 'vote' ) {
 				const vote = message.content;
 				const poll = polls[getPollIndex(message.content.poll)];
-				// increment number of voters
-				poll.voters++;
-				var message = new CustomEvent('broadcast');
-				message.content = { sender: 'poll-plugin', copy: true, type: 'voters', poll: poll.id, voters: poll.voters };
-				document.dispatchEvent( message );
+				// Check if this user already voted in this poll (isNewVoter)
+				var isNewVoter = !poll._prevChoice;
+				if ( !isNewVoter ) {
+					// Changing vote: decrement old choice
+					poll.votes[poll._prevChoice]--;
+				} else {
+					poll.voters++;
+				}
+				// Store current choice for this vote cycle
+				poll._prevChoice = vote.choice;
 
-				// update results
+				// Increment new choice
 				poll.votes[vote.choice]++;
-//console.log("Vote '" + vote.choice + "' received for poll ", poll );
-				message = new CustomEvent('broadcast');
-				message.content = { sender: 'poll-plugin', copy: true, type: 'results', poll: poll.id, votes: poll.votes };
-//console.log("Send results", message );
-				document.dispatchEvent( message );
+
+				var broadcastVoters = new CustomEvent('broadcast');
+				broadcastVoters.content = { sender: 'poll-plugin', copy: true, type: 'voters', poll: poll.id, voters: poll.voters };
+				document.dispatchEvent( broadcastVoters );
+
+				var broadcastResults = new CustomEvent('broadcast');
+				broadcastResults.content = { sender: 'poll-plugin', copy: true, type: 'results', poll: poll.id, votes: poll.votes };
+				document.dispatchEvent( broadcastResults );
 			}
 			else if ( message.content.type == 'voters' ) {
 //console.log("voters", message.content )
@@ -113,8 +122,8 @@ const initPoll = function(Reveal){
 				}
 
 				// update result charts
-				if ( RevealChart ) {
-					var charts = document.querySelectorAll('canvas[data-chart][data-poll="' + message.content.poll + '"]');	
+				if ( typeof RevealChart !== 'undefined' && RevealChart ) {
+					var charts = document.querySelectorAll('canvas[data-chart][data-poll="' + message.content.poll + '"]');
 					var data = [];
 					for (var choice in message.content.votes) {
 						data.push(message.content.votes[choice]);
