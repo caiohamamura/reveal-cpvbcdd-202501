@@ -423,6 +423,7 @@ console.log(rooms);
 			// forward custom events to other plugins
 			var event = new CustomEvent('received');
 			event.content = content;
+			event.sender = sender;
 			document.dispatchEvent( event );
 		}
 	});

@@ -4,7 +4,7 @@
 ** A plugin for reveal.js adding instant polls within an
 ** online seminar.
 **
-** Version: 0.1.1 (patched: allow vote changing)
+** Version: 0.1.1 (patched: per-user vote tracking, allow re-voting)
 **
 ** License: MIT license (see LICENSE.md)
 **
@@ -30,7 +30,6 @@ const initPoll = function(Reveal){
 
 	function initializePolls() {
 		var pollElements = document.querySelectorAll(".poll");
-//console.log(polls);
 		for (var i = 0; i < pollElements.length; i++ ){
 			var id = pollElements[i].getAttribute('data-poll')
 			var votes = {};
@@ -57,8 +56,8 @@ const initPoll = function(Reveal){
 					button.blur();
 				});
 			}
-			polls.push( { id, voters: 0, votes} );
-//console.log(polls);
+			// userVotes tracks each user's last choice: { userId: 'choice' }
+			polls.push( { id, voters: 0, votes, userVotes: {} } );
 		}
 
 	}
@@ -72,23 +71,33 @@ const initPoll = function(Reveal){
 
 	document.addEventListener( 'received', function ( message ) {
 		if ( message.content && message.content.sender == 'poll-plugin' ) {
-//console.log("Update: ", message.content);
 			if ( message.content.type == 'vote' ) {
-				const vote = message.content;
-				const poll = polls[getPollIndex(message.content.poll)];
-				// Check if this user already voted in this poll (isNewVoter)
-				var isNewVoter = !poll._prevChoice;
-				if ( !isNewVoter ) {
+				const voteData = message.content;
+				const poll = polls[getPollIndex(voteData.poll)];
+				// Identify user by sender.id from seminar plugin
+				const userId = message.sender ? message.sender.id : null;
+				if ( !userId || !poll ) return;
+
+				const prevChoice = poll.userVotes[userId];
+
+				if ( prevChoice === voteData.choice ) {
+					// Same vote, ignore
+					return;
+				}
+
+				if ( prevChoice ) {
 					// Changing vote: decrement old choice
-					poll.votes[poll._prevChoice]--;
+					poll.votes[prevChoice]--;
 				} else {
+					// New voter
 					poll.voters++;
 				}
-				// Store current choice for this vote cycle
-				poll._prevChoice = vote.choice;
+
+				// Store this user's choice
+				poll.userVotes[userId] = voteData.choice;
 
 				// Increment new choice
-				poll.votes[vote.choice]++;
+				poll.votes[voteData.choice]++;
 
 				var broadcastVoters = new CustomEvent('broadcast');
 				broadcastVoters.content = { sender: 'poll-plugin', copy: true, type: 'voters', poll: poll.id, voters: poll.voters };
@@ -99,7 +108,6 @@ const initPoll = function(Reveal){
 				document.dispatchEvent( broadcastResults );
 			}
 			else if ( message.content.type == 'voters' ) {
-//console.log("voters", message.content )
 				var voters = document.querySelectorAll('.voters[data-poll="' + message.content.poll + '"]');
 				for (var j = 0; j < voters.length; j++ ){
 					voters[j].innerHTML = message.content.voters;
@@ -109,11 +117,8 @@ const initPoll = function(Reveal){
 			else if ( message.content.type == 'results' ) {
 				// update result elements
 				var results = document.querySelectorAll('.results[data-poll="' + message.content.poll + '"]');
-//console.log("Results", results )
 				for (var i = 0; i < results.length; i++ ) {
-//console.log("Votes", message.content.votes )
 					for (var choice in message.content.votes) {
-//console.log(choice);
 						var elements = results[i].querySelectorAll('[data-value="' + choice + '"]');
 						for (var j = 0; j < elements.length; j++ ) {
 							elements[j].innerHTML = message.content.votes[choice];
@@ -137,7 +142,6 @@ const initPoll = function(Reveal){
 	});
 
 	Reveal.addEventListener('ready', function(){
-//alert("READY");
 		initializePolls();
 	});
 
