@@ -444,7 +444,7 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
         <multi-col style="gap: 30px;">
           <!-- COLUNA ESQUERDA: Código -->
           <div style="flex: 1;">
-            <code-block lang="r" data-line-numbers="1|2|3|4">
+            <code-block lang="r" data-line-numbers="1-14|2|5|8-11|14" data-fragment-index="1">
 # 1. Começa com modelo vazio
 modelo_null <- glm(Target ~ 1, data = treino, family = "binomial")
 
@@ -464,7 +464,7 @@ BIC(modelo_step)
           
           <!-- COLUNA DIREITA: Lista sincronizada -->
           <div style="flex: 1;">
-            <ul>
+            <ol>
               <li class="fragment" data-fragment-index="1">
                 <strong>Passo 1:</strong> Começa com modelo só intercepto
               </li>
@@ -475,9 +475,9 @@ BIC(modelo_step)
                 <strong>Passo 3:</strong> Adiciona/remove iterativamente
               </li>
               <li class="fragment" data-fragment-index="4">
-                <strong>Passo 4:</strong> Avalia: BIC menor = melhor
+                <strong>Passo 4:</strong> Extrai melhor BIC
               </li>
-            </ul>
+            </ol>
             
             <!-- Nota sobre likelihood -->
             <div style="background: #ff79c620; padding: 12px; margin-top: 20px; border-radius: 8px;">
