@@ -398,30 +398,129 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
       <section data-auto-animate>
         <section>
           <h2>Feature Selection 🎯</h2>
-          <p>Escolher features certas melhora modelo e interpretabilidade.</p>
+          <p>Escolher features certas melhora modelo, interpretabilidade e reduz overfitting.</p>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
-              <p style="color: #8be9fd;"><strong>Métodos Estatísticos:</strong></p>
+              <p style="color: #8be9fd;"><strong>Métodos Automáticos:</strong></p>
               <ul>
-                <li><strong>AIC/BIC:</strong> penaliza complexidade (quanto menor, melhor)</li>
-                <li><strong>p-value:</strong> significância de cada feature</li>
-                <li><strong>VIF:</strong> detecta multicolinearidade</li>
+                <li><strong>Stepwise (AIC/BIC):</strong> adiciona/remove features iterativamente</li>
+                <li><strong>Random Forest Importance:</strong> rankeia por redução de impureza</li>
+                <li><strong>LASSO (L1):</strong> zera coeficientes menos importantes</li>
               </ul>
-              <code-block lang="r" data-trim style="font-size:11pt; margin-top:10px"><textarea>
-modelo_step <- step(modelo, direction = "both")
-BIC(modelo_step)
-</textarea></code-block>
-            </div>
-            <div style="flex: 1;">
-              <p style="color: #50fa7b;"><strong>Conhecimento de Domínio:</strong></p>
+              <p style="color: #50fa7b; margin-top: 15px;"><strong>Conhecimento de Domínio:</strong></p>
               <ul>
                 <li>Expertise insubstituível</li>
                 <li>Remove features sem sentido lógico</li>
                 <li>Adiciona features com lógica de negócio</li>
               </ul>
             </div>
+            <div style="flex: 1;">
+              <img src="images/feature-importance.png" alt="Feature Importance" style="width:100%; border-radius: 8px;">
+            </div>
           </multi-col>
         </section>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 8.6: STEPWISE BIC - COMO FUNCIONA
+           ============================================================ -->
+      <section data-auto-animate>
+        <section>
+          <h2>Stepwise AIC/BIC: Como Funciona 🔍</h2>
+          <p>Busca iterativa: começa vazio (ou cheio) e testa adicionar/remover cada feature.</p>
+          <div style="background: #282a36; padding: 15px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #f1fa8c;"><strong>Algoritmo:</strong></p>
+            <ul style="font-size: 15pt;">
+              <li><strong>1.</strong> Começa com modelo vazio (forward) ou todas features (backward)</li>
+              <li><strong>2.</strong> Para cada step: testa adicionar/remover cada feature restante</li>
+              <li><strong>3.</strong> Se AIC/BIC melhora → aceita mudança</li>
+              <li><strong>4.</strong> Repete até nenhuma mudança melhorar</li>
+            </ul>
+          </div>
+          <code-block lang="r" data-trim style="font-size:12pt; margin-top:15px"><textarea>
+n <- nrow(treino)
+k_bic <- log(n)  # Penalidade BIC = log(n)
+k_aic <- 2       # Penalidade AIC = 2
+
+# Backward stepwise com BIC
+modelo_null <- glm(Target ~ 1, data = treino, family = "binomial")
+modelo_full <- glm(Target ~ ., data = treino, family = "binomial")
+
+modelo_step <- step(modelo_null,
+                    scope = list(lower = modelo_null, upper = modelo_full),
+                    direction = "both",
+                    k = k_bic)  # Use k=2 para AIC
+
+BIC(modelo_step)  # Quanto menor, melhor
+</textarea></code-block>
+        </section>
+        <section>
+          <h2>Stepwise: AIC vs BIC ⚖️</h2>
+          <table style="font-size: 15pt; width: 100%;">
+            <thead>
+              <tr><th></th><th>AIC</th><th>BIC</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Penalidade</strong></td><td>2 × k</td><td>k × log(n)</td></tr>
+              <tr><td><strong>n=100</strong></td><td>2k</td><td>4.6k</td></tr>
+              <tr><td><strong>n=1000</strong></td><td>2k</td><td>6.9k</td></tr>
+              <tr><td><strong>Resultado</strong></td><td>Modelo maior</td><td>Modelo menor</td></tr>
+              <tr><td><strong>Uso</strong></td><td>Predição</td><td>Interpretabilidade</td></tr>
+            </tbody>
+          </table>
+          <div style="background: #8be9fd20; padding: 15px; margin-top: 20px; border-radius: 8px;">
+            <p><strong>💡 Regra prática:</strong> BIC penaliza mais → prefira BIC quando quiser modelo mais simples e interpretável.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           SLIDE 8.7: COMPARATIVO DE MÉTODOS
+           ============================================================ -->
+      <section data-auto-animate>
+        <h2>Métodos de Seleção de Features 🔬</h2>
+        <p>Não existe método perfeito — cada um tem prós e contras.</p>
+        
+        <table style="width:100%; font-size: 14pt;">
+          <thead>
+            <tr>
+              <th>Método</th>
+              <th>Como funciona</th>
+              <th>✅ Vantagem</th>
+              <th>⚠️ Desvantagem</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Stepwise (AIC/BIC)</strong></td>
+              <td>Adiciona/remove features iterativamente</td>
+              <td>Simples, interpretável</td>
+              <td>Pode parar em local optimum</td>
+            </tr>
+            <tr>
+              <td><strong>Random Forest</strong></td>
+              <td>Baseado em redução de impureza de Gini</td>
+              <td>Captura relações não-lineares</td>
+              <td>Ignora correlação entre features</td>
+            </tr>
+            <tr>
+              <td><strong>LASSO (L1)</strong></td>
+              <td>Zera coeficientes menos importantes</td>
+              <td>Seleciona + regulariza</td>
+              <td>Requer muitos zeros (sparsity)</td>
+            </tr>
+            <tr>
+              <td><strong>RFE</strong></td>
+              <td>Elimina features uma por vez</td>
+              <td>Funciona com qualquer modelo</td>
+              <td>Muito lento (O(n²))</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div style="background: #8be9fd20; padding: 15px; margin-top: 20px; border-radius: 8px;">
+          <p><strong>💡 Dica:</strong> Para começar, use <strong>Random Forest Importance</strong> ou <strong>Correlation filter</strong> — são rápidos e dão boa baseline.</p>
+        </div>
       </section>
 
       <!-- ============================================================
