@@ -478,18 +478,19 @@ BIC(modelo_step)
                 <strong>Passo 4:</strong> Extrai melhor BIC
               </li>
             </ol>
-            
-            <!-- Nota sobre likelihood -->
-            <div style="background: #ff79c620; padding: 12px; margin-top: 20px; border-radius: 8px;">
-              <p style="color: #ff79c6; font-size: 12pt;">
-                <strong>⚠️ AIC/BIC:</strong> Só funcionam com modelos que têm likelihood<br>
-                <span style="font-size: 10pt;">
-                  ✅ glm, regressão logística | ❌ RF, KNN, SVM → usar AUC
-                </span>
-              </p>
-            </div>
           </div>
         </multi-col>
+
+        <!-- BOX DE WARNING FORA DO multi-col - span completo -->
+        <div style="background: #ff79c620; border: 2px solid #ff79c6; padding: 15px; margin-top: 20px; border-radius: 8px;">
+          <p style="color: #ff79c6; font-size: 14pt;">
+            <strong>⚠️ AIC/BIC:</strong> Só funcionam com modelos que têm <strong>likelihood</strong>
+          </p>
+          <ul style="color: #f8f8f2; font-size: 13pt;">
+            <li>✅ <strong>Funciona:</strong> glm, regressão logística, modelos com distribuição</li>
+            <li>❌ <strong>Não funciona:</strong> RandomForest, KNN, SVM → usar AUC ou cross-validation</li>
+          </ul>
+        </div>
       </section>
 
       <!-- ============================================================
