@@ -29,3 +29,8 @@
   background-color: var(--r-link-color-dark);
 }
 
+.poll > button.selected {
+  background-color: var(--r-link-color-dark);
+  box-shadow: 0 0 0 3px var(--r-link-color-hover);
+}
+
