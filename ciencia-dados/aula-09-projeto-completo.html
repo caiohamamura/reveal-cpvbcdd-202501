@@ -393,12 +393,12 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
       </section>
 
       <!-- ============================================================
-           SLIDE 8.5: FEATURE SELECTION
+           SLIDE 8.5: FEATURE SELECTION - MÉTODOS AUTOMÁTICOS
            ============================================================ -->
       <section data-auto-animate>
         <section>
           <h2>Feature Selection 🎯</h2>
-          <p>Escolher features certas melhora modelo, interpretabilidade e reduz overfitting.</p>
+          <p style="color: #f1fa8c;">Escolher features certas melhora modelo, interpretabilidade e reduz overfitting.</p>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
               <p style="color: #8be9fd;"><strong>Métodos Automáticos:</strong></p>
@@ -407,15 +407,29 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
                 <li><strong>Random Forest Importance:</strong> rankeia por redução de impureza</li>
                 <li><strong>LASSO (L1):</strong> zera coeficientes menos importantes</li>
               </ul>
-              <p style="color: #50fa7b; margin-top: 15px;"><strong>Conhecimento de Domínio:</strong></p>
-              <ul>
-                <li>Expertise insubstituível</li>
-                <li>Remove features sem sentido lógico</li>
-                <li>Adiciona features com lógica de negócio</li>
-              </ul>
             </div>
             <div style="flex: 1;">
               <img src="images/feature-importance.png" alt="Feature Importance" style="width:100%; border-radius: 8px;">
+            </div>
+          </multi-col>
+        </section>
+        <section>
+          <h2>Feature Selection: Conhecimento de Domínio 🧠</h2>
+          <p>Expertise humana é insubstituível — máquinas não entendem contexto de negócio.</p>
+          <multi-col style="gap:20px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Remove features sem sentido lógico</li>
+                <li>Adiciona features com lógica de negócio</li>
+                <li>Valida se rankings automáticos fazem sentido</li>
+                <li>Identifica confounders e causalidade</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; border-radius: 8px;">
+                <p style="color: #50fa7b;"><strong>💡 Combinação ideal:</strong></p>
+                <p>Use métodos automáticos para <strong>screening</strong> e conhecimento de domínio para <strong>validação final</strong>.</p>
+              </div>
             </div>
           </multi-col>
         </section>
@@ -437,21 +451,39 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
               <li><strong>4.</strong> Repete até nenhuma mudança melhorar</li>
             </ul>
           </div>
-          <code-block lang="r" data-trim style="font-size:12pt; margin-top:15px"><textarea>
-n <- nrow(treino)
-k_bic <- log(n)  # Penalidade BIC = log(n)
-k_aic <- 2       # Penalidade AIC = 2
-
-# Backward stepwise com BIC
+          <div style="background: #ff79c620; border: 2px solid #ff79c6; padding: 15px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #ff79c6;"><strong>⚠️ Importante:</strong> AIC e BIC <strong>só funcionam com modelos que têm likelihood</strong> (máxima verossimilhança).</p>
+            <ul>
+              <li>✅ Regressão logística, regressão linear, modelos glm</li>
+              <li>❌ RandomForest, KNN, SVM (não têm likelihood explícita)</li>
+            </ul>
+            <p>Alternativa para modelos sem likelihood: <strong>AUC, cross-validation score</strong></p>
+          </div>
+        </section>
+        <section>
+          <h2>Stepwise: Código em 4 Passos 📝</h2>
+          <p style="color: #f1fa8c;"><strong>Passo 1:</strong> Define modelo nulo (só intercepto)</p>
+          <code-block lang="r" data-trim data-line-numbers="1" class="fragment" data-fragment-index="1"><textarea>
+# Começa com modelo vazio
 modelo_null <- glm(Target ~ 1, data = treino, family = "binomial")
+</textarea></code-block>
+          <p style="color: #8be9fd; margin-top:10px;"><strong>Passo 2:</strong> Define modelo completo (todas features)</p>
+          <code-block lang="r" data-trim data-line-numbers="2-3" class="fragment" data-fragment-index="2"><textarea>
+# Define modelo completo (todas as features)
 modelo_full <- glm(Target ~ ., data = treino, family = "binomial")
-
+</textarea></code-block>
+          <p style="color: #50fa7b; margin-top:10px;"><strong>Passo 3:</strong> Stepwise com BIC</p>
+          <code-block lang="r" data-trim data-line-numbers="4-9" class="fragment" data-fragment-index="3"><textarea>
+# Stepwise: adiciona/remove features iterativamente
 modelo_step <- step(modelo_null,
                     scope = list(lower = modelo_null, upper = modelo_full),
                     direction = "both",
-                    k = k_bic)  # Use k=2 para AIC
-
-BIC(modelo_step)  # Quanto menor, melhor
+                    k = log(nrow(treino)))  # BIC: k = log(n)
+</textarea></code-block>
+          <p style="color: #ffb86c; margin-top:10px;"><strong>Passo 4:</strong> Avalia com BIC</p>
+          <code-block lang="r" data-trim data-line-numbers="10" class="fragment" data-fragment-index="4"><textarea>
+# Avalia: quanto menor, melhor
+BIC(modelo_step)
 </textarea></code-block>
         </section>
         <section>

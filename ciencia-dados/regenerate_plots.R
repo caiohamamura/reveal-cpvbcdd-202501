@@ -1,16 +1,17 @@
-# Regenerate plots with HIGH CONTRAST for dark background (Dracula theme)
+# HIGH CONTRAST plots for dark background
 
-# Colors from Dracula theme
 BG <- "#282a36"
+BG2 <- "#44475a"
 FG <- "#f8f8f2"
 CYAN <- "#8be9fd"
 YELLOW <- "#f1fa8c"
 GREEN <- "#50fa7b"
+PINK <- "#ff79c6"
 
 library(ggplot2)
 
 # ============================================================
-# PLOT 1: Feature Importance (HIGH CONTRAST)
+# PLOT 1: Feature Importance - WHITE TEXT
 # ============================================================
 importance_df <- data.frame(
   Feature = c("Duration", "Amount", "Age", "Credit_history", "Purpose", 
@@ -22,60 +23,70 @@ p1 <- ggplot(importance_df, aes(x = reorder(Feature, Value), y = Value)) +
   geom_col(fill = CYAN, width = 0.7) +
   coord_flip() +
   labs(title = "Feature Importance", subtitle = "German Credit Data",
-       x = "", y = "Importance (Gini)") +
-  theme_dark(16) +
+       x = NULL, y = "Importance (Gini)") +
+  # White text everywhere!
   theme(
     plot.background = element_rect(fill = BG, color = BG),
-    panel.background = element_rect(fill = BG),
-    panel.grid.major = element_line(color = "#44475a"),
-    panel.grid.minor = element_line(color = "#44475a"),
-    text = element_text(color = FG),
-    axis.text = element_text(color = FG, size = 14)
+    panel.background = element_rect(fill = BG, color = BG2),
+    panel.grid.major = element_line(color = BG2),
+    panel.grid.minor = element_line(color = BG2),
+    # FORCE white text
+    text = element_text(color = FG, family = "sans"),
+    axis.text = element_text(color = FG, size = 14),
+    axis.title = element_text(color = FG, size = 14),
+    plot.title = element_text(color = CYAN, size = 20, face = "bold"),
+    plot.subtitle = element_text(color = FG, size = 12),
+    legend.text = element_text(color = FG),
+    legend.title = element_text(color = FG)
   ) +
+  # Value labels in white
   geom_text(aes(label = sprintf("%.2f", Value)), 
-            hjust = -0.1, color = FG, size = 4) +
-  ylim(0, 0.30)
+            hjust = -0.05, color = FG, size = 5) +
+  ylim(0, 0.30) +
+  xlim(rev(reorder(importance_df$Feature, importance_df$Value)))
 
 ggsave("/home/openclaw/.openclaw/workspace/reveal-cpvbcdd-202501/ciencia-dados/images/feature-importance.png", 
-       plot = p1, width = 8, height = 5, dpi = 200, bg = BG)
+       plot = p1, width = 9, height = 5.5, dpi = 200, bg = BG)
 
-cat("1. Feature Importance saved\n")
+cat("1. Feature Importance saved (white text)\n")
 
 # ============================================================
-# PLOT 2: ROC Curve (HIGH CONTRAST)
+# PLOT 2: ROC Curve - WHITE TEXT
 # ============================================================
 fpr <- seq(0, 1, length.out = 200)
 tpr <- 1 - (1 - fpr)^2.5
-
 roc_df <- data.frame(FPR = fpr, TPR = tpr)
 
 p2 <- ggplot(roc_df, aes(x = FPR, y = TPR)) +
-  geom_abline(linetype = "dashed", color = "#6272a4", size = 1) +
-  geom_line(color = GREEN, size = 3) +
-  geom_area(fill = GREEN, alpha = 0.2) +
-  annotate("rect", x = 0.5, y = 0.08, xmax = 0.88, ymax = 0.38,
-           fill = BG, color = GREEN, size = 2) +
-  annotate("text", x = 0.69, y = 0.23, label = "AUC = 0.72", 
-           color = YELLOW, size = 10, fontface = "bold") +
+  geom_abline(linetype = "dashed", color = "#6272a4", linewidth = 1.5) +
+  geom_line(color = GREEN, linewidth = 3) +
+  geom_area(fill = GREEN, alpha = 0.15) +
+  annotate("text", x = 0.7, y = 0.25, label = "AUC = 0.72", 
+           color = YELLOW, size = 14, fontface = "bold", 
+           family = "sans") +
   labs(title = "ROC Curve", subtitle = "German Credit Risk Model",
        x = "False Positive Rate", y = "True Positive Rate") +
-  theme_dark(16) +
   theme(
     plot.background = element_rect(fill = BG, color = BG),
-    panel.background = element_rect(fill = BG),
-    panel.grid.major = element_line(color = "#44475a"),
-    text = element_text(color = FG),
-    axis.text = element_text(color = FG, size = 12)
+    panel.background = element_rect(fill = BG, color = BG2),
+    panel.grid.major = element_line(color = BG2),
+    panel.grid.minor = element_line(color = BG2),
+    # FORCE white text
+    text = element_text(color = FG, family = "sans"),
+    axis.text = element_text(color = FG, size = 14),
+    axis.title = element_text(color = FG, size = 14),
+    plot.title = element_text(color = GREEN, size = 22, face = "bold"),
+    plot.subtitle = element_text(color = FG, size = 13)
   ) +
   xlim(0, 1) + ylim(0, 1)
 
 ggsave("/home/openclaw/.openclaw/workspace/reveal-cpvbcdd-202501/ciencia-dados/images/roc-curve.png",
-       plot = p2, width = 8, height = 5, dpi = 200, bg = BG)
+       plot = p2, width = 9, height = 5.5, dpi = 200, bg = BG)
 
-cat("2. ROC Curve saved\n")
+cat("2. ROC Curve saved (white text)\n")
 
 # ============================================================
-# PLOT 3: Confusion Matrix
+# PLOT 3: Confusion Matrix - WHITE TEXT
 # ============================================================
 library(reshape2)
 
@@ -86,21 +97,25 @@ cm_df <- melt(cm)
 names(cm_df) <- c("Actual", "Predicted", "Count")
 
 p3 <- ggplot(cm_df, aes(x = Predicted, y = Actual, fill = Count)) +
-  geom_tile(color = FG, size = 1) +
-  geom_text(aes(label = Count), color = FG, size = 16, fontface = "bold") +
-  scale_fill_gradient(low = BG, high = CYAN) +
+  geom_tile(color = FG, linewidth = 1.5) +
+  geom_text(aes(label = Count), color = FG, size = 18, fontface = "bold") +
+  scale_fill_gradient(low = BG2, high = CYAN, name = "Count") +
   labs(title = "Confusion Matrix", subtitle = "Test Set (n=600)") +
-  theme_dark(16) +
   theme(
     plot.background = element_rect(fill = BG, color = BG),
     panel.background = element_rect(fill = BG),
-    text = element_text(color = FG),
-    axis.text = element_text(color = FG, size = 14)
+    text = element_text(color = FG, family = "sans"),
+    axis.text = element_text(color = FG, size = 14),
+    axis.title = element_text(color = FG, size = 14),
+    plot.title = element_text(color = YELLOW, size = 20, face = "bold"),
+    plot.subtitle = element_text(color = FG, size = 12),
+    legend.text = element_text(color = FG),
+    legend.title = element_text(color = FG)
   )
 
 ggsave("/home/openclaw/.openclaw/workspace/reveal-cpvbcdd-202501/ciencia-dados/images/confusion-matrix.png",
-       plot = p3, width = 6, height = 4, dpi = 200, bg = BG)
+       plot = p3, width = 7, height = 5, dpi = 200, bg = BG)
 
-cat("3. Confusion Matrix saved\n")
+cat("3. Confusion Matrix saved (white text)\n")
 
-cat("\n=== All plots regenerated with HIGH CONTRAST ===\n")
+cat("\n=== All plots with WHITE labels on dark background ===\n")
