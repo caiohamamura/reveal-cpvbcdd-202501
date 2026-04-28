@@ -15,12 +15,24 @@
  *   <script>
  *     window.app = mountSlideApp();
  *   </script>
+ *
+ * Optional plugins (auto-detected when their <script> tags are included):
+ *   - RevealSeminar + RevealQnA + RevealCustomControls
+ *   - Requires socket.io loaded before seminar plugin
+ *   - Configure via window.seminarConfig in the HTML before init.js loads
  */
 
 window.inTransition = false;
 
 function initializeReveal() {
-  window.deck = new Reveal(document.querySelector('.reveal'), {
+  const plugins = [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid];
+
+  // Auto-detect optional plugins
+  if (window.RevealSeminar) plugins.push(RevealSeminar);
+  if (window.RevealQnA) plugins.push(RevealQnA);
+  if (window.RevealCustomControls) plugins.push(RevealCustomControls);
+
+  const config = {
     controls: true,
     controlsLayout: 'edges',
     hash: true,
@@ -29,8 +41,15 @@ function initializeReveal() {
     keyboardCondition: 'focused',
     slideNumber: 'h.v',
     navigationMode: 'linear',
-    plugins: [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid],
-  });
+    plugins: plugins,
+  };
+
+  // Merge optional plugin configs from HTML
+  if (window.seminarConfig) config.seminar = window.seminarConfig;
+  if (window.questionsConfig) config.questions = window.questionsConfig;
+  if (window.customControlsConfig) config.customcontrols = window.customControlsConfig;
+
+  window.deck = new Reveal(document.querySelector('.reveal'), config);
   deck.initialize();
 
   let animations = [];

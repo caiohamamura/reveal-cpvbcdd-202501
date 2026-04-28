@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/questions/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
 </head>
 
 <body>
@@ -729,8 +731,26 @@ BIC(modelo_step)
   <script src="../slides_template/header1.js"></script>
   <script src="../components/components.js"></script>
   <script src="../slides_template/init.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+  <script src="../plugin/questions/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
 
   <script>
+    window.seminarConfig = {
+      server: 'https://seminar.hamacorps.work',
+      room: 'ciencia-dados-aula09',
+      hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
+    };
+    window.questionsConfig = {};
+    window.customControlsConfig = {
+      controls: [
+        {
+          icon: '<span style="font-size:20px">Q&A</span>',
+          action: 'RevealQnA.toggleQnA();',
+        },
+      ],
+    };
     window.app = mountSlideApp();
   </script>
 
