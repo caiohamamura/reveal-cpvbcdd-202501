@@ -37,7 +37,25 @@
       <section data-auto-animate>
         <section>
           <h2>Pipeline Completo</h2>
-          <img src="images/pipeline.png" alt="Pipeline" style="width:100%; border-radius: 12px;">
+          <div class="mermaid" data-id="pipeline-complete" style="width:100%">
+            <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '26px', 'fontFamily': 'Inter'}}}%%
+graph LR
+  A["📊 Dados<br/>German Credit"] --> B["🧹 Limpeza<br/>Missing, Outliers"]
+  B --> C["🔧 Feature<br/>Engineering"]
+  C --> D["✂️ Split<br/>Train/Test"]
+  D --> E["🏋️ Treino<br/>RandomForest"]
+  E --> F["✅ Validação<br/>Cruzada"]
+  F --> G["🧪 Teste<br/>Final"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#44475a,color:#f8f8f2
+  style C fill:#44475a,color:#f8f8f2
+  style D fill:#ff79c6,color:#f8f8f2
+  style E fill:#8be9fd,color:#282a36
+  style F fill:#f1fa8c,color:#282a36
+  style G fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
           <ul>
             <li>Dataset: <strong>German Credit Data</strong> (UCI)</li>
             <li>Tarefa: classificar risco de crédito (bom/ruim)</li>
