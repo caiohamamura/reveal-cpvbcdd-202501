@@ -653,26 +653,41 @@ BIC(modelo_step)
            ============================================================ -->
       <section data-auto-animate>
         <section>
-          <h2>Quiz Interativo 🤔</h2>
-          <p style="color: #f1fa8c;">Pense antes de responder!</p>
+          <h2>🎯 Teste seu conhecimento!</h2>
+          <p style="color: #f1fa8c;">Discutam em grupo — 2 min por questão</p>
           <div style="background: #282a36; border-radius: 12px; padding: 20px; margin-top: 15px;">
-            <ls-u :font-size="20">
-              <li style="margin-bottom: 20px;"><strong style="color: #8be9fd;">1.</strong> Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?
+            <ol font-size="18">
+              <li class="fragment" data-fragment-index="1" style="margin-bottom: 20px;">
+                <strong style="color: #8be9fd;">Questão 1:</strong> Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?
                 <br/><span style="color: #ffb86c;">a) O modelo treina mais rápido</span><br/>
                 <span style="color: #ff5555;">b) Data leakage — informação do teste vaza para treino</span><br/>
-                <span style="color: #f1fa8c;">c) Accuracy melhora automaticamente</span></li>
-              <li style="margin-bottom: 20px;"><strong style="color: #8be9fd;">2.</strong> Um modelo tem AUC = 0.45. O que isso significa?
+                <span style="color: #f1fa8c;">c) Accuracy melhora automaticamente</span>
+                <div class="fragment explanation" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;" data-fragment-index="4">
+                  <span style="color: #50fa7b;">✅ <strong>Resposta: B</strong> — Escalar antes do split causa data leakage. O scaler usa info do teste!</span>
+                </div>
+              </li>
+              <li class="fragment" data-fragment-index="2" style="margin-bottom: 20px;">
+                <strong style="color: #8be9fd;">Questão 2:</strong> Um modelo tem AUC = 0.45. O que isso significa?
                 <br/><span style="color: #50fa7b;">a) Modelo excelente</span><br/>
                 <span style="color: #f1fa8c;">b) Modelo razoável</span><br/>
-                <span style="color: #ff5555;">c) Modelo worse than random — está invertendo previsões!</span></li>
-              <li style="margin-bottom: 20px;"><strong style="color: #8be9fd;">3.</strong> Por que usar <code>strata = Target</code> no split?
+                <span style="color: #ff5555;">c) Pior que aleatório — está invertendo previsões!</span>
+                <div class="fragment explanation" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;" data-fragment-index="5">
+                  <span style="color: #50fa7b;">✅ <strong>Resposta: C</strong> — AUC &lt; 0.5 significa que o modelo inverteu as previsões.</span>
+                </div>
+              </li>
+              <li class="fragment" data-fragment-index="3" style="margin-bottom: 20px;">
+                <strong style="color: #8be9fd;">Questão 3:</strong> Por que usar <code>strata = Target</code> no split?
                 <br/><span style="color: #ff5555;">a) Para o modelo treinar mais rápido</span><br/>
                 <span style="color: #50fa7b;">b) Para manter a proporção das classes em treino e teste</span><br/>
-                <span style="color: #f1fa8c;">c) Para remover outliers automaticamente</span></li>
-            </ls-u>
+                <span style="color: #f1fa8c;">c) Para remover outliers automaticamente</span>
+                <div class="fragment explanation" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 10px; margin-top: 10px; border-radius: 8px;" data-fragment-index="6">
+                  <span style="color: #50fa7b;">✅ <strong>Resposta: B</strong> — Stratified split garante que treino e teste tenham mesma proporção de classes.</span>
+                </div>
+              </li>
+            </ol>
           </div>
-          <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #50fa7b;"><strong>💡 Dica:</strong> Reveja os slides de Data Leakage, AUC e Train/Test Split se tiver dúvida!</p>
+          <div style="background: #bd93f920; border: 1px solid #bd93f9; padding: 12px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #bd93f9;"><strong>📝 Instruções:</strong> Reveja cada questão → Discuta 2 min → Mostre resposta → Próxima</p>
           </div>
         </section>
       </section>
