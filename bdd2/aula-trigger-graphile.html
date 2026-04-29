@@ -516,16 +516,14 @@ INSERT INTO membros (nome) VALUES ('Ana'), ('Carlos');
 
         <!-- SLIDE: Resposta Exercício -->
         <section data-auto-animate>
-          <h2>Resposta do Exercício</h2>
+          <h2>Dicas Exercício</h2>
           <div
                style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #50fa7b;">
             <p>O trigger executa SELECTs pesados desnecessariamente</p>
           </div>
           <ul>
             <li>O trigger deve ser <strong>leve e atômico</strong></li>
-            <li>Informações já estão em <code>emprestimos</code> — não precisa buscar</li>
             <li>Para logs detalhados: procedure explícita chamada <strong>após</strong> a transação</li>
-            <li>Ou usar <code>NOTIFY</code> para desacoplar (assíncrono)</li>
           </ul>
           <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
             <p style="color: #ffb86c;">📝 <strong>Regra:</strong> Use os dados de <code>NEW</code>/<code>OLD</code> que
@@ -875,23 +873,6 @@ query {
 
         <!-- SLIDE: Resumo PostGraphile -->
 
-        <!-- SLIDE: Exercício Prático -->
-        <section data-auto-animate>
-          <h2>Exercício: Crie sua API</h2>
-          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
-            <p><strong>Objetivo:</strong> Criar uma API GraphQL com RLS no schema <code>api</code></p>
-            <ls-u>
-              <li>Criar schema <code>api</code> com tabela <code>tarefas</code> (id, usuario_id, descricao, concluida)
-              </li>
-              <li>Habilitar RLS com política para isolar por <code>usuario_id</code></li>
-              <li>Inserir 3 tarefas para cada usuário</li>
-              <li>Testar no GraphiQL: fazer login e listar tarefas</li>
-              <li>Verificar que cada usuário vê apenas suas próprias tarefas</li>
-            </ls-u>
-          </div>
-        </section>
-
-      </section><!-- fim Fase 2: PostGraphile -->
 
       <!-- SLIDE: Encerramento -->
       <section data-auto-animate>
