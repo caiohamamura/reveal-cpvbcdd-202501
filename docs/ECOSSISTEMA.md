@@ -325,6 +325,53 @@ Syntax highlighting com suporte a:
 - Foco em linhas com `data-line-focus`
 - Temas: `panda-syntax-dark.min.css`, `dracula.css`, `monokai.css`, `zenburn.css`
 
+### Code Highlights Sincronizados com Texto (Fragments)
+
+Destaca linhas de código em sincronia com uma lista de explicação, revelando passo a passo:
+
+```html
+<section data-auto-animate>
+  <h2>Título</h2>
+  <multi-col style="gap: 30px;">
+    <div style="flex: 1;">
+      <code-block lang="sql" data-trim
+        data-line-numbers="2-20|3-7|9-13|15-20"
+        data-fragment-index="1">
+        <!-- código completo aqui -->
+      </code-block>
+    </div>
+    <div style="flex: 1;">
+      <ol>
+        <li class="fragment" data-fragment-index="1">
+          <strong>Passo 1:</strong> descrição
+        </li>
+        <li class="fragment" data-fragment-index="2">
+          <strong>Passo 2:</strong> descrição
+        </li>
+        <li class="fragment" data-fragment-index="3">
+          <strong>Passo 3:</strong> descrição
+        </li>
+      </ol>
+    </div>
+  </multi-col>
+</section>
+```
+
+**Formato de `data-line-numbers`:**
+- `"ALL-LINES|F1|F2|F3"` — separado por `|`
+- Primeiro valor: todas as linhas visíveis ao carregar o slide (estado inicial, sem fragmento)
+- Valores seguintes: linhas destacadas quando o fragment correspondente é ativado
+
+**Regras de `data-fragment-index`:**
+- Começa em **1** (0 = estado inicial com todas as linhas)
+- Cada `<li>` usa `class="fragment" data-fragment-index="N"` onde N corresponde ao N-ésimo valor após o primeiro em `data-line-numbers`
+- Use `<ol>` (lista ordenada) para os passos
+
+**Importante:**
+- O código fica em **um único** `<code-block>` — nunca dividir em vários
+- Use `<multi-col>` para o layout de duas colunas (código + explicação)
+- O `<code-block>` também recebe `data-fragment-index="1"` para sincronizar com o primeiro `<li>`
+
 ### Plugin Math
 Suporte a KaTeX e MathJax 3 para equações matemáticas.
 

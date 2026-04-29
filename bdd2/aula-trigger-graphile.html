@@ -215,7 +215,9 @@ $$ LANGUAGE plpgsql;
         <!-- SLIDE: Trigger em Ação -->
         <section data-auto-animate>
           <h2>Trigger em Ação: Estoque Automático</h2>
-          <code-block lang="sql" data-trim data-line-numbers><script type="text/plain">
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <code-block lang="sql" data-trim data-line-numbers="2-13|3-7|9-13|15-19|21-27" data-fragment-index="1"><script type="text/plain">
 -- Tabelas
 CREATE TABLE produtos (
   id SERIAL PRIMARY KEY,
@@ -229,7 +231,7 @@ CREATE TABLE pedidos (
   quantidade INTEGER
 );
 
--- Trigger: atualiza estoque ao inserir pedido
+-- Trigger
 CREATE TRIGGER trg_atualiza_estoque
   AFTER INSERT ON pedidos
   FOR EACH ROW
@@ -240,12 +242,41 @@ CREATE FUNCTION atualizar_estoque()
 RETURNS TRIGGER AS $$
 BEGIN
   UPDATE produtos
-  SET estoque = estoque - NEW.quantidade
-  WHERE id = NEW.produto_id;
-  RETURN NEW;  -- convenção, ignorado em AFTER
+    SET estoque = estoque - NEW.quantidade
+    WHERE id = NEW.produto_id;
+  RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 </script></code-block>
+            </div>
+            <div style="flex: 1;">
+              <ol>
+                <li class="fragment" data-fragment-index="1">
+                  <strong>Tabela produtos:</strong> armazena
+                  nome e estoque atual
+                </li>
+                <li class="fragment" data-fragment-index="2">
+                  <strong>Tabela pedidos:</strong> cada pedido
+                  referencia um produto e uma quantidade
+                </li>
+                <li class="fragment" data-fragment-index="3">
+                  <strong>Trigger:</strong> dispara
+                  <code>AFTER INSERT</code> em pedidos,
+                  para cada linha inserida
+                </li>
+                <li class="fragment" data-fragment-index="4">
+                  <strong>Função:</strong> subtrai
+                  <code>NEW.quantidade</code> do estoque
+                  do produto referenciado
+                </li>
+                <li class="fragment" data-fragment-index="5">
+                  <strong>RETURN NEW:</strong> convenção
+                  em triggers <code>AFTER</code>
+                  (valor é ignorado)
+                </li>
+              </ol>
+            </div>
+          </multi-col>
         </section>
 
         <!-- SLIDE: Transaction Rollback -->
