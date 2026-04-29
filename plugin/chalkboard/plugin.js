@@ -122,7 +122,7 @@ const initChalkboard = function ( Reveal ) {
 	var lastColor = 0;
 	var boardmarkers = [ {
 			color: 'rgba(255,255,255,1)',
-			cursor: 'url(' + path + 'img/boardmarker-black.png), auto'
+			cursor: 'url(' + path + 'img/boardmarker-white.png), auto'
 		},
 		{
 			color: 'rgba(30,144,255, 1)',
@@ -377,6 +377,24 @@ const initChalkboard = function ( Reveal ) {
 	var slidechangeTimeout = null;
 	var updateStorageTimeout = null;
 	var playback = false;
+
+  function updateSpongeCursor() {
+    var size = Math.max( 16, eraser.radius * 2 );
+    var c = document.createElement( 'canvas' );
+    c.width = size;
+    c.height = size;
+    var ctx = c.getContext( '2d' );
+    var img = new Image();
+    img.onload = function() {
+      ctx.drawImage( img, 0, 0, size, size );
+      sponge.cursor = 'url(' + c.toDataURL() + ') ' + (size/2) + ' ' + (size/2) + ', auto';
+      // Update cursor if currently erasing
+      if ( color[ mode ] < 0 && drawingCanvas[ mode ] ) {
+        changeCursor( drawingCanvas[ mode ].canvas, sponge );
+      }
+    };
+    img.src = eraser.src;
+  }
 
   function changeCursor( element, tool ) {
     element.style.cursor = tool.cursor;
@@ -994,6 +1012,7 @@ const initChalkboard = function ( Reveal ) {
 
 	function changeEraserSize( delta ) {
 		eraser.radius = Math.max( 5, Math.min( 100, eraser.radius + delta ) );
+		updateSpongeCursor();
 	}
 
 	function selectColor( index ) {
@@ -1716,6 +1735,7 @@ const initChalkboard = function ( Reveal ) {
 //console.log('ready');
 		if ( !printMode ) {
 			window.addEventListener( 'resize', resize );
+			updateSpongeCursor();
 
 			slideStart = Date.now() - getSlideDuration();
 			slideIndices = Reveal.getIndices();
