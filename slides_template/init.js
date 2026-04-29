@@ -45,6 +45,7 @@ const SEMINAR_PANEL_HTML = `
 function injectSeminarPanel() {
   document.body.insertAdjacentHTML('afterbegin', SEMINAR_PANEL_HTML);
   document.addEventListener('seminar', function (e) {
+    if (!e.detail) return;
     const el = document.getElementById('seminarStatus');
     if (el) {
       el.textContent = e.detail.connected
@@ -101,7 +102,7 @@ function initializeReveal() {
   });
 }
 
-export function mountSlideApp() {
+function mountSlideApp() {
   injectSeminarPanel();
   const app = Vue.createApp({
     setup() {
