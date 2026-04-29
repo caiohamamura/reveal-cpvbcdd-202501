@@ -719,18 +719,18 @@ query {
           <code-block lang="bash" data-trim>
             <script type="text/plain">
 # npx (para teste rápido)
+export GRAPHILE_ENV=production
 npx postgraphile@5 \
-  --connection "postgres://user:pass@localhost:5432/bddufop" \
+  --connection "postgres://postgres:postgres@localhost:5432/caio" \
   --schema api \
-  --jwt-secret "segredo123" \
   --watch \
-  --graphiql
+  --preset postgraphile/presets/amber
 
 # Docker (para consistência)
 docker run -p 5000:5000 \
-  --env DATABASE_URL="postgres://postgres:pass@host.docker.internal:5433/bddufop" \
+  --env DATABASE_URL="postgres://postgres:postgres@host.docker.internal:5432/caio" \
   graphile/postgraphile:latest \
-  --schema api --jwt-secret segredo123 --graphiql
+  --schema api --preset postgraphile/presets/amber
 </script>
           </code-block>
           <div style="background: rgba(139,233,253,0.15); padding: 0.5em; border-radius: 4px; margin-top: 0.5em;">
