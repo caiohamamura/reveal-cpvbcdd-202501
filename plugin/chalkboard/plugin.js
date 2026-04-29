@@ -983,7 +983,12 @@ const initChalkboard = function ( Reveal ) {
 
 	function toggleEraser() {
 		eraserToggled = !eraserToggled;
-		colorIndex( eraserToggled ? -1 : -(color[ mode ] + 1) );
+		if (eraserToggled) {
+			setColor(-1, true);
+		} else {
+			var prev = color[mode] >= 0 ? color[mode] : 0;
+			setColor(prev, true);
+		}
 	}
 
 	function changeEraserSize( delta ) {
@@ -992,7 +997,7 @@ const initChalkboard = function ( Reveal ) {
 
 	function selectColor( index ) {
 		eraserToggled = false;
-		colorIndex( -(color[ mode ] + 1) + index );
+		setColor( index, true );
 	}
 
 
@@ -2010,6 +2015,16 @@ const initChalkboard = function ( Reveal ) {
 	this.updateStorage = updateStorage;
 	this.getData = getData;
 	this.configure = configure;
+	this.toggleEraser = toggleEraser;
+	this.increaseEraser = function() { changeEraserSize(5); };
+	this.decreaseEraser = function() { changeEraserSize(-5); };
+	this.color1 = function() { selectColor(0); };
+	this.color2 = function() { selectColor(1); };
+	this.color3 = function() { selectColor(2); };
+	this.color4 = function() { selectColor(3); };
+	this.color5 = function() { selectColor(4); };
+	this.color6 = function() { selectColor(5); };
+	this.color7 = function() { selectColor(6); };
 
 
 	for ( var key in keyBindings ) {
