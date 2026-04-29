@@ -201,3 +201,14 @@ O professor solicitou novo ajuste seguindo `Roteiro_resumido.md`:
 - - Candidate: Reflections: Theme: `assistant` kept surfacing across 102 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-18.md:378-381 - recalls: 0 [score=0.854 recalls=0 avg=0.620 source=memory/2026-04-18.md:3-6]
 <!-- openclaw-memory-promotion:memory:memory/2026-04-18.md:384:384 -->
 - - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.854 recalls=0 avg=0.620 source=memory/2026-04-18.md:93-93]
+
+## Promoted From Short-Term Memory (2026-04-24)
+
+<!-- openclaw-memory-promotion:memory:memory/2026-04-19.md:113:116 -->
+- - Candidate: Reflections: Theme: `assistant` kept surfacing across 104 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-19.md:113-116 - recalls: 0 [score=0.854 recalls=0 avg=0.620 source=memory/2026-04-19.md:3-6]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-19.md:119:119 -->
+- - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.854 recalls=0 avg=0.620 source=memory/2026-04-19.md:98-98]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-20.md:118:121 -->
+- - Candidate: Reflections: Theme: `assistant` kept surfacing across 106 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-20.md:118-121 - recalls: 0 [score=0.810 recalls=0 avg=0.620 source=memory/2026-04-20.md:3-6]
+<!-- openclaw-memory-promotion:memory:memory/2026-04-20.md:124:124 -->
+- - Candidate: Possible Lasting Truths: No strong candidate truths surfaced. [score=0.810 recalls=0 avg=0.620 source=memory/2026-04-20.md:108-108]

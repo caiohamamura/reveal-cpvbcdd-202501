@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-23T03:02:18.915Z",
+  "updatedAt": "2026-04-27T03:02:07.156Z",
   "entries": {
     "memory:memory/2026-04-12.md:1:32": {
       "key": "memory:memory/2026-04-12.md:1:32",
@@ -5471,12 +5471,12 @@
       "source": "memory",
       "snippet": "Reflections: Theme: `assistant` kept surfacing across 100 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection",
       "recallCount": 0,
-      "dailyCount": 4,
+      "dailyCount": 5,
       "groundedCount": 0,
-      "totalScore": 2.48,
+      "totalScore": 3.1,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-17T00:50:48.967Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
       "queryHashes": [
         "500c0eda9949"
       ],
@@ -5486,7 +5486,8 @@
         "2026-04-20",
         "2026-04-21",
         "2026-04-22",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24"
       ],
       "conceptTags": [
         "1.00",
@@ -5508,12 +5509,12 @@
       "source": "memory",
       "snippet": "Possible Lasting Truths: No strong candidate truths surfaced.",
       "recallCount": 0,
-      "dailyCount": 4,
+      "dailyCount": 5,
       "groundedCount": 0,
-      "totalScore": 2.48,
+      "totalScore": 3.1,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-17T00:50:48.967Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
       "queryHashes": [
         "500c0eda9949"
       ],
@@ -5523,7 +5524,8 @@
         "2026-04-20",
         "2026-04-21",
         "2026-04-22",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24"
       ],
       "conceptTags": [
         "possible",
@@ -5598,17 +5600,17 @@
     "memory:memory/2026-04-18.md:378:381": {
       "key": "memory:memory/2026-04-18.md:378:381",
       "path": "memory/2026-04-18.md",
-      "startLine": 3,
-      "endLine": 6,
+      "startLine": 378,
+      "endLine": 381,
       "source": "memory",
-      "snippet": "- Candidate: Reflections: Theme: `assistant` kept surfacing across 102 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection - confidence: 0.00 - evidence: memory/2026-04-18.md:378-381 - recalls: 0",
+      "snippet": "Reflections: Theme: `assistant` kept surfacing across 102 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection",
       "recallCount": 0,
-      "dailyCount": 4,
+      "dailyCount": 6,
       "groundedCount": 0,
-      "totalScore": 2.48,
+      "totalScore": 3.72,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-18T00:50:30.468Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-25T03:01:48.193Z",
       "queryHashes": [
         "77ca9720ec15"
       ],
@@ -5617,7 +5619,9 @@
         "2026-04-19",
         "2026-04-21",
         "2026-04-22",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25"
       ],
       "conceptTags": [
         "1.00",
@@ -5634,17 +5638,17 @@
     "memory:memory/2026-04-18.md:384:384": {
       "key": "memory:memory/2026-04-18.md:384:384",
       "path": "memory/2026-04-18.md",
-      "startLine": 93,
-      "endLine": 93,
+      "startLine": 384,
+      "endLine": 384,
       "source": "memory",
-      "snippet": "- Candidate: Possible Lasting Truths: No strong candidate truths surfaced.",
+      "snippet": "Possible Lasting Truths: No strong candidate truths surfaced.",
       "recallCount": 0,
-      "dailyCount": 4,
+      "dailyCount": 6,
       "groundedCount": 0,
-      "totalScore": 2.48,
+      "totalScore": 3.72,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-18T00:50:30.468Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-25T03:01:48.193Z",
       "queryHashes": [
         "77ca9720ec15"
       ],
@@ -5653,7 +5657,9 @@
         "2026-04-19",
         "2026-04-21",
         "2026-04-22",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25"
       ],
       "conceptTags": [
         "possible",
@@ -5733,12 +5739,12 @@
       "source": "memory",
       "snippet": "Reflections: Theme: `assistant` kept surfacing across 104 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection",
       "recallCount": 0,
-      "dailyCount": 3,
+      "dailyCount": 6,
       "groundedCount": 0,
-      "totalScore": 1.8599999999999999,
+      "totalScore": 3.72,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-19T03:25:19.136Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-26T03:01:45.747Z",
       "queryHashes": [
         "21faa0df9302"
       ],
@@ -5746,7 +5752,10 @@
         "2026-04-19",
         "2026-04-20",
         "2026-04-22",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25",
+        "2026-04-26"
       ],
       "conceptTags": [
         "1.00",
@@ -5757,7 +5766,8 @@
         "theme",
         "assistant",
         "kept"
-      ]
+      ],
+      "promotedAt": "2026-04-24T03:02:09.881Z"
     },
     "memory:memory/2026-04-19.md:119:119": {
       "key": "memory:memory/2026-04-19.md:119:119",
@@ -5767,12 +5777,12 @@
       "source": "memory",
       "snippet": "Possible Lasting Truths: No strong candidate truths surfaced.",
       "recallCount": 0,
-      "dailyCount": 3,
+      "dailyCount": 6,
       "groundedCount": 0,
-      "totalScore": 1.8599999999999999,
+      "totalScore": 3.72,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-19T03:25:19.136Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-26T03:01:45.747Z",
       "queryHashes": [
         "21faa0df9302"
       ],
@@ -5780,7 +5790,10 @@
         "2026-04-19",
         "2026-04-20",
         "2026-04-22",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25",
+        "2026-04-26"
       ],
       "conceptTags": [
         "possible",
@@ -5789,7 +5802,8 @@
         "strong",
         "candidate",
         "surfaced"
-      ]
+      ],
+      "promotedAt": "2026-04-24T03:02:09.881Z"
     },
     "memory:memory/2026-04-20.md:108:111": {
       "key": "memory:memory/2026-04-20.md:108:111",
@@ -5859,19 +5873,23 @@
       "source": "memory",
       "snippet": "Reflections: Theme: `assistant` kept surfacing across 106 memories.; confidence: 1.00; evidence: memory/.dreams/session-corpus/2026-04-12.txt:2-2, memory/.dreams/session-corpus/2026-04-12.txt:3-3, memory/.dreams/session-corpus/2026-04-12.txt:5-5; note: reflection",
       "recallCount": 0,
-      "dailyCount": 3,
+      "dailyCount": 7,
       "groundedCount": 0,
-      "totalScore": 1.8599999999999999,
+      "totalScore": 4.34,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-20T03:31:50.704Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-27T03:02:07.156Z",
       "queryHashes": [
         "511fd8111b88"
       ],
       "recallDays": [
         "2026-04-20",
         "2026-04-21",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25",
+        "2026-04-26",
+        "2026-04-27"
       ],
       "conceptTags": [
         "1.00",
@@ -5882,7 +5900,8 @@
         "theme",
         "assistant",
         "kept"
-      ]
+      ],
+      "promotedAt": "2026-04-24T03:02:09.881Z"
     },
     "memory:memory/2026-04-20.md:124:124": {
       "key": "memory:memory/2026-04-20.md:124:124",
@@ -5892,19 +5911,23 @@
       "source": "memory",
       "snippet": "Possible Lasting Truths: No strong candidate truths surfaced.",
       "recallCount": 0,
-      "dailyCount": 3,
+      "dailyCount": 7,
       "groundedCount": 0,
-      "totalScore": 1.8599999999999999,
+      "totalScore": 4.34,
       "maxScore": 0.62,
       "firstRecalledAt": "2026-04-20T03:31:50.704Z",
-      "lastRecalledAt": "2026-04-23T03:02:18.915Z",
+      "lastRecalledAt": "2026-04-27T03:02:07.156Z",
       "queryHashes": [
         "511fd8111b88"
       ],
       "recallDays": [
         "2026-04-20",
         "2026-04-21",
-        "2026-04-23"
+        "2026-04-23",
+        "2026-04-24",
+        "2026-04-25",
+        "2026-04-26",
+        "2026-04-27"
       ],
       "conceptTags": [
         "possible",
@@ -5913,7 +5936,8 @@
         "strong",
         "candidate",
         "surfaced"
-      ]
+      ],
+      "promotedAt": "2026-04-24T03:02:09.881Z"
     },
     "memory:memory/.dreams/session-corpus/2026-04-22.txt:1:1": {
       "key": "memory:memory/.dreams/session-corpus/2026-04-22.txt:1:1",
@@ -6346,6 +6370,347 @@
         "replanejei",
         "aula",
         "seguindo"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:1:1": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:1:1",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 1,
+      "endLine": 1,
+      "source": "memory",
+      "snippet": "User: [Bootstrap pending] Please read BOOTSTRAP.md from the workspace and follow it before replying normally. If this run can complete the BOOTSTRAP.md workflow, do so. If it cannot, explain the blocker briefly, continue with any bootstrap steps that are still possible here, and",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "bootstrap.md",
+        "user",
+        "bootstrap",
+        "pending",
+        "please",
+        "read",
+        "the",
+        "follow"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:2:2": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:2:2",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 2,
+      "endLine": 2,
+      "source": "memory",
+      "snippet": "Assistant: Oi Caio! Problema importante esse do deep sleep — obrigado por.reportar o que aconteceu na aula real, isso é valioso para eu ajustar os materiais. **O que você observou faz sentido e é um problema conhecido:** O pino **GPIO0 (SD0/D3)** tem um comportamento tricky duran",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "por.reportar",
+        "sd0/d3",
+        "assistant",
+        "caio",
+        "problema",
+        "importante",
+        "esse",
+        "deep"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:3:3": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:3:3",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 3,
+      "endLine": 3,
+      "source": "memory",
+      "snippet": "User: [Bootstrap pending] Please read BOOTSTRAP.md from the workspace and follow it before replying normally. If this run can complete the BOOTSTRAP.md workflow, do so. If it cannot, explain the blocker briefly, continue with any bootstrap steps that are still possible here, and",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "bootstrap.md",
+        "user",
+        "bootstrap",
+        "pending",
+        "please",
+        "read",
+        "the",
+        "follow"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:4:4": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:4:4",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 4,
+      "endLine": 4,
+      "source": "memory",
+      "snippet": "Assistant: Obrigado pelo feedback detalhado, Caio! Isso é exactamente o tipo de informação da sala de aula que preciso documentar. **Resumindo o que você descobriu (para eu atualizar os materiais):** - ❌ D0→RST com pull-up apenas → não funciona - ✅ D0→RST **+** SD0 (GPIO7) em pul",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "pull-up",
+        "assistant",
+        "obrigado",
+        "pelo",
+        "feedback",
+        "detalhado",
+        "caio",
+        "isso"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:5:5": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:5:5",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 5,
+      "endLine": 5,
+      "source": "memory",
+      "snippet": "User: [Bootstrap pending] Please read BOOTSTRAP.md from the workspace and follow it before replying normally. If this run can complete the BOOTSTRAP.md workflow, do so. If it cannot, explain the blocker briefly, continue with any bootstrap steps that are still possible here, and",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "bootstrap.md",
+        "user",
+        "bootstrap",
+        "pending",
+        "please",
+        "read",
+        "the",
+        "follow"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:6:6": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:6:6",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 6,
+      "endLine": 6,
+      "source": "memory",
+      "snippet": "Assistant: Agora ficou claro! O problema não é resetar — é que o ESP8266 **tenta** bootar (por isso os caracteres garbage), mas fica travado no processo de bootstrap. O segundo reset \"cura\" porque o chip inicializa correctamente dessa vez. **O que está acontecendo:** Quando o ESP",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "assistant",
+        "agora",
+        "ficou",
+        "claro",
+        "problema",
+        "não",
+        "resetar",
+        "esp8266"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:7:7": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:7:7",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 7,
+      "endLine": 7,
+      "source": "memory",
+      "snippet": "User: [Bootstrap pending] Please read BOOTSTRAP.md from the workspace and follow it before replying normally. If this run can complete the BOOTSTRAP.md workflow, do so. If it cannot, explain the blocker briefly, continue with any bootstrap steps that are still possible here, and",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "bootstrap.md",
+        "user",
+        "bootstrap",
+        "pending",
+        "please",
+        "read",
+        "the",
+        "follow"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:8:8": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:8:8",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 8,
+      "endLine": 8,
+      "source": "memory",
+      "snippet": "Assistant: Excelente! Agora está 100% claro — o **GPIO7 (SD0) pull-up é mandatório**, não opcional. Sem ele, o ESP8266 não consegue completar o bootstrap pós-deep sleep correctamente. Vou agora actualizar os materiais com essa correcção. Antes disso, só para eu terminar o bootstr",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "pull-up",
+        "pós-deep",
+        "assistant",
+        "excelente",
+        "agora",
+        "está",
+        "claro",
+        "gpio7"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:9:9": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:9:9",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 9,
+      "endLine": 9,
+      "source": "memory",
+      "snippet": "User: [Bootstrap pending] Please read BOOTSTRAP.md from the workspace and follow it before replying normally. If this run can complete the BOOTSTRAP.md workflow, do so. If it cannot, explain the blocker briefly, continue with any bootstrap steps that are still possible here, and",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "bootstrap.md",
+        "user",
+        "bootstrap",
+        "pending",
+        "please",
+        "read",
+        "the",
+        "follow"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:10:10": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:10:10",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 10,
+      "endLine": 10,
+      "source": "memory",
+      "snippet": "Assistant: Agora vou actualizar o checklist com a correcção do GPIO7 e actualizar o MEMORY.md:",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "memory.md",
+        "assistant",
+        "agora",
+        "vou",
+        "actualizar",
+        "checklist",
+        "com",
+        "correcção"
+      ]
+    },
+    "memory:memory/.dreams/session-corpus/2026-04-24.txt:11:11": {
+      "key": "memory:memory/.dreams/session-corpus/2026-04-24.txt:11:11",
+      "path": "memory/.dreams/session-corpus/2026-04-24.txt",
+      "startLine": 11,
+      "endLine": 11,
+      "source": "memory",
+      "snippet": "Assistant: Pronto, Caio! Bootstrap completo e materiais actualizados com a sua descoberta real da sala de aula. **Resumo do que foi corrigido:** **MEMORY.md:** - Adicionada a nota sobre GPIO7 (SD0) pull-up como mandatório - Detalhe sobre os caracteres garbage quando falta o pull-",
+      "recallCount": 0,
+      "dailyCount": 1,
+      "groundedCount": 0,
+      "totalScore": 0.58,
+      "maxScore": 0.58,
+      "firstRecalledAt": "2026-04-24T03:02:09.881Z",
+      "lastRecalledAt": "2026-04-24T03:02:09.881Z",
+      "queryHashes": [
+        "c2c2313ce194"
+      ],
+      "recallDays": [
+        "2026-04-24"
+      ],
+      "conceptTags": [
+        "memory.md",
+        "pull-up",
+        "assistant",
+        "pronto",
+        "caio",
+        "bootstrap",
+        "completo",
+        "materiais"
       ]
     }
   }

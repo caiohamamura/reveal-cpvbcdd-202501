@@ -57,6 +57,13 @@
       "lineCount": 2,
       "lastContentLine": 2
     },
+    "iot:sessions/7c093d24-1748-47c1-b3cb-5fa211446b2c.jsonl": {
+      "mtimeMs": 1776989866896,
+      "size": 113485,
+      "contentHash": "d98c01a79b6f343371ce44deff2df869829be22a87d7854de7611f17f8eaf77c",
+      "lineCount": 11,
+      "lastContentLine": 11
+    },
     "iot:sessions/82e69165-5bf5-4f63-bf5f-6f66ea8deaa6.jsonl": {
       "mtimeMs": 1776008440381,
       "size": 23576,
@@ -120,7 +127,7 @@
       "lineCount": 2,
       "lastContentLine": 2
     },
-    "iot:sessions/fd1f2451-da6f-45fe-a6ba-d62a1393c410.jsonl": {
+    "iot:sessions/fd1f2451-da6f-45fe-a6ba-d62a1393c410.jsonl.reset.2026-04-24T00-09-10.872Z": {
       "mtimeMs": 1776831552969,
       "size": 189903,
       "contentHash": "cdb21b7de012019b1cfc52181ed9dd8508a592e95003ec4e977a334eae4d9d54",
@@ -307,6 +314,19 @@
       "5435f8604dbcd25a33b374142702a8a8ef732a20",
       "0ae2adcdfb46d9376bef88e02988b989875ee44d",
       "c003bd4d16a0865449e85b47885a7b7af33f3e18"
+    ],
+    "iot:7c093d24-1748-47c1-b3cb-5fa211446b2c": [
+      "4cf67ae7b405f5a464413dffe82289f293491d14",
+      "85f90e981b75b6cf07069b10ffc0e8eb7a0c5db2",
+      "8e01df3dfdd5f6bc96f11b10391ae819461abdb5",
+      "39682114406f3f13125134d39eed6f1eee2ee5d2",
+      "55a4e6eab5963c29969ec1206b1e01eb3ce8376b",
+      "c74518466c135da4b5d09fdffe97b44d3bda7fbc",
+      "6bfafc0af5d04ab4f32cfae8ec552de4730c9774",
+      "5b986a83b677d989c3befb376900ab9921ba0e33",
+      "b5b0c2282b9cc3aab356a6f698110f72a160cacd",
+      "f2304accf4b989da1551d86e359443f2f102e018",
+      "ca01954eb479e221be6244aea41479846acc136c"
     ]
   }
 }
