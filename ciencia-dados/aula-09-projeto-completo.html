@@ -23,36 +23,7 @@
   <script src="../plugin/chalkboard/plugin.js"></script>
 </head>
 
-<body> 
-
-  <button class="seminar-toggle" onclick="document.getElementById('seminarPanel').classList.toggle('open');seminarPassword.focus()">&#9776;</button>
-  <div id="seminarPanel" class="seminar-panel">
-    <div id="seminarHost">
-      <label><strong>Host (apresentador)</strong></label> 
-      <form action="" onsubmit="event.preventDefault();RevealSeminar.open_or_join_room(document.getElementById('seminarPassword').value);setTimeout(() => {document.getElementById('seminarPanel').classList.toggle('open');}, 1000)">
-        <input type="password" id="seminarPassword" placeholder="Senha do host"/>
-      </form>
-      <button class="btn-host"
-              onclick="RevealSeminar.open_or_join_room(document.getElementById('seminarPassword').value)">Host</button>
-      <button class="btn-leave"
-              onclick="RevealSeminar.close_room(document.getElementById('seminarPassword').value)">Fechar sala</button>
-    </div>
-    <hr style="border-color: #44475a; margin: 12px 0;" />
-    <div class="seminar-status" id="seminarStatus">Desconectado</div>
-  </div>
-
-  <script>
-    window.customcontrolsConfig = { toggle: true, toggleClass: ' toggled', width: 48, height: 48, offset: 12 };
-    window.chalkboardConfig = {
-      boardmarkerWidth: 3,
-      chalkboardWidth: 3,
-      chalkboardEffect: 0.7,
-      readOnly: false,
-      transition: 800,
-      color: '#8be9fd',
-      backgroundColor: '#282a36'
-    };
-  </script>
+<body>
 
   <div id="app" class="reveal">
     <div class="slides">
@@ -926,28 +897,21 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
   <script src="../components/components.js"></script>
-  <script src="../slides_template/init.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
   <script src="../plugin/seminar/plugin.js"></script>
   <script src="../plugin/poll/plugin.js"></script>
 
   <script>
     window.seminarConfig = {
-      server: 'http://192.168.0.76:4433/',
       room: 'ciencia-dados-aula09',
       hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
       autoJoin: true,
     };
-    window.pollConfig = {};
-    window.app = mountSlideApp();
-
-    // Update seminar status display
-    document.addEventListener('seminar', function (e) {
-      const el = document.getElementById('seminarStatus');
-      const labels = { 1: 'Conectado', 2: 'Aguardando sala...', 3: 'Conectado como participante', 4: 'Conectado como host', 5: 'Conectado como chair' };
-      el.textContent = labels[e.status] || 'Desconectado';
-      el.style.color = e.status >= 3 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#6272a4';
-    });
+  </script>
+  <script type="module">
+    import { mountSlideApp } from '../slides_template/init.js';
+    mountSlideApp();
   </script>
 
 </body>
