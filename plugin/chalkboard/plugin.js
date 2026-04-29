@@ -1129,6 +1129,7 @@ const initChalkboard = function (Reveal) {
 		lastX = null;
 		lastY = null;
 		mode = 0;
+		hideCursorIndicator();
 	}
 
 	/**
@@ -1923,6 +1924,7 @@ const initChalkboard = function (Reveal) {
 				toggleChalkboard();
 				notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
 				notescanvas.style.pointerEvents = 'auto';
+				hideCursorIndicator();
 			}
 			else {
 				if (notescanvas.style.pointerEvents != 'none') {
@@ -1932,6 +1934,7 @@ const initChalkboard = function (Reveal) {
 					}
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = 'none';
+					hideCursorIndicator();
 				}
 				else {
 					// show notes canvas
@@ -1947,6 +1950,7 @@ const initChalkboard = function (Reveal) {
 					}
 
 					setColor(idx, true);
+					hideCursorIndicator();
 				}
 			}
 		}
