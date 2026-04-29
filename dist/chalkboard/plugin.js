@@ -38,6 +38,22 @@ window.RevealChalkboard = window.RevealChalkboard || {
 	colorPrev: function () {
 		colorPrev();
 	},
+	toggleEraser: function () {
+		toggleEraser();
+	},
+	increaseEraser: function () {
+		changeEraserSize( 5 );
+	},
+	decreaseEraser: function () {
+		changeEraserSize( -5 );
+	},
+	color1: function () { selectColor( 0 ); },
+	color2: function () { selectColor( 1 ); },
+	color3: function () { selectColor( 2 ); },
+	color4: function () { selectColor( 3 ); },
+	color5: function () { selectColor( 4 ); },
+	color6: function () { selectColor( 5 ); },
+	color7: function () { selectColor( 6 ); },
 	clear: function () {
 		clear();
 	},
@@ -102,8 +118,9 @@ const initChalkboard = function ( Reveal ) {
 		src: path + 'img/sponge.png',
 		radius: 20
 	};
+	var eraserToggled = false;
 	var boardmarkers = [ {
-			color: 'rgba(100,100,100,1)',
+			color: 'rgba(255,255,255,1)',
 			cursor: 'url(' + path + 'img/boardmarker-black.png), auto'
 		},
 		{
@@ -182,13 +199,28 @@ const initChalkboard = function ( Reveal ) {
 			key: 'DEL',
 			description: 'Clear drawings on slide'
 		},
-/*
-		reset: {
-			keyCode: 173,
-			key: '-',
-			description: 'Reset drawings on slide'
+		toggleEraser: {
+			keyCode: 69,
+			key: 'E',
+			description: 'Toggle eraser'
 		},
-*/
+		increaseEraser: {
+			keyCode: 187,
+			key: '+',
+			description: 'Increase eraser size'
+		},
+		decreaseEraser: {
+			keyCode: 189,
+			key: '-',
+			description: 'Decrease eraser size'
+		},
+		color1: { keyCode: 49, key: '1', description: 'Color 1 (white)' },
+		color2: { keyCode: 50, key: '2', description: 'Color 2 (blue)' },
+		color3: { keyCode: 51, key: '3', description: 'Color 3 (red)' },
+		color4: { keyCode: 52, key: '4', description: 'Color 4 (green)' },
+		color5: { keyCode: 53, key: '5', description: 'Color 5 (orange)' },
+		color6: { keyCode: 54, key: '6', description: 'Color 6 (purple)' },
+		color7: { keyCode: 55, key: '7', description: 'Color 7 (yellow)' },
 		resetAll: {
 			keyCode: 8,
 			key: 'BACKSPACE',
@@ -947,6 +979,20 @@ const initChalkboard = function ( Reveal ) {
 		if ( mode == 1 && grid ) {
 			redrawGrid( x + eraser.radius, y + eraser.radius, eraser.radius );
 		}
+	}
+
+	function toggleEraser() {
+		eraserToggled = !eraserToggled;
+		colorIndex( eraserToggled ? -1 : -(color[ mode ] + 1) );
+	}
+
+	function changeEraserSize( delta ) {
+		eraser.radius = Math.max( 5, Math.min( 100, eraser.radius + delta ) );
+	}
+
+	function selectColor( index ) {
+		eraserToggled = false;
+		colorIndex( -(color[ mode ] + 1) + index );
 	}
 
 
