@@ -429,4 +429,206 @@ Biblioteca `plugin/leader-line.min.js` para desenhar linhas/setas SVG entre elem
 
 ---
 
-*Documentação gerada em 2026-04-24*
+## Chalkboard Plugin (Quadro Branco Interativo)
+
+### Visão Geral
+O plugin `chalkboard` permite desenhar直接在 nos slides — funciona como um quadro branco virtual com caneta multicores, borracha e quadro de anotações. **Usa SOMENTE a versão local** em `plugin/chalkboard/` — a versão CDN não tem as customizações.
+
+### Arquivos
+```
+plugin/chalkboard/
+├── plugin.js          # Plugin principal (modificado com atalhos customizados)
+├── style.css          # Estilos da paleta e cursor
+└── img/               # Cursores, esponja, backgrounds
+    ├── boardmarker-*.png   # Cursores das canetas coloridas
+    ├── chalk-*.png        # Cursores giz (para modo chalkboard)
+    ├── sponge.png         # Cursor borracha
+    ├── blackboard.png     # Background quadro negro
+    └── whiteboard.png     # Background quadro branco
+```
+
+### Inclusão em um HTML
+
+```html
+<!-- CSS (antes do Reveal.js) -->
+<link rel="stylesheet" href="plugin/customcontrols/style.css" />
+<link rel="stylesheet" href="plugin/chalkboard/style.css" />
+
+<!-- Scripts (depois do Reveal.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="plugin/customcontrols/plugin.js"></script>
+<script src="plugin/chalkboard/plugin.js"></script>
+```
+
+```js
+window.customcontrolsConfig = { toggle: true, toggleClass: 'toggled', width: 48, height: 48, offset: 12 };
+window.chalkboardConfig = {
+  boardmarkerWidth: 3,
+  chalkboardWidth: 3,
+  color: '#8be9fd',
+  backgroundColor: '#282a36'
+};
+```
+
+**Importante:** Sempre use `../plugin/chalkboard/plugin.js` (local), **NÃO** a URL CDN do jsdelivr — a CDN não inclui as customizações de atalhos.
+
+### Atalhos de Teclado
+
+| Tecla | Ação |
+|-------|------|
+| `B` | Abrir/fechar quadro de desenho |
+| `C` | Abrir/fechar painel de anotações |
+| `E` | Alternar borracha ↔ caneta (lembra última cor ao voltar) |
+| `=` | Aumentar espessura: raio da borracha (+5px) no modo borracha; largura da caneta (+1px) no modo caneta |
+| `-` | Diminuir espessura: raio da borracha (-5px) no modo borracha; largura da caneta (-1px) no modo caneta |
+| `1`–`7` | Selecionar cor da caneta diretamente |
+| `X` / `Y` | Próxima / cor anterior |
+| `DEL` | Apagar desenhos do slide atual |
+| `D` | Baixar desenhos |
+
+**Cores (teclas 1–7):** 1=branco, 2=azul, 3=vermelho, 4=verde, 5=laranja, 6=roxo, 7=amarelo
+
+### Indicador de Cursor Flutuante
+Um círculo segue o cursor mostrando a cor e espessura atuais:
+- **Modo caneta:** círculo preenchido na cor atual, tamanho = `boardmarkerWidth`
+- **Modo borracha:** círculo bordado mostrando o raio da borracha
+
+O indicador desaparece automaticamente ao sair do modo desenho.
+
+### API Pública
+
+```js
+RevealChalkboard.toggleChalkboard()
+RevealChalkboard.toggleNotesCanvas()
+RevealChalkboard.toggleEraser()
+RevealChalkboard.increaseStrokeEraser()  // +1 passo
+RevealChalkboard.decreaseStrokeEraser()  // -1 passo
+RevealChalkboard.color1()  // through color7()
+RevealChalkboard.colorNext()
+RevealChalkboard.colorPrev()
+RevealChalkboard.clear()
+RevealChalkboard.reset()
+RevealChalkboard.resetAll()
+RevealChalkboard.download()
+```
+
+---
+
+## Chart.js Plugin (Gráficos Interativos)
+
+### Visão Geral
+Permite插入 Chart.js gráficos diretamente nos slides via markup HTML com `data-chart`. Requer Chart.js 4.x (3.x tem APIs incompatíveis).
+
+### Inclusão em um HTML
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="plugin/chart/plugin.js"></script>
+```
+
+### Uso
+
+```html
+<canvas data-chart="bar" style="width:75%;max-height:300px;">
+<!-- {
+  "data": {
+    "labels": ["Q1", "Q2", "Q3"],
+    "datasets": [{ "data": [120, 190, 30], "backgroundColor": ["#8be9fd","#6272a4","#8be9fd"] }]
+  },
+  "options": {
+    "responsive": true,
+    "maintainAspectRatio": false,
+    "plugins": { "legend": { "display": false } },
+    "scales": { "x": { "grid": { "color": "#44475a" } }, "y": { "grid": { "color": "#44475a" } } }
+  }
+} -->
+</canvas>
+```
+
+### Tipos de Gráfico
+`bar`, `line`, `pie`, `doughnut`, `polarArea`, `radar`, `bubble`, `scatter`
+
+### Cores Dracula para Chart.js
+```js
+// Use diretamente nos datasets
+backgroundColor: ['#8be9fd', '#ff5555', '#f1fa8c', '#50fa7b', '#6272a4', '#bd93f9', '#ff79c6']
+```
+
+### Erros Comuns
+
+| Erro | Solução |
+|------|---------|
+| `minimumFractionDigits value is out of range` | Use Chart.js 4.x, não 3.x |
+| `Cannot read properties of undefined (reading 'radius')` | Remova `pointRadius`, `borderRadius` dos datasets |
+| Altura gigantesca do gráfico | Use container div com altura fixa + `maintainAspectRatio: false` |
+| `null` no data array causa erros | Substitua `null` por valor inicial real (ex: `0.0`) |
+
+---
+
+## Seminar & Poll Plugins
+
+### Visão Geral
+Dois plugins para interatividade ao vivo: **Poll** (enquetes com resultados em tempo real via WebSocket) e **Seminar** (controle de presença e status de participação).
+
+### Inclusão (Poll)
+
+```html
+<link rel="stylesheet" href="plugin/poll/style.css" />
+<script src="plugin/poll/plugin.js"></script>
+```
+
+### Uso (Poll)
+
+```html
+<div class="poll">
+  <ul data-poll>
+    <li data-option>Opção A</li>
+    <li data-option>Opção B</li>
+    <li data-option>Opção C</li>
+  </ul>
+</div>
+```
+
+### Config
+
+```js
+window.pollConfig = {
+  server: 'ws://servidor:4433',
+  room: 'nome-da-sala',
+  user: 'Nome do Aluno'
+};
+```
+
+### Seminar
+
+```js
+window.seminarConfig = {
+  server: 'ws://servidor:4433',
+  room: 'nome-da-sala'
+};
+```
+
+Consulte `docs/ECOSSISTEMA.md` (memória team) para mais detalhes sobre setup do servidor.
+
+---
+
+## Configuração Centralizada (init.js)
+
+O arquivo `slides_template/init.js` detecta e registra automaticamente todos os plugins via variáveis globais:
+
+```js
+if (window.RevealSeminar)    plugins.push(RevealSeminar);
+if (window.RevealPoll)       plugins.push(RevealPoll);
+if (window.RevealChart)      plugins.push(RevealChart);
+if (window.RevealCustomControls) plugins.push(RevealCustomControls);
+if (window.RevealChalkboard) plugins.push(RevealChalkboard);
+
+// configs via window.<plugin>Config
+if (window.seminarConfig)     config.seminar     = window.seminarConfig;
+if (window.pollConfig)        config.poll        = window.pollConfig;
+if (window.chartConfig)      config.chart       = window.chartConfig;
+if (window.customControlsConfig) config.customcontrols = window.customControlsConfig;
+if (window.chalkboardConfig)  config.chalkboard  = window.chalkboardConfig;
+```
+
+
