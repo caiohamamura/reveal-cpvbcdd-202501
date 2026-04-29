@@ -387,8 +387,9 @@ const initChalkboard = function ( Reveal ) {
     var img = new Image();
     img.onload = function() {
       ctx.drawImage( img, 0, 0, size, size );
-      var hotspot = Math.round(size / 2) - 2;
-      sponge.cursor = 'url(' + c.toDataURL() + ') ' + hotspot + ' ' + hotspot + ', auto';
+      var hx = Math.round(size / 2);
+      var hy = Math.round(size / 2) - 4;
+      sponge.cursor = 'url(' + c.toDataURL() + ') ' + hx + ' ' + hy + ', auto';
       // Update cursor if currently erasing
       if ( color[ mode ] < 0 && drawingCanvas[ mode ] ) {
         changeCursor( drawingCanvas[ mode ].canvas, sponge );
