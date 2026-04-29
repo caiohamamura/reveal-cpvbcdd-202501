@@ -30,6 +30,7 @@ function initializeReveal() {
   // Auto-detect optional plugins
   if (window.RevealSeminar) plugins.push(RevealSeminar);
   if (window.RevealPoll) plugins.push(RevealPoll);
+  if (window.RevealChart) plugins.push(RevealChart);
   if (window.RevealCustomControls) plugins.push(RevealCustomControls);
 
   const config = {
@@ -48,6 +49,8 @@ function initializeReveal() {
   if (window.seminarConfig) config.seminar = window.seminarConfig;
   if (window.pollConfig) config.poll = window.pollConfig;
   if (window.customControlsConfig) config.customcontrols = window.customControlsConfig;
+  if (window.chartConfig) config.chart = window.chartConfig;
+  
 
   window.deck = new Reveal(document.querySelector('.reveal'), config);
   deck.initialize();

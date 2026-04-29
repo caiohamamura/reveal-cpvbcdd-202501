@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
   <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="../plugin/chart/plugin.js"></script>
 </head>
 
 <body> 
@@ -430,11 +432,30 @@ auc(pred_df, truth, estimate,
               </div>
             </div>
             <div style="flex: 1;">
-              <img src="images/roc-curve.png" alt="ROC Curve" style="width:100%; border-radius: 8px;">
-              <div
-                   style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
-                <p style="color: #50fa7b;"><strong>Pro tip:</strong> AUC = 0.5 significa que o modelo não sabe
-                  distinguir as classes. AUC > 0.8 geralmente é considerado bom.</p>
+              <div style="height:300px;position:relative;">
+              <canvas data-chart="line" style="width:100%;height:300px;border-radius:8px;">
+<!-- {
+  "data": {
+    "labels": ["0.0","0.2","0.4","0.6","0.8","1.0"],
+    "datasets": [
+      { "label": "Modelo RandomForest","data": [0.0, 0.15, 0.35, 0.60, 0.82, 0.91], "borderColor": "#8be9fd","backgroundColor": "#8be9fd30","fill": true,"tension": 0.4 },
+      { "label": "Linha Aleatória","data": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0], "borderColor": "#ff5555","borderDash": [5,5],"fill": false }
+    ]
+  },
+  "options": {
+    "responsive": true,
+    "maintainAspectRatio": false,
+    "plugins": { "legend": { "labels": { "color": "#f8f8f2" } } },
+    "scales": {
+      "x": { "title": { "display": true, "text": "Taxa Falso Positivo (FPR)", "color": "#f8f8f2" }, "grid": { "color": "#44475a" }, "ticks": { "color": "#f8f8f2" } },
+      "y": { "title": { "display": true, "text": "Taxa Verdadeiro Positivo (TPR)", "color": "#f8f8f2" }, "grid": { "color": "#44475a" }, "ticks": { "color": "#f8f8f2" } }
+    }
+  }
+} -->
+              </canvas>
+              </div>
+              <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
+                <p style="color: #50fa7b;"><strong>Pro tip:</strong> AUC = 0.5 significa que o modelo não sabe distinguir as classes. AUC > 0.8 geralmente é considerado bom.</p>
               </div>
             </div>
           </multi-col>
@@ -447,13 +468,34 @@ auc(pred_df, truth, estimate,
       <section data-auto-animate>
         <section>
           <h2>Feature Importance 📊</h2>
-          <img src="images/feature-importance.png" alt="Feature Importance"
-               style="width:65%; border-radius: 8px; display:block; margin:0 auto;">
+          <multi-col cols="2">
+              <div style="flex: 1;height:300px"> 
+          <canvas data-chart="bar" style="width:75%;max-height:300px;">
+<!-- {
+  "data": {
+    "labels": ["Duration", "Credit_amount", "Age", "Employment_duration", "Credit_history", "Housing", "Savings_account", "Property", "Purpose"],
+    "datasets": [{ "data": [0.18, 0.15, 0.13, 0.10, 0.09, 0.08, 0.07, 0.06, 0.05], "backgroundColor": ["#8be9fd","#6272a4","#8be9fd","#6272a4","#8be9fd","#6272a4","#8be9fd","#6272a4","#8be9fd"] }]
+  },
+  "options": {
+    "indexAxis": "y",
+    "responsive": true,
+    "maintainAspectRatio": false,
+    "aspectRatio": 2.5,
+    "plugins": { "legend": { "display": false } },
+    "scales": {
+      "x": { "title": { "display": true, "text": "Importância (Gini)", "color": "#f8f8f2" }, "grid": { "color": "#44475a" }, "ticks": { "color": "#f8f8f2" } },
+      "y": { "grid": { "display": false }, "ticks": { "color": "#f8f8f2" } }
+    }
+  }
+} -->
+          </canvas>
+          </div>
           <ul style="margin-top:15px">
             <li>Mede quanto cada feature <strong>reduz impureza de Gini</strong></li>
             <li>Features no topo = mais decisivas</li>
             <li>Ajuda a interpretar e simplificar o modelo</li>
           </ul>
+          </multi-col>
           <code-block lang="r" data-trim><textarea>
 vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
         </section>
@@ -476,8 +518,26 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
                 <li><strong>LASSO (L1):</strong> zera coeficientes menos importantes</li>
               </ul>
             </div>
-            <div style="flex: 1;">
-              <img src="images/feature-importance.png" alt="Feature Importance" style="width:100%; border-radius: 8px;">
+            <div style="flex: 1;height:300px"> 
+              <canvas data-chart="bar" style="width:75%;">
+<!-- {
+  "data": {
+    "labels": ["Duration", "Credit_amount", "Age", "Employment_duration", "Credit_history", "Housing", "Savings_account", "Property", "Purpose"],
+    "datasets": [{ "data": [0.18, 0.15, 0.13, 0.10, 0.09, 0.08, 0.07, 0.06, 0.05], "backgroundColor": ["#8be9fd","#6272a4","#8be9fd","#6272a4","#8be9fd","#6272a4","#8be9fd","#6272a4","#8be9fd"] }]
+  },
+  "options": {
+    "indexAxis": "y",
+    "responsive": true,
+    "maintainAspectRatio": false,
+    "aspectRatio": 2.5,
+    "plugins": { "legend": { "display": false } },
+    "scales": {
+      "x": { "title": { "display": true, "text": "Importância (Gini)", "color": "#f8f8f2" }, "grid": { "color": "#44475a" }, "ticks": { "color": "#f8f8f2" } },
+      "y": { "grid": { "display": false }, "ticks": { "color": "#f8f8f2" } }
+    }
+  }
+} -->
+          </canvas>
             </div>
           </multi-col>
         </section>
