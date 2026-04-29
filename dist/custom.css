@@ -404,11 +404,19 @@ div {
 }
 .seminar-toggle:hover { background: #ff79c6; }
 .seminar-panel {
-    display: none; position: fixed; top: 60px; right: 20px; z-index: 99;
+    opacity:0;
+    transform: scale(0);
+    transform-origin: 100% 0%; 
+    position: fixed; top: 60px; right: 20px; z-index: 99;
     background: #282a36; border: 1px solid #bd93f9; border-radius: 8px;
     padding: 16px; min-width: 260px; color: #f8f8f2;
+    transition: ease 0.3s all;  
+}  
+.seminar-panel.open { 
+    transform: scale(1);
+    opacity:1
 }
-.seminar-panel.open { display: block; }
+
 .seminar-panel input[type="text"], .seminar-panel input[type="password"] {
     width: 100%; padding: 8px; margin: 6px 0 12px; border: 1px solid #bd93f9;
     border-radius: 4px; background: #44475a; color: #f8f8f2; box-sizing: border-box;
