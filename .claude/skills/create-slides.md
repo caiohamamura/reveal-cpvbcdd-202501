@@ -74,7 +74,12 @@ Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new fol
 
 Theme: use `night.css` for IoT, `dracula.css` for BDD.
 
-**CRITICAL: Use `mountSlideApp()` from `slides_template/init.js`.** This creates the Vue app, registers all components, initializes Reveal.js with all plugins (Markdown, Notes, Zoom, Highlight, Math/KaTeX, Mermaid, plus chalkboard/poll/chart/customcontrols if detected), and mounts on `#app`. Do NOT call `new Reveal()` or `initializeReveal()` directly — just call `mountSlideApp()`.
+**CRITICAL: Use `mountSlideApp()` from `slides_template/init.js`.** This:
+1. Injects the seminar connect panel into `<body>` (host button + status display)
+2. Sets `window.seminarConfig` automatically (server is shared, room defaults to `location.pathname`)
+3. To override the room, set `window.seminarConfig = { room: 'my-room' }` BEFORE calling `mountSlideApp()`
+4. Creates Vue app, registers components, initializes Reveal.js with all plugins
+5. Do NOT call `new Reveal()` or set `window.seminarConfig` yourself
 
 ### Slide Structure Patterns
 
