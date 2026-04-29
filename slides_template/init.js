@@ -21,6 +21,7 @@ window.seminarConfig = {
   server: 'https://seminar.hamacorps.work/',
   room: window.seminarConfig?.room || location.pathname,
   hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
+  autoJoin: true,
 };
 window.pollConfig = {};
 
@@ -46,13 +47,11 @@ const SEMINAR_PANEL_HTML = `
 function injectSeminarPanel() {
   document.body.insertAdjacentHTML('afterbegin', SEMINAR_PANEL_HTML);
   document.addEventListener('seminar', function (e) {
-    if (e.status == null) return;
-    const el = document.getElementById('seminarStatus');
-    if (!el) return;
-    const labels = { 1: 'Conectado', 2: 'Aguardando sala...', 3: 'Conectado como participante', 4: 'Conectado como host', 5: 'Conectado como chair' };
-    el.textContent = labels[e.status] || 'Status: ' + e.status;
-    el.style.color = e.status >= 4 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#ff5555';
-  });
+      const el = document.getElementById('seminarStatus');
+      const labels = { 1: 'Conectado', 2: 'Aguardando sala...', 3: 'Conectado como participante', 4: 'Conectado como host', 5: 'Conectado como chair' };
+      el.textContent = labels[e.status] || 'Desconectado';
+      el.style.color = e.status >= 3 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#6272a4';
+    });
 }
 
 function initializeReveal() {
