@@ -647,7 +647,7 @@ query {
           </div>
           <ul>
             <li>🔄 <strong>Zero código</strong> — tabelas viram tipos GraphQL automaticamente</li>
-            <li>🔒 <strong>Segurança nativa</strong> — suporta RLS, JWT, permissões</li>
+            <li>🔒 <strong>Segurança nativa</strong> — suporta RLS, JWT, permissões (tópico avançado)</li>
             <li>⚡ <strong>Performance</strong> — queries viram SQL otimizadas</li>
             <li>🛠️ <strong>Flexibilidade</strong> — expõe functions, views, procedures</li>
           </ul>
@@ -747,15 +747,11 @@ docker run -p 5000:5000 \
 -- 1. Criar schema dedicado (NÃO use public!)
 CREATE SCHEMA IF NOT EXISTS api;
 
--- 2. Habilitar extensão pgcrypto (para hash de senhas)
-CREATE EXTENSION IF NOT EXISTS pgcrypto SCHEMA public;
-
--- 3. Tabelas dentro do schema api
+-- 2. Tabelas dentro do schema api
 CREATE TABLE api.usuarios (
   id SERIAL PRIMARY KEY,
   nome TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  senha_hash TEXT NOT NULL
+  email TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE api.pedidos (
@@ -786,7 +782,7 @@ CREATE TABLE api.pedidos (
           </multi-col>
           <code-block lang="sql" data-trim>
             <script type="text/plain">
--- View: expõe apenas dados necessários (sem senha_hash!)
+-- View: expõe apenas dados necessários
 CREATE VIEW api.meus_pedidos AS
 SELECT
   p.id,
@@ -815,158 +811,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
           </code-block>
         </section>
 
-        <!-- SLIDE: pgcrypto -->
-        <section data-auto-animate>
-          <h2>Segurança: pgcrypto para Hash de Senhas</h2>
-          <div
-               style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff5555;">
-            <p>⚠️ <strong>NUNCA</strong> armazene senhas em texto puro!</p>
-          </div>
-          <code-block lang="sql" data-trim>
-            <script type="text/plain">
--- Hash bcrypt via pgcrypto
-INSERT INTO api.usuarios (nome, email, senha_hash) VALUES
-  ('Ana', 'ana@email.com', crypt('senha123', gen_salt('bf'))),
-  ('Bruno', 'bruno@email.com', crypt('senha456', gen_salt('bf')));
-
--- Funções do pgcrypto:
--- crypt(senha, salt) → retorna hash
--- gen_salt('bf') → gera salt bcrypt aleatório
-</script>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: JWT -->
-        <section data-auto-animate>
-          <h2>JWT: Autenticação com Tokens</h2>
-          <div
-               style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
-            <p>💡 Para projetos novos, use extensão <code>pgjwt</code>!</p>
-          </div>
-          <code-block lang="sql" data-trim>
-            <script type="text/plain">
--- OPÇÃO: pgjwt (recomendado para produção)
-CREATE EXTENSION pgjwt;
-
-CREATE FUNCTION api.login(email TEXT, senha TEXT)
-RETURNS TEXT AS $$
-DECLARE
-  usuario RECORD;
-BEGIN
-  SELECT * INTO usuario
-  FROM api.usuarios
-  WHERE email = login.email
-    AND crypt(login.senha, senha_hash) = senha_hash;
-
-  IF NOT FOUND THEN
-    RAISE EXCEPTION 'Credenciais inválidas';
-  END IF;
-
-  RETURN jwt.sign(
-    row_to_json(usuario)::jsonb,
-    'segredo123',
-    '1h'
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-</script>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: RLS -->
-        <section data-auto-animate>
-          <h2>RLS: Row Level Security</h2>
-          <p style="color: #bd93f9; margin-bottom: 1em;">Cada usuário vê apenas seus dados</p>
-          <code-block lang="sql" data-trim>
-            <script type="text/plain">
--- Habilitar RLS na tabela
-ALTER TABLE api.pedidos ENABLE ROW LEVEL SECURITY;
-
--- Política: usuário vê apenas seus próprios pedidos
-CREATE POLICY usuarios_pedidos ON api.pedidos
-  FOR ALL
-  USING (
-    usuario_id = NULLIF(
-      current_setting('request.jwt.claim.user_id', true),
-      ''
-    )::INTEGER
-  );
-</script>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: RLS Fluxo -->
-        <section data-auto-animate>
-          <h2>RLS: De Onde Vem o <code>user_id</code>?</h2>
-          <div style="text-align: center; margin-bottom: 1em;">
-            <div class="mermaid" data-id="rls-flow" style="width:80%;margin:auto;">
-              <pre>
-graph LR
-  A["👤 Login"] -->|"email + senha"| B["🔐 Function api.login"]
-  B -->|"retorna JWT"| C["📦 Token JWT"]
-  C -->|"envia no header"| D["🔗 PostGraphile"]
-  D -->|"injeta claim"| E["⚙️ PostgreSQL RLS"]
-  E -->|"filtra"| F["🔒 Dados filtrados"]
-  style D fill:#bd93f9,color:#f8f8f2
-  style F fill:#50fa7b,color:#282a36
-              </pre>
-            </div>
-          </div>
-          <div style="background: #44475a; padding: 1em; border-radius: 8px;">
-            <p>💡 PostGraphile decodifica o JWT e injeta o <code>user_id</code> via <code>set_config()</code></p>
-          </div>
-        </section>
-
-        <!-- SLIDE: RLS Debugging -->
-        <section data-auto-animate>
-          <h2>RLS: Debugging</h2>
-          <div
-               style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
-            <p>Para testar RLS manualmente, use <code>set_config</code>:</p>
-          </div>
-          <code-block lang="sql" data-trim>
-            <script type="text/plain">
--- Simula usuário logado (para testar)
-SET app.current_user_id = '1';
-SELECT * FROM api.pedidos;  -- só pedidos do usuário 1
-
--- Ou injeta claim diretamente:
-SELECT set_config('request.jwt.claim.user_id', '1', false);
-
--- Resetar
-RESET app.current_user_id;
-</script>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: SECURITY DEFINER -->
-        <section data-auto-animate>
-          <h2>SECURITY DEFINER</h2>
-          <div
-               style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ffb86c;">
-            <p>⚠️ <code>SECURITY DEFINER</code> executa com privilégios do <strong>dono</strong> da função, ignorando
-              permissões do chamador</p>
-          </div>
-          <code-block lang="sql" data-trim>
-            <script type="text/plain">
--- SECURITY DEFINER: executa como OWNER da schema
-CREATE FUNCTION api.criar_pedido(...)
-RETURNS ... AS $$
-BEGIN
-  -- Permite inserir em api.pedidos mesmo que
-  -- o usuário não tenha permissão direta
-  INSERT INTO api.pedidos ...;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Impacto no RLS:
--- O RLS verifica o usuário do TOKEN (JWT)
--- MAS a função executa com privilégios do owner
--- → Combinação pode ser tricky!
-</script>
-          </code-block>
-        </section>
-
         <!-- SLIDE: Demo Passo 1 -->
         <section data-auto-animate>
           <h2>Demo: Schema + Tabelas</h2>
@@ -977,8 +821,7 @@ CREATE SCHEMA api;
 CREATE TABLE api.usuarios (
   id SERIAL PRIMARY KEY,
   nome TEXT,
-  email TEXT UNIQUE,
-  senha_hash TEXT
+  email TEXT UNIQUE
 );
 
 CREATE TABLE api.pedidos (
@@ -993,24 +836,13 @@ CREATE TABLE api.pedidos (
 
         <!-- SLIDE: Demo Passo 2 -->
         <section data-auto-animate>
-          <h2>Demo: RLS + Dados</h2>
+          <h2>Demo: Inserir Dados</h2>
           <code-block lang="sql" data-trim>
             <script type="text/plain">
--- 2. Habilitar RLS
-ALTER TABLE api.pedidos ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY rls_pedidos ON api.pedidos
-  USING (
-    usuario_id = current_setting(
-      'request.jwt.claim.user_id',
-      true
-    )::INTEGER
-  );
-
--- 3. Inserir dados de exemplo
-INSERT INTO api.usuarios VALUES
-  (1, 'Ana', 'ana@email.com', crypt('123', gen_salt('bf'))),
-  (2, 'Bruno', 'bruno@email.com', crypt('456', gen_salt('bf')));
+-- Inserir dados de exemplo
+INSERT INTO api.usuarios (nome, email) VALUES
+  ('Ana', 'ana@email.com'),
+  ('Bruno', 'bruno@email.com');
 
 INSERT INTO api.pedidos (usuario_id, produto, quantidade) VALUES
   (1, 'Caneta', 10),
@@ -1023,11 +855,10 @@ INSERT INTO api.pedidos (usuario_id, produto, quantidade) VALUES
         <!-- SLIDE: GraphiQL Queries -->
         <section data-auto-animate>
           <h2>GraphiQL: Testando Queries</h2>
-          <multi-col style="gap:15px">
-            <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
-              <p style="color: #50fa7b; font-size: 0.8em;">Query: Listar pedidos</p>
-              <code-block lang="graphql" data-trim>
-                <script type="text/plain">
+          <div style="background: #44475a; padding: 1em; border-radius: 8px; max-width: 600px; margin: auto;">
+            <p style="color: #50fa7b; font-size: 0.8em;">Query: Listar pedidos</p>
+            <code-block lang="graphql" data-trim>
+              <script type="text/plain">
 query {
   allPedidos {
     nodes {
@@ -1038,67 +869,11 @@ query {
   }
 }
 </script>
-              </code-block>
-            </div>
-            <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
-              <p style="color: #bd93f9; font-size: 0.8em;">Mutation: Login</p>
-              <code-block lang="graphql" data-trim>
-                <script type="text/plain">
-mutation {
-  login(
-    email: "ana@email.com"
-    senha: "123"
-  ) {
-    text
-  }
-}
-</script>
-              </code-block>
-            </div>
-          </multi-col>
-          <div
-               style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ffb86c;">
-            <p>💡 Token JWT vai no header <code>Authorization: Bearer &lt;token&gt;</code></p>
+            </code-block>
           </div>
         </section>
 
-        <!-- SLIDE: httpOnly Cookies -->
-        <section data-auto-animate>
-          <h2>Segurança: httpOnly Cookies vs localStorage</h2>
-          <multi-col style="gap:15px">
-            <div
-                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
-              <h4 style="color: #ff5555;">❌ localStorage</h4>
-              <ul style="font-size: 0.85em;">
-                <li>Vulnerável a XSS</li>
-                <li>JavaScript pode ler</li>
-                <li>Atacante injeta script → token roubado</li>
-              </ul>
-            </div>
-            <div
-                 style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
-              <h4 style="color: #50fa7b;">✅ httpOnly Cookies</h4>
-              <ul style="font-size: 0.85em;">
-                <li>Inacessíveis ao JavaScript</li>
-                <li>Seguro contra XSS</li>
-                <li>Configure <code>SameSite=Strict</code></li>
-              </ul>
-            </div>
-          </multi-col>
-          <code-block lang="javascript" data-trim>
-            <script type="text/plain">
-// localStorage (simplificado, menos seguro)
-localStorage.setItem('token', jwt);
-
-// httpOnly cookie (produção) — PostGraphile usa --cookies
-res.cookie('token', jwt, {
-  httpOnly: true,     // JS não acessa
-  secure: true,       // só HTTPS
-  sameSite: 'strict'  // só mesmo domínio
-});
-</script>
-          </code-block>
-        </section>
+        <!-- SLIDE: Resumo PostGraphile -->
 
         <!-- SLIDE: Exercício Prático -->
         <section data-auto-animate>
