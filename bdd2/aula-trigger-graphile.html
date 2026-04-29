@@ -528,8 +528,8 @@ INSERT INTO membros (nome) VALUES ('Ana'), ('Carlos');
             <li>Ou usar <code>NOTIFY</code> para desacoplar (assíncrono)</li>
           </ul>
           <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
-            <p style="color: #ffb86c;">📝 <strong>Regra:</strong> Se o trigger precisa de dados, passe-os como
-              <code>NEW</code> — não faça SELECT!</p>
+            <p style="color: #ffb86c;">📝 <strong>Regra:</strong> Use os dados de <code>NEW</code>/<code>OLD</code> que
+              o PostgreSQL já preenche — evite <code>SELECT</code> dentro do trigger!</p>
           </div>
         </section>
 
