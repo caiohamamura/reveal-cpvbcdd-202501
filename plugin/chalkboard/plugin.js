@@ -417,7 +417,7 @@ const initChalkboard = function (Reveal) {
 		for (var i = 0; i < length; i++) {
 			var colorButton = document.createElement('li');
 			colorButton.setAttribute('data-color', i);
-			colorButton.innerHTML = '<i class="fa fa-square"></i>';
+			colorButton.innerHTML = '<i class="fa fa-square"></i><span class="key-label">' + (i + 1) + '</span>';
 			colorButton.style.color = colors[i].color;
 			colorButton.addEventListener('click', function (e) {
 				var element = e.target;
@@ -447,6 +447,7 @@ const initChalkboard = function (Reveal) {
 		spongeImg.style.marginBottom = '0';
 		spongeImg.style.marginLeft = '0';
 		eraserButton.appendChild(spongeImg);
+		eraserButton.appendChild(document.createTextNode('E'));
 		eraserButton.addEventListener('click', function (e) {
 			colorIndex(-1);
 		});
