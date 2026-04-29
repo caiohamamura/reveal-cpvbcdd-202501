@@ -183,6 +183,11 @@ const initChalkboard = function (Reveal) {
 		cursor: 'url(' + path + 'img/sponge.png), auto'
 	}
 
+	var cursorIndicator = null;
+	var cursorOverlay = null;
+	var lastClientX = 0;
+	var lastClientY = 0;
+
 
 	var keyBindings = {
 		toggleNotesCanvas: {
@@ -404,6 +409,80 @@ const initChalkboard = function (Reveal) {
 		if (palette) {
 			palette.style.cursor = tool.cursor;
 		}
+	}
+
+	function createCursorIndicator() {
+		cursorOverlay = document.createElement('div');
+		cursorOverlay.id = 'chalkboard-cursor-overlay';
+		cursorOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none;';
+		document.body.appendChild(cursorOverlay);
+
+		cursorIndicator = document.createElement('div');
+		cursorIndicator.id = 'chalkboard-cursor-indicator';
+		cursorIndicator.style.cssText = 'position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);';
+		cursorOverlay.appendChild(cursorIndicator);
+	}
+
+	function updateCursorIndicator(e) {
+		if (!cursorOverlay || !cursorIndicator) return;
+		var clientX = e.clientX;
+		var clientY = e.clientY;
+		lastClientX = clientX;
+		lastClientY = clientY;
+
+		cursorOverlay.style.display = 'block';
+		cursorOverlay.style.left = '0';
+		cursorOverlay.style.top = '0';
+
+		if (color[mode] < 0) {
+			// eraser mode
+			var r = eraser.radius * 2;
+			cursorIndicator.style.width = r + 'px';
+			cursorIndicator.style.height = r + 'px';
+			cursorIndicator.style.border = '2px solid rgba(255,255,255,0.7)';
+			cursorIndicator.style.background = 'rgba(180,180,180,0.25)';
+			cursorIndicator.style.left = (clientX + 1) + 'px';
+			cursorIndicator.style.top = (clientY + 1) + 'px';
+		} else {
+			// pen mode — use current color and boardmarkerWidth
+			var w = boardmarkerWidth;
+			var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
+			cursorIndicator.style.width = w + 'px';
+			cursorIndicator.style.height = w + 'px';
+			cursorIndicator.style.border = 'none';
+			cursorIndicator.style.background = colorVal;
+			cursorIndicator.style.left = clientX + 'px';
+			cursorIndicator.style.top = clientY + 'px';
+		}
+	}
+
+	function redrawCursorIndicator() {
+		if (!cursorOverlay || !cursorIndicator || !cursorOverlay.style.display || cursorOverlay.style.display === 'none') return;
+		var clientX = lastClientX;
+		var clientY = lastClientY;
+
+		if (color[mode] < 0) {
+			var r = eraser.radius * 2;
+			cursorIndicator.style.width = r + 'px';
+			cursorIndicator.style.height = r + 'px';
+			cursorIndicator.style.border = '2px solid rgba(255,255,255,0.7)';
+			cursorIndicator.style.background = 'rgba(180,180,180,0.25)';
+			cursorIndicator.style.left = (clientX + 1) + 'px';
+			cursorIndicator.style.top = (clientY + 1) + 'px';
+		} else {
+			var w = boardmarkerWidth;
+			var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
+			cursorIndicator.style.width = w + 'px';
+			cursorIndicator.style.height = w + 'px';
+			cursorIndicator.style.border = 'none';
+			cursorIndicator.style.background = colorVal;
+			cursorIndicator.style.left = clientX + 'px';
+			cursorIndicator.style.top = clientY + 'px';
+		}
+	}
+
+	function hideCursorIndicator() {
+		if (cursorOverlay) cursorOverlay.style.display = 'none';
 	}
 
 	function createPalette(colors, length) {
@@ -1020,6 +1099,7 @@ const initChalkboard = function (Reveal) {
 		} else {
 			boardmarkerWidth = Math.max(1, Math.min(30, boardmarkerWidth + delta));
 		}
+		redrawCursorIndicator();
 	}
 
 	function selectColor(index) {
@@ -1156,6 +1236,7 @@ const initChalkboard = function (Reveal) {
 		else {
 			changeCursor(drawingCanvas[mode].canvas, pens[mode][color[mode]]);
 		}
+		redrawCursorIndicator();
 	}
 
 	/**
@@ -1647,6 +1728,8 @@ const initChalkboard = function (Reveal) {
 			mouseX = evt.pageX;
 			mouseY = evt.pageY;
 
+			updateCursorIndicator(evt);
+
 			if (drawing || erasing) {
 				var scale = drawingCanvas[mode].scale;
 				var xOffset = drawingCanvas[mode].xOffset;
@@ -1704,6 +1787,7 @@ const initChalkboard = function (Reveal) {
 				stopDrawing();
 				stopErasing();
 			}
+			hideCursorIndicator();
 		});
 	}
 
@@ -1742,6 +1826,7 @@ const initChalkboard = function (Reveal) {
 		//console.log('ready');
 		if (!printMode) {
 			window.addEventListener('resize', resize);
+			createCursorIndicator();
 			updateSpongeCursor();
 
 			slideStart = Date.now() - getSlideDuration();
