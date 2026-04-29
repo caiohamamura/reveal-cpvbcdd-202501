@@ -991,12 +991,12 @@ const initChalkboard = function ( Reveal ) {
 	function eraseWithSponge( context, x, y ) {
 		context.save();
 		context.beginPath();
-		context.arc( x + eraser.radius, y + eraser.radius, eraser.radius, 0, 2 * Math.PI, false );
+		context.arc( x, y, eraser.radius, 0, 2 * Math.PI, false );
 		context.clip();
-		context.clearRect( x - 1, y - 1, eraser.radius * 2 + 2, eraser.radius * 2 + 2 );
+		context.clearRect( x - eraser.radius - 1, y - eraser.radius - 1, eraser.radius * 2 + 2, eraser.radius * 2 + 2 );
 		context.restore();
 		if ( mode == 1 && grid ) {
-			redrawGrid( x + eraser.radius, y + eraser.radius, eraser.radius );
+			redrawGrid( x, y, eraser.radius );
 		}
 	}
 
