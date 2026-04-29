@@ -32,6 +32,7 @@ function initializeReveal() {
   if (window.RevealPoll) plugins.push(RevealPoll);
   if (window.RevealChart) plugins.push(RevealChart);
   if (window.RevealCustomControls) plugins.push(RevealCustomControls);
+  if (window.RevealChalkboard) plugins.push(RevealChalkboard);
 
   const config = {
     controls: true,
@@ -50,7 +51,7 @@ function initializeReveal() {
   if (window.pollConfig) config.poll = window.pollConfig;
   if (window.customControlsConfig) config.customcontrols = window.customControlsConfig;
   if (window.chartConfig) config.chart = window.chartConfig;
-  
+  if (window.chalkboardConfig) config.chalkboard = window.chalkboardConfig;
 
   window.deck = new Reveal(document.querySelector('.reveal'), config);
   deck.initialize();
