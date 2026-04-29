@@ -72,7 +72,8 @@ graph LR
                 <li>Um <code>UPDATE</code> modifica dados</li>
                 <li>Um <code>DELETE</code> remove registros</li>
               </ul>
-              <p style="color: #8be9fd; margin-top: 0.5em;">⏰ <strong>BEFORE</strong> = antes | <strong>AFTER</strong> = depois da operação</p>
+              <p style="color: #8be9fd; margin-top: 0.5em;">⏰ <strong>BEFORE</strong> = antes | <strong>AFTER</strong> =
+                depois da operação</p>
             </div>
             <div style="flex: 1; text-align: center;">
               <div class="mermaid" data-id="trigger-flow">
@@ -94,9 +95,13 @@ graph LR
         <!-- SLIDE: BEFORE vs AFTER -->
         <section data-auto-animate>
           <h2>BEFORE vs AFTER</h2>
-          <table>
+          <table style="font-size:18pt">
             <thead>
-              <tr><th>Aspecto</th><th>BEFORE</th><th>AFTER</th></tr>
+              <tr>
+                <th>Aspecto</th>
+                <th>BEFORE</th>
+                <th>AFTER</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -107,12 +112,12 @@ graph LR
               <tr>
                 <td>Pode modificar dados?</td>
                 <td style="color: #50fa7b;">✅ SIM — pode alterar NEW</td>
-                <td style="color: #ff5555;">❌ NÃO — já committed</td>
+                <td style="color: #ff5555;">⚠️ Pode causar rollback </td>
               </tr>
               <tr>
                 <td>Pode abortar?</td>
                 <td style="color: #50fa7b;">✅ SIM — retorna NULL</td>
-                <td style="color: #ffb86c;">⚠️ Não diretamente — use exceção</td>
+                <td style="color: #ffb86c;">⚠️ Sim — use exceções ainda fazem rollback!</td>
               </tr>
               <tr>
                 <td>Use para</td>
@@ -122,8 +127,9 @@ graph LR
             </tbody>
           </table>
           <copy-btn></copy-btn>
-          <div style="background: rgba(255,121,198,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ff79c6;">
-            <p>💡 <strong>BEFORE + RAISE EXCEPTION</strong> aborta a operação antes que ela aconteça!</p>
+          <div
+               style="background: rgba(255,121,198,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ff79c6;">
+            <p>💡 <strong>BEFORE/AFTER + RAISE EXCEPTION</strong> aborta a operação!</p>
           </div>
         </section>
 
@@ -131,7 +137,8 @@ graph LR
         <section data-auto-animate>
           <h2>Variáveis: NEW, OLD e TG_OP</h2>
           <multi-col :cols="3" style="gap:10px">
-            <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+            <div
+                 style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
               <h3 style="color: #50fa7b;">NEW</h3>
               <p style="font-size: 0.8em;">Dados <strong>novos</strong></p>
               <ul style="font-size: 0.75em;">
@@ -140,7 +147,8 @@ graph LR
                 <li><code>DELETE</code>: NULL</li>
               </ul>
             </div>
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h3 style="color: #ff5555;">OLD</h3>
               <p style="font-size: 0.8em;">Dados <strong>antigos</strong></p>
               <ul style="font-size: 0.75em;">
@@ -149,7 +157,8 @@ graph LR
                 <li><code>DELETE</code>: sendo removidos</li>
               </ul>
             </div>
-            <div style="background: rgba(189,147,249,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #bd93f9;">
+            <div
+                 style="background: rgba(189,147,249,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #bd93f9;">
               <h3 style="color: #bd93f9;">TG_OP</h3>
               <p style="font-size: 0.8em;">Operação atual</p>
               <ul style="font-size: 0.75em;">
@@ -164,7 +173,8 @@ graph LR
         <!-- SLIDE: Exemplo Trigger com TG_OP -->
         <section data-auto-animate>
           <h2>Exemplo: Trigger com TG_OP</h2>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 CREATE FUNCTION log_mudancas()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -178,18 +188,24 @@ BEGIN
   RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: RETURN no Trigger -->
         <section data-auto-animate>
           <h2>Por que RETURN é Necessário?</h2>
-          <div style="background: rgba(255,121,198,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff79c6;">
+          <div
+               style="background: rgba(255,121,198,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff79c6;">
             <p>⚠️ O trigger é parte da chain — precisa retornar um valor!</p>
           </div>
           <table>
             <thead>
-              <tr><th>Comando</th><th>BEFORE</th><th>AFTER</th></tr>
+              <tr>
+                <th>Comando</th>
+                <th>BEFORE</th>
+                <th>AFTER</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -215,9 +231,10 @@ $$ LANGUAGE plpgsql;
         <!-- SLIDE: Trigger em Ação -->
         <section data-auto-animate>
           <h2>Trigger em Ação: Estoque Automático</h2>
+
           <multi-col style="gap: 30px;">
             <div style="flex: 1;">
-              <code-block lang="sql" data-trim data-line-numbers="2-13|3-7|9-13|15-19|21-27" data-fragment-index="1"><script type="text/plain">
+              <code-block style="min-height:600px" lang="sql" data-trim data-line-numbers="1-99|2-6|8-12|15-19|21-29" data-fragment-index="1"><script type="text/plain">
 -- Tabelas
 CREATE TABLE produtos (
   id SERIAL PRIMARY KEY,
@@ -251,25 +268,25 @@ $$ LANGUAGE plpgsql;
             </div>
             <div style="flex: 1;">
               <ol>
-                <li class="fragment" data-fragment-index="1">
+                <li class="fragment" style="font-size:19pt" data-fragment-index="1">
                   <strong>Tabela produtos:</strong> armazena
                   nome e estoque atual
                 </li>
-                <li class="fragment" data-fragment-index="2">
+                <li class="fragment" style="font-size:19pt" data-fragment-index="2">
                   <strong>Tabela pedidos:</strong> cada pedido
                   referencia um produto e uma quantidade
                 </li>
-                <li class="fragment" data-fragment-index="3">
+                <li class="fragment" style="font-size:19pt" data-fragment-index="3">
                   <strong>Trigger:</strong> dispara
                   <code>AFTER INSERT</code> em pedidos,
                   para cada linha inserida
                 </li>
-                <li class="fragment" data-fragment-index="4">
+                <li class="fragment" style="font-size:19pt" data-fragment-index="4">
                   <strong>Função:</strong> subtrai
                   <code>NEW.quantidade</code> do estoque
                   do produto referenciado
                 </li>
-                <li class="fragment" data-fragment-index="5">
+                <li class="fragment" style="font-size:19pt" data-fragment-index="5">
                   <strong>RETURN NEW:</strong> convenção
                   em triggers <code>AFTER</code>
                   (valor é ignorado)
@@ -282,10 +299,12 @@ $$ LANGUAGE plpgsql;
         <!-- SLIDE: Transaction Rollback -->
         <section data-auto-animate>
           <h2>Rollback dentro de Triggers</h2>
-          <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff5555;">
+          <div
+               style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff5555;">
             <p>⚠️ Triggers executam dentro da mesma transação!</p>
           </div>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- Trigger que valida e pode abortar
 CREATE FUNCTION validar_estoque()
 RETURNS TRIGGER AS $$
@@ -307,26 +326,31 @@ $$ LANGUAGE plpgsql;
 -- → O INSERT do pedido é ROLLBACK
 -- → A atualização de estoque é ROLLBACK
 -- → A transação inteira falha!
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: Armadilhas dos Triggers -->
         <section data-auto-animate>
           <h2>⚠️ Armadilhas dos Triggers</h2>
           <multi-col style="gap:15px">
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h3 style="color: #ff5555;">Efeitos Colaterais</h3>
               <p>Modificam dados em tabelas que você não esperava</p>
             </div>
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h3 style="color: #ff5555;">Obscuros</h3>
               <p>Difícil rastrear quando algo acontece "por trás"</p>
             </div>
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h3 style="color: #ff5555;">Imprevisíveis</h3>
               <p>Performance pode degradar inesperadamente</p>
             </div>
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h3 style="color: #ff5555;">Cascata</h3>
               <p>Trigger dispara outro trigger → loop ou deadlock</p>
               <p style="font-size: 0.7em; color: #8be9fd;">PostgreSQL limita: <code>max_trigger_depth</code></p>
@@ -337,21 +361,25 @@ $$ LANGUAGE plpgsql;
         <!-- SLIDE: Triggers vs Procedures — Melhor Diretriz -->
         <section data-auto-animate>
           <h2>Triggers vs Procedures: Melhor Diretriz</h2>
-          <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #bd93f9;">
+          <div
+               style="background: #44475a; padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #bd93f9;">
             <p>Não é "evite triggers" — é <strong>"use triggers com intenção"</strong>:</p>
           </div>
           <multi-col style="gap:15px">
-            <div style="flex: 1; background: rgba(255,85,85,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="flex: 1; background: rgba(255,85,85,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h3 style="color: #ff5555;">⚡ Trigger</h3>
               <p style="font-size: 0.85em;">Se <strong>esquecer</strong> vai quebrar seus dados</p>
               <p style="font-size: 0.75em; color: #6272a4;">Ex: auditoria, invariantes cross-cutting</p>
             </div>
-            <div style="flex: 1; background: rgba(80,250,123,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+            <div
+                 style="flex: 1; background: rgba(80,250,123,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
               <h3 style="color: #50fa7b;">📦 Procedure</h3>
               <p style="font-size: 0.85em;">Representa uma <strong>ação de negócio</strong></p>
               <p style="font-size: 0.75em; color: #6272a4;">Ex: criar_pedido, emprestar_livro</p>
             </div>
-            <div style="flex: 1; background: rgba(139,233,253,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #8be9fd;">
+            <div
+                 style="flex: 1; background: rgba(139,233,253,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #8be9fd;">
               <h3 style="color: #8be9fd;">🔢 Function</h3>
               <p style="font-size: 0.85em;"><strong>Computa</strong> algo sem efeitos colaterais</p>
               <p style="font-size: 0.75em; color: #6272a4;">Ex: calcular_desconto, formatar_cpf</p>
@@ -364,7 +392,11 @@ $$ LANGUAGE plpgsql;
           <h2>Procedure Explícita vs Trigger</h2>
           <table>
             <thead>
-              <tr><th>Aspecto</th><th>Procedure</th><th>Trigger</th></tr>
+              <tr>
+                <th>Aspecto</th>
+                <th>Procedure</th>
+                <th>Trigger</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -392,6 +424,25 @@ $$ LANGUAGE plpgsql;
           <copy-btn></copy-btn>
         </section>
 
+        <section>
+          <h2>🧠 Ordem Correta de Decisão</h2>
+
+          <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+            <p>Antes de usar triggers ou procedures, pergunte:</p>
+          </div>
+
+          <ol style="font-size: 0.95em;">
+            <li>Posso usar <strong>CONSTRAINT</strong>? (FK, CHECK, UNIQUE)</li>
+            <li>Posso <strong>não armazenar</strong> esse dado?</li>
+            <li>É uma <strong>invariante que nunca pode quebrar</strong>? → TRIGGER</li>
+            <li>É uma <strong>ação do sistema</strong>? → PROCEDURE</li>
+          </ol>
+
+          <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; margin-top: 1em;">
+            <p>✅ Sempre prefira a solução mais <strong>declarativa</strong></p>
+          </div>
+        </section>
+
         <!-- SLIDE: Exercício Prático -->
         <section data-auto-animate>
           <h2>Exercício: Identificando o Problema</h2>
@@ -403,8 +454,10 @@ $$ LANGUAGE plpgsql;
               <li>Trigger <code>trg_log_emprestimo</code> insere em <code>log_auditoria</code></li>
             </ls-u>
           </div>
-          <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ff5555;">
-            <p>⚠️ O trigger executa um <code>SELECT</code> pesado com <code>JOIN</code> em <code>livros</code> + <code>autores</code> para <strong>cada empréstimo</strong>!</p>
+          <div
+               style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ff5555;">
+            <p>⚠️ O trigger executa um <code>SELECT</code> pesado com <code>JOIN</code> em <code>livros</code> +
+              <code>autores</code> para <strong>cada empréstimo</strong>!</p>
           </div>
           <div class="fragment" style="text-align: center; margin-top: 15px;">
             <p style="font-size: 26pt; color: #ff79c6;">Onde está o problema? O que deveria ser feito?</p>
@@ -414,7 +467,8 @@ $$ LANGUAGE plpgsql;
         <!-- SLIDE: Resposta Exercício -->
         <section data-auto-animate>
           <h2>Resposta do Exercício</h2>
-          <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #50fa7b;">
+          <div
+               style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #50fa7b;">
             <p>O trigger executa SELECTs pesados desnecessariamente</p>
           </div>
           <ul>
@@ -424,7 +478,8 @@ $$ LANGUAGE plpgsql;
             <li>Ou usar <code>NOTIFY</code> para desacoplar (assíncrono)</li>
           </ul>
           <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
-            <p style="color: #ffb86c;">📝 <strong>Regra:</strong> Se o trigger precisa de dados, passe-os como <code>NEW</code> — não faça SELECT!</p>
+            <p style="color: #ffb86c;">📝 <strong>Regra:</strong> Se o trigger precisa de dados, passe-os como
+              <code>NEW</code> — não faça SELECT!</p>
           </div>
         </section>
 
@@ -481,7 +536,8 @@ $$ LANGUAGE plpgsql;
             <div style="flex: 1;">
               <div style="background: #44475a; padding: 1em; border-radius: 8px;">
                 <p style="color: #bd93f9; font-size: 0.8em;">Exemplo de Query:</p>
-                <code-block lang="graphql" data-trim><script type="text/plain">
+                <code-block lang="graphql" data-trim>
+                  <script type="text/plain">
 query {
   usuarios {
     id
@@ -489,7 +545,8 @@ query {
     email
   }
 }
-</script></code-block>
+</script>
+                </code-block>
               </div>
             </div>
           </multi-col>
@@ -500,7 +557,11 @@ query {
           <h2>GraphQL vs REST</h2>
           <table>
             <thead>
-              <tr><th>Aspecto</th><th>REST</th><th>GraphQL</th></tr>
+              <tr>
+                <th>Aspecto</th>
+                <th>REST</th>
+                <th>GraphQL</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -540,7 +601,8 @@ query {
             <li>⚡ <strong>Performance</strong> — queries viram SQL otimizadas</li>
             <li>🛠️ <strong>Flexibilidade</strong> — expõe functions, views, procedures</li>
           </ul>
-          <div style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #8be9fd;">
+          <div
+               style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #8be9fd;">
             <p>📦 <strong>v5 já estável</strong> — grandes melhorias em performance e DX</p>
           </div>
         </section>
@@ -549,7 +611,8 @@ query {
         <section data-auto-animate>
           <h2>Por que Schema <code>api</code> Separado?</h2>
           <multi-col style="gap:15px">
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h4 style="color: #ff5555;">❌ Tables no schema public</h4>
               <ul style="font-size: 0.8em;">
                 <li>Todas as tabelas expostas</li>
@@ -557,7 +620,8 @@ query {
                 <li>Risco de segurança</li>
               </ul>
             </div>
-            <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+            <div
+                 style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
               <h4 style="color: #50fa7b;">✅ Schema <code>api</code> separado</h4>
               <ul style="font-size: 0.8em;">
                 <li>Só expõe o que você quer</li>
@@ -567,7 +631,8 @@ query {
             </div>
           </multi-col>
           <div style="background: #44475a; padding: 1em; border-radius: 8px; margin-top: 1em;">
-            <p style="font-size: 0.9em;">💡 O <code>public</code> é o padrão — mas o PostGraphile só expõe o que você especificar (<code>--schema api</code>)</p>
+            <p style="font-size: 0.9em;">💡 O <code>public</code> é o padrão — mas o PostGraphile só expõe o que você
+              especificar (<code>--schema api</code>)</p>
           </div>
         </section>
 
@@ -601,7 +666,8 @@ query {
         <!-- SLIDE: Instalação -->
         <section data-auto-animate>
           <h2>Instalação: PostGraphile v5</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
+          <code-block lang="bash" data-trim>
+            <script type="text/plain">
 # npx (para teste rápido)
 npx postgraphile@5 \
   --connection "postgres://user:pass@localhost:5432/bddufop" \
@@ -615,16 +681,19 @@ docker run -p 5000:5000 \
   --env DATABASE_URL="postgres://postgres:pass@host.docker.internal:5433/bddufop" \
   graphile/postgraphile:latest \
   --schema api --jwt-secret segredo123 --graphiql
-</script></code-block>
+</script>
+          </code-block>
           <div style="background: rgba(139,233,253,0.15); padding: 0.5em; border-radius: 4px; margin-top: 0.5em;">
-            <p style="font-size: 0.75em; color: #8be9fd;">💡 <code>--watch</code> recarrega automaticamente ao detectar mudanças!</p>
+            <p style="font-size: 0.75em; color: #8be9fd;">💡 <code>--watch</code> recarrega automaticamente ao detectar
+              mudanças!</p>
           </div>
         </section>
 
         <!-- SLIDE: Schema API -->
         <section data-auto-animate>
           <h2>Criando o Schema <code>api</code></h2>
-          <code-block lang="sql" data-trim data-line-numbers><script type="text/plain">
+          <code-block lang="sql" data-trim data-line-numbers>
+            <script type="text/plain">
 -- 1. Criar schema dedicado (NÃO use public!)
 CREATE SCHEMA IF NOT EXISTS api;
 
@@ -646,23 +715,27 @@ CREATE TABLE api.pedidos (
   quantidade INTEGER NOT NULL,
   data_pedido TIMESTAMPTZ DEFAULT NOW()
 );
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: Views e Functions -->
         <section data-auto-animate>
           <h2>Views vs Tables no Schema API</h2>
           <multi-col style="gap:15px">
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h4 style="color: #ff5555;">❌ Tabela direta</h4>
               <p style="font-size: 0.8em;">Expõe TODOS os dados — inclusive sensíveis!</p>
             </div>
-            <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+            <div
+                 style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
               <h4 style="color: #50fa7b;">✅ View</h4>
               <p style="font-size: 0.8em;">Controla exatamente quais colunas são visíveis!</p>
             </div>
           </multi-col>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- View: expõe apenas dados necessários (sem senha_hash!)
 CREATE VIEW api.meus_pedidos AS
 SELECT
@@ -688,16 +761,19 @@ BEGIN
   RETURNING *;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: pgcrypto -->
         <section data-auto-animate>
           <h2>Segurança: pgcrypto para Hash de Senhas</h2>
-          <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff5555;">
+          <div
+               style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ff5555;">
             <p>⚠️ <strong>NUNCA</strong> armazene senhas em texto puro!</p>
           </div>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- Hash bcrypt via pgcrypto
 INSERT INTO api.usuarios (nome, email, senha_hash) VALUES
   ('Ana', 'ana@email.com', crypt('senha123', gen_salt('bf'))),
@@ -706,16 +782,19 @@ INSERT INTO api.usuarios (nome, email, senha_hash) VALUES
 -- Funções do pgcrypto:
 -- crypt(senha, salt) → retorna hash
 -- gen_salt('bf') → gera salt bcrypt aleatório
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: JWT -->
         <section data-auto-animate>
           <h2>JWT: Autenticação com Tokens</h2>
-          <div style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
+          <div
+               style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
             <p>💡 Para projetos novos, use extensão <code>pgjwt</code>!</p>
           </div>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- OPÇÃO: pgjwt (recomendado para produção)
 CREATE EXTENSION pgjwt;
 
@@ -740,14 +819,16 @@ BEGIN
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: RLS -->
         <section data-auto-animate>
           <h2>RLS: Row Level Security</h2>
           <p style="color: #bd93f9; margin-bottom: 1em;">Cada usuário vê apenas seus dados</p>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- Habilitar RLS na tabela
 ALTER TABLE api.pedidos ENABLE ROW LEVEL SECURITY;
 
@@ -760,7 +841,8 @@ CREATE POLICY usuarios_pedidos ON api.pedidos
       ''
     )::INTEGER
   );
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: RLS Fluxo -->
@@ -788,10 +870,12 @@ graph LR
         <!-- SLIDE: RLS Debugging -->
         <section data-auto-animate>
           <h2>RLS: Debugging</h2>
-          <div style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
+          <div
+               style="background: rgba(139,233,253,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #8be9fd;">
             <p>Para testar RLS manualmente, use <code>set_config</code>:</p>
           </div>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- Simula usuário logado (para testar)
 SET app.current_user_id = '1';
 SELECT * FROM api.pedidos;  -- só pedidos do usuário 1
@@ -801,16 +885,20 @@ SELECT set_config('request.jwt.claim.user_id', '1', false);
 
 -- Resetar
 RESET app.current_user_id;
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: SECURITY DEFINER -->
         <section data-auto-animate>
           <h2>SECURITY DEFINER</h2>
-          <div style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ffb86c;">
-            <p>⚠️ <code>SECURITY DEFINER</code> executa com privilégios do <strong>dono</strong> da função, ignorando permissões do chamador</p>
+          <div
+               style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #ffb86c;">
+            <p>⚠️ <code>SECURITY DEFINER</code> executa com privilégios do <strong>dono</strong> da função, ignorando
+              permissões do chamador</p>
           </div>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- SECURITY DEFINER: executa como OWNER da schema
 CREATE FUNCTION api.criar_pedido(...)
 RETURNS ... AS $$
@@ -825,13 +913,15 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- O RLS verifica o usuário do TOKEN (JWT)
 -- MAS a função executa com privilégios do owner
 -- → Combinação pode ser tricky!
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: Demo Passo 1 -->
         <section data-auto-animate>
           <h2>Demo: Schema + Tabelas</h2>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 CREATE SCHEMA api;
 
 CREATE TABLE api.usuarios (
@@ -847,13 +937,15 @@ CREATE TABLE api.pedidos (
   produto TEXT,
   quantidade INTEGER
 );
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: Demo Passo 2 -->
         <section data-auto-animate>
           <h2>Demo: RLS + Dados</h2>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim>
+            <script type="text/plain">
 -- 2. Habilitar RLS
 ALTER TABLE api.pedidos ENABLE ROW LEVEL SECURITY;
 
@@ -874,7 +966,8 @@ INSERT INTO api.pedidos (usuario_id, produto, quantidade) VALUES
   (1, 'Caneta', 10),
   (1, 'Caderno', 5),
   (2, 'Lápis', 20);
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: GraphiQL Queries -->
@@ -883,7 +976,8 @@ INSERT INTO api.pedidos (usuario_id, produto, quantidade) VALUES
           <multi-col style="gap:15px">
             <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
               <p style="color: #50fa7b; font-size: 0.8em;">Query: Listar pedidos</p>
-              <code-block lang="graphql" data-trim><script type="text/plain">
+              <code-block lang="graphql" data-trim>
+                <script type="text/plain">
 query {
   allPedidos {
     nodes {
@@ -893,11 +987,13 @@ query {
     }
   }
 }
-</script></code-block>
+</script>
+              </code-block>
             </div>
             <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
               <p style="color: #bd93f9; font-size: 0.8em;">Mutation: Login</p>
-              <code-block lang="graphql" data-trim><script type="text/plain">
+              <code-block lang="graphql" data-trim>
+                <script type="text/plain">
 mutation {
   login(
     email: "ana@email.com"
@@ -906,10 +1002,12 @@ mutation {
     text
   }
 }
-</script></code-block>
+</script>
+              </code-block>
             </div>
           </multi-col>
-          <div style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ffb86c;">
+          <div
+               style="background: rgba(255,187,140,0.15); padding: 1em; border-radius: 8px; margin-top: 1em; border-left: 4px solid #ffb86c;">
             <p>💡 Token JWT vai no header <code>Authorization: Bearer &lt;token&gt;</code></p>
           </div>
         </section>
@@ -918,7 +1016,8 @@ mutation {
         <section data-auto-animate>
           <h2>Segurança: httpOnly Cookies vs localStorage</h2>
           <multi-col style="gap:15px">
-            <div style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
+            <div
+                 style="background: rgba(255,85,85,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
               <h4 style="color: #ff5555;">❌ localStorage</h4>
               <ul style="font-size: 0.85em;">
                 <li>Vulnerável a XSS</li>
@@ -926,7 +1025,8 @@ mutation {
                 <li>Atacante injeta script → token roubado</li>
               </ul>
             </div>
-            <div style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+            <div
+                 style="background: rgba(80,250,123,0.15); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
               <h4 style="color: #50fa7b;">✅ httpOnly Cookies</h4>
               <ul style="font-size: 0.85em;">
                 <li>Inacessíveis ao JavaScript</li>
@@ -935,7 +1035,8 @@ mutation {
               </ul>
             </div>
           </multi-col>
-          <code-block lang="javascript" data-trim><script type="text/plain">
+          <code-block lang="javascript" data-trim>
+            <script type="text/plain">
 // localStorage (simplificado, menos seguro)
 localStorage.setItem('token', jwt);
 
@@ -945,7 +1046,8 @@ res.cookie('token', jwt, {
   secure: true,       // só HTTPS
   sameSite: 'strict'  // só mesmo domínio
 });
-</script></code-block>
+</script>
+          </code-block>
         </section>
 
         <!-- SLIDE: Exercício Prático -->
@@ -954,7 +1056,8 @@ res.cookie('token', jwt, {
           <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
             <p><strong>Objetivo:</strong> Criar uma API GraphQL com RLS no schema <code>api</code></p>
             <ls-u>
-              <li>Criar schema <code>api</code> com tabela <code>tarefas</code> (id, usuario_id, descricao, concluida)</li>
+              <li>Criar schema <code>api</code> com tabela <code>tarefas</code> (id, usuario_id, descricao, concluida)
+              </li>
               <li>Habilitar RLS com política para isolar por <code>usuario_id</code></li>
               <li>Inserir 3 tarefas para cada usuário</li>
               <li>Testar no GraphiQL: fazer login e listar tarefas</li>
@@ -1021,4 +1124,5 @@ res.cookie('token', jwt, {
   </script>
 
 </body>
+
 </html>
