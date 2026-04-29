@@ -119,6 +119,7 @@ const initChalkboard = function ( Reveal ) {
 		radius: 20
 	};
 	var eraserToggled = false;
+	var lastColor = 0;
 	var boardmarkers = [ {
 			color: 'rgba(255,255,255,1)',
 			cursor: 'url(' + path + 'img/boardmarker-black.png), auto'
@@ -206,7 +207,7 @@ const initChalkboard = function ( Reveal ) {
 		},
 		increaseEraser: {
 			keyCode: 187,
-			key: '+',
+			key: '=',
 			description: 'Increase eraser size'
 		},
 		decreaseEraser: {
@@ -984,10 +985,10 @@ const initChalkboard = function ( Reveal ) {
 	function toggleEraser() {
 		eraserToggled = !eraserToggled;
 		if (eraserToggled) {
+			if (color[mode] >= 0) lastColor = color[mode];
 			setColor(-1, true);
 		} else {
-			var prev = color[mode] >= 0 ? color[mode] : 0;
-			setColor(prev, true);
+			setColor(lastColor, true);
 		}
 	}
 
@@ -997,6 +998,7 @@ const initChalkboard = function ( Reveal ) {
 
 	function selectColor( index ) {
 		eraserToggled = false;
+		lastColor = index;
 		setColor( index, true );
 	}
 
