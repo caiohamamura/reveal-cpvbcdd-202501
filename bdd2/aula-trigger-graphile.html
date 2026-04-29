@@ -443,6 +443,56 @@ $$ LANGUAGE plpgsql;
           </div>
         </section>
 
+        <!-- SLIDE: Setup Biblioteca -->
+        <section data-auto-animate>
+          <h2>Setup: Sistema de Biblioteca</h2>
+          <p style="font-size: 0.75em; color: #6272a4;">Copie e execute no psql para criar o schema do exercício</p>
+          <code-block lang="sql" data-trim><script type="text/plain">
+-- Autores
+CREATE TABLE autores (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL
+);
+
+-- Livros
+CREATE TABLE livros (
+  id SERIAL PRIMARY KEY,
+  titulo TEXT NOT NULL,
+  autor_id INTEGER REFERENCES autores(id),
+  disponivel BOOLEAN DEFAULT true
+);
+
+-- Membros
+CREATE TABLE membros (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL
+);
+
+-- Empréstimos
+CREATE TABLE emprestimos (
+  id SERIAL PRIMARY KEY,
+  livro_id INTEGER REFERENCES livros(id),
+  membro_id INTEGER REFERENCES membros(id),
+  data_emprestimo DATE DEFAULT current_date
+);
+
+-- Log de auditoria
+CREATE TABLE log_auditoria (
+  id SERIAL PRIMARY KEY,
+  tabela TEXT,
+  operacao TEXT,
+  detalhes TEXT,
+  criado_em TIMESTAMP DEFAULT now()
+);
+
+-- Dados de exemplo
+INSERT INTO autores (nome) VALUES ('Machado de Assis'), ('Clarice Lispector');
+INSERT INTO livros (titulo, autor_id) VALUES ('Dom Casmurro', 1), ('A Hora da Estrela', 2);
+INSERT INTO membros (nome) VALUES ('Ana'), ('Carlos');
+</script></code-block>
+          <copy-btn></copy-btn>
+        </section>
+
         <!-- SLIDE: Exercício Prático -->
         <section data-auto-animate>
           <h2>Exercício: Identificando o Problema</h2>
