@@ -425,6 +425,10 @@ const initChalkboard = function (Reveal) {
 
 	function updateCursorIndicator(e) {
 		if (!cursorOverlay || !cursorIndicator) return;
+		if (mode != 1) {
+			cursorOverlay.style.display = 'none';
+			return;
+		}
 		var clientX = e.clientX;
 		var clientY = e.clientY;
 		lastClientX = clientX;
