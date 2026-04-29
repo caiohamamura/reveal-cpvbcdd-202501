@@ -34,12 +34,12 @@ div.boardhandle > ul {
 
 div.palette > ul > li,
 div.boardhandle > ul > li {
-  margin: 10px;
+  margin: 4px;
 }
 
 .key-label {
   display: block;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: bold;
   color: #ccc;
   text-align: center;
@@ -54,7 +54,7 @@ li[data-eraser="true"] {
   align-items: center;
   gap: 2px;
   color: #aaa;
-  font-size: 9px;
+  font-size: 14px;
   font-weight: bold;
   font-family: monospace;
 }

@@ -41,11 +41,11 @@ window.RevealChalkboard = window.RevealChalkboard || {
 	toggleEraser: function () {
 		toggleEraser();
 	},
-	increaseEraser: function () {
-		changeEraserSize(5);
+	increaseStrokeEraser: function () {
+		changeStrokeEraserSize(1);
 	},
-	decreaseEraser: function () {
-		changeEraserSize(-5);
+	decreaseStrokeEraser: function () {
+		changeStrokeEraserSize(-1);
 	},
 	color1: function () { selectColor(0); },
 	color2: function () { selectColor(1); },
@@ -210,12 +210,12 @@ const initChalkboard = function (Reveal) {
 			key: 'E',
 			description: 'Toggle eraser'
 		},
-		increaseEraser: {
+		increaseStrokeEraser: {
 			keyCode: 187,
 			key: '=',
 			description: 'Increase eraser size'
 		},
-		decreaseEraser: {
+		decreaseStrokeEraser: {
 			keyCode: 189,
 			key: '-',
 			description: 'Decrease eraser size'
@@ -425,10 +425,6 @@ const initChalkboard = function (Reveal) {
 
 	function updateCursorIndicator(e) {
 		if (!cursorOverlay || !cursorIndicator) return;
-		if (mode != 1) {
-			cursorOverlay.style.display = 'none';
-			return;
-		}
 		var clientX = e.clientX;
 		var clientY = e.clientY;
 		lastClientX = clientX;
@@ -438,16 +434,7 @@ const initChalkboard = function (Reveal) {
 		cursorOverlay.style.left = '0';
 		cursorOverlay.style.top = '0';
 
-		if (color[mode] < 0) {
-			// eraser mode
-			var r = eraser.radius * 2;
-			cursorIndicator.style.width = r + 'px';
-			cursorIndicator.style.height = r + 'px';
-			cursorIndicator.style.border = '2px solid rgba(255,255,255,0.7)';
-			cursorIndicator.style.background = 'rgba(180,180,180,0.25)';
-			cursorIndicator.style.left = (clientX + 1) + 'px';
-			cursorIndicator.style.top = (clientY + 1) + 'px';
-		} else {
+		if (color[mode] >= 0) {
 			// pen mode — use current color and boardmarkerWidth
 			var w = boardmarkerWidth;
 			var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
@@ -465,15 +452,7 @@ const initChalkboard = function (Reveal) {
 		var clientX = lastClientX;
 		var clientY = lastClientY;
 
-		if (color[mode] < 0) {
-			var r = eraser.radius * 2;
-			cursorIndicator.style.width = r + 'px';
-			cursorIndicator.style.height = r + 'px';
-			cursorIndicator.style.border = '2px solid rgba(255,255,255,0.7)';
-			cursorIndicator.style.background = 'rgba(180,180,180,0.25)';
-			cursorIndicator.style.left = (clientX + 1) + 'px';
-			cursorIndicator.style.top = (clientY + 1) + 'px';
-		} else {
+		if (color[mode] >= 0) {
 			var w = boardmarkerWidth;
 			var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
 			cursorIndicator.style.width = w + 'px';
@@ -1096,9 +1075,9 @@ const initChalkboard = function (Reveal) {
 		}
 	}
 
-	function changeEraserSize(delta) {
+	function changeStrokeEraserSize(delta) {
 		if (eraserToggled || color[mode] < 0) {
-			eraser.radius = Math.max(5, Math.min(100, eraser.radius + delta));
+			eraser.radius = Math.max(5, Math.min(100, eraser.radius + (delta*5)));
 			updateSpongeCursor();
 		} else {
 			boardmarkerWidth = Math.max(1, Math.min(30, boardmarkerWidth + delta));
@@ -1133,7 +1112,6 @@ const initChalkboard = function (Reveal) {
 		lastX = null;
 		lastY = null;
 		mode = 0;
-		hideCursorIndicator();
 	}
 
 	/**
@@ -1928,7 +1906,6 @@ const initChalkboard = function (Reveal) {
 				toggleChalkboard();
 				notescanvas.style.background = background[0]; //'rgba(255,0,0,0.5)';
 				notescanvas.style.pointerEvents = 'auto';
-				hideCursorIndicator();
 			}
 			else {
 				if (notescanvas.style.pointerEvents != 'none') {
@@ -1938,7 +1915,6 @@ const initChalkboard = function (Reveal) {
 					}
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = 'none';
-					hideCursorIndicator();
 				}
 				else {
 					// show notes canvas
@@ -1954,7 +1930,6 @@ const initChalkboard = function (Reveal) {
 					}
 
 					setColor(idx, true);
-					hideCursorIndicator();
 				}
 			}
 		}
@@ -2138,8 +2113,8 @@ const initChalkboard = function (Reveal) {
 	this.getData = getData;
 	this.configure = configure;
 	this.toggleEraser = toggleEraser;
-	this.increaseEraser = function () { changeEraserSize(5); };
-	this.decreaseEraser = function () { changeEraserSize(-5); };
+	this.increaseStrokeEraser = function () { changeStrokeEraserSize(1); };
+	this.decreaseStrokeEraser = function () { changeStrokeEraserSize(-1); };
 	this.color1 = function () { selectColor(0); };
 	this.color2 = function () { selectColor(1); };
 	this.color3 = function () { selectColor(2); };
