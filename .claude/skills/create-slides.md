@@ -284,6 +284,57 @@ graph TD
 | `<copy-btn>` | Copy button for tables | Place after `<table>` |
 | `<md>` | Markdown rendering | Prop: `md` (markdown string) |
 | `<leader-line>` | Arrow between elements | **Must use explicit close `</leader-line>`** |
+| `<poll-question>` | Interactive poll (live voting) | Wrap in `<section>` parent, each question is a child slide |
+| `<md>` | Markdown rendering | Prop: `md` (markdown string) |
+
+### Poll Questions — `poll-question` Pattern
+
+Each question is a **separate slide** wrapped in a parent `<section>`:
+
+```html
+<section>
+  <!-- SLIDE: Instructions (shown first) -->
+  <section>
+    <h2>Quiz Interativo</h2>
+    <p>Conecte-se à sala e vote!</p>
+  </section>
+
+  <!-- SLIDE: Question 1 -->
+  <section>
+    <poll-question
+      id="q1"
+      title="Questão 1: Data Leakage"
+      question="Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?"
+      answer="b"
+      answer-text="Escalar antes do split causa data leakage!"
+      :options="[
+        { value: 'a', label: 'O modelo treina mais rápido' },
+        { value: 'b', label: 'Data leakage — info do teste vaza para treino' },
+        { value: 'c', label: 'Accuracy melhora automaticamente' },
+      ]" />
+  </section>
+
+  <!-- SLIDE: Question 2 -->
+  <section>
+    <poll-question
+      id="q2"
+      title="Questão 2: AUC"
+      question="Um modelo tem AUC = 0.45. O que isso significa?"
+      answer="c"
+      answer-text="AUC < 0.5 significa previsões invertidas!"
+      :options="[
+        { value: 'a', label: 'Modelo excelente' },
+        { value: 'b', label: 'Modelo razoável' },
+        { value: 'c', label: 'Pior que aleatório — inverteu as previsões!' },
+        { value: 'd', label: 'Modelo perfeito!' },
+      ]" />
+  </section>
+</section>
+```
+
+**Props:** `id` (unique identifier), `title` (e.g. "Questão 1: Topic"), `question` (the question text), `answer` (correct value, e.g. `"b"`), `answer-text` (explanation shown after answering), `:options` (array of `{value, label}` — **must use `:options` binding**).
+
+**Note:** Poll server is shared with seminar (`https://seminar.hamacorps.work/`). `mountSlideApp()` already sets `window.pollConfig = {}` — no additional config needed.
 
 ### Styling Conventions (from custom.css and user's manual edits)
 

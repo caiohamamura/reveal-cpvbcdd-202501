@@ -202,6 +202,67 @@ SELECT * FROM orders;
 - Para tabelas: extrai células em texto separado por tabulação, remove linhas duplicadas do header
 - Feedback visual "Copiado!" por 2s
 
+#### `poll-question` — Enquete Interativa
+Cada questão é um slide separado dentro de uma `<section>`. Requer `<section>` ao redor e `poll-question` como child direto.
+
+```html
+<section>  <!-- wrapper obrigatório -->
+  <section>  <!-- cada questão é um slide -->
+    <poll-question
+      id="q1"
+      title="Questão 1: Data Leakage"
+      question="Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?"
+      answer="b"
+      answer-text="Escalar antes do split causa data leakage!"
+      :options="[
+        { value: 'a', label: 'O modelo treina mais rápido' },
+        { value: 'b', label: 'Data leakage — info do teste vaza para treino' },
+        { value: 'c', label: 'Accuracy melhora automaticamente' },
+      ]" />
+  </section>
+</section>
+```
+
+**Props:**
+| Prop | Tipo | Descrição |
+|------|------|-----------|
+| `id` | string | Identificador único da questão |
+| `title` | string | Título da questão (ex: "Questão 1: Data Leakage") |
+| `question` | string | Texto da pergunta |
+| `answer` | string | Valor correto (ex: `"b"`) |
+| `answer-text` | string | Explicação após resposta |
+| `options` | array | Array de `{ value, label }` — deve usar `:options` |
+
+**Exemplo completo de quiz (vários slides):**
+```html
+<section>
+  <section>
+    <h2>Quiz Interativo</h2>
+    <p>Conecte-se à sala e vote!</p>
+  </section>
+
+  <section>
+    <poll-question
+      id="q1"
+      title="Questão 1"
+      question="Pergunta aqui?"
+      answer="a"
+      answer-text="Explicação da resposta"
+      :options="[...]" />
+  </section>
+
+  <section>
+    <poll-question
+      id="q2"
+      title="Questão 2"
+      question="Outra pergunta?"
+      answer="c"
+      answer-text="Explicação"
+      :options="[...]" />
+  </section>
+</section>
+```
+
 #### `leader-line` — Linhas Conectoras entre Elementos
 ```html
 <div id="el1">Elemento A</div>
@@ -570,43 +631,50 @@ backgroundColor: ['#8be9fd', '#ff5555', '#f1fa8c', '#50fa7b', '#6272a4', '#bd93f
 ### Visão Geral
 Dois plugins para interatividade ao vivo: **Poll** (enquetes com resultados em tempo real via WebSocket) e **Seminar** (controle de presença e status de participação).
 
-### Inclusão (Poll)
+### Inclusão (Poll — já em init.js)
+
+O `mountSlideApp()` já carrega `window.pollConfig = {}`. Só é necessário o `<poll-question>` nos slides.
+
+### Uso (Poll — componente Vue `poll-question`)
+
+Cada questão é um slide separado dentro de `<section>` wrapper:
 
 ```html
-<link rel="stylesheet" href="plugin/poll/style.css" />
-<script src="plugin/poll/plugin.js"></script>
+<section>
+  <section>
+    <poll-question
+      id="q1"
+      title="Questão 1: Data Leakage"
+      question="Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?"
+      answer="b"
+      answer-text="Escalar antes do split causa data leakage!"
+      :options="[
+        { value: 'a', label: 'O modelo treina mais rápido' },
+        { value: 'b', label: 'Data leakage — info do teste vaza para treino' },
+        { value: 'c', label: 'Accuracy melhora automaticamente' },
+      ]" />
+  </section>
+</section>
 ```
 
-### Uso (Poll)
+Props: `id`, `title`, `question`, `answer`, `answer-text`, `:options` (array de `{value, label}`).
 
-```html
-<div class="poll">
-  <ul data-poll>
-    <li data-option>Opção A</li>
-    <li data-option>Opção B</li>
-    <li data-option>Opção C</li>
-  </ul>
-</div>
-```
-
-### Config
+### Config (Poll)
 
 ```js
 window.pollConfig = {
-  server: 'ws://servidor:4433',
-  room: 'nome-da-sala',
+  server: 'https://seminar.hamacorps.work/',  // mesmo servidor do seminar
+  room: window.seminarConfig?.room || location.pathname,
   user: 'Nome do Aluno'
 };
 ```
 
-### Seminar
+### Seminar (já em init.js)
 
-```js
-window.seminarConfig = {
-  server: 'ws://servidor:4433',
-  room: 'nome-da-sala'
-};
-```
+`mountSlideApp()` injeta automaticamente o painel de conexão no `<body>`. Config padrão:
+- `server: 'https://seminar.hamacorps.work/'` (compartilhado por todos os decks)
+- `room: location.pathname` (único por deck)
+- Para customizar room: `window.seminarConfig = { room: 'my-room' }` antes de `mountSlideApp()`
 
 Consulte `docs/ECOSSISTEMA.md` (memória team) para mais detalhes sobre setup do servidor.
 
