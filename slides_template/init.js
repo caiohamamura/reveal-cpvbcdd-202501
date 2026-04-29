@@ -101,7 +101,7 @@ function initializeReveal() {
   });
 }
 
-function mountSlideApp() {
+export function mountSlideApp() {
   injectSeminarPanel();
   const app = Vue.createApp({
     setup() {
