@@ -362,27 +362,27 @@ $$ LANGUAGE plpgsql;
         <section data-auto-animate>
           <h2>Triggers vs Procedures: Melhor Diretriz</h2>
           <div
-               style="background: #44475a; padding: 1em; border-radius: 8px; margin-bottom: 1em; border-left: 4px solid #bd93f9;">
-            <p>Não é "evite triggers" — é <strong>"use triggers com intenção"</strong>:</p>
+               style="background: #44475a; padding: 0.5em 1em; border-radius: 8px; margin-bottom: 0.5em; border-left: 4px solid #bd93f9; font-size: 0.8em;">
+            <p style="margin:0">Não é "evite triggers" — é <strong>"use triggers com intenção"</strong></p>
           </div>
-          <multi-col style="gap:15px">
+          <multi-col :cols="3" style="gap:10px">
             <div
-                 style="flex: 1; background: rgba(255,85,85,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #ff5555;">
-              <h3 style="color: #ff5555;">⚡ Trigger</h3>
-              <p style="font-size: 0.85em;">Se <strong>esquecer</strong> vai quebrar seus dados</p>
-              <p style="font-size: 0.75em; color: #6272a4;">Ex: auditoria, invariantes cross-cutting</p>
+                 style="background: rgba(255,85,85,0.1); padding: 0.6em; border-radius: 8px; border-left: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; font-size: 0.9em;">⚡ Trigger</h3>
+              <p style="font-size: 0.7em;">Se <strong>esquecer</strong> vai quebrar dados</p>
+              <p style="font-size: 0.65em; color: #6272a4;">Ex: auditoria, invariantes</p>
             </div>
             <div
-                 style="flex: 1; background: rgba(80,250,123,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #50fa7b;">
-              <h3 style="color: #50fa7b;">📦 Procedure</h3>
-              <p style="font-size: 0.85em;">Representa uma <strong>ação de negócio</strong></p>
-              <p style="font-size: 0.75em; color: #6272a4;">Ex: criar_pedido, emprestar_livro</p>
+                 style="background: rgba(80,250,123,0.1); padding: 0.6em; border-radius: 8px; border-left: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; font-size: 0.9em;">📦 Procedure</h3>
+              <p style="font-size: 0.7em;">Representa uma <strong>ação de negócio</strong></p>
+              <p style="font-size: 0.65em; color: #6272a4;">Ex: criar_pedido, emprestar_livro</p>
             </div>
             <div
-                 style="flex: 1; background: rgba(139,233,253,0.1); padding: 1em; border-radius: 8px; border-left: 4px solid #8be9fd;">
-              <h3 style="color: #8be9fd;">🔢 Function</h3>
-              <p style="font-size: 0.85em;"><strong>Computa</strong> algo sem efeitos colaterais</p>
-              <p style="font-size: 0.75em; color: #6272a4;">Ex: calcular_desconto, formatar_cpf</p>
+                 style="background: rgba(139,233,253,0.1); padding: 0.6em; border-radius: 8px; border-left: 4px solid #8be9fd;">
+              <h3 style="color: #8be9fd; font-size: 0.9em;">🔢 Function</h3>
+              <p style="font-size: 0.7em;"><strong>Computa</strong> sem efeitos colaterais</p>
+              <p style="font-size: 0.65em; color: #6272a4;">Ex: calcular_desconto</p>
             </div>
           </multi-col>
         </section>
