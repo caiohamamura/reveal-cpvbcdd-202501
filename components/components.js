@@ -391,6 +391,13 @@ const pollQuestionComponent = {
     const el = this.$el;
     const results = el.querySelector('.poll-results');
     const pollEl = el.querySelector('.poll');
+    const pollBarTracks = el.querySelectorAll(".poll-bar-track");
+
+    pollBarTracks.forEach(track => {
+      setTimeout(() => {
+        track.style.height = pollEl.clientHeight - 40  + "px";
+      }, 50);
+    });
 
     const highlightAnswer = () => {
       if (!this.answer || !pollEl) return;
@@ -429,7 +436,7 @@ const pollQuestionComponent = {
         bars.forEach((bar, i) => {
           const pct = total > 0 ? Math.round(counts[i] / total * 100) : 0;
           bar.style.height = Math.max(pct, 8) + '%';
-          bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#50fa7b' : '#bd93f9';
+          bar.style.background = pct > 0 && counts[i] === Math.max(...counts) ? '#bd93f9' : '#8d63c9';
         });
       };
 
@@ -454,8 +461,8 @@ const pollQuestionComponent = {
             });
           }
           if (results) {
-            results.querySelectorAll('.poll-bar-fill').forEach(bar => {
-              bar.style.background = '#bd93f9';
+            results.querySelectorAll('.poll-bar-fill').forEach((bar, i) => {
+              bar.style.background = bar.style.height.replace("%", "") > 8 ? '#bd93f9' : '#8d63c9';
             });
           }
         }
@@ -474,7 +481,7 @@ const pollQuestionComponent = {
           {{ String(opt.value).toUpperCase() }}) {{ opt.label }}
         </button>
       </div>
-      <div class="results poll-results" :data-poll="id" style="display:flex;justify-content:space-evenly;align-items:end;height:100%">
+      <div class="results poll-results" ref="pollResultsRef" :data-poll="id" style="display:flex;justify-content:space-evenly;align-items:end;height:100%">
         <div class="poll-bar" v-for="opt in options" style="display:flex;flex-flow:column;">
           <div class="poll-bar-track">
             <div class="poll-bar-fill" :style="{height:'0%'}">

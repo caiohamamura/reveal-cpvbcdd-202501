@@ -426,5 +426,5 @@ div {
 .poll-results { margin-top: 8px; display: flex; align-items: flex-end; gap: 12px; justify-content: center; }
 .poll-bar { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; max-width: 120px; }
 .poll-bar-label { color: #bd93f9; font-weight: bold; font-size: 14px; }
-.poll-bar-track { width: 100%; background: #44475a; border-radius: 4px; height: 120px; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
+.poll-bar-track { width: 100%; border-radius: 4px; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
 .poll-bar-fill { background: #bd93f9; width: 100%; border-radius: 4px; display: flex; align-items: flex-start; justify-content: center; padding-top: 4px; min-height: 24px; transition: height 0.5s ease; color: #282a36; font-weight: bold; font-size: 13px; }

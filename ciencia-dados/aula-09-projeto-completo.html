@@ -15,23 +15,21 @@
   <link rel="stylesheet" href="../plugin/poll/style.css" />
 </head>
 
-<body>
+<body> 
 
-  <button class="seminar-toggle" onclick="document.getElementById('seminarPanel').classList.toggle('open')">&#9776; Seminar</button>
+  <button class="seminar-toggle" onclick="document.getElementById('seminarPanel').classList.toggle('open');seminarPassword.focus()">&#9776;</button>
   <div id="seminarPanel" class="seminar-panel">
     <div id="seminarHost">
-      <label><strong>Host (apresentador)</strong></label>
-      <input type="password" id="seminarPassword" placeholder="Senha do host" />
-      <button class="btn-host" onclick="RevealSeminar.open_or_join_room(document.getElementById('seminarPassword').value)">Host</button>
-      <button class="btn-leave" onclick="RevealSeminar.close_room(document.getElementById('seminarPassword').value)">Fechar sala</button>
+      <label><strong>Host (apresentador)</strong></label> 
+      <form action="" onsubmit="event.preventDefault();console.log('Try');RevealSeminar.open_or_join_room(document.getElementById('seminarPassword').value);">
+        <input type="password" id="seminarPassword" placeholder="Senha do host"/>
+      </form>
+      <button class="btn-host"
+              onclick="RevealSeminar.open_or_join_room(document.getElementById('seminarPassword').value)">Host</button>
+      <button class="btn-leave"
+              onclick="RevealSeminar.close_room(document.getElementById('seminarPassword').value)">Fechar sala</button>
     </div>
-    <hr style="border-color: #44475a; margin: 12px 0;"/>
-    <div id="seminarJoin">
-      <label><strong>Participante</strong></label>
-      <input type="text" id="seminarUsername" placeholder="Seu nome (opcional)" />
-      <button class="btn-join" onclick="RevealSeminar.join_room(document.getElementById('seminarUsername').value || undefined)">Join</button>
-      <button class="btn-leave" onclick="RevealSeminar.leave_room()">Sair</button>
-    </div>
+    <hr style="border-color: #44475a; margin: 12px 0;" />
     <div class="seminar-status" id="seminarStatus">Desconectado</div>
   </div>
 
@@ -43,11 +41,10 @@
            ============================================================ -->
       <section data-auto-animate>
         <header1
-          curso="Ciência de Dados"
-          aula="09"
-          title="Projeto Completo de Data Science em R"
-          title-size="22"
-        ></header1>
+                 curso="Ciência de Dados"
+                 aula="09"
+                 title="Projeto Completo de Data Science em R"
+                 title-size="22"></header1>
       </section>
 
       <!-- ============================================================
@@ -121,7 +118,8 @@ table(teste$Target) %>% prop.table()
 cat("Treino:", nrow(treino), "| Teste:", nrow(teste))
 </textarea></code-block>
           <ul>
-            <li><code>strata = Target</code> — <strong>amostragem estratificada</strong>: mantém proporção das classes</li>
+            <li><code>strata = Target</code> — <strong>amostragem estratificada</strong>: mantém proporção das classes
+            </li>
             <li><code>prop = 0.8</code> — 80% treino, 20% teste</li>
             <li><code>set.seed(42)</code> — reprodutibilidade</li>
           </ul>
@@ -134,27 +132,29 @@ cat("Treino:", nrow(treino), "| Teste:", nrow(teste))
            ============================================================ -->
       <section data-auto-animate>
 
-          <h2 style="color: #ff5555;">⚠️ Data Leakage</h2>
-          <div style="background: #ff555520; border: 2px solid #ff5555; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
-            <p style="color: #ff5555; font-size: 18pt;"><strong>WARNING:</strong> Informacao do teste vaza para o treino = resultados falsamente otimistas!</p>
-          </div>
-          <multi-col style="gap:20px">
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
-                <p style="color: #ff5555;"><strong>❌ ERRADO — Data Leakage:</strong></p>
-                <code-block lang="r" data-trim><textarea>
+        <h2 style="color: #ff5555;">⚠️ Data Leakage</h2>
+        <div
+             style="background: #ff555520; border: 2px solid #ff5555; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+          <p style="color: #ff5555; font-size: 18pt;"><strong>WARNING:</strong> Informacao do teste vaza para o treino =
+            resultados falsamente otimistas!</p>
+        </div>
+        <multi-col style="gap:20px">
+          <div style="flex: 1;">
+            <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 15px;">
+              <p style="color: #ff5555;"><strong>❌ ERRADO — Data Leakage:</strong></p>
+              <code-block lang="r" data-trim><textarea>
 # scale() USA media de TODOS os dados!
 dados_scaled <- scale(dados)
 split <- initial_split(dados_scaled)
 
 # O scaler viu o teste antes de separar!
 </textarea></code-block>
-              </div>
             </div>
-            <div style="flex: 1;">
-              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
-                <p style="color: #50fa7b;"><strong>✅ CERTO — Sem Leakage:</strong></p>
-                <code-block lang="r" data-trim><textarea>
+          </div>
+          <div style="flex: 1;">
+            <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px;">
+              <p style="color: #50fa7b;"><strong>✅ CERTO — Sem Leakage:</strong></p>
+              <code-block lang="r" data-trim><textarea>
 # Split PRIMEIRO
 split <- initial_split(dados, prop = 0.8)
 treino <- training(split)
@@ -164,10 +164,11 @@ teste <- testing(split)
 treino_scaled <- scale(treino)
 teste_scaled <- scale(teste)
 </textarea></code-block>
-              </div>
             </div>
-          </multi-col>
-          <p style="color: #f1fa8c; font-size: 16pt; margin-top: 15px;">Regra: <strong>Split → Pré-processamento → Treino</strong></p>
+          </div>
+        </multi-col>
+        <p style="color: #f1fa8c; font-size: 16pt; margin-top: 15px;">Regra: <strong>Split → Pré-processamento →
+            Treino</strong></p>
       </section>
 
       <!-- ============================================================
@@ -260,40 +261,40 @@ graph TD
               </pre>
             </div>
           </div>
-          </section>
-          <section>
-            <h3>Contexto Histórico</h3>
-            <ul>
-              <li>Paper de <strong>Leo Breiman (2001)</strong>: "Random Forests"</li>
-              <li>Baseado em dois pilares: <strong>bagging</strong> + <strong>random feature selection</strong></li>
-              <li>Um dos primeiros algoritmos de <strong>ensemble</strong></li>
-            </ul>
-            <h3 style="margin-top: 20px;">Por que é o padrão de comparação?</h3>
-            <ul>
-              <li>Robusto: funciona bem <strong>"out of the box"</strong></li>
-              <li>Não precisa de muito tuning</li>
-              <li>Combina poder preditivo com interpretabilidade</li>
-              <li>Frequentemente usado como <strong>baseline</strong> em competitions (Kaggle, etc.)</li>
-              <li>Novas técnicas precisam <strong>"bater"</strong> o RF para provar valor</li>
-            </ul>
-          </section>
-          <section>
-            <h3>⚠️ Limitações Importantes</h3>
-            <div style="background-color: #ff5555; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-              <strong>Não extrapola!</strong> — Só prevê dentro do range dos dados de treino.
-              <br>Se treino tem Age 20-60, <strong>não consegue prever Age=80</strong>.
-            </div>
-            <ul>
-              <li>Interpretabilidade: individuais vs globais</li>
-              <li>Pode ter overfit com muitas árvores (raro, mas possível)</li>
-            </ul>
-            <code-block lang="r" data-trim><textarea>
+        </section>
+        <section>
+          <h3>Contexto Histórico</h3>
+          <ul>
+            <li>Paper de <strong>Leo Breiman (2001)</strong>: "Random Forests"</li>
+            <li>Baseado em dois pilares: <strong>bagging</strong> + <strong>random feature selection</strong></li>
+            <li>Um dos primeiros algoritmos de <strong>ensemble</strong></li>
+          </ul>
+          <h3 style="margin-top: 20px;">Por que é o padrão de comparação?</h3>
+          <ul>
+            <li>Robusto: funciona bem <strong>"out of the box"</strong></li>
+            <li>Não precisa de muito tuning</li>
+            <li>Combina poder preditivo com interpretabilidade</li>
+            <li>Frequentemente usado como <strong>baseline</strong> em competitions (Kaggle, etc.)</li>
+            <li>Novas técnicas precisam <strong>"bater"</strong> o RF para provar valor</li>
+          </ul>
+        </section>
+        <section>
+          <h3>⚠️ Limitações Importantes</h3>
+          <div style="background-color: #ff555530; color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <strong>Não extrapola!</strong> — Só prevê dentro do range dos dados de treino.
+            <br>Se treino tem Age 20-60, <strong>não consegue prever Age=80</strong>.
+          </div>
+          <ul>
+            <li>Interpretabilidade: individuais vs globais</li>
+            <li>Pode ter overfit com muitas árvores (raro, mas possível)</li>
+          </ul>
+          <code-block lang="r" data-trim><textarea>
 # Importante: RF não extrapola!
 # train: Amount 1000-50000
 # test: Amount 80000 → predictions serão ruins!
 </textarea></code-block>
-          </section>
-          <section>
+        </section>
+        <section>
           <code-block lang="r" data-trim><textarea>
 library(ranger)
 
@@ -320,14 +321,38 @@ cat("OOB Error:", modelo$prediction.error)
             <div style="flex: 1;">
               <table style="font-size: 16pt;">
                 <thead>
-                  <tr><th>Métrica</th><th>Fórmula</th><th>Interpretação</th></tr>
+                  <tr>
+                    <th>Métrica</th>
+                    <th>Fórmula</th>
+                    <th>Interpretação</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr><td><strong>Accuracy</strong></td><td>TP+TN / Total</td><td>% total de acertos</td></tr>
-                  <tr><td><strong>Precision</strong></td><td>TP / (TP+FP)</td><td>Das classificadas risco, quantas eram?</td></tr>
-                  <tr><td><strong>Recall</strong></td><td>TP / (TP+FN)</td><td>Das que eram risco, quantas encontrou?</td></tr>
-                  <tr><td><strong>F1 Score</strong></td><td>2×P×R / (P+R)</td><td>Harmônico entre precision e recall</td></tr>
-                  <tr><td><strong>AUC-ROC</strong></td><td>Área sob curva ROC</td><td>Probabilidade de classificar positivo maior que negativo</td></tr>
+                  <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td>TP+TN / Total</td>
+                    <td>% total de acertos</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Precision</strong></td>
+                    <td>TP / (TP+FP)</td>
+                    <td>Das classificadas risco, quantas eram?</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Recall</strong></td>
+                    <td>TP / (TP+FN)</td>
+                    <td>Das que eram risco, quantas encontrou?</td>
+                  </tr>
+                  <tr>
+                    <td><strong>F1 Score</strong></td>
+                    <td>2×P×R / (P+R)</td>
+                    <td>Harmônico entre precision e recall</td>
+                  </tr>
+                  <tr>
+                    <td><strong>AUC-ROC</strong></td>
+                    <td>Área sob curva ROC</td>
+                    <td>Probabilidade de classificar positivo maior que negativo</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -355,7 +380,10 @@ f_meas(pred_df, truth, estimate,
 auc(pred_df, truth, estimate,
     event_level = "second")
 </textarea></code-block>
-              <p style="color: #8be9fd; font-size: 14pt;"><strong>💡 as.factor():</strong> yarstick exige que <code>truth</code> seja fator — classe positiva deve ser o <em>segundo nível</em> para <code>event_level = "second"</code></p>
+              <p style="color: #8be9fd; font-size: 14pt;"><strong>💡 as.factor():</strong> yarstick exige que
+                <code>truth</code> seja fator — classe positiva deve ser o <em>segundo nível</em> para
+                <code>event_level = "second"</code>
+              </p>
 
             </div>
           </multi-col>
@@ -374,20 +402,39 @@ auc(pred_df, truth, estimate,
               <p>Área sob a curva ROC — mede a <strong>capacidade discriminativa</strong> do modelo.</p>
               <div style="background: #282a36; padding: 15px; margin-top: 15px; border-radius: 8px;">
                 <table style="font-size: 14pt;">
-                  <thead><tr><th>AUC</th><th>Interpretação</th></tr></thead>
+                  <thead>
+                    <tr>
+                      <th>AUC</th>
+                      <th>Interpretação</th>
+                    </tr>
+                  </thead>
                   <tbody>
-                    <tr><td style="color: #ff5555;"><strong>= 0.5</strong></td><td>Azar (classificador aleatório)</td></tr>
-                    <tr><td style="color: #ffb86c;"><strong>&lt; 0.5</strong></td><td>Invertido (preve ao contrário!)</td></tr>
-                    <tr><td style="color: #50fa7b;"><strong>> 0.5</strong></td><td>Bom — mais perto de 1, melhor</td></tr>
-                    <tr><td style="color: #8be9fd;"><strong>> 0.9</strong></td><td>Excelente (cuidado com overfitting)</td></tr>
+                    <tr>
+                      <td style="color: #ff5555;"><strong>= 0.5</strong></td>
+                      <td>Azar (classificador aleatório)</td>
+                    </tr>
+                    <tr>
+                      <td style="color: #ffb86c;"><strong>&lt; 0.5</strong></td>
+                      <td>Invertido (preve ao contrário!)</td>
+                    </tr>
+                    <tr>
+                      <td style="color: #50fa7b;"><strong>> 0.5</strong></td>
+                      <td>Bom — mais perto de 1, melhor</td>
+                    </tr>
+                    <tr>
+                      <td style="color: #8be9fd;"><strong>> 0.9</strong></td>
+                      <td>Excelente (cuidado com overfitting)</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </div>
             <div style="flex: 1;">
               <img src="images/roc-curve.png" alt="ROC Curve" style="width:100%; border-radius: 8px;">
-              <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
-                <p style="color: #50fa7b;"><strong>Pro tip:</strong> AUC = 0.5 significa que o modelo não sabe distinguir as classes. AUC > 0.8 geralmente é considerado bom.</p>
+              <div
+                   style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; margin-top: 15px; border-radius: 8px;">
+                <p style="color: #50fa7b;"><strong>Pro tip:</strong> AUC = 0.5 significa que o modelo não sabe
+                  distinguir as classes. AUC > 0.8 geralmente é considerado bom.</p>
               </div>
             </div>
           </multi-col>
@@ -400,7 +447,8 @@ auc(pred_df, truth, estimate,
       <section data-auto-animate>
         <section>
           <h2>Feature Importance 📊</h2>
-          <img src="images/feature-importance.png" alt="Feature Importance" style="width:65%; border-radius: 8px; display:block; margin:0 auto;">
+          <img src="images/feature-importance.png" alt="Feature Importance"
+               style="width:65%; border-radius: 8px; display:block; margin:0 auto;">
           <ul style="margin-top:15px">
             <li>Mede quanto cada feature <strong>reduz impureza de Gini</strong></li>
             <li>Features no topo = mais decisivas</li>
@@ -417,7 +465,8 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
       <section data-auto-animate>
         <section>
           <h2>Feature Selection 🎯</h2>
-          <p style="color: #f1fa8c;">Escolher features certas melhora modelo, interpretabilidade e reduz overfitting.</p>
+          <p style="color: #f1fa8c;">Escolher features certas melhora modelo, interpretabilidade e reduz overfitting.
+          </p>
           <multi-col style="gap:20px">
             <div style="flex: 1;">
               <p style="color: #8be9fd;"><strong>Métodos Automáticos:</strong></p>
@@ -447,7 +496,9 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
             <div style="flex: 1;">
               <div style="background: #50fa7b20; border: 2px solid #50fa7b; padding: 15px; border-radius: 8px;">
                 <p style="color: #50fa7b;"><strong>💡 Combinação ideal:</strong></p>
-                <p>Use métodos automáticos para <strong>screening</strong> e conhecimento de domínio para <strong>validação final</strong>.</p>
+                <p>Use métodos automáticos para <strong>screening</strong> e conhecimento de domínio para
+                  <strong>validação final</strong>.
+                </p>
               </div>
             </div>
           </multi-col>
@@ -459,28 +510,28 @@ vip(modelo, num_features = 10, geom = "point")</textarea></code-block>
            ============================================================ -->
       <section data-auto-animate>
         <h2>Stepwise AIC/BIC: Como Funciona</h2>
-        
+
         <multi-col style="gap: 30px;">
           <!-- COLUNA ESQUERDA: Código -->
           <div style="flex: 1;">
             <code-block lang="r" data-line-numbers="1-14|2|5|8-11|14" data-fragment-index="1">
-# 1. Começa com modelo vazio
-modelo_null <- glm(Target ~ 1, data = treino, family = "binomial")
+              # 1. Começa com modelo vazio
+              modelo_null <- glm(Target ~ 1, data=treino, family="binomial" )
 
-# 2. Define modelo completo
-modelo_full <- glm(Target ~ ., data = treino, family = "binomial")
+                 # 2. Define modelo completo
+                 modelo_full <- glm(Target ~ ., data=treino, family="binomial" )
 
-# 3. Stepwise iterativo
-modelo_step <- step(modelo_null,
-  scope = list(lower = modelo_null, upper = modelo_full),
-  direction = "both",
-  k = log(nrow(treino)))  # BIC
+                 # 3. Stepwise iterativo
+                 modelo_step <- step(modelo_null,
+                 scope=list(lower=modelo_null, upper=modelo_full),
+                 direction="both" ,
+                 k=log(nrow(treino))) # BIC
 
-# 4. Avalia
-BIC(modelo_step)
-            </code-block>
+                 # 4. Avalia
+                 BIC(modelo_step)
+                 </code-block>
           </div>
-          
+
           <!-- COLUNA DIREITA: Lista sincronizada -->
           <div style="flex: 1;">
             <ol>
@@ -506,13 +557,14 @@ BIC(modelo_step)
            ============================================================ -->
       <section data-auto-animate>
         <h2>⚠️ AIC/BIC: Quando Usar?</h2>
-        
-        <div style="background: #ff79c620; border: 2px solid #ff79c6; padding: 25px; border-radius: 12px; margin: 20px 40px;">
+
+        <div
+             style="background: #ff79c620; border: 2px solid #ff79c6; padding: 25px; border-radius: 12px; margin: 20px 40px;">
           <p style="color: #ff79c6; font-size: 18pt; text-align: center;">
             <strong>AIC e BIC só funcionam com modelos que têm likelihood</strong>
           </p>
         </div>
-        
+
         <multi-col style="gap: 40px; margin: 0 40px;">
           <div style="flex: 1; background: #50fa7b20; padding: 20px; border-radius: 8px; border: 1px solid #50fa7b;">
             <p style="color: #50fa7b; font-size: 16pt;"><strong>✅ Funcionam:</strong></p>
@@ -522,7 +574,7 @@ BIC(modelo_step)
               <li>Modelos com distribuição definida</li>
             </ul>
           </div>
-          
+
           <div style="flex: 1; background: #ff555520; padding: 20px; border-radius: 8px; border: 1px solid #ff5555;">
             <p style="color: #ff5555; font-size: 16pt;"><strong>❌ Não funcionam:</strong></p>
             <ul style="color: #f8f8f2; font-size: 14pt;">
@@ -543,7 +595,7 @@ BIC(modelo_step)
       <section data-auto-animate>
         <h2>Métodos de Seleção de Features 🔬</h2>
         <p>Não existe método perfeito — cada um tem prós e contras.</p>
-        
+
         <table style="width:100%; font-size: 14pt;">
           <thead>
             <tr>
@@ -580,9 +632,11 @@ BIC(modelo_step)
             </tr>
           </tbody>
         </table>
-        
+
         <div style="background: #8be9fd20; padding: 15px; margin-top: 20px; border-radius: 8px;">
-          <p><strong>💡 Dica:</strong> Para começar, use <strong>Random Forest Importance</strong> ou <strong>Correlation filter</strong> — são rápidos e dão boa baseline.</p>
+          <p><strong>💡 Dica:</strong> Para começar, use <strong>Random Forest Importance</strong> ou
+            <strong>Correlation filter</strong> — são rápidos e dão boa baseline.
+          </p>
         </div>
       </section>
 
@@ -597,8 +651,10 @@ BIC(modelo_step)
             <li><strong>Não precisa de normalização:</strong> splits categóricos, não distâncias</li>
             <li><strong>Paper de Breiman (2001):</strong> "Random Forests" — ensemble robusto</li>
           </ul>
-          <div style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #ff5555;"><strong>⚠️ Não extrapola!</strong> Só prevê dentro do range dos dados de treino.</p>
+          <div
+               style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #ff5555;"><strong>⚠️ Não extrapola!</strong> Só prevê dentro do range dos dados de treino.
+            </p>
           </div>
           <ul style="margin-top:15px">
             <li>Feature selection: mais <strong>arte que ciência</strong> — teste diferentes combinações</li>
@@ -614,17 +670,42 @@ BIC(modelo_step)
           <h2>Paramétrico vs Não-Paramétrico 📊</h2>
           <table style="font-size: 15pt; width: 100%;">
             <thead>
-              <tr><th></th><th>Paramétrico</th><th>Não-Paramétrico</th></tr>
+              <tr>
+                <th></th>
+                <th>Paramétrico</th>
+                <th>Não-Paramétrico</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td><strong>Exemplo</strong></td><td>Regressão Linear</td><td>RandomForest</td></tr>
-              <tr><td><strong>Assume distribuição</strong></td><td>Normal dos resíduos</td><td>Nenhuma</td></tr>
-              <tr><td><strong>Normalização</strong></td><td>Necessária</td><td>Não precisa</td></tr>
-              <tr><td><strong>Outliers</strong></td><td>Alto impacto</td><td>Baixo impacto</td></tr>
-              <tr><td><strong>Interpretabilidade</strong></td><td>Coeficientes diretos</td><td>Feature importance</td></tr>
+              <tr>
+                <td><strong>Exemplo</strong></td>
+                <td>Regressão Linear</td>
+                <td>RandomForest</td>
+              </tr>
+              <tr>
+                <td><strong>Assume distribuição</strong></td>
+                <td>Normal dos resíduos</td>
+                <td>Nenhuma</td>
+              </tr>
+              <tr>
+                <td><strong>Normalização</strong></td>
+                <td>Necessária</td>
+                <td>Não precisa</td>
+              </tr>
+              <tr>
+                <td><strong>Outliers</strong></td>
+                <td>Alto impacto</td>
+                <td>Baixo impacto</td>
+              </tr>
+              <tr>
+                <td><strong>Interpretabilidade</strong></td>
+                <td>Coeficientes diretos</td>
+                <td>Feature importance</td>
+              </tr>
             </tbody>
           </table>
-          <p style="margin-top: 15px; color: #8be9fd;"><strong>Vantagem RF:</strong> funciona com qualquer formato de dados —flexível e robusto.</p>
+          <p style="margin-top: 15px; color: #8be9fd;"><strong>Vantagem RF:</strong> funciona com qualquer formato de
+            dados —flexível e robusto.</p>
         </section>
       </section>
 
@@ -638,7 +719,8 @@ BIC(modelo_step)
             <div style="flex: 1;">
               <div style="background: #ff555520; border-left: 4px solid #ff5555; padding: 15px;">
                 <p style="color: #ff5555; font-size: 16pt;"><strong>O que é COMPAS?</strong></p>
-                <p style="font-size: 14pt;">Correctional Offender Management Profiling for Alternative Sanctions — algoritmo usado na justiça criminal dos EUA para prever reincidência.</p>
+                <p style="font-size: 14pt;">Correctional Offender Management Profiling for Alternative Sanctions —
+                  algoritmo usado na justiça criminal dos EUA para prever reincidência.</p>
               </div>
               <div style="background: #282a36; padding: 15px; margin-top: 10px;">
                 <p style="color: #f1fa8c; font-size: 16pt;"><strong>Descoberta da ProPublica (2016):</strong></p>
@@ -662,7 +744,10 @@ BIC(modelo_step)
             </div>
           </multi-col>
           <div style="background: #44475a; padding: 15px; margin-top: 15px; border-radius: 8px;">
-            <p style="font-size: 14pt;"><strong>Fairness Metrics:</strong> Além de accuracy, usar <strong>Precision</strong>, <strong>Recall</strong> e <strong>Disparate Impact</strong> (razão entre taxas de grupos). Se taxa_negativos/taxa_positivos &lt; 0.8, há possível viés.</p>
+            <p style="font-size: 14pt;"><strong>Fairness Metrics:</strong> Além de accuracy, usar
+              <strong>Precision</strong>, <strong>Recall</strong> e <strong>Disparate Impact</strong> (razão entre taxas
+              de grupos). Se taxa_negativos/taxa_positivos &lt; 0.8, há possível viés.
+            </p>
           </div>
         </section>
       </section>
@@ -670,53 +755,58 @@ BIC(modelo_step)
       <!-- ============================================================
            SLIDE 9.5: QUIZ INTERATIVO (Poll)
            ============================================================ -->
-      <section data-auto-animate>
+      <section>
         <section>
           <h2>Quiz Interativo</h2>
           <p style="color: #f1fa8c;">Conecte-se à sala e vote!</p>
-          <div style="background: #bd93f920; border: 1px solid #bd93f9; padding: 12px; margin-top: 15px; border-radius: 8px;">
-            <p style="color: #bd93f9;"><strong>Instruções:</strong> Host clica "Host" — participantes entram automaticamente e votam</p>
+          <div
+               style="background: #bd93f920; border: 1px solid #bd93f9; padding: 12px; margin-top: 15px; border-radius: 8px;">
+            <p style="color: #bd93f9;"><strong>Instruções:</strong> Host clica "Host" — participantes entram
+              automaticamente e votam</p>
           </div>
         </section>
 
-        <poll-question
-          id="q1"
-          title="Questão 1: Data Leakage"
-          question="Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?"
-          answer="b"
-          answer-text="Escalar antes do split causa data leakage!"
-          :options="[
+        <section>
+          <poll-question
+                         id="q1"
+                         title="Questão 1: Data Leakage"
+                         question="Se você escala TODOS os dados ANTES do split, qual problema pode ocorrer?"
+                         answer="b"
+                         answer-text="Escalar antes do split causa data leakage!"
+                         :options="[
             { value: 'a', label: 'O modelo treina mais rápido' },
             { value: 'b', label: 'Data leakage — info do teste vaza para treino' },
             { value: 'c', label: 'Accuracy melhora automaticamente' },
-          ]"
-        />
+          ]" />
+        </section>
 
-        <poll-question
-          id="q2"
-          title="Questão 2: AUC = 0.45"
-          question="Um modelo tem AUC = 0.45. O que isso significa?"
-          answer="c"
-          answer-text="AUC < 0.5 significa previsões invertidas!"
-          :options="[
+        <section>
+          <poll-question
+                         id="q2"
+                         title="Questão 2: AUC = 0.45"
+                         question="Um modelo tem AUC = 0.45. O que isso significa?"
+                         answer="c"
+                         answer-text="AUC < 0.5 significa previsões invertidas!"
+                         :options="[
             { value: 'a', label: 'Modelo excelente' },
             { value: 'b', label: 'Modelo razoável' },
             { value: 'c', label: 'Pior que aleatório — inverteu as previsões!' },
-          ]"
-        />
-
-        <poll-question
-          id="q3"
-          title="Questão 3: Stratified Split"
-          question="Por que usar strata = Target no split?"
-          answer="b"
-          answer-text="Stratified split mantém proporção de classes!"
-          :options="[
+            { value: 'd', label: 'Modelo perfeito!' },
+          ]" />
+        </section>
+        <section>
+          <poll-question
+                         id="q3"
+                         title="Questão 3: Stratified Split"
+                         question="Por que usar strata = Target no split?"
+                         answer="b"
+                         answer-text="Stratified split mantém proporção de classes!"
+                         :options="[
             { value: 'a', label: 'Para o modelo treinar mais rápido' },
             { value: 'b', label: 'Para manter a proporção das classes em treino e teste' },
             { value: 'c', label: 'Para remover outliers automaticamente' },
-          ]"
-        />
+          ]" />
+        </section>
       </section>
 
       <!-- ============================================================
@@ -735,8 +825,10 @@ BIC(modelo_step)
             <li><strong>Feature Importance:</strong> <code>vip()</code> para interpretar modelo</li>
             <li><strong>Ética COMPAS:</strong> modelos afetam vidas — responsabilidade do cientista</li>
           </ul>
-          <div style="background: #50fa7b20; border: 2px solid #50fa7b; border-radius: 12px; padding: 15px; margin-top: 20px;">
-            <p style="color: #50fa7b; font-size: 18pt;"><strong>Exercício:</strong> Complete o pipeline no German Credit Data e analise fairness do modelo!</p>
+          <div
+               style="background: #50fa7b20; border: 2px solid #50fa7b; border-radius: 12px; padding: 15px; margin-top: 20px;">
+            <p style="color: #50fa7b; font-size: 18pt;"><strong>Exercício:</strong> Complete o pipeline no German Credit
+              Data e analise fairness do modelo!</p>
           </div>
         </section>
       </section>
@@ -762,7 +854,7 @@ BIC(modelo_step)
 
   <script>
     window.seminarConfig = {
-      server: 'https://seminar.hamacorps.work',
+      server: 'http://192.168.0.76:4433/',
       room: 'ciencia-dados-aula09',
       hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
       autoJoin: true,
@@ -771,9 +863,9 @@ BIC(modelo_step)
     window.app = mountSlideApp();
 
     // Update seminar status display
-    document.addEventListener('seminar', function(e) {
+    document.addEventListener('seminar', function (e) {
       const el = document.getElementById('seminarStatus');
-      const labels = {1:'Conectado', 2:'Aguardando sala...', 3:'Conectado como participante', 4:'Conectado como host', 5:'Conectado como chair'};
+      const labels = { 1: 'Conectado', 2: 'Aguardando sala...', 3: 'Conectado como participante', 4: 'Conectado como host', 5: 'Conectado como chair' };
       el.textContent = labels[e.status] || 'Desconectado';
       el.style.color = e.status >= 3 ? '#50fa7b' : e.status >= 1 ? '#f1fa8c' : '#6272a4';
     });
