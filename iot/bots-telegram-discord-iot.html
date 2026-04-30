@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - Bots Telegram e Discord com NodeMCU ESP8266</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SLIDE 1: CAPA
+         ============================================================ -->
+      <section data-auto-animate>
+        <header1 aula="12" curso="Internet das Coisas" title-size="22"
+                 title="Bots Telegram e Discord para IoT com NodeMCU ESP8266">
+          <div class="mermaid" data-id="cover-arch" style="width:500px">
+            <pre>
+graph LR
+  A["📱 Telegram/Discord"] -->|"HTTPS"| B["☁️ Bot Server"]
+  B -->|"WiFi"| C["📦 ESP8266"]
+  C -->|"Sensores"| D["🌡️ DHT22"]
+  C -->|"Atuadores"| E["💡 LED"]
+  style A fill:#6272a4,color:#f8f8f2
+  style B fill:#bd93f9,color:#f8f8f2
+  style C fill:#50fa7b,color:#282a36
+  style D fill:#ffb86c,color:#282a36
+  style E fill:#ff5555,color:#f8f8f2
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO: ARQUITETURA DO SISTEMA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 2: Seção - Arquitetura -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Arquitetura do Sistema</h2>
+          <p style="color: #6272a4;">Como os dispositivos IoT se comunicam com bots de chat</p>
+        </section>
+
+        <!-- SLIDE 3: Diagrama de Arquitetura -->
+        <section data-auto-animate>
+          <h2>Diagrama de Arquitetura</h2>
+          <div class="mermaid" data-id="architecture-full" style="width: 100%;">
+            <pre>
+graph TB
+    subgraph ESP["📦 ESP8266"]
+        S1["🌡️ Sensor DHT22"]
+        A1["💡 LED"]
+        C1["📡 WiFi Client"]
+    end
+    
+    subgraph CLOUD["☁️ Internet"]
+        B1["🤖 Telegram Bot"]
+        B2["🤖 Discord Bot"]
+    end
+    
+    subgraph USER["👤 Usuário"]
+        U1["📱 Telegram App"]
+        U2["💬 Discord App"]
+    end
+    
+    C1 -->|"HTTPS POST/GET"| B1
+    C1 -->|"HTTPS POST (Webhook)"| B2
+    B1 -->|"Mensagens"| U1
+    B2 -->|"Mensagens"| U2
+    S1 -->|"Dados"| C1
+    A1 -->|"Comandos"| C1
+    
+    style ESP fill:#44475a,color:#f8f8f2
+    style CLOUD fill:#282a36,color:#f8f8f2,stroke:#50fa7b,stroke-width:2px
+    style USER fill:#44475a,color:#f8f8f2
+            </pre>
+          </div>
+        </section>
+
+        <!-- SLIDE 4: Telegram vs Discord -->
+        <section data-auto-animate>
+          <h2>Telegram vs Discord para IoT</h2>
+          <multi-col style="gap: 40px;">
+            <div style="flex: 1;">
+              <h3 style="color: #50fa7b;">Telegram ✅</h3>
+              <ul style="font-size: 18pt;">
+                <li>Bot API oficial e bem documentada</li>
+                <li>Biblioteca Arduino pronta</li>
+                <li>Polling ou Webhook</li>
+                <li>Comandos com prefixo <code>/</code></li>
+                <li>Notificações push automáticas</li>
+                <li>Multi-plataforma</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #bd93f9;">Discord ⚡</h3>
+              <ul style="font-size: 18pt;">
+                <li>Webhooks são simples e rápidos</li>
+                <li>Ideal para envio de dados</li>
+                <li>HTTP POST para canais</li>
+                <li>Sem biblioteca Arduino oficial</li>
+                <li>Formato JSON simples</li>
+                <li>Visual rico com embeds</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Arquitetura -->
+
+      <!-- ============================================================
+         SEÇÃO: SEGURANÇA EM BOTS IOT
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 5: Seção - Segurança -->
+        <section data-auto-animate>
+          <h2 style="color: #ff5555;">⚠️ Segurança em Bots IoT</h2>
+          <p style="color: #6272a4;">Boas práticas para proteger seus tokens e credenciais</p>
+        </section>
+
+        <!-- SLIDE 6: Regras de Segurança -->
+        <section data-auto-animate>
+          <h2>Regras de Segurança</h2>
+          <ls-u font-size="20pt">
+            <li><span style="color: #ff5555;">NUNCA</span> exponha tokens no código versionado</li>
+            <li>Use <code>secrets.h</code> ou <code>platformio.ini</code> para tokens</li>
+            <li>Adicione arquivos sensíveis ao <code>.gitignore</code></li>
+            <li>WiFiManager para credenciais WiFi (não hardcoded)</li>
+            <li>Valide todos os comandos recebidos</li>
+            <li>Use HTTPS para todas as comunicações</li>
+          </ls-u>
+          <div style="background: #44475a; border-radius: 8px; padding: 15px; margin-top: 20px; border-left: 4px solid #ff5555;">
+            <code>🔴 TENHO_TOKEN_TELEGRAM="123456:ABC-DEF..." // ❌ NUNCA FAÇA ISSO</code>
+          </div>
+        </section>
+
+        <!-- SLIDE 7: Solução - Arquivos Separados -->
+        <section data-auto-animate>
+          <h2>Solução: Arquivos Separados</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">secrets.h</h4>
+              <code-block lang="cpp" data-trim>
+              <textarea>
+#define BOT_TOKEN "123456:ABC-DEF"
+#define BOT_NAME "MeuIoTBot"
+#define CHAT_ID "123456789"
+              </textarea>
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">.gitignore</h4>
+              <code-block lang="bash" data-trim>
+              <textarea>
+# Secrets
+secrets.h
+.config
+.pio/libdeps
+              </textarea>
+              </code-block>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Segurança -->
+
+      <!-- ============================================================
+         SEÇÃO: BOT TELEGRAM
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 8: Seção - Telegram -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">🤖 Bot Telegram</h2>
+          <p style="color: #6272a4;">Configurando e implementando um bot Telegram com ESP8266</p>
+        </section>
+
+        <!-- SLIDE 9: Criar Bot via BotFather -->
+        <section data-auto-animate>
+          <h2>Criando Bot no Telegram</h2>
+          <ol style="font-size: 18pt;">
+            <li style="margin-bottom: 15px;">Abra o Telegram e busque por <code style="color: #50fa7b;">@BotFather</code></li>
+            <li style="margin-bottom: 15px;">Envie <code>/newbot</code> e siga as instruções</li>
+            <li style="margin-bottom: 15px;">Escolha um nome e username para o bot</li>
+            <li style="margin-bottom: 15px;"><strong style="color: #ffb86c;">Copie o token!</strong> Formato: <code>123456789:AABBcc...</code></li>
+          </ol>
+          <div style="background: #44475a; border-radius: 8px; padding: 15px; margin-top: 15px; text-align: center;">
+            <p style="color: #8be9fd; font-size: 14pt;">📱 Exemplo de conversa:</p>
+            <code style="color: #50fa7b;">/newbot → Nome: IoT Bot → Username: iot_esp8266_bot → Token: 6123456789:AAF...</code>
+          </div>
+        </section>
+
+        <!-- SLIDE 10: Biblioteca Universal Telegram Bot -->
+        <section data-auto-animate>
+          <h2>Biblioteca Universal Telegram Bot</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">Instalação (PlatformIO)</h4>
+              <code-block lang="ini" data-trim>
+              <textarea>
+; platformio.ini
+lib_deps =
+    witnessmenow/Universal Arduino Telegram Bot
+              </textarea>
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">Instalação (Arduino IDE)</h4>
+              <p style="font-size: 16pt;">Sketch → Incluir Biblioteca → Gerenciar Bibliotecas<br/>Buscar: <code>Universal Telegram Bot</code></p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 11: Comandos do Bot -->
+        <section data-auto-animate>
+          <h2>Comandos do Bot</h2>
+          <table style="font-size: 16pt; width: 100%;">
+            <thead>
+              <tr style="background: #44475a;">
+                <th>Comando</th><th>Descrição</th><th>Ação no ESP8266</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code style="color: #50fa7b;">/start</code></td>
+                <td>Inicia conversa</td>
+                <td>Envia mensagem de boas-vindas</td>
+              </tr>
+              <tr>
+                <td><code style="color: #50fa7b;">/status</code></td>
+                <td>Status do dispositivo</td>
+                <td>Retorna IP, uptime, temperatura</td>
+              </tr>
+              <tr>
+                <td><code style="color: #50fa7b;">/ledon</code></td>
+                <td>Liga LED</td>
+                <td>GPIO HIGH</td>
+              </tr>
+              <tr>
+                <td><code style="color: #50fa7b;">/ledoff</code></td>
+                <td>Desliga LED</td>
+                <td>GPIO LOW</td>
+              </tr>
+              <tr>
+                <td><code style="color: #50fa7b;">/temp</code></td>
+                <td>Lê temperatura</td>
+                <td>Retorna valor do DHT22</td>
+              </tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+        <!-- SLIDE 12: Código Telegram Bot - Setup -->
+        <section data-auto-animate>
+          <h2>Código: Telegram Bot (Setup)</h2>
+          <code-block lang="cpp" data-line-numbers="1-15|3-6|7-11|12-15" data-fragment-index="1">
+          <textarea>
+#include &lt;ArduinoJson.h&gt;
+#include &lt;UniversalTelegramBot.h&gt;
+#include &lt;WiFiClientSecure.h&gt;
+
+#define BOT_TOKEN "SEU_TOKEN_AQUI"
+#define LED_PIN 2
+
+WiFiClientSecure client;
+UniversalTelegramBot bot(BOT_TOKEN, client);
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(LED_PIN, OUTPUT);
+    client.setInsecure(); // Aceita certificados
+}</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE 13: Código Telegram Bot - Loop -->
+        <section data-auto-animate>
+          <h2>Código: Telegram Bot (Loop)</h2>
+          <code-block lang="cpp" data-line-numbers="1-20|5-7|8-14|15-20" data-fragment-index="1">
+          <textarea>
+void loop() {
+    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    
+    while (numNewMessages) {
+        for (int i = 0; i &lt; numNewMessages; i++) {
+            String chat_id = bot.messages[i].chat_id;
+            String text = bot.messages[i].text;
+            
+            if (text == "/ledon") {
+                digitalWrite(LED_PIN, HIGH);
+                bot.sendMessage(chat_id, "💡 LED ligado!");
+            } else if (text == "/ledoff") {
+                digitalWrite(LED_PIN, LOW);
+                bot.sendMessage(chat_id, "💡 LED desligado!");
+            }
+        }
+        numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    }
+}</textarea>
+          </code-block>
+        </section>
+
+      </section><!-- fim Telegram -->
+
+      <!-- ============================================================
+         SEÇÃO: BOT DISCORD
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 14: Seção - Discord -->
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">💬 Bot Discord</h2>
+          <p style="color: #6272a4;">Enviando dados do ESP8266 para um canal Discord via Webhooks</p>
+        </section>
+
+        <!-- SLIDE 15: Discord Developer Portal -->
+        <section data-auto-animate>
+          <h2>Criando Webhook no Discord</h2>
+          <ol style="font-size: 18pt;">
+            <li style="margin-bottom: 15px;">Acesse <code style="color: #bd93f9;">discord.com/developers</code></li>
+            <li style="margin-bottom: 15px;">Crie uma nova Application</li>
+            <li style="margin-bottom: 15px;">Vá em <strong>Integrations → Webhooks</strong></li>
+            <li style="margin-bottom: 15px;">Crie Webhook para seu servidor</li>
+            <li style="margin-bottom: 15px;"><strong style="color: #ffb86c;">Copie a URL!</strong> Formato: <code>https://discord.com/api/webhooks/...</code></li>
+          </ol>
+        </section>
+
+        <!-- SLIDE 16: HTTP POST para Discord -->
+        <section data-auto-animate>
+          <h2>Enviando dados para Discord</h2>
+          <code-block lang="cpp" data-line-numbers="1-25|1-6|7-15|16-25" data-fragment-index="1">
+          <textarea>
+bool sendDiscordMessage(float temp, float humidity) {
+    WiFiClient client;
+    
+    if (!client.connect("discord.com", 443)) {
+        Serial.println("Connection failed");
+        return false;
+    }
+    
+    String url = "/api/webhooks/SEU_WEBHOOK_ID/TOKEN";
+    String json = "{\"content\":\"🌡️ Temp: " + String(temp) + 
+                  "°C | 💧 Umid: " + String(humidity) + "%\"}";
+    
+    client.println("POST " + url + " HTTP/1.1");
+    client.println("Host: discord.com");
+    client.println("Content-Type: application/json");
+    client.println("Content-Length: " + String(json.length()));
+    client.println();
+    client.print(json);
+    
+    return true;
+}</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE 17: Error Handling com Retry -->
+        <section data-auto-animate>
+          <h2>Error Handling com Retry</h2>
+          <code-block lang="cpp" data-trim>
+          <textarea>
+void sendWithRetry(const String&amp; message, int maxRetries = 3) {
+    for (int attempt = 1; attempt &lt;= maxRetries; attempt++) {
+        if (sendDiscordMessage(message)) {
+            Serial.println("Mensagem enviada!");
+            return;
+        }
+        Serial.println("Falha tentativa " + String(attempt));
+        delay(1000); // Espera 1s antes de retry
+    }
+    Serial.println("Falhou após " + String(maxRetries) + " tentativas");
+}</textarea>
+          </code-block>
+        </section>
+
+      </section><!-- fim Discord -->
+
+      <!-- ============================================================
+         SEÇÃO: WIFIMANAGER
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 18: Seção - WiFiManager -->
+        <section data-auto-animate>
+          <h2 style="color: #ffb86c;">📶 WiFiManager</h2>
+          <p style="color: #6272a4;">Autoconfiguração de rede WiFi para dispositivos IoT</p>
+        </section>
+
+        <!-- SLIDE 19: O Problema -->
+        <section data-auto-animate>
+          <h2>O Problema</h2>
+          <div style="background: #44475a; border-radius: 12px; padding: 25px; text-align: center;">
+            <p style="font-size: 20pt; color: #ff5555; margin-bottom: 20px;">❌ Hardcoded WiFi credentials no código</p>
+            <code style="font-size: 16pt; color: #ff79c6;">SSID: "MinhaRede"<br/>Password: "minhasenha123"</code>
+            <p style="margin-top: 20px; color: #6272a4;">Problemas:</p>
+            <ul style="color: #f8f8f2; font-size: 16pt; text-align: left; display: inline-block;">
+              <li>Credenciais expostas no código</li>
+              <li>Precisa reprogramar para mudar rede</li>
+              <li>Não funciona em locais diferentes</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE 20: Solução WiFiManager -->
+        <section data-auto-animate>
+          <h2>Solução: WiFiManager</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <ls-u font-size="18pt">
+                <li>Primeira vez: abre portal de configuração</li>
+                <li>AP modo: ESP8266 cria rede WiFi</li>
+                <li>Página web para selecionar rede</li>
+                <li>Salva credenciais na memória flash</li>
+                <li>Reconecta automaticamente</li>
+              </ls-u>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="wifi-flow" style="width: 280px; margin: 0 auto;">
+                <pre>
+graph TD
+  A["🚀 Primeiro uso"] --> B["📶 Cria AP ESP"]
+  B --> C["🔗 Usuário conecta"]
+  C --> D["🌐 Página config"]
+  D --> E["✅ Credenciais salvas"]
+  E --> F["📡 Conecta WiFi"]
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 21: Código WiFiManager -->
+        <section data-auto-animate>
+          <h2>Código: WiFiManager</h2>
+          <code-block lang="cpp" data-line-numbers="1-25|1-5|6-12|13-19|20-25" data-fragment-index="1">
+          <textarea>
+#include &lt;WiFiManager.h&gt;
+
+void setup() {
+    Serial.begin(115200);
+    
+    WiFiManager wm;
+    
+    // Tenta conectar, se falhar abre portal
+    if (!wm.autoConnect("IoT-ESP8266", "password123")) {
+        Serial.println("Falhou ao conectar. Resetando...");
+        ESP.restart();
+    }
+    
+    Serial.println("✅ WiFi conectado!");
+    Serial.println(WiFi.localIP());
+}
+
+void loop() {
+    // WiFi já configurado, continua aqui
+}</textarea>
+          </code-block>
+        </section>
+
+      </section><!-- fim WiFiManager -->
+
+      <!-- ============================================================
+         SEÇÃO: PRÁTICA TELEGRAM
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 22: Seção - Prática Telegram -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">🛠️ Prática: LED via Telegram</h2>
+          <p style="color: #6272a4;">Controlando um LED através de comandos do Telegram</p>
+        </section>
+
+        <!-- SLIDE 23: Circuito LED -->
+        <section data-auto-animate>
+          <h2>Circuito: LED no Protoboard</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <p style="color: #ffb86c; font-size: 18pt;">Materiais:</p>
+              <ul style="font-size: 16pt;">
+                <li>NodeMCU ESP8266</li>
+                <li>LED (qualquer cor)</li>
+                <li>Resistor 220Ω</li>
+                <li>Protoboard</li>
+                <li>Jumpers</li>
+              </ul>
+              <div style="background: #44475a; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <p style="color: #8be9fd;">🔌 GPIO2 (D4) → Resistor → Ânodo LED</p>
+                <p style="color: #8be9fd;">🌍 GND → Cátodo LED</p>
+              </div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/WQNrNlE.png" alt="ESP8266 LED wiring" style="max-width: 100%; border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 24: Código Completo Telegram -->
+        <section data-auto-animate>
+          <h2>Código Completo: Telegram LED</h2>
+          <code-block lang="cpp" data-trim>
+          <textarea>
+#include &lt;Arduino.h&gt;
+#include &lt;WiFiManager.h&gt;
+#include &lt;UniversalTelegramBot.h&gt;
+#include &lt;WiFiClientSecure.h&gt;
+
+#define LED_PIN 2
+#define BOT_TOKEN "SEU_TOKEN_TELEGRAM"
+
+WiFiClientSecure client;
+UniversalTelegramBot bot(BOT_TOKEN, client);
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(LED_PIN, OUTPUT);
+    client.setInsecure();
+    
+    WiFiManager wm;
+    wm.autoConnect("IoT-ESP8266");
+    
+    bot.updateToken(BOT_TOKEN);
+}
+
+void handleNewMessages(int numNewMessages) {
+    for (int i = 0; i &lt; numNewMessages; i++) {
+        String chat_id = bot.messages[i].chat_id;
+        String text = bot.messages[i].text;
+        
+        if (text == "/start") {
+            bot.sendMessage(chat_id, "👋 Olá! Use /ledon ou /ledoff");
+        } else if (text == "/ledon") {
+            digitalWrite(LED_PIN, HIGH);
+            bot.sendMessage(chat_id, "💡 LED LIGADO!");
+        } else if (text == "/ledoff") {
+            digitalWrite(LED_PIN, LOW);
+            bot.sendMessage(chat_id, "💡 LED DESLIGADO!");
+        } else if (text == "/status") {
+            String status = digitalRead(LED_PIN) ? "Ligado" : "Desligado";
+            bot.sendMessage(chat_id, "🔌 LED: " + status);
+        }
+    }
+}
+
+void loop() {
+    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    while (numNewMessages) {
+        handleNewMessages(numNewMessages);
+        numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    }
+}</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE 25: Checkpoint Telegram -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">✅ Checkpoint: Telegram</h2>
+          <div style="background: #44475a; border-radius: 12px; padding: 30px; text-align: center;">
+            <p style="font-size: 24pt; margin-bottom: 25px;">Demonstre para o professor:</p>
+            <ol style="font-size: 20pt; text-align: left; display: inline-block;">
+              <li style="margin-bottom: 15px;">Enviar <code>/start</code> e receber mensagem</li>
+              <li style="margin-bottom: 15px;">Enviar <code>/ledon</code> e ver LED acender</li>
+              <li style="margin-bottom: 15px;">Enviar <code>/ledoff</code> e ver LED apagar</li>
+              <li style="margin-bottom: 15px;">Enviar <code>/status</code> e ver estado</li>
+            </ol>
+          </div>
+        </section>
+
+      </section><!-- fim Prática Telegram -->
+
+      <!-- ============================================================
+         SEÇÃO: PRÁTICA DISCORD
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 26: Seção - Prática Discord -->
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">🛠️ Prática: DHT22 para Discord</h2>
+          <p style="color: #6272a4;">Enviando dados do sensor DHT22 para um canal Discord</p>
+        </section>
+
+        <!-- SLIDE 27: Código DHT22 + Discord -->
+        <section data-auto-animate>
+          <h2>Código: DHT22 → Discord</h2>
+          <code-block lang="cpp" data-line-numbers="1-40|10-18|19-30|31-40" data-fragment-index="1">
+          <textarea>
+#include &lt;Arduino.h&gt;
+#include &lt;WiFiManager.h&gt;
+#include &lt;DHT.h&gt;
+#include &lt;WiFiClientSecure.h&gt;
+
+#define DHTPIN 4
+#define DHTTYPE DHT22
+#define WEBHOOK_URL "https://discord.com/api/webhooks/..."
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void sendToDiscord(float temp, float humi) {
+    WiFiClientSecure client;
+    client.setInsecure();
+    
+    if (!client.connect("discord.com", 443)) return;
+    
+    String json = "{\"content\":\"🌡️ **Sensores IoT**\n\""
+                  "\"📌 Temperatura: " + String(temp, 1) + "°C\n\""
+                  "\"💧 Umidade: " + String(humi, 1) + "%\"}";
+    
+    client.println("POST /api/webhooks/SEU_WEBHOOK/TOKEN HTTP/1.1");
+    client.println("Host: discord.com");
+    client.println("Content-Type: application/json");
+    client.println("Content-Length: " + String(json.length()));
+    client.println();
+    client.print(json);
+    
+    client.stop();
+}
+
+void setup() {
+    Serial.begin(115200);
+    dht.begin();
+    WiFiManager wm;
+    wm.autoConnect("IoT-ESP8266");
+}
+
+void loop() {
+    delay(30000); // A cada 30 segundos
+    float t = dht.readTemperature();
+    float h = dht.readHumidity();
+    if (!isnan(t) &amp;&amp; !isnan(h)) {
+        sendToDiscord(t, h);
+        Serial.printf("Enviado: %.1f°C, %.1f%%\n", t, h);
+    }
+}</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE 28: Checkpoint Discord -->
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">✅ Checkpoint: Discord</h2>
+          <div style="background: #44475a; border-radius: 12px; padding: 30px; text-align: center;">
+            <p style="font-size: 24pt; margin-bottom: 25px;">Demonstre para o professor:</p>
+            <ol style="font-size: 20pt; text-align: left; display: inline-block;">
+              <li style="margin-bottom: 15px;">Mensagem aparecer no canal Discord</li>
+              <li style="margin-bottom: 15px;">Dados de temperatura corretos</li>
+              <li style="margin-bottom: 15px;">Umidade correta</li>
+              <li style="margin-bottom: 15px;">Envio automático a cada 30s</li>
+            </ol>
+          </div>
+        </section>
+
+      </section><!-- fim Prática Discord -->
+
+      <!-- ============================================================
+         SEÇÃO: PROJETO INTEGRADOR
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 29: Seção - Projeto Integrador -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">🚀 Projeto Integrador</h2>
+          <p style="color: #6272a4;">Sistema de Monitoramento Ambiental Completo</p>
+        </section>
+
+        <!-- SLIDE 30: Requisitos do Projeto -->
+        <section data-auto-animate>
+          <h2>Requisitos do Projeto</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h4 style="color: #50fa7b;">Hardware</h4>
+              <ul style="font-size: 18pt;">
+                <li>ESP8266 NodeMCU</li>
+                <li>Sensor DHT22 (temp/umidade)</li>
+                <li>LED (para feedback visual)</li>
+                <li>Protoboard + jumpers</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #bd93f9;">Software</h4>
+              <ul style="font-size: 18pt;">
+                <li>WiFiManager ( autoconfig)</li>
+                <li>Bot Telegram (controle)</li>
+                <li>Webhook Discord (monitoramento)</li>
+                <li>Comando /alerta para threshold</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 31: Funcionalidades -->
+        <section data-auto-animate>
+          <h2>Funcionalidades</h2>
+          <table style="font-size: 16pt; width: 100%;">
+            <thead>
+              <tr style="background: #44475a;">
+                <th>Comando Telegram</th><th>Ação</th><th>Saída Discord</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>/start</code></td>
+                <td>Boas-vindas</td>
+                <td>Nenhuma</td>
+              </tr>
+              <tr>
+                <td><code>/ledon</code></td>
+                <td>Liga LED</td>
+                <td>"LED ativado"</td>
+              </tr>
+              <tr>
+                <td><code>/ledoff</code></td>
+                <td>Desliga LED</td>
+                <td>"LED desativado"</td>
+              </tr>
+              <tr>
+                <td><code>/temp</code></td>
+                <td>Lê sensor</td>
+                <td>Dados no Discord</td>
+              </tr>
+              <tr>
+                <td>Auto (30s)</td>
+                <td>Envio periódico</td>
+                <td>Temperatura + Umidade</td>
+              </tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+        <!-- SLIDE 32: Estrutura de Diretórios -->
+        <section data-auto-animate>
+          <h2>Estrutura de Diretórios</h2>
+          <code-block lang="bash" data-trim>
+          <textarea>
+projeto-iot/
+├── platformio.ini
+├── src/
+│   ├── main.cpp
+│   └── secrets.h
+├── lib/
+│   └── README
+├── test/
+│   └── README
+└── README.md  ← Documentação obrigatória</textarea>
+          </code-block>
+          <div style="background: #44475a; padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <p style="color: #ffb86c;">📝 O README.md deve incluir:</p>
+            <ul style="font-size: 16pt;">
+              <li>Descrição do projeto</li>
+              <li>Pinagem utilizada</li>
+              <li>Como configurar tokens</li>
+              <li>Como usar (passo a passo)</li>
+            </ul>
+          </div>
+        </section>
+
+      </section><!-- fim Projeto Integrador -->
+
+      <!-- ============================================================
+         SEÇÃO: REFERÊNCIAS E PRÓXIMOS PASSOS
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 33: Seção - Referências -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">📚 Referências e Próximos Passos</h2>
+          <p style="color: #6272a4;">Recursos para continuar aprendendo</p>
+        </section>
+
+        <!-- SLIDE 34: Links Úteis -->
+        <section data-auto-animate>
+          <h2>Links Úteis</h2>
+          <ul style="font-size: 18pt;">
+            <li style="margin-bottom: 15px;">
+              <a href="https://core.telegram.org/bots/api" style="color: #50fa7b;">Telegram Bot API</a> - Documentação oficial
+            </li>
+            <li style="margin-bottom: 15px;">
+              <a href="https://discord.com/developers/docs/resources/webhook" style="color: #bd93f9;">Discord Webhooks</a> - Guia de webhooks
+            </li>
+            <li style="margin-bottom: 15px;">
+              <a href="https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot" style="color: #ff79c6;">Universal Telegram Bot</a> - Biblioteca Arduino
+            </li>
+            <li style="margin-bottom: 15px;">
+              <a href="https://github.com/tzapu/WiFiManager" style="color: #ffb86c;">WiFiManager</a> - Biblioteca WiFiManager
+            </li>
+            <li style="margin-bottom: 15px;">
+              <a href="https://randomnerdtutorials.com/telegram-control-esp32-esp8266/" style="color: #8be9fd;">Random Nerd Tutorials</a> - Tutoriais completos
+            </li>
+          </ul>
+        </section>
+
+        <!-- SLIDE 35: Próximos Passos -->
+        <section data-auto-animate>
+          <h2>Próximos Passos</h2>
+          <ls-u font-size="20pt">
+            <li>Implementar MQTT broker para IoT</li>
+            <li>Adicionar Home Assistant para automação</li>
+            <li>Criar dashboard web com Node-RED</li>
+            <li>Integrar com Google Home ou Alexa</li>
+            <li>Implementar OTA (Over-The-Air) updates</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE 36: Encerramento -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">✅ Resumo da Aula</h2>
+          <div style="background: #44475a; border-radius: 12px; padding: 25px;">
+            <ul style="font-size: 18pt;">
+              <li style="margin-bottom: 10px;">📐 Arquitetura: ESP8266 ↔ Internet ↔ Bots</li>
+              <li style="margin-bottom: 10px;">🔐 Segurança: tokens nunca hardcoded</li>
+              <li style="margin-bottom: 10px;">🤖 Telegram: Bot API + comandos</li>
+              <li style="margin-bottom: 10px;">💬 Discord: Webhooks + HTTP POST</li>
+              <li style="margin-bottom: 10px;">📶 WiFiManager: autoconfiguração</li>
+              <li style="margin-bottom: 10px;">🚀 Prática: LED + DHT22 funcionando</li>
+            </ul>
+          </div>
+          <p style="margin-top: 30px; font-size: 24pt; color: #ffb86c;">Dúvidas? 🤔</p>
+        </section>
+
+      </section><!-- fim Referências -->
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../slides_template/init.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+
+</html>
