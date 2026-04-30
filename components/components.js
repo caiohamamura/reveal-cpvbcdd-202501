@@ -103,7 +103,7 @@ function escapeHtml(text) {
 })();
 
 function getCodeWithLineBreaks(preEl) {
-  const lines = preEl.querySelectorAll('.hljs-ln-code')
+  const lines = preEl.querySelector("code").querySelectorAll('.hljs-ln-code')
   if (lines.length) {
     return Array.from(lines)
       .map(line => line.textContent)
