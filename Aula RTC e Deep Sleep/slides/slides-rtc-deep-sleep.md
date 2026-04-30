@@ -212,8 +212,24 @@ void loop() {
 
 ---
 
-## Slide 21 — Acordar por Transistor
+## Slide 21a — Acordar por Transistor (Conceito)
 # 💡 Interrupt Externo via KSP2222A
+- **Transistor KSP2222A** como interrupt externo
+- **Luz alta** → LDR resistência baixa → transistor satura → RST LOW → **ACORDA**
+- **Luz baixa** → transistor corta → ESP **DORME**
+- Perfeito para projetos solares!
+
+> 🌞 A ideia: só trabalha durante o dia!
+
+**Conexões do transistor:**
+- **Emissor** → GND
+- **Coletor** → RST do ESP8266
+- **Base** → Divisor de tensão (LDR + Trimpot)
+
+---
+
+## Slide 21b — Código do Interrupt por Luz
+# 👨‍💻 Implementação com Transistor KSP2222A
 ```cpp
 // Transistor KSP2222A:
 // - Emissor → GND
@@ -223,10 +239,8 @@ void loop() {
 // No escuro: transistor OFF → ESP dorme
 // Na luz: transistor ON → RST LOW → ESP ACORDA!
 ```
-- **Luz alta** → LDR resistência baixa → transistor satura → RST LOW → **ACORDA**
-- **Luz baixa** → transistor corta → ESP **DORME**
-
-> 🌞 Projeto solar: só trabalha durante o dia!
+- Hardware faz o trabalho pesado (desperta por luz!)
+- ESP só precisa dormir e acordar — sem timer!
 
 ---
 
@@ -298,39 +312,39 @@ file.close();
 
 ---
 
-## Slide 27 — Projeto Integrador
-# 🚀 Estação Solar de Monitoramento
-**Requisitos:**
-1. ✅ Acorda por luz (transistor KSP2222A + LDR)
-2. ✅ Lê DHT11 (temperatura + umidade)
-3. ✅ Timestamp correto via NTP inteligente
-4. ✅ **LittleFS + ArduinoJson** para persistência
-5. ✅ Deep sleep entre ciclos
-6. ✅ Só trabalha durante o dia!
+## Slide 27 — Imagem do Circuito
+# 💡 Circuito do Sensor de Luz (LDR + KSP2222A)
 
-**Hardware especial:**
-- LDR + Trimpot + Transistor KSP2222A
-- Sem timer — desperta por interrupt!
-
----
-
-## Slide 28 — Circuito do Sensor de Luz
-# 💡 Como Funciona o Interrupt por Luz
-
-```
-   3.3V ─── LDR ──── ◬─── Base do KSP2222A
-                      │
-                 Trimpot
-                      │
-                     GND
-                     
-   Coletor (C) ──── RST do ESP8266
-   Emissor (E) ──── GND
-```
+![Circuito do Sensor de Luz com Transistor KSP2222A](ldr-circuit.jpg)
 
 **Ajuste do trimpot:**
 - Mais para LDR → acorda com menos luz (amanhecer cedo)
 - Mais para GND → só acorda com sol forte
+
+> 📸 Na aula: monte e teste o circuito vocês mesmos!
+
+---
+
+## Slide 28 — 🚀 Atividade da Aula
+# 🎉 Montem o Circuito do Sensor de Luz!
+
+**Agora é com vocês!**
+
+📋 **Atividade:**
+1. Monte o circuito do sensor de luz (transistor + LDR + trimpot)
+2. Conecte D0 → RST (não esqueça!)
+3. Adicione os pull-ups obrigatórios (GPIO7 e GPIO2)
+4. Testem o despertador por luz
+
+**Circuito completo:**
+- ESP8266 + D0→RST + pull-ups
+- Transistor KSP2222A + LDR + trimpot
+
+> ⚠️ Sem o pull-up em GPIO7, o ESP mostra caracteres garbage!
+
+📸 **Entrega:** Tirem foto ou gravem vídeo do circuito funcionando!
+
+**Objetivo:** Ver o ESP acordar quando você cobrir/descobrir o LDR
 
 ---
 
