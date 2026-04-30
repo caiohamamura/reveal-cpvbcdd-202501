@@ -630,6 +630,217 @@ print(f"LDA + LR: {acc_lda:.2%}")
       </section><!-- fim COMPARAÇÃO E DESAFIO -->
 
       <!-- ============================================================
+           SEÇÃO: EDGE CASES E LIMITAÇÕES
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Edge Cases e Limitações</h2>
+          <p style="color: #6272a4;">Quando PCA e LDA falham</p>
+        </section>
+
+        <!-- SLIDE: Limitações do PCA -->
+        <section data-auto-animate>
+          <h2>Limitações do PCA</h2>
+          <ul style="font-size: 0.85em;">
+            <li class="fragment fade-in"><strong>Dados não-lineares:</strong> PCA assume relações lineares entre variáveis</li>
+            <li class="fragment fade-in"><strong>Sensibilidade a outliers:</strong> Um outlier pode distorcer os primeiros componentes</li>
+            <li class="fragment fade-in"><strong>Variância ≠ Informação:</strong> Alta variância pode ser apenas ruído</li>
+            <li class="fragment fade-in"><strong>Interpretabilidade:</strong> Autovetores são difíceis de interpretar com muitas features</li>
+            <li class="fragment fade-in"><strong>Dados categóricos:</strong> PCA assume variáveis contínuas</li>
+          </ul>
+          <div class="yellow-box fragment fade-in" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>💡 Solução:</strong> Para dados não-lineares, use t-SNE, UMAP ou Kernel PCA</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Limitações do LDA -->
+        <section data-auto-animate>
+          <h2>Limitações do LDA</h2>
+          <ul style="font-size: 0.85em;">
+            <li class="fragment fade-in"><strong>Máximo K-1 componentes:</strong> Limitado pelo número de classes</li>
+            <li class="fragment fade-in"><strong>Suposição de normalidade:</strong> Assume distribuição normal multivariada</li>
+            <li class="fragment fade-in"><strong>Classes desbalanceadas:</strong> Funciona mal quando uma classe tem 90% dos dados</li>
+            <li class="fragment fade-in"><strong>Overfitting:</strong> Com muitas features e poucas amostras, overfita facilmente</li>
+            <li class="fragment fade-in"><strong>Boundaries lineares:</strong> Só captura relações lineares</li>
+          </ul>
+          <div class="red-box fragment fade-in" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>⚠️ Importante:</strong> Verifique normalidade multivariada antes de usar LDA</p>
+          </div>
+        </section>
+
+      </section><!-- fim EDGE CASES -->
+
+      <!-- ============================================================
+           SEÇÃO: TÉCNICAS NÃO-LINEARES
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Técnicas Não-Lineares</h2>
+          <p style="color: #6272a4;">Quando PCA e LDA não são suficientes</p>
+        </section>
+
+        <!-- SLIDE: Quando usar não-linear -->
+        <section data-auto-animate>
+          <h2>Quando Usar Técnicas Não-Lineares?</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #ff79c6; font-size: 0.85em;">Dados não-lineares:</h3>
+              <ul style="font-size: 0.8em;">
+                <li>Manifolds curvos</li>
+                <li>Padrões circulares ou esféricos</li>
+                <li>Relações complexas entre variáveis</li>
+              </ul>
+              <h3 style="color: #50fa7b; margin-top: 15px; font-size: 0.85em;">Exemplo:</h3>
+              <code-block lang="python" data-trim>
+              <textarea>
+from sklearn.datasets import make_moons
+X, y = make_moons(n_samples=200)
+# PCA falhará em separar!
+              </textarea>
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <img src="../../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_vs_lda_comparacao.png" 
+                   alt="PCA vs LDA" style="width: 100%; border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Técnicas disponíveis -->
+        <section data-auto-animate>
+          <h2>Técnicas Não-Lineares Disponíveis</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Técnica</th>
+                <th>Quando usar</th>
+                <th>Exemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>t-SNE</strong></td>
+                <td>Visualização 2D/3D</td>
+                <td>MNIST, single-cell</td>
+              </tr>
+              <tr>
+                <td><strong>UMAP</strong></td>
+                <td>Mais rápido que t-SNE</td>
+                <td>Genômica, imagens</td>
+              </tr>
+              <tr>
+                <td><strong>Kernel PCA</strong></td>
+                <td>Redução com kernel RBF</td>
+                <td>Padrões circulares</td>
+              </tr>
+              <tr>
+                <td><strong>QDA</strong></td>
+                <td>Classificação não-linear</td>
+                <td>Classes com variâncias diferentes</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="green-box fragment fade-in" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>Regra:</strong> Comece com PCA/LDA lineares. Se não funcionar, experimente não-lineares.</p>
+          </div>
+        </section>
+
+      </section><!-- fim TÉCNICAS NÃO-LINEARES -->
+
+      <!-- ============================================================
+           SEÇÃO: GLOSSÁRIO E ERROS COMUNS
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Glossário e Erros Comuns</h2>
+          <p style="color: #6272a4;">Termos técnicos e como evitá-los</p>
+        </section>
+
+        <!-- SLIDE: Glossário Rápido -->
+        <section data-auto-animate>
+          <h2>Glossário Rápido</h2>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.75em;">
+            <div class="highlight-box">
+              <p><strong>Centralizar</strong></p>
+              <p>Subtrair a média (mover dados para origem)</p>
+            </div>
+            <div class="highlight-box">
+              <p><strong>Padronizar</strong></p>
+              <p>Centralizar + dividir pelo desvio (média=0, dp=1)</p>
+            </div>
+            <div class="highlight-box">
+              <p><strong>Autovetor</strong></p>
+              <p>Vetor que não muda de direção após transformação</p>
+            </div>
+            <div class="highlight-box">
+              <p><strong>Autovalor</strong></p>
+              <p>Escala do autovetor após transformação</p>
+            </div>
+            <div class="highlight-box">
+              <p><strong>Variância explicada</strong></p>
+              <p>Quanto cada componente explica da variância total</p>
+            </div>
+            <div class="highlight-box">
+              <p><strong>Overfitting</strong></p>
+              <p>Modelo que memoriza ruído em vez de aprender padrão</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE: Erros Comuns -->
+        <section data-auto-animate>
+          <h2>5 Erros Comuns (e como evitá-los)</h2>
+          <ul style="font-size: 0.8em;">
+            <li class="fragment fade-in"><strong style="color: #ff5555;">1. Esquecer de padronizar:</strong> Features com maior escala dominam → Sempre use StandardScaler()</li>
+            <li class="fragment fade-in"><strong style="color: #ff5555;">2. Usar labels no PCA:</strong> Vazamento de dados → PCA não deve receber y</li>
+            <li class="fragment fade-in"><strong style="color: #ff5555;">3. Escolher componentes demais:</strong> Overfitting → Use gráfico de cotovelo ou 80-95%</li>
+            <li class="fragment fade-in"><strong style="color: #ff5555;">4. Não separar treino/teste:</strong> Métricas otimistas → Aplique PCA só no treino</li>
+            <li class="fragment fade-in"><strong style="color: #ff5555;">5. Confundir centralizar com padronizar:</strong> Resultados incorretos</li>
+          </ul>
+          <div class="green-box fragment fade-in" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>💡 Lembre:</strong> Centralizar = média 0, dp original | Padronizar = média 0, dp 1</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Centralizar vs Padronizar -->
+        <section data-auto-animate>
+          <h2>Centralizar vs Padronizar</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #ffb86c; font-size: 0.85em;">CENTRALIZAR</h3>
+              <code-block lang="python" data-trim>
+              <textarea>
+X_centered = X - X.mean(axis=0)
+# média = 0
+# desvio = original
+              </textarea>
+              </code-block>
+              <p style="font-size: 0.75em; margin-top: 10px;">Move os dados para a origem</p>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #50fa7b; font-size: 0.85em;">PADRONIZAR</h3>
+              <code-block lang="python" data-trim>
+              <textarea>
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+# média = 0
+# desvio = 1
+              </textarea>
+              </code-block>
+              <p style="font-size: 0.75em; margin-top: 10px;">Mesma escala para todas as features</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim GLOSSÁRIO E ERROS -->
+
+      <!-- ============================================================
            SEÇÃO: CONCLUSÃO E RECURSOS
            ============================================================ -->
       <section>
