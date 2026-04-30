@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Ciência de Dados - PCA e LDA: Redução de Dimensionalidade</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+           SLIDE 1: CAPA
+           ============================================================ -->
+      <section data-auto-animate>
+        <header1 aula="04" curso="Ciência de Dados" title-size="24"
+                 title="PCA e LDA: Redução de Dimensionalidade e Classificação">
+          <div class="mermaid" style="width:100%; max-width: 600px; margin: 0 auto;">
+            <pre>
+graph TD
+    A["📊 Dados Originais<br/>(muitas dimensões)"] -->|"PCA| LDA"| B["🔮 Dimensões Reduzidas<br/>(2-3D)"]
+    B --> C["📈 Visualização clara"]
+    style A fill:#44475a,color:#f8f8f2
+    style B fill:#bd93f9,color:#f8f8f2
+    style C fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- ============================================================
+           SEÇÃO: INTRODUÇÃO
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Seção 1: Introdução</h2>
+          <p style="color: #6272a4;">Da maldição da dimensionalidade à clareza</p>
+          <ul style="font-size: 0.8em; color: #f8f8f2;">
+            <li>O que é redução de dimensionalidade?</li>
+            <li>Intuição por trás do PCA</li>
+            <li>Intuição por trás do LDA</li>
+          </ul>
+          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~50 minutos</p>
+        </section>
+
+        <!-- SLIDE: O Problema - Maldição da Dimensionalidade -->
+        <section data-auto-animate>
+          <h2>A Maldição da Dimensionalidade</h2>
+          <div class="red-box" style="margin-bottom: 20px;">
+            <p><strong>Cenário:</strong> Você tem 100 features (dimensões) para prever uma variável-alvo.</p>
+            <p style="font-size: 0.85em; color: #ff5555;">Problema: quanto mais dimensões, mais dados precisamos!</p>
+          </div>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #ff79c6; font-size: 0.9em;">📊 O que acontece?</h3>
+              <ul style="font-size: 0.8em;">
+                <li>Modelo pode <strong>overfitar</strong></li>
+                <li>Distância entre pontos fica similar</li>
+                <li>Dados ficam <strong>esparsos</strong></li>
+                <li>Custo computacional aumenta</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #50fa7b; font-size: 0.9em;">💡 A solução</h3>
+              <ul style="font-size: 0.8em;">
+                <li>Reduzir dimensões</li>
+                <li>Preservar informação importante</li>
+                <li>Visualizar em 2D/3D</li>
+                <li>Melhorar performance do modelo</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Exemplo Motivador - Compressão de Imagem -->
+        <section data-auto-animate>
+          <h2>Exemplo Motivador: Compressão de Imagem</h2>
+          <div class="highlight-box">
+            <p><strong>Imagine:</strong> Uma imagem com 784 pixels (28×28) — como uma imagem do MNIST.</p>
+          </div>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1;">
+              <p style="font-size: 0.85em;"><strong>Sem PCA:</strong> 784 valores por pixel</p>
+              <p style="font-size: 0.85em; color: #ff5555;">⬛⬛⬛⬛⬛⬛⬛⬛<br/>⬛⬛⬛⬛⬛⬛⬛⬛<br/>... (784 valores)</p>
+            </div>
+            <div style="flex: 1;">
+              <p style="font-size: 0.85em;"><strong>Com PCA (50 componentes):</strong> Muito menos informação!</p>
+              <p style="font-size: 0.85em; color: #50fa7b;">50 valores + componentes principais</p>
+            </div>
+          </multi-col>
+          <div class="green-box" style="margin-top: 15px;">
+            <p><strong>Resultado:</strong> 95% da variância preservada com ~94% menos dados!</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Quiz de Pré-Requisitos -->
+        <section data-auto-animate>
+          <h2>Quiz: Pré-Requisitos Rápido</h2>
+          <p style="color: #6272a4;">Responda rapidamente (sem consulta):</p>
+          <div style="margin-top: 20px;">
+            <ls-u font-size="24pt">
+              <li><strong>1.</strong> O que é um autovetor (eigenvector)?</li>
+              <li><strong>2.</strong> Como multiplicar duas matrizes em NumPy?</li>
+              <li><strong>3.</strong> O que significa "ortogonal"?</li>
+            </ls-u>
+          </div>
+          <div class="fragment fade-in" style="margin-top: 20px; text-align: right;">
+            <p style="font-size: 0.7em; color: #50fa7b;">Respostas na lousa! 👍</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Introdução ao PCA -->
+        <section data-auto-animate>
+          <h2>PCA: Principal Component Analysis</h2>
+          <div class="highlight-box">
+            <p><strong>Definição:</strong> Técnica <strong>não-supervisionada</strong> que encontra novas direções (componentes) que <strong>maximizam a variância</strong>.</p>
+          </div>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #ffb86c; font-size: 0.85em;">🎯 Objetivo</h3>
+              <ul style="font-size: 0.8em;">
+                <li>Encontrar direções de <strong>máxima variância</strong></li>
+                <li>Componentes são <strong>ortogonais</strong> (perpendiculares)</li>
+                <li>PC1 = maior variância, PC2 = segunda maior, etc.</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #8be9fd; font-size: 0.85em;">📈 Características</h3>
+              <ul style="font-size: 0.8em;">
+                <li><strong>Não</strong> usa labels (não-supervisionado)</li>
+                <li>Reduz para qualquer k dimensões</li>
+                <li>Cada PC explica parte da variância total</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Intuição Geométrica do PCA -->
+        <section data-auto-animate>
+          <h2>Intuição Geométrica do PCA</h2>
+          <div class="mermaid" style="width:100%; max-width: 600px; margin: 0 auto;">
+            <pre>
+graph LR
+    A["Dados Originais<br/>(2D)"] -->|"Encontrar<br/>direção"| B["PC1<br/>(máxima variância)"]
+    B --> C["PC2<br/>(ortogonal)"]
+    style A fill:#44475a,color:#f8f8f2
+    style B fill:#ffb86c,color:#282a36
+    style C fill:#8be9fd,color:#282a36
+            </pre>
+          </div>
+          <div style="margin-top: 20px;">
+            <p style="font-size: 0.85em;"><strong>Analogia:</strong> Imagine uma foto de frente de um rosto.</p>
+            <ul style="font-size: 0.8em;">
+              <li>Uma <strong>linha vertical</strong> (PC1) captura a altura — máxima variância</li>
+              <li>Uma <strong>linha horizontal</strong> (PC2) captura a largura — segunda maior</li>
+              <li>Juntas, representam o rosto com menos informação!</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE: Introdução ao LDA -->
+        <section data-auto-animate>
+          <h2>LDA: Linear Discriminant Analysis</h2>
+          <div class="highlight-box">
+            <p><strong>Definição:</strong> Técnica <strong>supervisionada</strong> que encontra direções que <strong>maximizam a separação entre classes</strong>.</p>
+          </div>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #ff79c6; font-size: 0.85em;">🎯 Objetivo</h3>
+              <ul style="font-size: 0.8em;">
+                <li>Maximizar <strong>distância entre classes</strong></li>
+                <li>Minimizar <strong>variância dentro das classes</strong></li>
+                <li>Usado para <strong>classificação</strong></li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #bd93f9; font-size: 0.85em;">📈 Características</h3>
+              <ul style="font-size: 0.8em;">
+                <li><strong>Usa labels</strong> (supervisionado)</li>
+                <li>Máximo de <strong>K-1 componentes</strong> (K = classes)</li>
+                <li>Intuitivamente: "poser pessoas para foto"</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Comparação PCA vs LDA -->
+        <section data-auto-animate>
+          <h2>PCA vs LDA: Comparação</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th>PCA</th>
+                <th>LDA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Supervisionado?</strong></td>
+                <td style="color: #ff5555;">❌ Não</td>
+                <td style="color: #50fa7b;">✅ Sim</td>
+              </tr>
+              <tr>
+                <td><strong>Usa labels?</strong></td>
+                <td style="color: #ff5555;">Não</td>
+                <td style="color: #50fa7b;">Sim</td>
+              </tr>
+              <tr>
+                <td><strong>Objetivo</strong></td>
+                <td>Maximizar variância</td>
+                <td>Maximizar separação</td>
+              </tr>
+              <tr>
+                <td><strong>Dimensões de saída</strong></td>
+                <td>Qualquer k</td>
+                <td>Máximo K-1</td>
+              </tr>
+              <tr>
+                <td><strong>Uso principal</strong></td>
+                <td>Redução, visualização</td>
+                <td>Classificação</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: Quiz de Verificação -->
+        <section data-auto-animate>
+          <h2>Quiz de Verificação</h2>
+          <ls-u font-size="20pt">
+            <li><strong>1.</strong> PCA é supervisionado ou não-supervisionado?</li>
+            <li><strong>2.</strong> O que o PCA maximiza?</li>
+            <li><strong>3.</strong> Qual o número máximo de componentes LDA para 3 classes?</li>
+            <li><strong>4.</strong> O que devemos fazer antes de aplicar PCA?</li>
+            <li><strong>5.</strong> PCA e LDA são técnicas lineares ou não-lineares?</li>
+          </ls-u>
+          <div class="fragment fade-in" style="margin-top: 20px;">
+            <p style="font-size: 0.7em; color: #50fa7b;">Respostas no roteiro do professor! 📋</p>
+          </div>
+        </section>
+
+      </section><!-- fim INTRODUÇÃO -->
+
+      <!-- ============================================================
+           SEÇÃO: HANDS-ON PCA
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Seção 2: Hands-On PCA</h2>
+          <p style="color: #6272a4;">Implementando do zero e com scikit-learn</p>
+          <ul style="font-size: 0.8em; color: #f8f8f2;">
+            <li>PCA no NumPy (do zero)</li>
+            <li>PCA com scikit-learn (Wine dataset)</li>
+            <li>Visualização e interpretação</li>
+          </ul>
+          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~60 minutos</p>
+        </section>
+
+        <!-- SLIDE: Demonstração - PCA no NumPy -->
+        <section data-auto-animate>
+          <h2>Demonstração: PCA no NumPy</h2>
+          <p style="color: #6272a4; font-size: 0.8em;">Passo a passo da implementação do zero</p>
+          <code-block lang="python" data-trim>
+<textarea>
+# PASSO 1: Importar bibliotecas
+import numpy as np
+import matplotlib.pyplot as plt
+
+# PASSO 2: Carregar dataset (Iris)
+from sklearn.datasets import load_iris
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# PASSO 3: Centralizar (média = 0)
+X_centered = X - X.mean(axis=0)
+print(f"Média após centralização: {X_centered.mean(axis=0)}")
+
+# PASSO 4: Matriz de covariância
+cov_matrix = np.cov(X_centered.T)
+
+# PASSO 5: Autovalores e autovetores
+eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
+
+# PASSO 6: Ordenar por importância
+idx = eigenvalues.argsort()[::-1]
+eigenvalues = eigenvalues[idx]
+eigenvectors = eigenvectors[:, idx]
+
+print(f"Autovalores: {eigenvalues}")
+</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: PCA no NumPy - Projeção -->
+        <section data-auto-animate>
+          <h2>PCA no NumPy: Projeção</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+# PASSO 7: Projetar nos primeiros k componentes
+k = 2  # reduzir para 2D
+top_k_eigenvectors = eigenvectors[:, :k]
+X_transformed = X_centered @ top_k_eigenvectors
+
+print(f"Dados originais shape: {X.shape}")
+print(f"Dados transformados shape: {X_transformed.shape}")
+
+# PASSO 8: Visualizar
+plt.figure(figsize=(8, 6))
+colors = ['red', 'green', 'blue']
+for i in range(3):
+    plt.scatter(X_transformed[y==i, 0], X_transformed[y==i, 1],
+                c=colors[i], label=iris.target_names[i], alpha=0.7)
+plt.xlabel('PC1'); plt.ylabel('PC2')
+plt.title('Iris após PCA (implementação manual)')
+plt.legend(); plt.grid(True); plt.show()
+</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: Atividade Prática - PCA com scikit-learn -->
+        <section data-auto-animate>
+          <h2>Prática: PCA com scikit-learn</h2>
+          <p style="color: #6272a4; font-size: 0.85em;">Dataset: Wine (sklearn)</p>
+          <code-block lang="python" data-trim>
+<textarea>
+from sklearn.datasets import load_wine
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Carregar dados
+wine = load_wine()
+X, y = wine.data, wine.target
+
+# Padronizar (OBRIGATÓRIO antes do PCA!)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Aplicar PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Variância explicada
+print("Variância por componente:", pca.explained_variance_ratio_)
+print("Variância acumulada:", sum(pca.explained_variance_ratio_))
+</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: Visualização - Variância Explicada -->
+        <section data-auto-animate>
+          <h2>Visualização: Variância Explicada</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Gráfico de cotovelo
+plt.figure(figsize=(10, 4))
+
+# Subplot 1: Variância individual
+plt.subplot(1, 2, 1)
+plt.bar(range(1, len(pca.explained_variance_ratio_)+1),
+        pca.explained_variance_ratio_, color='#bd93f9')
+plt.xlabel('Componente'); plt.ylabel('Variância Explicada')
+plt.title('Variância por Componente')
+
+# Subplot 2: Variância acumulada
+plt.subplot(1, 2, 2)
+cumsum = np.cumsum(pca.explained_variance_ratio_)
+plt.plot(range(1, len(cumsum)+1), cumsum, 'bo-', color='#50fa7b')
+plt.axhline(y=0.95, color='r', linestyle='--', label='95%')
+plt.xlabel('Número de Componentes')
+plt.ylabel('Variância Explicada Acumulada')
+plt.title('Variância Acumulada')
+plt.legend(); plt.grid(True)
+plt.tight_layout(); plt.show()
+</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: Interpretação dos Loadings -->
+        <section data-auto-animate>
+          <h2>Interpretação: Loadings do PCA</h2>
+          <p style="color: #6272a4; font-size: 0.8em;">Cada loading indica quanto cada feature contribui para o componente</p>
+          <code-block lang="python" data-trim>
+<textarea>
+# Ver loadings (contribuição de cada feature)
+print("Loadings do PC1:")
+for feature, loading in zip(wine.feature_names, pca.components_[0]):
+    print(f"  {feature}: {loading:.3f}")
+
+# Visualizar biplot
+# (Código completo no notebook 02_pca_sklearn.ipynb)
+</textarea>
+          </code-block>
+          <div class="yellow-box" style="margin-top: 15px;">
+            <p style="font-size: 0.8em;"><strong>Pergunta:</strong> Por que precisamos padronizar antes do PCA?</p>
+            <p style="font-size: 0.7em; color: #ffb86c;">Resposta: Features em escalas diferentes dominariam a variância!</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Desafio Visualização -->
+        <section data-auto-animate>
+          <h2>Desafio: Visualize o Wine Dataset</h2>
+          <ls-u font-size="20pt">
+            <li>Abrir o notebook <code>02_pca_sklearn.ipynb</code></li>
+            <li>Executar cada célula</li>
+            <li>Plotar o scatter 2D com cores por classe</li>
+            <li>Responder: Quantos componentes para 95% da variância?</li>
+          </ls-u>
+          <div class="green-box" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>Dica:</strong> Use <code>shift + Enter</code> para executar células</p>
+          </div>
+        </section>
+
+      </section><!-- fim HANDS-ON PCA -->
+
+      <!-- ============================================================
+           SEÇÃO: HANDS-ON LDA
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Seção 3: Hands-On LDA</h2>
+          <p style="color: #6272a4;">Classificação com Análise Discriminante Linear</p>
+          <ul style="font-size: 0.8em; color: #f8f8f2;">
+            <li>LDA para classificação</li>
+            <li>Breast Cancer dataset</li>
+            <li>Métricas de avaliação</li>
+          </ul>
+          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~45 minutos</p>
+        </section>
+
+        <!-- SLIDE: Demonstração - LDA para Classificação -->
+        <section data-auto-animate>
+          <h2>Demonstração: LDA para Classificação</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+
+# Carregar dados
+cancer = load_breast_cancer()
+X, y = cancer.data, cancer.target
+
+# Separar treino/teste
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42)
+
+# Padronizar
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: LDA - Treinar e Avaliar -->
+        <section data-auto-animate>
+          <h2>LDA: Treinar e Avaliar</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+# Aplicar LDA (max 1 componente para 2 classes)
+lda = LinearDiscriminantAnalysis(n_components=1)
+X_train_lda = lda.fit_transform(X_train_scaled, y_train)
+X_test_lda = lda.transform(X_test_scaled)
+
+print(f"Variância explicada: {lda.explained_variance_ratio_}")
+
+# Treinar classificador
+clf = LogisticRegression(random_state=42)
+clf.fit(X_train_lda, y_train)
+
+# Predizer e avaliar
+y_pred = clf.predict(X_test_lda)
+print(f"Acurácia: {accuracy_score(y_test, y_pred):.2%}")
+print("\nRelatório:")
+print(classification_report(y_test, y_pred))
+</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: Comparação PCA + Classifier vs LDA -->
+        <section data-auto-animate>
+          <h2>Comparação: PCA + Classifier vs LDA</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #bd93f9; font-size: 0.85em;">Abordagem A: PCA + LR</h3>
+              <code-block lang="python" data-trim>
+<textarea>
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_train_pca = pca.fit_transform(X_train_scaled)
+X_test_pca = pca.transform(X_test_scaled)
+
+clf_pca = LogisticRegression(random_state=42)
+clf_pca.fit(X_train_pca, y_train)
+acc_pca = accuracy_score(y_test, clf_pca.predict(X_test_pca))
+print(f"PCA + LR: {acc_pca:.2%}")
+</textarea>
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #50fa7b; font-size: 0.85em;">Abordagem B: LDA + LR</h3>
+              <code-block lang="python" data-trim>
+<textarea>
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+lda = LinearDiscriminantAnalysis(n_components=1)
+X_train_lda = lda.fit_transform(X_train_scaled, y_train)
+X_test_lda = lda.transform(X_test_scaled)
+
+clf_lda = LogisticRegression(random_state=42)
+clf_lda.fit(X_train_lda, y_train)
+acc_lda = accuracy_score(y_test, clf_lda.predict(X_test_lda))
+print(f"LDA + LR: {acc_lda:.2%}")
+</textarea>
+              </code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Análise de Resultados -->
+        <section data-auto-animate>
+          <h2>Análise de Resultados</h2>
+          <div class="highlight-box">
+            <p><strong>Perguntas para discussão:</strong></p>
+          </div>
+          <ul style="font-size: 0.85em;">
+            <li class="fragment fade-in"><strong>1.</strong> Qual abordagem teve melhor acurácia? Por quê?</li>
+            <li class="fragment fade-in"><strong>2.</strong> A variância explicada pelo LDA é maior ou menor que a do PCA?</li>
+            <li class="fragment fade-in"><strong>3.</strong> Qual o trade-off entre as duas abordagens?</li>
+          </ul>
+          <div class="fragment fade-in green-box" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>Resposta esperada:</strong> LDA supervisionado usa labels → melhor separação para classificação. PCA não-supervisionado preserva variância global.</p>
+          </div>
+        </section>
+
+      </section><!-- fim HANDS-ON LDA -->
+
+      <!-- ============================================================
+           SEÇÃO: COMPARAÇÃO E DESAFIO
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Seção 4: Comparação e Desafio</h2>
+          <p style="color: #6272a4;">Projetando a solução ideal</p>
+          <ul style="font-size: 0.8em; color: #f8f8f2;">
+            <li>Comparar PCA + Classifier vs LDA + Classifier</li>
+            <li>Escolher a melhor abordagem</li>
+            <li>Implementar no dataset Iris</li>
+          </ul>
+          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~30 minutos</p>
+        </section>
+
+        <!-- SLIDE: Desafio Comparativo -->
+        <section data-auto-animate>
+          <h2>Desafio: Comparar Abordagens</h2>
+          <div class="highlight-box">
+            <p><strong>Em duplas:</strong> Crie um notebook que implementa ambas as abordagens</p>
+          </div>
+          <ls-u font-size="20pt">
+            <li>Carregar dataset Iris</li>
+            <li>Separar treino/teste (70/30)</li>
+            <li>Padronizar os dados</li>
+            <li><strong>Abordagem A:</strong> PCA (2 componentes) + Logistic Regression</li>
+            <li><strong>Abordagem B:</strong> LDA (2 componentes) + Logistic Regression</li>
+            <li>Comparar acurácias</li>
+            <li>Visualizar os resultados</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE: Rubrica de Avaliação -->
+        <section data-auto-animate>
+          <h2>Rubrica de Avaliação Rápida</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Critério</th>
+                <th>Pontos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Implementa PCA + LR</td>
+                <td style="color: #50fa7b;">25%</td>
+              </tr>
+              <tr>
+                <td>Implementa LDA + LR</td>
+                <td style="color: #50fa7b;">25%</td>
+              </tr>
+              <tr>
+                <td>Compara acurácias</td>
+                <td style="color: #50fa7b;">25%</td>
+              </tr>
+              <tr>
+                <td>Visualiza resultados</td>
+                <td style="color: #50fa7b;">25%</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="green-box" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>Total:</strong> 100%</p>
+          </div>
+        </section>
+
+      </section><!-- fim COMPARAÇÃO E DESAFIO -->
+
+      <!-- ============================================================
+           SEÇÃO: CONCLUSÃO E RECURSOS
+           ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Header da Seção -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Seção 5: Conclusão e Recursos</h2>
+          <p style="color: #6272a4;">Resumo e próximos passos</p>
+        </section>
+
+        <!-- SLIDE: Resumo Final -->
+        <section data-auto-animate>
+          <h2>Resumo: O que Aprendemos</h2>
+          <ul style="font-size: 0.85em;">
+            <li class="fragment fade-in"><strong>PCA</strong> = redução de dimensionalidade <strong>não-supervisionada</strong></li>
+            <li class="fragment fade-in"><strong>LDA</strong> = redução + classificação <strong>supervisionada</strong></li>
+            <li class="fragment fade-in">Ambos são <strong>lineares</strong> (assumem relações lineares)</li>
+            <li class="fragment fade-in"><strong>PCA:</strong> maximize variância (não usa labels)</li>
+            <li class="fragment fade-in"><strong>LDA:</strong> maximize separação entre classes (usa labels)</li>
+          </ul>
+          <div class="fragment fade-in" style="margin-top: 20px;">
+            <div class="highlight-box">
+              <p style="font-size: 0.85em; text-align: center;"><strong>Regra prática:</strong><br/>Sem labels → PCA<br/>Com labels + classificação → LDA</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE: Quando usar cada técnica -->
+        <section data-auto-animate>
+          <h2>Quando Usar Cada Técnica?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Cenário</th>
+                <th>Técnica Recomendada</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Visualizar dados em 2D/3D</td>
+                <td style="color: #50fa7b;">PCA</td>
+              </tr>
+              <tr>
+                <td>Classificação com labels</td>
+                <td style="color: #50fa7b;">LDA</td>
+              </tr>
+              <tr>
+                <td>Pré-processamento para ML</td>
+                <td style="color: #bd93f9;">PCA ou LDA</td>
+              </tr>
+              <tr>
+                <td>Não tem labels disponíveis</td>
+                <td style="color: #ffb86c;">PCA</td>
+              </tr>
+              <tr>
+                <td> Muitas features (maldição dimensionalidade)</td>
+                <td style="color: #50fa7b;">PCA</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: Checklist de Aprendizado -->
+        <section data-auto-animate>
+          <h2>Checklist de Aprendizado</h2>
+          <ls-u font-size="20pt">
+            <li>✅ Entendo a diferença entre PCA e LDA</li>
+            <li>✅ Sei implementar PCA do zero com NumPy</li>
+            <li>✅ Sei usar PCA com scikit-learn</li>
+            <li>✅ Sei usar LDA para classificação</li>
+            <li>✅ Sei interpretar variância explicada</li>
+            <li>✅ Sei comparar abordagens em um projeto</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE: Recursos para Estudo -->
+        <section data-auto-animate>
+          <h2>Recursos para Estudo</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <h3 style="color: #ff79c6; font-size: 0.85em;">🎥 Vídeos</h3>
+              <ul style="font-size: 0.75em;">
+                <li><a href="https://www.youtube.com/watch?v=0E8Gf2jK8Xw" target="_blank">StatQuest: PCA</a></li>
+                <li><a href="https://www.youtube.com/watch?v=azxc9tY3o-0" target="_blank">StatQuest: LDA</a></li>
+                <li><a href="https://www.youtube.com/watch?v=fNk_zzaMoSs" target="_blank">3Blue1Brown: Autovetores</a></li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h3 style="color: #8be9fd; font-size: 0.85em;">📖 Documentação</h3>
+              <ul style="font-size: 0.75em;">
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html" target="_blank">scikit-learn PCA</a></li>
+                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.discriminant_analysis.LinearDiscriminantAnalysis.html" target="_blank">scikit-learn LDA</a></li>
+              </ul>
+            </div>
+          </multi-col>
+          <div class="yellow-box" style="margin-top: 20px;">
+            <p style="font-size: 0.8em;"><strong>🌐 Interativo:</strong> <a href="http://setosa.io/ev/principal-component-analysis/" target="_blank">PCA Visualization</a></p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Próxima Aula -->
+        <section data-auto-animate>
+          <h2>Próxima Aula</h2>
+          <div class="highlight-box">
+            <p><strong>Topic:</strong> Clustering (K-means, Hierarchical)</p>
+            <p style="font-size: 0.85em; color: #6272a4;">Aprenderemos a agrupar dados sem labels!</p>
+          </div>
+          <ul style="font-size: 0.85em; margin-top: 20px;">
+            <li>K-means: separar em K clusters</li>
+            <li>Aglomerativo: dendrogramas</li>
+            <li>Elbow method: escolher K</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Dúvidas -->
+        <section data-auto-animate>
+          <h2>🤔 Dúvidas?</h2>
+          <p style="font-size: 1.1em;">Vamos discutir!</p>
+          <div class="fragment fade-in" style="margin-top: 30px;">
+            <p style="font-size: 0.8em; color: #6272a4;">Slides disponíveis no repositório do curso</p>
+            <p style="font-size: 0.7em; color: #50fa7b;">Ciência de Dados - IFSP Capivari</p>
+          </div>
+        </section>
+
+      </section><!-- fim CONCLUSÃO -->
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../slides_template/init.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
