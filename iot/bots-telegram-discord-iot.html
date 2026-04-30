@@ -404,60 +404,31 @@ void loop() {
 
       </section><!-- fim Prática Telegram -->
 
-      <!-- ============================================================
+            <!-- ============================================================
          SEÇÃO: PRÁTICA LDR
          ============================================================ -->
       <section>
 
         <!-- SLIDE: Seção - LDR Proativo -->
         <section data-auto-animate>
-            <h2 style="color: #ffb86c;">☀️ LDR - Sensor de Luz Proativo</h2>
-            <p style="color: #6272a4;">Quando a luz muda, o ESP avisa você!</p>
+            <h2 style="color: #ffb86c;">☀️ LDR Proativo</h2>
+            <p style="color: #6272a4;">Projeto: Sensor de Luz Automático com Telegram</p>
         </section>
 
-        <!-- SLIDE: O que é LDR? -->
+        <!-- SLIDE: Projeto LDR - Sensor de Luz Automático -->
         <section data-auto-animate>
-            <h2>O que é LDR?</h2>
-            <ls-u style="font-size: 0.9em;">
-                <li>LDR = <strong>Light Dependent Resistor</strong> (Resistor Dependente de Luz)</li>
-                <li>Também chamado de <strong>fotoresistor</strong></li>
-                <li>Resistência <strong>diminui</strong> quando há mais luz</li>
-                <li>Conectado ao pino analógico do ESP8266 (A0)</li>
-            </ls-u>
-        </section>
-
-        <!-- SLIDE: Circuito LDR -->
-        <section data-auto-animate>
-            <h2>Circuito LDR</h2>
-            <multi-col style="gap: 40px;">
+            <h2>Projeto LDR - Sensor de Luz Automático</h2>
+            <multi-col style="gap: 30px; align-items: start;">
                 <div style="flex: 1;">
-                    <h4 style="color: #50fa7b;">Esquema de Ligação</h4>
-                    <ls-u style="font-size: 0.85em;">
-                        <li>LDR conectado entre <strong>3.3V</strong> e <strong>A0</strong></li>
-                        <li>Resistor de <strong>10KΩ</strong> entre A0 e GND (pull-down)</li>
-                        <li>Forma um <strong>divisor de tensão</strong></li>
-                    </ls-u>
+                    <img src="../img/ldr-circuit.jpg" alt="Circuito LDR" style="max-width: 100%; border-radius: 8px; border: 2px solid #50fa7b;">
+                    <p style="color: #6272a4; font-size: 0.8em; text-align: center; margin-top: 8px;">Esquema de ligação do sensor LDR</p>
                 </div>
-                <div style="flex: 1; text-align: center;">
-                    <pre style="background: #44475a; padding: 15px; border-radius: 8px; font-size: 0.8em; text-align: left;">
-    3.3V ---\            /-- A0 (ESP8266)
-             \          /
-              [  LDR  ]
-             /          \ 
-    GND ----[  10KΩ  ]--</pre>
-                </div>
-            </multi-col>
-            <p style="color: #bd93f9; margin-top: 15px;">💡 Luz alta → tensão alta no A0 → valor próximo de 1024</p>
-        </section>
-
-        <!-- SLIDE: Código LDR Proativo -->
-        <section data-auto-animate>
-            <header1 title="Código: LDR Proativo" />
-            <code-block lang="cpp" theme="dracula">
+                <div style="flex: 1;">
+                    <h4 style="color: #50fa7b;">Código Completo</h4>
+                    <code-block lang="cpp" theme="dracula">
 #include <Arduino.h>
 #include <WiFiClientSecure.h>
 #include <UniversalTelegramBot.h>
-#include <ArduinoJson.h>
 
 #define LDR_PIN A0
 #define BOT_TOKEN "SEU_TOKEN"
@@ -467,7 +438,7 @@ WiFiClientSecure client;
 UniversalTelegramBot bot(BOT_TOKEN, client);
 
 int threshold = 500;
-int lastState = -1; // -1 = não definido, 0 = escuro, 1 = claro
+int lastState = -1;
 
 void setup() {
     Serial.begin(115200);
@@ -476,13 +447,12 @@ void setup() {
 
 void sendAlert(String message) {
     bot.sendMessage(CHAT_ID, message);
-    Serial.println(message);
 }
 
 void loop() {
     int light = analogRead(LDR_PIN);
     int currentState = (light > threshold) ? 1 : 0;
-
+    
     if (currentState != lastState) {
         lastState = currentState;
         if (currentState == 1) {
@@ -491,52 +461,22 @@ void loop() {
             sendAlert("🌙 Está escuro! (LDR: " + String(light) + ")");
         }
     }
-
     delay(1000);
 }
-            </code-block>
+                    </code-block>
+                    <p style="color: #bd93f9; font-size: 0.85em; margin-top: 10px;">⚙️ Ajuste o <code>threshold</code> conforme seu ambiente</p>
+                </div>
+            </multi-col>
         </section>
 
-        <!-- SLIDE: Checkpoint LDR -->
+        <!-- SLIDE: Checkpoint -->
         <section data-auto-animate>
             <h2>Checkpoint LDR ☑️</h2>
-            <multi-col style="gap: 30px;">
-                <div style="flex: 1;">
-                    <h4 style="color: #50fa7b;">Teste 1: Escuro</h4>
-                    <ls-u>
-                        <li>Cubra o LDR com o dedo</li>
-                        <li>Verifique no Telegram: <code>🌙 Está escuro!</code></li>
-                        <li>Observe o valor no Serial Monitor</li>
-                    </ls-u>
-                </div>
-                <div style="flex: 1;">
-                    <h4 style="color: #ffb86c;">Teste 2: Claro</h4>
-                    <ls-u>
-                        <li>Aponte a lanterna do celular para o LDR</li>
-                        <li>Verifique no Telegram: <code>☀️ Está claro!</code></li>
-                        <li>Compare os valores (deveriam ser bem diferentes)</li>
-                    </ls-u>
-                </div>
-            </multi-col>
-        </section>
-
-        <!-- SLIDE: Melhorias Possíveis -->
-        <section data-auto-animate>
-            <h2>Melhorias Possíveis 🔧</h2>
-            <multi-col style="gap: 30px;">
-                <div style="flex: 1;">
-                    <h4 style="color: #ff79c6;">Histerese</h4>
-                    <p style="color: #f8f8f2; font-size: 0.85em;">Adicionar janela entre claro/escuro para evitar flutuação quando o valor fica próximo do limiar</p>
-                </div>
-                <div style="flex: 1;">
-                    <h4 style="color: #8be9fd;">Calibração Automática</h4>
-                    <p style="color: #f8f8f2; font-size: 0.85em;">Salvar leitura mínima/máxima para calibrar o threshold dinamicamente</p>
-                </div>
-                <div style="flex: 1;">
-                    <h4 style="color: #50fa7b;">Relatório Periódico</h4>
-                    <p style="color: #f8f8f2; font-size: 0.85em;">Enviar leituras periódicas mesmo sem mudança de estado</p>
-                </div>
-            </multi-col>
+            <ls-u>
+                <li>🌓 <strong>Teste coberto:</strong> Cubra o LDR com o dedo → Receba <code>🌙 Está escuro!</code></li>
+                <li>☀️ <strong>Teste exposto:</strong> Aponte luz para o LDR → Receba <code>☀️ Está claro!</code></li>
+                <li>📊 Observe os valores no Serial Monitor (valores devem ser bem diferentes)</li>
+            </ls-u>
         </section>
 
       </section><!-- fim Prática LDR -->
