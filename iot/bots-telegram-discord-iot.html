@@ -22,7 +22,7 @@
       <!-- ============================================================
          SLIDE 1: CAPA
          ============================================================ -->
-      <section data-auto-animate>
+      <section>
         <header1 aula="12" curso="Internet das Coisas" title-size="36"
                  title="Bot Telegram para IoT com NodeMCU ESP8266">
           <div class="mermaid" data-id="cover-arch" style="width:500px">
@@ -48,7 +48,7 @@ graph LR
 
 
         <!-- SLIDE 3: Diagrama de Arquitetura -->
-        <section data-auto-animate>
+        <section>
           <h2>Diagrama de Arquitetura</h2>
           <div class="mermaid" data-id="architecture-full" style="width: 100%;">
             <pre>
@@ -123,8 +123,9 @@ graph TB
             </svg>
           </div>
           <ls-u font-size="28" style="margin-top:20pt">
-            <li data-fragment-index="1"><span style="color: #ff5555;">NUNCA</span> exponha tokens no código versionado</li>
-            <li>Use <code>secrets.h</code> ou <code>platformio.ini</code> para tokens</li>
+            <li data-fragment-index="1"><span style="color: #ff5555;">NUNCA</span> exponha tokens no código versionado
+            </li>
+            <li>Use <code>secrets.h</code> para tokens</li>
             <li>Adicione arquivos sensíveis ao <code>.gitignore</code></li>
             <li>Valide todos os comandos recebidos</li>
             <li>Use HTTPS para todas as comunicações</li>
@@ -164,12 +165,12 @@ secrets.h
       <!-- ============================================================
          SEÇÃO: BOT TELEGRAM
          ============================================================ -->
-      <section>
+      <section data-background-image="https://i.imgur.com/S2Qrhtd.png" data-background-opacity="0.1">
 
         <!-- SLIDE 8: Seção - Telegram -->
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">🤖 Bot Telegram</h2>
-          <p style="color: #6272a4;">Configurando e implementando um bot Telegram com ESP8266</p>
+          <h2>Bot Telegram</h2>
+          <p>Configurando e implementando um bot Telegram com ESP8266</p>
         </section>
 
         <!-- SLIDE 9: Criar Bot via BotFather -->
@@ -182,7 +183,8 @@ secrets.h
               <li style="margin-bottom: 15px;">Envie <code>/newbot</code> e siga as instruções</li>
               <li style="margin-bottom: 15px;">Escolha um nome e username para o bot</li>
               <li style="margin-bottom: 15px;"><strong style="color: #ffb86c;">Copie o token!</strong> Formato:
-                <code>123456789:AABBcc...</code></li>
+                <code>123456789:AABBcc...</code>
+              </li>
             </ol>
             <img src="https://i.imgur.com/7aDtBhm.png" alt="">
           </multi-col>
@@ -192,23 +194,24 @@ secrets.h
         <!-- SLIDE 10: Biblioteca Universal Telegram Bot -->
         <section data-auto-animate>
           <h2>Biblioteca Universal Telegram Bot</h2>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h4 style="color: #ffb86c;">Instalação (PlatformIO)</h4>
-              <code-block lang="ini" data-trim>
-                <textarea>
-; platformio.ini
+
+          <h4 style="color: #ffb86c;">Instalação (PlatformIO)</h4>
+          <code-block lang="ini" data-trim>
+            <textarea>
+[env:nodemcuv2]
+platform = espressif8266
+board = nodemcuv2
+framework = arduino
+monitor_speed = 115200
+upload_speed = 921600
 lib_deps =
-    witnessmenow/Universal Arduino Telegram Bot
+    witnessmenow/UniversalTelegramBot @ ^1.3.0
+    bblanchon/ArduinoJson @ ^7.4.3
               </textarea>
-              </code-block>
-            </div>
-            <div style="flex: 1;">
-              <h4 style="color: #ffb86c;">Instalação (Arduino IDE)</h4>
-              <p style="font-size: 16pt;">Sketch → Incluir Biblioteca → Gerenciar Bibliotecas<br />Buscar:
-                <code>Universal Telegram Bot</code></p>
-            </div>
-          </multi-col>
+          </code-block>
+
+
+
         </section>
 
         <!-- SLIDE 11: Comandos do Bot -->
@@ -253,52 +256,87 @@ lib_deps =
           <copy-btn></copy-btn>
         </section>
 
+        <section data-auto-animate>
+          <h2>Código: secrets.h</h2>
+          <multi-col>
+            <code-block style="min-height:max-content" data-fragment-index="1" lang="cpp"
+                        data-line-numbers>
+              <textarea>
+#define BOT_TOKEN "XXXXXX:XXXXXXX..."    
+</textarea>
+            </code-block>
+
+          </multi-col>
+        </section>
+
         <!-- SLIDE 12: Código Telegram Bot - Setup -->
         <section data-auto-animate>
           <h2>Código: Telegram Bot (Setup)</h2>
-          <code-block lang="cpp" data-line-numbers="1-15|3-6|7-11|12-15" data-fragment-index="1">
-            <textarea>
-#include &lt;ArduinoJson.h&gt;
-#include &lt;UniversalTelegramBot.h&gt;
-#include &lt;WiFiClientSecure.h&gt;
+          <multi-col>
+            <code-block style="line-height: 1.2;min-height:max-content;" data-fragment-index="1" lang="cpp"
+                        data-line-numbers="1-26|6,11|4,10,24" data-fragment-index="1">
+              <textarea>
+#include <Arduino.h>
+#include <ArduinoJson.h>
+#include <UniversalTelegramBot.h>
+#include <WiFiClientSecure.h>
+#include <ESP8266WiFi.h>
+#include "secrets.h"
 
-#define BOT_TOKEN "SEU_TOKEN_AQUI"
-#define LED_PIN 2
+#define LED_PIN D4
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOT_TOKEN, client);
 
-void setup() {
-    Serial.begin(115200);
-    pinMode(LED_PIN, OUTPUT);
-    client.setInsecure(); // Aceita certificados
+void setup()
+{
+  Serial.begin(115200);
+  WiFi.begin("LAB6");
+  Serial.print("\nConectando WiFi");
+  while(WiFi.isConnected() == false) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConectado!");
+  pinMode(LED_PIN, OUTPUT);
+  client.setInsecure(); // Aceita certificados
+}
 }</textarea>
-          </code-block>
+            </code-block>
+
+            <ls-u>
+              <li data-fragment-index="1">Usar o secrets.h para BOT_TOKEN</li>
+              <li data-fragment-index="2">O telegram usa o HTTPS</li>
+            </ls-u>
+          </multi-col>
         </section>
 
         <!-- SLIDE 13: Código Telegram Bot - Loop -->
         <section data-auto-animate>
           <h2>Código: Telegram Bot (Loop)</h2>
-          <code-block lang="cpp" data-line-numbers="1-20|5-7|8-14|15-20" data-fragment-index="1">
+          <code-block style="line-height: 1.5;min-height:max-content;" lang="cpp" data-line-numbers="1-20|5|8-15"
+                      data-fragment-index="1">
             <textarea>
 void loop() {
-    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-    
-    while (numNewMessages) {
-        for (int i = 0; i &lt; numNewMessages; i++) {
-            String chat_id = bot.messages[i].chat_id;
-            String text = bot.messages[i].text;
-            
-            if (text == "/ledon") {
-                digitalWrite(LED_PIN, HIGH);
-                bot.sendMessage(chat_id, "💡 LED ligado!");
-            } else if (text == "/ledoff") {
-                digitalWrite(LED_PIN, LOW);
-                bot.sendMessage(chat_id, "💡 LED desligado!");
-            }
-        }
-        numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+  int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+
+  while (numNewMessages) {
+    for (int i = 0; i < numNewMessages; i++) {
+      String chat_id = bot.messages[i].chat_id;
+      String text = bot.messages[i].text;
+
+      if (text == "/ledon") {
+        digitalWrite(LED_PIN, LOW);
+        bot.sendMessage(chat_id, "💡 LED ligado!");
+      }
+      else if (text == "/ledoff") {
+        digitalWrite(LED_PIN, HIGH);
+        bot.sendMessage(chat_id, "💡 LED desligado!");
+      }
     }
+    numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+  }
+}
 }</textarea>
           </code-block>
         </section>
@@ -332,12 +370,12 @@ void loop() {
                 <li>Jumpers</li>
               </ul>
               <div style="background: #44475a; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                <p style="color: #8be9fd;">🔌 GPIO2 (D4) → Resistor → Ânodo LED</p>
-                <p style="color: #8be9fd;">🌍 GND → Cátodo LED</p>
+                <p style="color: #8be9fd;">GPIO2 (D4) → Resistor → Cátado LED (-)</p>
+                <p style="color: #8be9fd;">Ânodo LED (+) → 3V3</p>
               </div>
             </div>
             <div style="flex: 1; text-align: center;">
-              <img src="https://i.imgur.com/WQNrNlE.png" alt="ESP8266 LED wiring"
+              <img src="https://i.imgur.com/qwYqcd4.png" alt="ESP8266 LED wiring"
                    style="max-width: 100%; border-radius: 8px;" />
             </div>
           </multi-col>
@@ -349,49 +387,58 @@ void loop() {
           <code-block lang="cpp" data-trim>
             <textarea>
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include <UniversalTelegramBot.h>
 #include <WiFiClientSecure.h>
+#include <ESP8266WiFi.h>
+#include "secrets.h"
 
-#define LED_PIN 2
-#define BOT_TOKEN "SEU_TOKEN_TELEGRAM"
+#define LED_PIN D4
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOT_TOKEN, client);
 
-void setup() {
-    Serial.begin(115200);
-    pinMode(LED_PIN, OUTPUT);
-    client.setInsecure();
-    
-    bot.updateToken(BOT_TOKEN);
+void setup()
+{
+  Serial.begin(115200);
+  WiFi.begin("LAB6");
+  Serial.print("\nConectando WiFi");
+  while(WiFi.isConnected() == false) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConectado!");
+  pinMode(LED_PIN, OUTPUT);
+  client.setInsecure(); // Aceita certificados
 }
 
-void handleNewMessages(int numNewMessages) {
-    for (int i = 0; i &lt; numNewMessages; i++) {
-        String chat_id = bot.messages[i].chat_id;
-        String text = bot.messages[i].text;
-        
-        if (text == "/start") {
-            bot.sendMessage(chat_id, "👋 Olá! Use /ledon ou /ledoff");
-        } else if (text == "/ledon") {
-            digitalWrite(LED_PIN, HIGH);
-            bot.sendMessage(chat_id, "💡 LED LIGADO!");
-        } else if (text == "/ledoff") {
-            digitalWrite(LED_PIN, LOW);
-            bot.sendMessage(chat_id, "💡 LED DESLIGADO!");
-        } else if (text == "/status") {
-            String status = digitalRead(LED_PIN) ? "Ligado" : "Desligado";
-            bot.sendMessage(chat_id, "🔌 LED: " + status);
-        }
+void processaMsg(int numeroMensagens) {
+  for (int i = 0; i < numeroMensagens; i++) {
+    String chat_id = bot.messages[i].chat_id;
+    String text = bot.messages[i].text;
+    
+    if (text == "/start") {
+      bot.sendMessage(chat_id, "👋 Olá! Use /ledon ou /ledoff");
+    } else if (text == "/ledon") {
+      digitalWrite(LED_PIN, LOW);
+      bot.sendMessage(chat_id, "💡 LED ligado!");
+    } else if (text == "/ledoff") {
+      digitalWrite(LED_PIN, HIGH);
+      bot.sendMessage(chat_id, "💡 LED desligado!");
+    } else if (text == "/status") {
+      String status = digitalRead(LED_PIN) ? "Desligado": "Ligado";
+      bot.sendMessage(chat_id, "🔌 LED: " + status);
     }
+  }
 }
 
 void loop() {
-    int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-    while (numNewMessages) {
-        handleNewMessages(numNewMessages);
-        numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-    }
+  int qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
+
+  while (qdeMensagens) {
+    processaMsg(qdeMensagens);
+    qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
+  }
 }</textarea>
           </code-block>
         </section>
@@ -423,16 +470,58 @@ void loop() {
           <p style="color: #6272a4;">Projeto: Sensor de Luz Automático com Telegram</p>
         </section>
 
+        <!-- SLIDE: Histerese -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">🌡️ Histerese</h2>
+          <p style="color: #6272a4;">Evita liga/desliga constante (chattering)</p>
+
+          <div style="background: #44475a; border-radius: 12px; padding: 25px; margin-top: 20px;">
+            <ul style="font-size: 20pt;">
+              <li style="margin-bottom: 12px;">Define <strong>dois limiares</strong> (liga e desliga)</li>
+              <li style="margin-bottom: 12px;">Cria uma <strong>faixa de estabilidade</strong></li>
+              <li style="margin-bottom: 12px;">Depende do <strong>estado anterior</strong> (memória)</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 25px;">
+            <p style="font-size: 20pt; color: #50fa7b;">Exemplo (Ar-condicionado):</p>
+            <p class="center">
+            <code-block style="line-height:1" class="c">
+              // Liga quando >= 25°C
+              // Desliga quando <= 23°C
+
+              if (temp >= 25 && estado == OFF) {
+                ligar();
+              }
+
+              if (temp <= 23 && estado == ON) {
+                desligar();
+              }
+          </code-block>
+          </p>
+          </div>
+
+          <p style="margin-top: 20px; font-size: 18pt; color: #ffb86c;">
+            💡 Resultado: menos desgaste e comportamento estável
+          </p>
+        </section>
+
+        <section>
+          <h2 style="margin-top: 8px;">Esquema de ligação do
+            sensor LDR</h2>
+          <p class="center">
+            <img src="https://i.imgur.com/Vm6IbSj.png" alt="Circuito LDR" height="600"
+
+                 style="border-radius: 8px; border: 2px solid #50fa7b;">
+          </p>
+
+        </section>
+
         <!-- SLIDE: Projeto LDR - Sensor de Luz Automático -->
         <section data-auto-animate>
           <h2>Projeto LDR - Sensor de Luz Automático</h2>
           <multi-col style="gap: 30px; align-items: start;">
-            <div style="flex: 1;">
-              <img src="../img/ldr-circuit.jpg" alt="Circuito LDR"
-                   style="max-width: 100%; border-radius: 8px; border: 2px solid #50fa7b;">
-              <p style="color: #6272a4; font-size: 0.8em; text-align: center; margin-top: 8px;">Esquema de ligação do
-                sensor LDR</p>
-            </div>
+
             <div style="flex: 1;">
               <h4 style="color: #50fa7b;">Código Completo</h4>
               <code-block lang="cpp" data-trim>
@@ -443,220 +532,178 @@ void loop() {
 
 #define LDR_PIN A0
 #define BOT_TOKEN "SEU_TOKEN"
-#define CHAT_ID "SEU_CHAT_ID"
+String chat_id="";
 
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOT_TOKEN, client);
 
-int threshold = 500;
+int limiar = 500;
 int lastState = -1;
 
-void setup() {
+void setup()
+{
     Serial.begin(115200);
+
+    ///////////////////
+    // CONECTE WIFI
+    ///////////////////
+
     client.setInsecure();
 }
 
-void sendAlert(String message) {
-    bot.sendMessage(CHAT_ID, message);
+void sendAlert(String message)
+{
+    bot.sendMessage(chat_id, message);
 }
 
-void loop() {
+void processaMsgs() {
+    int qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
+    while (qdeMensagens)
+    {
+        for (int i = 0; i < qdeMensagens; i++)
+        {
+            chat_id = bot.messages[i].chat_id;
+            String text = bot.messages[i].text;
+
+            if (text == "/start")
+            {
+                bot.sendMessage(chat_id, "👋 Olá!");
+            }
+            
+        }
+        qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
+    }
+}
+
+void loop()
+{
+    // Enquanto não receber /start e tiver chat_id
+    if (chat_id == "") {
+        processaMsgs();
+        return;
+    }
+
+    //////////////////////////
+    // IMPLEMENTAR HISTERESE
+    //////////////////////////
     int light = analogRead(LDR_PIN);
-    int currentState = (light > threshold) ? 1 : 0;
-    
-    if (currentState != lastState) {
+    int currentState = (light > limiar) ? 1 : 0;
+
+    if (currentState != lastState)
+    {
         lastState = currentState;
-        if (currentState == 1) {
+        if (currentState == 1)
+        {
             sendAlert("☀️ Está claro! (LDR: " + String(light) + ")");
-        } else {
+        }
+        else
+        {
             sendAlert("🌙 Está escuro! (LDR: " + String(light) + ")");
         }
     }
-    delay(1000);
+    delay(100);
 }
                     </textarea>
               </code-block>
-              <p style="color: #bd93f9; font-size: 0.85em; margin-top: 10px;">⚙️ Ajuste o <code>threshold</code>
+              <p style="color: #bd93f9; font-size: 0.85em; margin-top: 10px;">⚙️ Ajuste o <code>limiar</code>
                 conforme seu ambiente</p>
             </div>
           </multi-col>
         </section>
-
-        <!-- SLIDE: Checkpoint -->
-        <section data-auto-animate>
-          <h2>Checkpoint LDR ☑️</h2>
-          <ls-u>
-            <li>🌓 <strong>Teste coberto:</strong> Cubra o LDR com o dedo → Receba <code>🌙 Está escuro!</code></li>
-            <li>☀️ <strong>Teste exposto:</strong> Aponte luz para o LDR → Receba <code>☀️ Está claro!</code></li>
-            <li>📊 Observe os valores no Serial Monitor (valores devem ser bem diferentes)</li>
-          </ls-u>
         </section>
 
-      </section><!-- fim Prática LDR -->
-
-      <!-- ============================================================
-         SEÇÃO: PROJETO INTEGRADOR
-         ============================================================ -->
-      <section>
-
-        <!-- SLIDE 29: Seção - Projeto Integrador -->
-        <section data-auto-animate>
-          <h2 style="color: #ff79c6;">🚀 Projeto Integrador</h2>
-          <p style="color: #6272a4;">Sistema de Monitoramento Ambiental Completo</p>
+        <section>
+        <section>
+          <h2>Quiz Interativo</h2>
         </section>
 
-        <!-- SLIDE 30: Requisitos do Projeto -->
-        <section data-auto-animate>
-          <h2>Requisitos do Projeto</h2>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h4 style="color: #50fa7b;">Hardware</h4>
-              <ul style="font-size: 18pt;">
-                <li>ESP8266 NodeMCU</li>
-                <li>Sensor DHT22 (temp/umidade)</li>
-                <li>LED (para feedback visual)</li>
-                <li>Protoboard + jumpers</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h4 style="color: #bd93f9;">Software</h4>
-              <ul style="font-size: 18pt;">
-                <li>Bot Telegram (controle)</li>
-                <li>Alertas automáticos (threshold)</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
+        <section>
+  <poll-question
+    id="q_histerese_1"
+    title="Questão: Histerese"
+    question="Qual é o principal objetivo da histerese em sistemas como ar-condicionado?"
+    answer="c"
+    answer-text="A histerese evita o liga/desliga constante criando uma faixa entre os limiares."
+    :options="[
+      { value: 'a', label: 'Aumentar a precisão da medição de temperatura' },
+      { value: 'b', label: 'Fazer o sistema responder mais rápido a qualquer variação' },
+      { value: 'c', label: 'Evitar chaveamento constante (liga/desliga)' },
+    ]" />
+</section>
+  
+        <section>
+  <poll-question
+    id="q_secrets_gitignore"
+    title="Questão 2: Segurança em IoT"
+    question="Por que usamos um arquivo secrets.h e o colocamos no .gitignore em projetos IoT?"
+    answer="b"
+    answer-text="Para evitar expor credenciais sensíveis (Wi-Fi, tokens, API keys) no repositório."
+    :options="[
+      { value: 'a', label: 'Para melhorar a performance do código' },
+      { value: 'b', label: 'Para proteger credenciais e evitar vazamento no Git' },
+      { value: 'c', label: 'Porque o compilador exige esse arquivo separado' },
+    ]" />
+</section> 
 
-        <!-- SLIDE 31: Funcionalidades -->
-        <section data-auto-animate>
-          <h2>Funcionalidades</h2>
-          <table style="font-size: 16pt; width: 100%;">
-            <thead>
-              <tr style="background: #44475a;">
-                <th>Comando Telegram</th>
-                <th>Ação</th>
-                <th>Descrição</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>/start</code></td>
-                <td>Boas-vindas</td>
-                <td>Nenhuma</td>
-              </tr>
-              <tr>
-                <td><code>/ledon</code></td>
-                <td>Liga LED</td>
-                <td>"LED ativado"</td>
-              </tr>
-              <tr>
-                <td><code>/ledoff</code></td>
-                <td>Desliga LED</td>
-                <td>"LED desativado"</td>
-              </tr>
-              <tr>
-                <td><code>/temp</code></td>
-                <td>Lê sensor</td>
-                <td>Dados do sensor</td>
-              </tr>
-              <tr>
-                <td>Auto (30s)</td>
-                <td>Envio periódico</td>
-                <td>Temperatura + Umidade</td>
-              </tr>
-            </tbody>
-          </table>
-          <copy-btn></copy-btn>
-        </section>
-
-        <!-- SLIDE 32: Estrutura de Diretórios -->
-        <section data-auto-animate>
-          <h2>Estrutura de Diretórios</h2>
-          <code-block lang="bash" data-trim>
-            <textarea>
-projeto-iot/
-├── platformio.ini
-├── src/
-│   ├── main.cpp
-│   └── secrets.h
-├── lib/
-│   └── README
-├── test/
-│   └── README
-└── README.md  ← Documentação obrigatória</textarea>
-          </code-block>
-          <div style="background: #44475a; padding: 15px; border-radius: 8px; margin-top: 15px;">
-            <p style="color: #ffb86c;">📝 O README.md deve incluir:</p>
-            <ul style="font-size: 16pt;">
-              <li>Descrição do projeto</li>
-              <li>Pinagem utilizada</li>
-              <li>Como configurar tokens</li>
-              <li>Como usar (passo a passo)</li>
-            </ul>
-          </div>
-        </section>
-
-      </section><!-- fim Projeto Integrador -->
-
-      <!-- ============================================================
+        <!-- ============================================================
          SEÇÃO: REFERÊNCIAS E PRÓXIMOS PASSOS
          ============================================================ -->
-      <section>
+        <section>
 
-        <!-- SLIDE 33: Seção - Referências -->
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">📚 Referências e Próximos Passos</h2>
-          <p style="color: #6272a4;">Recursos para continuar aprendendo</p>
-        </section>
+          <!-- SLIDE 33: Seção - Referências -->
+          <section data-auto-animate>
+            <h2 style="color: #8be9fd;">📚 Referências e Próximos Passos</h2>
+            <p style="color: #6272a4;">Recursos para continuar aprendendo</p>
+          </section>
 
-        <!-- SLIDE 34: Links Úteis -->
-        <section data-auto-animate>
-          <h2>Links Úteis</h2>
-          <ul style="font-size: 18pt;">
-            <li style="margin-bottom: 15px;">
-              <a href="https://core.telegram.org/bots/api" style="color: #50fa7b;">Telegram Bot API</a> - Documentação
-              oficial
-            </li>
-            <li style="margin-bottom: 15px;">
-              <a href="https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot" style="color: #50fa7b;">Universal
-                Telegram Bot</a> - Biblioteca Arduino
-            </li>
-            <li style="margin-bottom: 15px;">
-              <a href="https://randomnerdtutorials.com/telegram-control-esp32-esp8266/" style="color: #8be9fd;">Random
-                Nerd Tutorials</a> - Tutoriais completos
-            </li>
-          </ul>
-        </section>
-
-        <!-- SLIDE 35: Próximos Passos -->
-        <section data-auto-animate>
-          <h2>Próximos Passos</h2>
-          <ls-u font-size="20pt">
-            <li>Implementar MQTT broker para IoT</li>
-            <li>Adicionar Home Assistant para automação</li>
-            <li>Criar dashboard web com Node-RED</li>
-            <li>Integrar com Google Home ou Alexa</li>
-            <li>Implementar OTA (Over-The-Air) updates</li>
-          </ls-u>
-        </section>
-
-        <!-- SLIDE 36: Encerramento -->
-        <section data-auto-animate>
-          <h2 style="color: #50fa7b;">✅ Resumo da Aula</h2>
-          <div style="background: #44475a; border-radius: 12px; padding: 25px;">
+          <!-- SLIDE 34: Links Úteis -->
+          <section data-auto-animate>
+            <h2>Links Úteis</h2>
             <ul style="font-size: 18pt;">
-              <li style="margin-bottom: 10px;">📐 Arquitetura: ESP8266 ↔ Internet ↔ Bots</li>
-              <li style="margin-bottom: 10px;">🔐 Segurança: tokens nunca hardcoded</li>
-              <li style="margin-bottom: 10px;">🤖 Telegram: Bot API + comandos</li>
-              <li style="margin-bottom: 10px;">📡 ESP8266 ↔ Telegram (comunicação direta)</li>
-              <li style="margin-bottom: 10px;">🚀 Prática: LED + DHT22 funcionando</li>
+              <li style="margin-bottom: 15px;">
+                <a href="https://core.telegram.org/bots/api" style="color: #50fa7b;">Telegram Bot API</a> - Documentação
+                oficial
+              </li>
+              <li style="margin-bottom: 15px;">
+                <a href="https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot"
+                   style="color: #50fa7b;">Universal
+                  Telegram Bot</a> - Biblioteca Arduino
+              </li>
+              <li style="margin-bottom: 15px;">
+                <a href="https://randomnerdtutorials.com/telegram-control-esp32-esp8266/" style="color: #8be9fd;">Random
+                  Nerd Tutorials</a> - Tutoriais completos
+              </li>
             </ul>
-          </div>
-          <p style="margin-top: 30px; font-size: 24pt; color: #ffb86c;">Dúvidas? 🤔</p>
-        </section>
+          </section>
 
-      </section><!-- fim Referências -->
+          <!-- SLIDE 35: Próximos Passos -->
+          <section data-auto-animate>
+            <h2>Próximos Passos</h2>
+            <ls-u font-size="20pt">
+              <li>Implementar MQTT broker para IoT</li>
+              <li>Adicionar Home Assistant para automação</li>
+              <li>Criar dashboard web com Node-RED</li>
+              <li>Integrar com Google Home ou Alexa</li>
+              <li>Implementar OTA (Over-The-Air) updates</li>
+            </ls-u>
+          </section>
+
+          <!-- SLIDE 36: Encerramento -->
+          <section data-auto-animate>
+            <h2 style="color: #50fa7b;">✅ Resumo da Aula</h2>
+            <div style="background: #44475a; border-radius: 12px; padding: 25px;">
+              <ul style="font-size: 18pt;">
+                <li style="margin-bottom: 10px;">📐 Arquitetura: ESP8266 ↔ Internet ↔ Bots</li>
+                <li style="margin-bottom: 10px;">🔐 Segurança: tokens nunca hardcoded</li>
+                <li style="margin-bottom: 10px;">🤖 Telegram: Bot API + comandos</li>
+                <li style="margin-bottom: 10px;">📡 ESP8266 ↔ Telegram (comunicação direta)</li>
+                <li style="margin-bottom: 10px;">🚀 Prática: LED + DHT22 funcionando</li>
+              </ul>
+            </div>
+            <p style="margin-top: 30px; font-size: 24pt; color: #ffb86c;">Dúvidas? 🤔</p>
+          </section>
+
+        </section><!-- fim Referências -->
 
     </div>
   </div>
