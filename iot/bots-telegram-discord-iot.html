@@ -120,7 +120,6 @@ graph TB
             <li><span style="color: #ff5555;">NUNCA</span> exponha tokens no código versionado</li>
             <li>Use <code>secrets.h</code> ou <code>platformio.ini</code> para tokens</li>
             <li>Adicione arquivos sensíveis ao <code>.gitignore</code></li>
-            <li>WiFiManager para credenciais WiFi (não hardcoded)</li>
             <li>Valide todos os comandos recebidos</li>
             <li>Use HTTPS para todas as comunicações</li>
           </ls-u>
@@ -298,89 +297,7 @@ void loop() {
 
       </section><!-- fim Telegram -->
 
-      <!-- ============================================================
-         SEÇÃO: WIFIMANAGER
-         ============================================================ -->
-      <section>
 
-        <!-- SLIDE 18: Seção - WiFiManager -->
-        <section data-auto-animate>
-          <h2 style="color: #ffb86c;">📶 WiFiManager</h2>
-          <p style="color: #6272a4;">Autoconfiguração de rede WiFi para dispositivos IoT</p>
-        </section>
-
-        <!-- SLIDE 19: O Problema -->
-        <section data-auto-animate>
-          <h2>O Problema</h2>
-          <div style="background: #44475a; border-radius: 12px; padding: 25px; text-align: center;">
-            <p style="font-size: 20pt; color: #ff5555; margin-bottom: 20px;">❌ Hardcoded WiFi credentials no código</p>
-            <code style="font-size: 16pt; color: #ff79c6;">SSID: "MinhaRede"<br/>Password: "minhasenha123"</code>
-            <p style="margin-top: 20px; color: #6272a4;">Problemas:</p>
-            <ul style="color: #f8f8f2; font-size: 16pt; text-align: left; display: inline-block;">
-              <li>Credenciais expostas no código</li>
-              <li>Precisa reprogramar para mudar rede</li>
-              <li>Não funciona em locais diferentes</li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- SLIDE 20: Solução WiFiManager -->
-        <section data-auto-animate>
-          <h2>Solução: WiFiManager</h2>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <ls-u font-size="18pt">
-                <li>Primeira vez: abre portal de configuração</li>
-                <li>AP modo: ESP8266 cria rede WiFi</li>
-                <li>Página web para selecionar rede</li>
-                <li>Salva credenciais na memória flash</li>
-                <li>Reconecta automaticamente</li>
-              </ls-u>
-            </div>
-            <div style="flex: 1; text-align: center;">
-              <div class="mermaid" data-id="wifi-flow" style="width: 280px; margin: 0 auto;">
-                <pre>
-graph TD
-  A["🚀 Primeiro uso"] --> B["📶 Cria AP ESP"]
-  B --> C["🔗 Usuário conecta"]
-  C --> D["🌐 Página config"]
-  D --> E["✅ Credenciais salvas"]
-  E --> F["📡 Conecta WiFi"]
-                </pre>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE 21: Código WiFiManager -->
-        <section data-auto-animate>
-          <h2>Código: WiFiManager</h2>
-          <code-block lang="cpp" data-line-numbers="1-25|1-5|6-12|13-19|20-25" data-fragment-index="1">
-          <textarea>
-#include &lt;WiFiManager.h&gt;
-
-void setup() {
-    Serial.begin(115200);
-    
-    WiFiManager wm;
-    
-    // Tenta conectar, se falhar abre portal
-    if (!wm.autoConnect("IoT-ESP8266", "password123")) {
-        Serial.println("Falhou ao conectar. Resetando...");
-        ESP.restart();
-    }
-    
-    Serial.println("✅ WiFi conectado!");
-    Serial.println(WiFi.localIP());
-}
-
-void loop() {
-    // WiFi já configurado, continua aqui
-}</textarea>
-          </code-block>
-        </section>
-
-      </section><!-- fim WiFiManager -->
 
       <!-- ============================================================
          SEÇÃO: PRÁTICA TELEGRAM
@@ -423,7 +340,7 @@ void loop() {
           <code-block lang="cpp" data-trim>
           <textarea>
 #include &lt;Arduino.h&gt;
-#include &lt;WiFiManager.h&gt;
+#include &lt;Arduino.h&gt;
 #include &lt;UniversalTelegramBot.h&gt;
 #include &lt;WiFiClientSecure.h&gt;
 
@@ -437,9 +354,6 @@ void setup() {
     Serial.begin(115200);
     pinMode(LED_PIN, OUTPUT);
     client.setInsecure();
-    
-    WiFiManager wm;
-    wm.autoConnect("IoT-ESP8266");
     
     bot.updateToken(BOT_TOKEN);
 }
@@ -491,6 +405,143 @@ void loop() {
       </section><!-- fim Prática Telegram -->
 
       <!-- ============================================================
+         SEÇÃO: PRÁTICA LDR
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Seção - LDR Proativo -->
+        <section data-auto-animate>
+            <h2 style="color: #ffb86c;">☀️ LDR - Sensor de Luz Proativo</h2>
+            <p style="color: #6272a4;">Quando a luz muda, o ESP avisa você!</p>
+        </section>
+
+        <!-- SLIDE: O que é LDR? -->
+        <section data-auto-animate>
+            <h2>O que é LDR?</h2>
+            <ls-u style="font-size: 0.9em;">
+                <li>LDR = <strong>Light Dependent Resistor</strong> (Resistor Dependente de Luz)</li>
+                <li>Também chamado de <strong>fotoresistor</strong></li>
+                <li>Resistência <strong>diminui</strong> quando há mais luz</li>
+                <li>Conectado ao pino analógico do ESP8266 (A0)</li>
+            </ls-u>
+        </section>
+
+        <!-- SLIDE: Circuito LDR -->
+        <section data-auto-animate>
+            <h2>Circuito LDR</h2>
+            <multi-col style="gap: 40px;">
+                <div style="flex: 1;">
+                    <h4 style="color: #50fa7b;">Esquema de Ligação</h4>
+                    <ls-u style="font-size: 0.85em;">
+                        <li>LDR conectado entre <strong>3.3V</strong> e <strong>A0</strong></li>
+                        <li>Resistor de <strong>10KΩ</strong> entre A0 e GND (pull-down)</li>
+                        <li>Forma um <strong>divisor de tensão</strong></li>
+                    </ls-u>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <pre style="background: #44475a; padding: 15px; border-radius: 8px; font-size: 0.8em; text-align: left;">
+    3.3V ---\            /-- A0 (ESP8266)
+             \          /
+              [  LDR  ]
+             /          \ 
+    GND ----[  10KΩ  ]--</pre>
+                </div>
+            </multi-col>
+            <p style="color: #bd93f9; margin-top: 15px;">💡 Luz alta → tensão alta no A0 → valor próximo de 1024</p>
+        </section>
+
+        <!-- SLIDE: Código LDR Proativo -->
+        <section data-auto-animate>
+            <header1 title="Código: LDR Proativo" />
+            <code-block lang="cpp" theme="dracula">
+#include <Arduino.h>
+#include <WiFiClientSecure.h>
+#include <UniversalTelegramBot.h>
+#include <ArduinoJson.h>
+
+#define LDR_PIN A0
+#define BOT_TOKEN "SEU_TOKEN"
+#define CHAT_ID "SEU_CHAT_ID"
+
+WiFiClientSecure client;
+UniversalTelegramBot bot(BOT_TOKEN, client);
+
+int threshold = 500;
+int lastState = -1; // -1 = não definido, 0 = escuro, 1 = claro
+
+void setup() {
+    Serial.begin(115200);
+    client.setInsecure();
+}
+
+void sendAlert(String message) {
+    bot.sendMessage(CHAT_ID, message);
+    Serial.println(message);
+}
+
+void loop() {
+    int light = analogRead(LDR_PIN);
+    int currentState = (light > threshold) ? 1 : 0;
+
+    if (currentState != lastState) {
+        lastState = currentState;
+        if (currentState == 1) {
+            sendAlert("☀️ Está claro! (LDR: " + String(light) + ")");
+        } else {
+            sendAlert("🌙 Está escuro! (LDR: " + String(light) + ")");
+        }
+    }
+
+    delay(1000);
+}
+            </code-block>
+        </section>
+
+        <!-- SLIDE: Checkpoint LDR -->
+        <section data-auto-animate>
+            <h2>Checkpoint LDR ☑️</h2>
+            <multi-col style="gap: 30px;">
+                <div style="flex: 1;">
+                    <h4 style="color: #50fa7b;">Teste 1: Escuro</h4>
+                    <ls-u>
+                        <li>Cubra o LDR com o dedo</li>
+                        <li>Verifique no Telegram: <code>🌙 Está escuro!</code></li>
+                        <li>Observe o valor no Serial Monitor</li>
+                    </ls-u>
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="color: #ffb86c;">Teste 2: Claro</h4>
+                    <ls-u>
+                        <li>Aponte a lanterna do celular para o LDR</li>
+                        <li>Verifique no Telegram: <code>☀️ Está claro!</code></li>
+                        <li>Compare os valores (deveriam ser bem diferentes)</li>
+                    </ls-u>
+                </div>
+            </multi-col>
+        </section>
+
+        <!-- SLIDE: Melhorias Possíveis -->
+        <section data-auto-animate>
+            <h2>Melhorias Possíveis 🔧</h2>
+            <multi-col style="gap: 30px;">
+                <div style="flex: 1;">
+                    <h4 style="color: #ff79c6;">Histerese</h4>
+                    <p style="color: #f8f8f2; font-size: 0.85em;">Adicionar janela entre claro/escuro para evitar flutuação quando o valor fica próximo do limiar</p>
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="color: #8be9fd;">Calibração Automática</h4>
+                    <p style="color: #f8f8f2; font-size: 0.85em;">Salvar leitura mínima/máxima para calibrar o threshold dinamicamente</p>
+                </div>
+                <div style="flex: 1;">
+                    <h4 style="color: #50fa7b;">Relatório Periódico</h4>
+                    <p style="color: #f8f8f2; font-size: 0.85em;">Enviar leituras periódicas mesmo sem mudança de estado</p>
+                </div>
+            </multi-col>
+        </section>
+
+      </section><!-- fim Prática LDR -->
+
+      <!-- ============================================================
          SEÇÃO: PROJETO INTEGRADOR
          ============================================================ -->
       <section>
@@ -517,7 +568,6 @@ void loop() {
             <div style="flex: 1;">
               <h4 style="color: #bd93f9;">Software</h4>
               <ul style="font-size: 18pt;">
-                <li>WiFiManager ( autoconfig)</li>
                 <li>Bot Telegram (controle)</li>
                 <li>Alertas automáticos (threshold)</li>
               </ul>
@@ -616,9 +666,6 @@ projeto-iot/
               <a href="https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot" style="color: #50fa7b;">Universal Telegram Bot</a> - Biblioteca Arduino
             </li>
             <li style="margin-bottom: 15px;">
-              <a href="https://github.com/tzapu/WiFiManager" style="color: #ffb86c;">WiFiManager</a> - Biblioteca WiFiManager
-            </li>
-            <li style="margin-bottom: 15px;">
               <a href="https://randomnerdtutorials.com/telegram-control-esp32-esp8266/" style="color: #8be9fd;">Random Nerd Tutorials</a> - Tutoriais completos
             </li>
           </ul>
@@ -645,7 +692,6 @@ projeto-iot/
               <li style="margin-bottom: 10px;">🔐 Segurança: tokens nunca hardcoded</li>
               <li style="margin-bottom: 10px;">🤖 Telegram: Bot API + comandos</li>
               <li style="margin-bottom: 10px;">📡 ESP8266 ↔ Telegram (comunicação direta)</li>
-              <li style="margin-bottom: 10px;">📶 WiFiManager: autoconfiguração</li>
               <li style="margin-bottom: 10px;">🚀 Prática: LED + DHT22 funcionando</li>
             </ul>
           </div>
