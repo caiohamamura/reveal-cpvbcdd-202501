@@ -10,16 +10,7 @@
   <link rel="stylesheet" href="../dist/reveal.css" />
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
-  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
-  <link rel="stylesheet" href="../plugin/poll/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
-  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="../plugin/chart/plugin.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-  <script src="../plugin/customcontrols/plugin.js"></script>
-  <script src="../plugin/chalkboard/plugin.js"></script>
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
 </head>
 
 <body>
@@ -34,12 +25,14 @@
         <header1 aula="04" curso="Ciência de Dados" title-size="24"
                  title="PCA: Análise de Componentes Principais">
           <div class="mermaid" style="width:100%; max-width: 600px; margin: 0 auto;">
+            <pre>
 graph TD
-    A["📊 Dados Originais\n(muitas dimensões)"] --> B["🔮 Dimensões Reduzidas\n(2-3D)"]
+    A["📊 Dados Originais<br/>(muitas dimensões)"] -->|"PCA| B["🔮 Dimensões Reduzidas<br/>(2-3D)"]
     B --> C["📈 Visualização clara"]
     style A fill:#44475a,color:#f8f8f2
     style B fill:#bd93f9,color:#f8f8f2
     style C fill:#50fa7b,color:#282a36
+            </pre>
           </div>
         </header1>
       </section>
@@ -156,12 +149,14 @@ graph TD
         <section data-auto-animate>
           <h2>Intuição Geométrica do PCA</h2>
           <div class="mermaid" style="width:100%; max-width: 600px; margin: 0 auto;">
+            <pre>
 graph LR
-    A["Dados Originais\n(2D)"] -->|"Encontrar\ndireção" B["PC1\n(máxima variância)"]
-    B --> C["PC2\n(ortogonal)"]
+    A["Dados Originais<br/>(2D)"] -->|"Encontrar<br/>direção"| B["PC1<br/>(máxima variância)"]
+    B --> C["PC2<br/>(ortogonal)"]
     style A fill:#44475a,color:#f8f8f2
     style B fill:#ffb86c,color:#282a36
     style C fill:#8be9fd,color:#282a36
+            </pre>
           </div>
           <div style="margin-top: 20px;">
             <p style="font-size: 0.85em;"><strong>Analogia:</strong> Imagine uma foto de frente de um rosto.</p>
@@ -184,7 +179,7 @@ graph LR
             <li><strong>5.</strong> Por que componentes são ortogonais entre si?</li>
           </ls-u>
           <div class="fragment fade-in" style="margin-top: 20px;">
-            <p style="font-size: 0.7em; color: #50fa7b;">Respostas na lousa! 👍</p>
+            <p style="font-size: 0.7em; color: #50fa7b;">Respostas no roteiro do professor! 📋</p>
           </div>
         </section>
 
@@ -1258,14 +1253,12 @@ X_scaled = scaler.fit_transform(X)
   <script src="../plugin/leader-line.min.js"></script>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
+  <script src="../components/md.js"></script>
   <script src="../components/components.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
   <script src="../slides_template/init.js"></script>
-  <script src="../plugin/seminar/plugin.js"></script>
-  <script src="../plugin/poll/plugin.js"></script>
 
   <script>
-    mountSlideApp();
+    window.app = mountSlideApp();
   </script>
 
 </body>
