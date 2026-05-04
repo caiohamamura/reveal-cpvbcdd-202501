@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - Bots Telegram com ESP8266</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SEÇÃO 1: INTRODUÇÃO
+         ============================================================ -->
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="12" curso="Programação IoT" title-size="26" title="Bots Telegram com ESP8266">
+          <div class="mermaid" data-id="telegram-arch" style="width:450px">
+            <pre>
+graph LR
+  A["📱 Usuário"] -->|"mensagem"| B["🤖 Bot Telegram"]
+  B -->|"HTTP"| C["🌐 Internet"]
+  C -->|"Wi-Fi"| D["📡 ESP8266"]
+  D -->|"sensor"| E["📊 LED/DHT22"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#50fa7b,color:#282a36
+  style D fill:#bd93f9,color:#f8f8f2
+            </pre>
+          </div>
+          <div><img src="https://i.imgur.com/Telegram_logo.png" width="300"></div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: O que é um Bot Telegram? -->
+      <section data-auto-animate>
+        <h2>🤖 O que é um Bot Telegram?</h2>
+        <div style="display: flex; align-items: center; gap: 1.5em;">
+          <div style="flex: 1;">
+            <ls-u>
+              <li>Programa que responde mensagens automaticamente</li>
+              <li>Interage com usuários via API do Telegram</li>
+              <li>Pode enviar textos, fotos, comandos, botões</li>
+              <li>Funciona 24/7 sem servidor próprio</li>
+            </ls-u>
+          </div>
+          <div style="flex: 0 0 300px; text-align: center;">
+            <img src="https://i.imgur.com/Telegram_logo.png" width="200" alt="Telegram Logo">
+          </div>
+        </div>
+        <div class="fragment"
+             style="background: rgba(80,250,123,0.15); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+          <p style="font-size: 22pt; color: #50fa7b;">💡 Bot é um "usuário automático" que recebe e envia mensagens!</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Arquitetura -->
+      <section data-auto-animate>
+        <h2>🏗️ Arquitetura do Sistema</h2>
+        <div class="mermaid" data-id="full-arch" style="width:100%">
+          <pre>
+graph TD
+  A["📱 Smartphone"] -->|"@MeuBotIoT"| B["🌐 Telegram Cloud"]
+  B -->|"Bot API HTTPS"| C["☁️ Internet"]
+  C -->|"Wi-Fi"| D["📡 ESP8266 NodeMCU"]
+  D -->|"GPIO"| E["💡 LED"]
+  D -->|"GPIO"| F["🌡️ DHT22"]
+  D -->|"Serial"| G["🖥️ Serial Monitor"]
+  
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#50fa7b,color:#282a36
+  style D fill:#bd93f9,color:#f8f8f2
+          </pre>
+        </div>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt; color: #bd93f9;">O ESP8266 é servidor e cliente ao mesmo tempo!</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Inline Keyboards vs Comandos -->
+      <section data-auto-animate>
+        <h2>🎛️ Inline Keyboards vs Comandos /</h2>
+        <div style="display: flex; gap: 20px;">
+          <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="color: #ff79c6;">Comandos /</h3>
+            <ls-u font-size="16">
+              <li>Usuário digita <code>/ledon</code></li>
+              <li>Requer teclado físico</li>
+              <li>Menos intuitivo</li>
+              <li>Funciona em qualquer bot</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1; background: #44475a; padding: 1em; border-radius: 8px;">
+            <h3 style="color: #50fa7b;">Inline Keyboards</h3>
+            <ls-u font-size="16">
+              <li>Usuário clica em botões</li>
+              <li>Mais visual e fácil</li>
+              <li>Feedback imediato</li>
+              <li>Melhor experiência mobile</li>
+            </ls-u>
+          </div>
+        </div>
+        <div class="fragment" style="background: rgba(189,147,249,0.15); border-left: 4px solid #bd93f9; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+          <p style="font-size: 20pt; color: #bd93f9;">💡 Nesta aula: botões inline para controlar o LED!</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 2: HARDWARE E COMPONENTES
+         ============================================================ -->
+
+      <section data-background-image="https://i.imgur.com/component-bg.jpg" data-background-opacity="0.2">
+        <!-- SLIDE 5: Componentes Necessários -->
+        <section data-auto-animate>
+          <h2>🧰 Componentes Necessários</h2>
+          <multi-col :cols="2">
+            <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+              <h3 style="color: #50fa7b;">📡 NodeMCU ESP8266</h3>
+              <ul>
+                <li>Placa principal com Wi-Fi</li>
+                <li>Wi-Fi: 802.11 b/g/n</li>
+                <li>GPIO para conexões</li>
+                <li>USB para programação</li>
+              </ul>
+            </div>
+            <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+              <h3 style="color: #ff79c6;">🌡️ Sensor DHT22</h3>
+              <ul>
+                <li>Mede temperatura e umidade</li>
+                <li>Precisão: ±0.5°C</li>
+                <li>Ligação: 1-wire</li>
+                <li>Pino: GPIO4 (D2)</li>
+              </ul>
+            </div>
+            <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+              <h3 style="color: #ffb86c;">💡 LED (on-board)</h3>
+              <ul>
+                <li>LED embutido no GPIO2</li>
+                <li>Já existe na NodeMCU!</li>
+                <li>Para teste inicial</li>
+              </ul>
+            </div>
+            <div style="background: #44475a; padding: 1em; border-radius: 8px;">
+              <h3 style="color: #8be9fd;">🔌 Fiação</h3>
+              <ul>
+                <li>Jumpers para conexões</li>
+                <li>Protoboard (opcional)</li>
+                <li>Cabo USB</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 6: Pinagem NodeMCU -->
+        <section data-auto-animate>
+          <h2>📍 Pinagem NodeMCU v2</h2>
+          <div style="text-align: center;">
+            <img src="https://i.imgur.com/nodemcu_pins.png" height="400" alt="NodeMCU Pinout">
+          </div>
+          <div style="background: #44475a; padding: 10px; margin-top: 15px; border-radius: 8px;">
+            <p style="font-size: 18pt;"><b style="color: #ffb86c;">LED_BUILTIN = GPIO2</b> | <b style="color: #8be9fd;">DHT22 = GPIO4 (D2)</b></p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 3: platformio.ini
+         ============================================================ -->
+
+      <!-- SLIDE 7: platformio.ini -->
+      <section data-auto-animate>
+        <h2>⚙️ platformio.ini</h2>
+        <p style="color: #8be9fd; margin-bottom: 10px;">Arquivo de configuração do projeto</p>
+        <div>
+          <pre><code class="lang-ini" data-trim data-line-numbers="1-14|1-3|5-8|10-14">
+[env:esp8266]
+platform = espressif8266
+board = nodemcuv2
+framework = arduino
+
+build_flags =
+    -Og
+    -Wall -Wextra
+    -D LED_BUILTIN=2
+    -I include
+
+lib_deps =
+    cotestatnt/AsyncTelegram2@^2.3.4
+    bblanchon/ArduinoJson@^7.3.1
+    adafruit/DHT sensor library@^1.4.6
+
+monitor_speed = 115200
+monitor_filters = esp8266_exception_decoder
+          </code></pre>
+          <copy-btn></copy-btn>
+        </div>
+        <ls-u font-size="18">
+          <li><b style="color: #50fa7b;">AsyncTelegram2</b>: Biblioteca async para Telegram</li>
+          <li><b style="color: #50fa7b;">-I include</b>: Diretório do certificado TLS</li>
+          <li><b style="color: #ff79c6;">Sem WiFiManager!</b> Wi-Fi direto via <code>WiFi.begin()</code></li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 4: CÓDIGO PRINCIPAL
+         ============================================================ -->
+
+      <section data-background-image="https://i.imgur.com/code-bg.jpg" data-background-opacity="0.2">
+        <!-- SLIDE 8: Includes e Definições -->
+        <section data-auto-animate>
+          <h2>📝 Código: Includes e Definições</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-30|1-10|12-20|22-30">
+#include &lt;AsyncTelegram2.h&gt;
+#include &lt;DHT.h&gt;
+#include "secrets.h"
+
+#define MYTZ "BRT3BRDT,M3.4.0,M10.4.0"
+
+#ifdef ESP8266
+  #include &lt;ESP8266WiFi.h&gt;
+  #include &lt;WiFiClientSecure.h&gt;
+  BearSSL::WiFiClientSecure client;
+  BearSSL::Session session;
+  BearSSL::X509List certificate(telegram_cert);
+#endif
+
+// Callbacks para os botões inline
+#define CB_LED_ON  "ledON"
+#define CB_LED_OFF "ledOFF"
+#define CB_STATUS  "status"
+
+// ========== VARIÁVEIS GLOBAIS ==========
+DHT dht(DHT_PIN, DHT_TYPE);
+AsyncTelegram2 bot(client);
+InlineKeyboard myInlineKbd;
+
+bool ledState = false;
+          </code></pre>
+          <copy-btn></copy-btn>
+        </section>
+
+        <!-- SLIDE 9: Callbacks dos Botões -->
+        <section data-auto-animate>
+          <h2>🎮 Callbacks dos Botões Inline</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-35|1-12|14-23|25-35">
+// ========== CALLBACKS DOS BOTÕES ==========
+void onLedOn(const TBMessage &queryMsg) {
+  digitalWrite(LED_PIN, LOW);
+  ledState = true;
+  Serial.println("LED ON via callback");
+  bot.endQuery(queryMsg, "💡 LED ligado!", true);
+  String reply = "✅ *LED LIGADO*\n\n💡 Use os botões para controlar";
+  bot.editMessage(queryMsg, reply, myInlineKbd);
+}
+
+void onLedOff(const TBMessage &queryMsg) {
+  digitalWrite(LED_PIN, HIGH);
+  ledState = false;
+  Serial.println("LED OFF via callback");
+  bot.endQuery(queryMsg, "⚫ LED desligado!", true);
+  String reply = "⚫ *LED DESLIGADO*\n\n💡 Use os botões para controlar";
+  bot.editMessage(queryMsg, reply, myInlineKbd);
+}
+
+void onStatus(const TBMessage &queryMsg) {
+  Serial.println("Status via callback");
+  sendStatus(queryMsg);
+  bot.endQuery(queryMsg, "📊 Status atualizado!", true);
+}
+          </code></pre>
+          <copy-btn></copy-btn>
+          <ls-u font-size="16">
+            <li><code>bot.endQuery()</code>: Confirma o callback e mostra notificação</li>
+            <li><code>bot.editMessage()</code>: Atualiza a mensagem com teclado</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE 10: Configuração WiFi e TLS -->
+        <section data-auto-animate>
+          <h2>📡 WiFi e Configuração TLS</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-30|1-8|10-18|20-30">
+// Conectar WiFi
+WiFi.mode(WIFI_STA);
+WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+// Espera conexão
+while (WiFi.status() != WL_CONNECTED) {
+  delay(500);
+  Serial.print(".");
+}
+
+#ifdef ESP8266
+  // Sincronizar hora (necessário para certificado TLS)
+  configTime(MYTZ, "time.google.com", 
+             "time.windows.com", "pool.ntp.org");
+  client.setSession(&session);
+  client.setTrustAnchors(&certificate);
+  client.setBufferSizes(1024, 1024);
+#endif
+
+// Inicializar bot
+bot.setUpdateTime(1000);
+bot.setTelegramToken(TELEGRAM_BOT_TOKEN);
+
+if (bot.begin()) {
+  Serial.println("Bot Telegram OK!");
+} else {
+  Serial.println("Falha no bot!");
+}
+          </code></pre>
+          <copy-btn></copy-btn>
+          <div class="fragment" style="background: rgba(255,121,198,0.15); border-left: 4px solid #ff79c6; padding: 10px; margin-top: 10px; border-radius: 0 4px 4px 0;">
+            <p style="font-size: 16pt; color: #ff79c6;">⚠️ O certificado TLS é obrigatório para conexões seguras!</p>
+          </div>
+        </section>
+
+        <!-- SLIDE 11: Configuração dos Botões -->
+        <section data-auto-animate>
+          <h2>🎛️ Configuração do Teclado Inline</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-15|1-5|7-11|13-15">
+// Configurar teclado inline com callbacks
+myInlineKbd.addButton("💡 LED ON", CB_LED_ON, 
+                      KeyboardButtonQuery, onLedOn);
+myInlineKbd.addButton("⚫ LED OFF", CB_LED_OFF, 
+                      KeyboardButtonQuery, onLedOff);
+myInlineKbd.addRow();  // Nova linha
+myInlineKbd.addButton("📊 Status", CB_STATUS, 
+                      KeyboardButtonQuery, onStatus);
+          </code></pre>
+          <copy-btn></copy-btn>
+          <ls-u font-size="16">
+            <li><code>addButton()</code>: Adiciona botão com texto, callback e função</li>
+            <li><code>addRow()</code>: Quebra linha para novo grupo de botões</li>
+            <li><code>KeyboardButtonQuery</code>: Tipo que envia callback ao pressionar</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE 12: Loop Principal -->
+        <section data-auto-animate>
+          <h2>🔄 Loop Principal</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-40|1-15|17-28|30-40">
+void loop() {
+  // LED pisca para indicar que está rodando
+  static uint32_t ledTime = 0;
+  if (millis() - ledTime > 1000) {
+    ledTime = millis();
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+  }
+
+  TBMessage msg;
+  if (bot.getNewMessage(msg)) {
+    MessageType msgType = msg.messageType;
+    String msgText = msg.text;
+
+    switch (msgType) {
+      case MessageText:
+        if (msgText.equalsIgnoreCase("/start")) {
+          String reply = "🤖 *Bot IoT - ESP8266*\n\n";
+          reply += "Use os botões abaixo para controlar o LED:";
+          bot.sendMessage(msg, reply.c_str(), myInlineKbd);
+        }
+        else if (msgText.equalsIgnoreCase("/status")) {
+          sendStatus(msg);
+        }
+        break;
+
+      case MessageQuery:
+        // Callbacks tratados automaticamente
+        break;
+    }
+  }
+}
+          </code></pre>
+          <copy-btn></copy-btn>
+        </section>
+
+        <!-- SLIDE 13: Função sendStatus -->
+        <section data-auto-animate>
+          <h2>📊 Função: sendStatus()</h2>
+          <pre><code class="lang-cpp" data-trim data-line-numbers="1-30|1-8|10-18|20-30">
+void sendStatus(const TBMessage &msg) {
+  String reply = "📊 *Status do Sistema*\n\n";
+  
+  float temp = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  
+  if (isnan(temp) || isnan(humidity)) {
+    reply += "🌡️ Temperatura: Erro\n";
+    reply += "💧 Umidade: Erro\n";
+  } else {
+    reply += "🌡️ Temperatura: " + String(temp, 1) + " °C\n";
+    reply += "💧 Umidade: " + String(humidity, 1) + " %\n";
+  }
+  
+  reply += "\n💡 LED: ";
+  reply += ledState ? "*LIGADO*" : "*DESLIGADO*";
+  reply += "\n📶 WiFi: " + String(WiFi.RSSI()) + " dBm";
+
+  bot.sendMessage(msg, reply.c_str(), myInlineKbd);
+}
+          </code></pre>
+          <copy-btn></copy-btn>
+        </section>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 5: COMANDOS E BOTÕES
+         ============================================================ -->
+
+      <!-- SLIDE 14: Lista de Comandos e Botões -->
+      <section data-auto-animate>
+        <h2>📟 Comandos e Botões</h2>
+        <table>
+          <thead>
+            <tr>
+              <th class="tg-bf9e">Tipo</th>
+              <th class="tg-bf9e">Ação</th>
+              <th class="tg-bf9e">Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tg-bf9e"><code>/start</code></td>
+              <td class="tg-bf9e">Boas-vindas</td>
+              <td class="tg-bf9e">Mostra teclado inline</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e"><code>/status</code></td>
+              <td class="tg-bf9e">Status</td>
+              <td class="tg-bf9e">🌡️ Temp + 💧 Umidade</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">💡 LED ON</td>
+              <td class="tg-bf9e">Liga LED</td>
+              <td class="tg-bf9e">✅ Callback automático</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">⚫ LED OFF</td>
+              <td class="tg-bf9e">Desliga LED</td>
+              <td class="tg-bf9e">✅ Callback automático</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">📊 Status</td>
+              <td class="tg-bf9e">Status</td>
+              <td class="tg-bf9e">✅ Callback automático</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 6: ATIVIDADE PRÁTICA
+         ============================================================ -->
+
+      <!-- SLIDE 15: Atividade Prática -->
+      <section data-auto-animate>
+        <h2>🔧 Atividade Prática</h2>
+        <ls-u>
+          <li><b>1.</b> Crie um bot no Telegram: busque <b>@BotFather</b></li>
+          <li><b>2.</b> Use <code>/newbot</code> e siga as instruções</li>
+          <li><b>3.</b> Copie o <b>TOKEN</b> fornecido</li>
+          <li><b>4.</b> Cole no arquivo <code>src/secrets.h</code></li>
+          <li><b>5.</b> Copie o certificado TLS para <code>include/tg_certificate.h</code></li>
+          <li><b>6.</b> Compile: <code>pio run</code></li>
+          <li><b>7.</b> Grave: <code>pio run --target upload</code></li>
+          <li><b>8.</b> Envie <code>/start</code> para seu bot!</li>
+        </ls-u>
+      </section>
+
+      <!-- SLIDE 16: Estrutura de Arquivos -->
+      <section data-auto-animate>
+        <h2>📁 Estrutura do Projeto</h2>
+        <pre><code class="lang-bash" data-trim>
+telegram-bot/
+├── platformio.ini
+├── include/
+│   └── tg_certificate.h    # ✅ Certificado Telegram
+├── src/
+│   ├── main.cpp            # Código principal
+│   └── secrets.h           # Token do bot
+└── lib/
+    └── (AsyncTelegram2, ArduinoJson, DHT)
+        </code></pre>
+        <copy-btn></copy-btn>
+        <div class="fragment" style="background: rgba(80,250,123,0.15); border-left: 4px solid #50fa7b; padding: 10px; margin-top: 15px; border-radius: 0 4px 4px 0;">
+          <p style="font-size: 18pt; color: #50fa7b;">💡 O certificado TLS é necessário para conexão segura!</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 17: Resumo -->
+      <section data-auto-animate>
+        <h2>📝 Resumo: AsyncTelegram2 vs UniversalTelegramBot</h2>
+        <table>
+          <thead>
+            <tr>
+              <th class="tg-bf9e">Feature</th>
+              <th class="tg-bf9e">AsyncTelegram2 ✅</th>
+              <th class="tg-bf9e">UniversalTelegramBot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tg-bf9e">Bloqueante</td>
+              <td class="tg-bf9e">Não (async)</td>
+              <td class="tg-bf9e">Sim (blocking)</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Inline Keyboards</td>
+              <td class="tg-bf9e">Sim + callbacks</td>
+              <td class="tg-bf9e">Sim (basic)</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">TLS Certificate</td>
+              <td class="tg-bf9e">Obrigatório</td>
+              <td class="tg-bf9e">Opcional (setInsecure)</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">NTP Sync</td>
+              <td class="tg-bf9e">Necessário</td>
+              <td class="tg-bf9e">Não</td>
+            </tr>
+            <tr>
+              <td class="tg-bf9e">Velocidade</td>
+              <td class="tg-bf9e">Mais rápido</td>
+              <td class="tg-bf9e">Mais lento</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/search/search.js"></script>
+  <script src="../plugin/mermaid/mermaid.js"></script>
+
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      width: 1280,
+      height: 720,
+      margin: 0.04,
+      plugins: [ RevealHighlight, RevealNotes, RevealZoom, RevealSearch, RevealMermaid ],
+      mermaid: {
+        theme: "dark",
+        startOnLoad: false
+      }
+    });
+  </script>
+
+</body>
+</html>
