@@ -1,69 +1,111 @@
-# Bot Telegram para NodeMCU ESP8266
+# 🤖 Bot Telegram para NodeMCU ESP8266 v5
 
-## Descrição
-Este projeto implementa um bot Telegram que controla um NodeMCU ESP8266, permitindo:
-- Ligar/desligar LED via comandos de chat
-- Verificar temperatura e umidade do sensor DHT22
-- Autoconfiguração WiFi via WiFiManager
+Bot Telegram para controle de LED e leitura de sensor DHT22 via Wi-Fi.
+Usa **AsyncTelegram2** com inline keyboards para controle interativo.
 
-## Hardware Necessário
-- NodeMCU ESP8266
-- LED (ou LED embutido do NodeMCU)
-- Sensor DHT22 (opcional, para temperatura/umidade)
-- Protoboard e jumpers
+## 📋 Comandos e Botões
 
-## Configuração
+| Comando/Botão | Descrição |
+|----------------|-----------|
+| `/start` | Mensagem de boas-vindas com teclado inline |
+| `/help` | Lista de comandos |
+| `/status` | Lê temperatura e umidade do DHT22 |
+| 💡 LED ON | Liga o LED (botão inline) |
+| ⚫ LED OFF | Desliga o LED (botão inline) |
+| 📊 Status | Mostra status (botão inline) |
 
-### 1. Criar Bot Telegram
-1. Abra o Telegram e procure por `@BotFather`
-2. Envie `/newbot`
-3. Siga as instruções e obtenha o **token do bot**
+## 🔧 Hardware Necessário
 
-### 2. Configurar o Projeto
-1. Copie `src/secrets.h.example` para `src/secrets.h`
-2. Edite `src/secrets.h` e cole seu token:
+- NodeMCU ESP8266 v2 (ou compatível)
+- Sensor DHT22 (temperatura e umidade)
+- LED embutido (GPIO2 - já disponível no NodeMCU)
+
+## ⚙️ Bibliotecas (via PlatformIO)
+
+```ini
+[env:esp8266]
+platform = espressif8266
+board = nodemcuv2
+framework = arduino
+
+build_flags =
+    -Og
+    -Wall -Wextra
+    -D LED_BUILTIN=2
+    -I include
+
+lib_deps =
+    cotestatnt/AsyncTelegram2@^2.3.4
+    bblanchon/ArduinoJson@^7.3.1
+    adafruit/DHT sensor library@^1.4.6
+
+monitor_speed = 115200
+```
+
+## 🔐 Configuração
+
+### 1. Token do Bot Telegram
+
+Crie o arquivo `src/secrets.h`:
+
 ```cpp
-#define TELEGRAM_BOT_TOKEN "123456789:ABCdefGHIjklMNOpqrSTUvwxyz"
+#define TELEGRAM_BOT_TOKEN "SEU_TOKEN_AQUI"
+
+const char* WIFI_SSID = "LAB6";
+const char* WIFI_PASSWORD = "";
 ```
 
-### 3. Compilar e Carregar
-```bash
-# Usando PlatformIO
-pio run
-pio run --target upload
-pio monitor
-```
+### 2. Certificado TLS
 
-## Comandos do Bot
-| Comando | Descrição |
-|---------|-----------|
-| `/start` | Mensagem de boas-vindas |
-| `/help` | Mostrar ajuda |
-| `/status` | Ver temperatura e umidade |
-| `/ledon` | Ligar LED |
-| `/ledoff` | Desligar LED |
+O arquivo `include/tg_certificate.h` já está incluído. Ele contém o certificado
+TLS do Telegram necessário para conexões seguras.
 
-## Autoconfiguração WiFi
-Na primeira vez que o ESP8266 iniciar, ele criará um **access point** chamado `IoT-Bot-Config`.
-1. Conecte-se a esta rede via smartphone
-2. Abra o navegador e acesse `192.168.4.1`
-3. Selecione sua rede WiFi e informe a senha
-4. O dispositivo reiniciará e conectará automaticamente
+### 3. Obter Token do Bot
 
-## Arquivos
+1. Abra o Telegram e busque por **@BotFather**
+2. Envie `/newbot`
+3. Siga as instruções e copie o token
+
+## 📁 Estrutura do Projeto
+
 ```
 telegram-bot/
-├── platformio.ini
+├── platformio.ini          # Configuração do projeto
+├── include/
+│   └── tg_certificate.h   # Certificado TLS do Telegram
 ├── src/
-│   ├── main.cpp
-│   └── secrets.h.example
-└── README.md
+│   ├── main.cpp           # Código principal
+│   └── secrets.h          # Token e credenciais (criar)
+└── README.md              # Este arquivo
 ```
 
-## Segurança
-⚠️ **NUNCA** exponha o token em código versionado!
-- O arquivo `secrets.h` já está no `.gitignore`
-- Use WiFiManager para evitar hardcoding de credenciais
+## 🏃 Compilar e Gravar
 
-## Licença
-MIT License
+```bash
+# Compilar
+pio run
+
+# Compilar e gravar
+pio run --target upload
+
+# Monitor Serial
+pio device monitor
+```
+
+## ⚠️ Notas Importantes
+
+1. **AsyncTelegram2** - Biblioteca async, não bloqueia o loop
+2. **Inline Keyboards** - Botões no Telegram para controle interativo
+3. **TLS Obrigatório** - O certificado é necessário para conexão segura
+4. **NTP Sync** - Sincronização de hora para validar certificado TLS
+5. **Wi-Fi Direto** - Sem WiFiManager, credenciais no código
+
+## 🔄 Diferenças do UniversalTelegramBot
+
+| Feature | AsyncTelegram2 | UniversalTelegramBot |
+|---------|-----------------|----------------------|
+| Bloqueante | Não (async) | Sim |
+| Inline Keyboards | Sim + callbacks | Sim (básico) |
+| TLS Certificate | Obrigatório | Opcional (setInsecure) |
+| NTP Sync | Necessário | Não |
+| Velocidade | Mais rápido | Mais lento |
