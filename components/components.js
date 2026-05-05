@@ -43,8 +43,12 @@ const multiColComponent = {
 };
 
 const highlightBoxComponent = {
-  template: `<div class="fragment highlight-box" :data-fragment-index="index"><slot></slot></div>`,
-  props: ['index']
+  mounted() {
+    console.log("Highlight");
+    console.log(this.instant);
+  },
+  template: `<div :class="{fragment: instant === undefined, 'highlight-box': true}" :data-fragment-index="index"><slot></slot></div>`,
+  props: ['index', 'instant']
 };
 
 const lsUComponent = {
