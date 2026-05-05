@@ -679,6 +679,161 @@ print("Componentes Principais:\n", PC)</textarea>
       </section><!-- fim BIPLOT -->
 
       <!-- ============================================================
+           SEÇÃO INTERPRETACAO: MÉTODOS DE ANÁLISE DO PCA
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Além do Biplot: Outras Formas de Análise</h2>
+          <p style="color: #6272a4;">Loadings, correlação, contribuição e qualidade de representação</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Loadings: Contribuição Numérica de Cada Variável</h2>
+          <div class="highlight-box">
+            <p><strong>Loadings</strong> são os coeficientes que relacionam variáveis originais aos componentes:</p>
+            <p style="font-size: 0.85em; text-align: center; color: #bd93f9;">PC1 = loading₁·var₁ + loading₂·var₂ + ... + loadingₚ·varₚ</p>
+          </div>
+          <div style="display: flex; gap: 20px; margin-top: 15px; align-items: center;">
+            <div style="flex: 1; font-size: 0.8em;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #44475a;">
+                  <th style="padding: 8px; text-align: left; color: #8be9fd;">Variável</th>
+                  <th style="padding: 8px; text-align: right; color: #8be9fd;">PC1</th>
+                  <th style="padding: 8px; text-align: right; color: #8be9fd;">PC2</th>
+                </tr>
+                <tr style="background: #282a36;">
+                  <td style="padding: 6px;">alcohol</td>
+                  <td style="padding: 6px; text-align: right; color: #50fa7b;">0.42</td>
+                  <td style="padding: 6px; text-align: right; color: #f1fa8c;">-0.08</td>
+                </tr>
+                <tr style="background: #44475a;">
+                  <td style="padding: 6px;">malic_acid</td>
+                  <td style="padding: 6px; text-align: right; color: #50fa7b;">0.31</td>
+                  <td style="padding: 6px; text-align: right; color: #ff79c6;">0.55</td>
+                </tr>
+                <tr style="background: #282a36;">
+                  <td style="padding: 6px;">ash</td>
+                  <td style="padding: 6px; text-align: right; color: #50fa7b;">0.27</td>
+                  <td style="padding: 6px; text-align: right; color: #f1fa8c;">0.18</td>
+                </tr>
+                <tr style="background: #44475a;">
+                  <td style="padding: 6px;">alcalinity</td>
+                  <td style="padding: 6px; text-align: right; color: #6272a4;">-0.08</td>
+                  <td style="padding: 6px; text-align: right; color: #ff79c6;">0.61</td>
+                </tr>
+              </table>
+            </div>
+            <div style="flex: 1;" class="fragment fade-in">
+              <div class="green-box">
+                <p><strong>Como interpretar:</strong></p>
+                <ul style="font-size: 0.8em;">
+                  <li>Loading alto (posit. ou neg.) = variável importante para aquele PC</li>
+                  <li>Loading perto de 0 = variável pouco relacionada</li>
+                  <li>Sinal indica direção da relação</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Círculo de Correlação</h2>
+          <p style="font-size: 0.85em; color: #6272a4;">Visualização geométrica das correlações entre variáveis e PCs</p>
+          <div style="display: flex; gap: 20px; margin-top: 10px; align-items: center;">
+            <div style="flex: 1;">
+              <img src="aulas/2026-04-30-pca-e-lda/materiais/graficos/biplot_wine.png"
+                   alt="Círculo de correlação" style="width: 100%; border-radius: 8px;" />
+            </div>
+            <div style="flex: 1; font-size: 0.85em;">
+              <ul>
+                <li class="fragment fade-in" style="margin-bottom: 10px;"><span style="color: #50fa7b;">●</span> Variáveis dentro do círculo = bem representadas</li>
+                <li class="fragment fade-in" style="margin-bottom: 10px;"><span style="color: #f1fa8c;">●</span> Variáveis fora = alta contribuição (importantes)</li>
+                <li class="fragment fade-in" style="margin-bottom: 10px;"><span style="color: #ff79c6;">●</span> Setas opostas = correlação negativa</li>
+                <li class="fragment fade-in" style="margin-bottom: 10px;"><span style="color: #8be9fd;">●</span> Setas perpendiculares = independentes</li>
+                <li class="fragment fade-in;"><span style="color: #bd93f9;">●</span> Mesmo quadrante = correlação positiva forte</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Scree Plot: Quantos Componentes Escolher?</h2>
+          <div style="display: flex; gap: 20px; margin-top: 15px; align-items: center;">
+            <div style="flex: 1;">
+              <img src="aulas/2026-04-30-pca-e-lda/materiais/graficos/cotovelo_wine.png"
+                   alt="Scree plot" style="width: 100%; border-radius: 8px;" />
+            </div>
+            <div style="flex: 1; font-size: 0.85em;">
+              <div class="green-box" style="margin-bottom: 15px;">
+                <p><strong>Método do Cotovelo:</strong></p>
+                <p style="font-size: 0.8em;">Olhe onde a curva "dobra" (cotovelo). Escolha componentes antes da estabilização.</p>
+              </div>
+              <div class="red-box" style="margin-bottom: 15px;">
+                <p><strong>Regra da Variância Acumulada:</strong></p>
+                <p style="font-size: 0.8em;">Escolha k componentes que explicam ≥ 70-80% da variância total.</p>
+              </div>
+              <div class="yellow-box">
+                <p><strong>Kaiser-Guttman:</strong></p>
+                <p style="font-size: 0.8em;">Keep only components with eigenvalue > 1 (for standardized data).</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Cos²: Qualidade de Representação</h2>
+          <div class="highlight-box">
+            <p><strong>Cos² (cosseno quadrado)</strong> mede quão bem cada observação é representada em cada componente:</p>
+            <p style="font-size: 0.85em; text-align: center; color: #bd93f9;">cos² = (coordenada)² / (soma dos quadrados da linha)</p>
+          </div>
+          <div style="display: flex; gap: 20px; margin-top: 15px;">
+            <div class="fragment fade-in" style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Interpretação:</strong></p>
+                <ul style="font-size: 0.8em;">
+                  <li>cos² alto (> 0.7) = observação bem representada</li>
+                  <li>cos² baixo (< 0.3) = observação mal representada</li>
+                  <li>Útil para identificar outliers no espaço dos PCs</li>
+                </ul>
+              </div>
+            </div>
+            <div class="fragment fade-in" style="flex: 1;">
+              <div class="red-box">
+                <p><strong>Uso prático:</strong></p>
+                <ul style="font-size: 0.8em;">
+                  <li>Filtrar observações com cos² baixo antes de interpretar grupos</li>
+                  <li>Identificar quais observações contribuem mais para cada PC</li>
+                  <li>Detectar anomalias na estrutura dos dados</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Contribution (CTR): Quem Forma os Componentes?</h2>
+          <div class="highlight-box">
+            <p><strong>CTR</strong> mede quanto cada observação/variável contribui para um componente:</p>
+            <p style="font-size: 0.85em; text-align: center; color: #50fa7b;">CTR = (coordenada)² / (soma dos quadrados das coordenadas desse PC)</p>
+          </div>
+          <div style="margin-top: 15px; font-size: 0.85em;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div class="fragment fade-in" style="background: #44475a; border-radius: 8px; padding: 15px; border-left: 4px solid #8be9fd;">
+                <p style="color: #8be9fd; font-weight: bold;">CTR de Observações</p>
+                <p style="font-size: 0.8em;">Identifica quais amostras são mais "importantes" para definir cada PC. Observações com alta CTR dominam a direção do componente.</p>
+              </div>
+              <div class="fragment fade-in" style="background: #44475a; border-radius: 8px; padding: 15px; border-left: 4px solid #ff79c6;">
+                <p style="color: #ff79c6; font-weight: bold;">CTR de Variáveis (loadings²)</p>
+                <p style="font-size: 0.8em;">Mostra quais variáveis mais definem cada PC. Soma do CTR de todas variáveis em um PC = 1 (100%).</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </section><!-- fim INTERPRETACAO -->
+
+      <!-- ============================================================
            SEÇÃO 4: PCA NA PRÁTICA COM PYTHON
            ============================================================ -->
       <section>
