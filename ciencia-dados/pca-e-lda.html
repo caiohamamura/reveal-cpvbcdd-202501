@@ -11,6 +11,11 @@
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="../plugin/chart/plugin.js"></script>
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
 </head>
 
 <body>
@@ -22,1197 +27,757 @@
            SLIDE 1: CAPA
            ============================================================ -->
       <section data-auto-animate>
-        <header1 aula="04" curso="Ciência de Dados" title-size="24"
+        <header1 aula="11" curso="Ciência de Dados" title-size="24"
                  title="PCA: Análise de Componentes Principais">
-          <div class="mermaid" style="width:100%; max-width: 600px; margin: 0 auto;">
+                 <multi-col cols="1.2fr 1fr"  style="align-items: center; gap:20px">
+          <div class="mermaid" style="width:100%; margin: 0 auto;">
             <pre>
+              %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '46px', 'fontFamily': 'Roboto'}}}%%
 graph LR
-    A["📊 Dados Originais<br/>(muitas dimensões)"] -->|"PCA"| B["🔮 Dimensões Reduzidas<br/>(2-3D)"]
-    B --> C["📈 Visualização clara"]
+    A["📊 Dados&lt;br/&gt;(muitas variáveis)"] -->|"PCA"| B["🔮 Componentes Principais&lt;br/&gt;(poucas dimensões)"]
+    B --> C["📈 Visualização &lt;br/&gt;e Análise"]
     style A fill:#44475a,color:#f8f8f2
-    style B fill:#bd93f9,color:#f8f8f2
+    style B fill:#bd93f9,color:#282a36
     style C fill:#50fa7b,color:#282a36
             </pre>
           </div>
+          <div>
+            <img src="aulas/2026-04-30-pca-e-lda/materiais/graficos/biplot_wine.png" alt="">
+          </div>
+        </multi-col>
         </header1>
       </section>
 
       <!-- ============================================================
-           SEÇÃO: INTRODUÇÃO AO PCA
+           SEÇÃO 1: FUNDAMENTOS ESTATÍSTICOS
            ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Seção 1: Introdução ao PCA</h2>
-          <p style="color: #6272a4;">Da maldição da dimensionalidade à clareza</p>
-          <ul style="font-size: 0.8em; color: #f8f8f2;">
-            <li>O que é redução de dimensionalidade?</li>
-            <li>Intuição por trás do PCA</li>
-            <li>A matemática por trás dos componentes</li>
-          </ul>
-          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~70 minutos</p>
-        </section>
-
-        <!-- SLIDE: O Problema - Maldição da Dimensionalidade -->
-        <section data-auto-animate>
-          <h2>A Maldição da Dimensionalidade</h2>
-          <div class="red-box" style="margin-bottom: 20px;">
-            <p><strong>Cenário:</strong> Você tem 100 features (dimensões) para prever uma variável-alvo.</p>
-            <p style="font-size: 0.85em; color: #ff5555;">Problema: quanto mais dimensões, mais dados precisamos!</p>
-          </div>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ff79c6; font-size: 0.9em;">📊 O que acontece?</h3>
-              <ul style="font-size: 0.8em;">
-                <li>Modelo pode <strong>overfitar</strong></li>
-                <li>Distância entre pontos fica similar</li>
-                <li>Dados ficam <strong>esparsos</strong></li>
-                <li>Custo computacional aumenta</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #50fa7b; font-size: 0.9em;">💡 A solução</h3>
-              <ul style="font-size: 0.8em;">
-                <li>Reduzir dimensões</li>
-                <li>Preservar informação importante</li>
-                <li>Visualizar em 2D/3D</li>
-                <li>Melhorar performance do modelo</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Exemplo Motivador - Compressão de Imagem -->
-        <section data-auto-animate>
-          <h2>Exemplo Motivador: Compressão de Imagem</h2>
-          <div class="highlight-box">
-            <p><strong>Imagine:</strong> Uma imagem com 784 pixels (28×28) — como uma imagem do MNIST.</p>
-          </div>
-          <multi-col style="gap: 20px;">
-            <div style="flex: 1;">
-              <p style="font-size: 0.85em;"><strong>Sem PCA:</strong> 784 valores por pixel</p>
-              <p style="font-size: 0.85em; color: #ff5555;">⬛⬛⬛⬛⬛⬛⬛⬛<br/>⬛⬛⬛⬛⬛⬛⬛⬛<br/>... (784 valores)</p>
-            </div>
-            <div style="flex: 1;">
-              <p style="font-size: 0.85em;"><strong>Com PCA (50 componentes):</strong> Muito menos informação!</p>
-              <p style="font-size: 0.85em; color: #50fa7b;">50 valores + componentes principais</p>
-            </div>
-          </multi-col>
-          <div class="green-box" style="margin-top: 15px;">
-            <p><strong>Resultado:</strong> 95% da variância preservada com ~94% menos dados!</p>
-          </div>
-        </section>
-
-        <!-- SLIDE: Quiz de Pré-Requisitos -->
-        <section data-auto-animate>
-          <h2>Quiz: Pré-Requisitos Rápido</h2>
-          <p style="color: #6272a4;">Responda rapidamente (sem consulta):</p>
-          <div style="margin-top: 20px;">
-            <ls-u font-size="24pt">
-              <li><strong>1.</strong> O que é um autovetor (eigenvector)?</li>
-              <li><strong>2.</strong> Como multiplicar duas matrizes em NumPy?</li>
-              <li><strong>3.</strong> O que significa "ortogonal"?</li>
-            </ls-u>
-          </div>
-        </section>
-
-        <!-- SLIDE: Introdução ao PCA -->
-        <section data-auto-animate>
-          <h2>PCA: Principal Component Analysis</h2>
-          <div class="highlight-box">
-            <p><strong>Definição:</strong> Técnica <strong>não-supervisionada</strong> que encontra novas direções (componentes) que <strong>maximizam a variância</strong>.</p>
-          </div>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ffb86c; font-size: 0.85em;">🎯 Objetivo</h3>
-              <ul style="font-size: 0.8em;">
-                <li>Encontrar direções de <strong>máxima variância</strong></li>
-                <li>Componentes são <strong>ortogonais</strong> (perpendiculares)</li>
-                <li>PC1 = maior variância, PC2 = segunda maior, etc.</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #8be9fd; font-size: 0.85em;">📈 Características</h3>
-              <ul style="font-size: 0.8em;">
-                <li><strong>Não</strong> usa labels (não-supervisionado)</li>
-                <li>Reduz para qualquer k dimensões</li>
-                <li>Cada PC explica parte da variância total</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Intuição Geométrica do PCA -->
-        <section data-auto-animate>
-          <h2>Intuição Geométrica do PCA</h2>
-          <div class="mermaid" style="width:100%; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #bd93f9;">Parte 1: Fundamentos Estatísticos</h2>
+          <p style="color: #6272a4;">De variância a covariância — os blocos do PCA</p>
+          <div class="mermaid" style="max-width: 700px; margin: 20px auto;">
             <pre>
-graph LR
-    A["Dados Originais<br/>(2D)"] -->|"Encontrar<br/>direção"| B["PC1<br/>(máxima variância)"]
-    B --> C["PC2<br/>(ortogonal)"]
-    style A fill:#44475a,color:#f8f8f2
-    style B fill:#ffb86c,color:#282a36
-    style C fill:#8be9fd,color:#282a36
+              %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '56px', 'fontFamily': 'Roboto'},
+            'flowchart': {
+    'rankSpacing': 170
+  }}}%%
+graph LR 
+    V["Variância"] --> C["Covariância"]
+    C --> CM["Matriz de&lt;br/&gt;Covariância"]
+    CM --> E["Autovetores &lt;br/&gt;Autovalores"]
+    E --> PCA["PCA"]
+    style V fill:#8be9fd,color:#282a36
+    style C fill:#50fa7b,color:#282a36
+    style CM fill:#ff79c6,color:#282a36
+    style E fill:#f1fa8c,color:#282a36
+    style PCA fill:#bd93f9,color:#282a36
             </pre>
           </div>
-          <div style="margin-top: 20px;">
-            <p style="font-size: 0.85em;"><strong>Analogia:</strong> Imagine uma foto de frente de um rosto.</p>
-            <ul style="font-size: 0.8em;">
-              <li>Uma <strong>linha vertical</strong> (PC1) captura a altura — máxima variância</li>
-              <li>Uma <strong>linha horizontal</strong> (PC2) captura a largura — segunda maior</li>
-              <li>Juntas, representam o rosto com menos informação!</li>
-            </ul>
+        </section>
+
+        <!-- SLIDE: Variância -->
+        <section data-auto-animate>
+          <h2>Variância: dispersão dos dados</h2>
+          <div class="highlight-box">
+            <p><strong>Variância</strong> mede o quanto os dados se espalham em torno da média:</p>
+            <p style="font-size: 1.2em; text-align: center; color: #8be9fd;">
+              Var(X) = \( \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2 \)
+            </p>
+          </div>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/variancia_visual.png"
+               alt="Variância visual" style="width: 85%; margin-top: 10px; border-radius: 8px;" />
+        </section>
+
+        <!-- SLIDE: Covariância -->
+        <section data-auto-animate>
+          <h2>Covariância: duas variáveis juntas</h2>
+          <div class="highlight-box">
+            <p><strong>Covariância</strong> mede como duas variáveis variam juntas:</p>
+            <p style="font-size: 1.1em; text-align: center; color: #50fa7b;">
+              Cov(X, Y) = \( \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y}) \)
+            </p>
+          </div>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/covariancia_visual.png"
+               alt="Covariância visual" style="width: 90%; margin-top: 10px; border-radius: 8px;" />
+        </section>
+
+        <!-- SLIDE: Da Covariância para a Matriz -->
+        <section data-auto-animate>
+          <h2>Matriz de Covariância</h2>
+          <p style="font-size: 0.85em; color: #6272a4;">Para <em>n</em> variáveis, organizamos todas as covariâncias numa matriz:</p>
+          <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 10px;">
+            <div style="flex: 1;">
+              <pre style="font-size: 0.7em; background: #44475a; padding: 12px; border-radius: 8px; text-align: center;">
+Cov = | Var(X₁)    Cov(X₁,X₂)  ... |
+      | Cov(X₂,X₁) Var(X₂)     ... |
+      | ...        ...         ... |</pre>
+              <ul style="font-size: 0.75em; margin-top: 10px;">
+                <li class="fragment fade-in"><strong>Diagonal:</strong> variâncias de cada variável</li>
+                <li class="fragment fade-in"><strong>Fora da diagonal:</strong> covariâncias entre pares</li>
+                <li class="fragment fade-in"><strong>Simétrica:</strong> Cov(X,Y) = Cov(Y,X)</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/matriz_covariancia_heatmap.png"
+                   alt="Heatmap covariância" style="width: 100%; border-radius: 8px;" />
+            </div>
           </div>
         </section>
 
-        <!-- SLIDE: Quiz de Verificação -->
+        <!-- SLIDE: Calculando a Matriz de Covariância -->
         <section data-auto-animate>
-          <h2>Quiz de Verificação</h2>
-          <ls-u font-size="20pt">
-            <li><strong>1.</strong> PCA é supervisionado ou não-supervisionado?</li>
-            <li><strong>2.</strong> O que o PCA maximiza?</li>
-            <li><strong>3.</strong> O que são componentes principais?</li>
-            <li><strong>4.</strong> O que devemos fazer antes de aplicar PCA?</li>
-            <li><strong>5.</strong> Por que componentes são ortogonais entre si?</li>
-          </ls-u>
+          <h2>Calculando a Matriz de Covariância</h2>
+          <multi-col >
+            <div style="flex: 1;">
+              <ol style="font-size: 0.85em;">
+                <li class="fragment fade-in"><strong>Centralizar:</strong> \( X_c = X - \bar{X} \)</li>
+                <li class="fragment fade-in"><strong>Produto:</strong> \( X_c^T \cdot X_c \)</li>
+                <li class="fragment fade-in"><strong>Normalizar:</strong> \( \text{Cov} = \frac{X_c^T X_c}{n-1} \)</li>
+              </ol>
+              <div class="green-box fragment fade-in" style="margin-top: 15px;">
+                <p style="font-size: 0.8em;"><strong>NumPy:</strong> <code>np.cov(X.T)</code> ou <code>(Xc.T @ Xc) / (n-1)</code></p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/covariancia_centralizacao.png"
+                   alt="Centralização" style="max-height:600px;border-radius: 8px;" />
+            </div>
+          </multi-col>
         </section>
 
-      </section><!-- fim INTRODUÇÃO -->
+        <!-- SLIDE: Exemplo Numérico Covariância -->
+        <section data-auto-animate>
+          <h2>Exemplo: Matriz de Covariância 2×2</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+import numpy as np
+
+# 3 amostras, 2 variáveis
+X = np.array([[2, 1],
+              [4, 3],
+              [6, 5]])
+
+# Passo 1: Centralizar
+Xc = X - X.mean(axis=0)
+print("X centralizado:\n", Xc)
+# [[-2, -2],
+#  [ 0,  0],
+#  [ 2,  2]]
+
+# Passo 2: Matriz de covariância
+Cov = (Xc.T @ Xc) / (X.shape[0] - 1)
+print("Cov:\n", Cov)
+# [[4, 4],
+#  [4, 4]]</textarea>
+          </code-block>
+        </section>
+
+      </section><!-- fim FUNDAMENTOS -->
 
       <!-- ============================================================
-           SEÇÃO: MATEMÁTICA DO PCA
+           SEÇÃO 2: VETORES E TRANSFORMAÇÕES LINEARES
            ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #bd93f9;">Seção 2: A Matemática do PCA</h2>
-          <p style="color: #6272a4;">Covariância, autovetores e decomposição espectral</p>
-          <ul style="font-size: 0.8em; color: #f8f8f2;">
-            <li>Matriz de Covariância: definição e cálculo</li>
-            <li>Autovetores e Autovalores: interpretação geométrica</li>
-            <li>Decomposição Espectral: Cov = QΛQᵀ</li>
-          </ul>
-          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~45 minutos</p>
+          <h2 style="color: #bd93f9;">Parte 2: Vetores e Transformações</h2>
+          <p style="color: #6272a4;">Como matrizes transformam vetores — o caminho para autovetores</p>
         </section>
 
-        <!-- SLIDE: Matriz de Covariância - Definição -->
+        <!-- SLIDE: Vetor e Transformação -->
         <section data-auto-animate>
-          <h2>Matriz de Covariância — Definição Formal</h2>
+          <h2>Transformação Linear: M · v</h2>
           <div class="highlight-box">
-            <p><strong>Definição:</strong> Cov(X) = E[(X - μ)(X - μ)ᵀ]</p>
-            <p style="font-size: 0.85em; color: #6272a4;">Onde X é a matriz de dados, μ é o vetor de médias</p>
+            <p>Multiplicar um vetor <strong>v</strong> por uma matriz <strong>M</strong> pode <strong>rotacionar</strong> e <strong>escalar</strong> o vetor:</p>
+            <p style="font-size: 1.1em; text-align: center; color: #ff79c6;">\( M \cdot \vec{v} = \vec{v}' \)</p>
           </div>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ff79c6; font-size: 0.85em;">📐 O que mede?</h3>
-              <ul style="font-size: 0.8em;">
-                <li>Como cada feature varia consigo mesma (variância)</li>
-                <li>Como duas features variam juntas (covariância)</li>
-                <li>Matriz quadrada n×n (n = número de features)</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #8be9fd; font-size: 0.85em;">📊 Exemplo 2x2</h3>
-              <pre style="font-size: 0.75em; background: #44475a; padding: 10px; border-radius: 8px;">
-Cov = | Var(X₁)   Cov(X₁,X₂) |
-      | Cov(X₂,X₁) Var(X₂)  |
-              </pre>
-            </div>
-          </multi-col>
+          <center>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/transformacao_vetor.png"
+               alt="Transformação de vetor" style="width: 38%; justify-self: center; margin: auto; margin-top: 10px; border-radius: 8px;" />
+          </center>
         </section>
 
-        <!-- SLIDE: Matriz de Covariância - Cálculo Passo-a-Passo -->
+        <!-- SLIDE: Autovetores — não rotacionam! -->
         <section data-auto-animate>
-          <h2>Matriz de Covariância — Cálculo Passo-a-Passo</h2>
-          <multi-col style="gap: 30px;">
+          <h2>Autovetores: direções que NÃO rotacionam</h2>
+          <div class="highlight-box">
+            <p style="font-size: 1em; text-align: center; color: #f1fa8c;">\( A \cdot \vec{v} = \lambda \cdot \vec{v} \)</p>
+            <p style="font-size: 0.7em;">O vetor <strong>v</strong> só é <strong>escalado</strong> por λ — não muda de direção!</p>
+          </div>
+          <center>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/autovetores_escalam.png"
+               alt="Autovetores escalam" style="width: 70%; margin-top: 10px; border-radius: 8px;" />
+          </center>
+        </section>
+
+        <!-- SLIDE: Autovalores — escala -->
+        <section data-auto-animate>
+          <h2>Autovalores: quanto escalar</h2>
+          <multi-col style="gap: 20px;">
             <div style="flex: 1;">
-              <ol style="font-size: 0.85em;">
-                <li class="fragment fade-in"><strong>Centralizar dados:</strong> Xc = X - μ</li>
-                <li class="fragment fade-in"><strong>Calcular produto externo:</strong> Xcᵀ × Xc</li>
-                <li class="fragment fade-in"><strong>Normalizar por (n-1):</strong> Cov = XcᵀXc / (n-1)</li>
-              </ol>
-              <div class="green-box fragment fade-in" style="margin-top: 20px;">
-                <p style="font-size: 0.8em;"><strong>NumPy:</strong> np.cov(X.T) ou (Xc.T @ Xc) / (n-1)</p>
+              <ul style="font-size: 0.85em;">
+                <li><strong>\(\lambda\)</strong> = fator de escala</li>
+                <li class="fragment fade-in">Se \( \lambda > 1 \): vetor cresce</li>
+                <li class="fragment fade-in">Se \( 0 < \lambda < 1 \): vetor encolhe</li>
+                <li class="fragment fade-in">No PCA: <strong>maior λ = mais variância</strong> naquela direção</li>
+              </ul>
+              <div class="green-box fragment fade-in" style="margin-top: 15px;">
+                <p style="font-size: 0.8em;"><strong>PC1</strong> = autovetor com <strong>maior autovalor</strong></p>
               </div>
             </div>
             <div style="flex: 1;">
-              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/covariancia_centralizacao.png" 
-                   alt="Covariância e Centralização" style="width: 100%; border-radius: 8px;" />
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Autovetores e Autovalores - Definição -->
-        <section data-auto-animate>
-          <h2>Autovetores e Autovalores — Definição</h2>
-          <div class="highlight-box">
-            <p><strong>Definição:</strong> Av = λv</p>
-            <p style="font-size: 0.85em; color: #6272a4;">Onde A é a matriz de covariância, λ é autovalor, v é autovetor</p>
-          </div>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ffb86c; font-size: 0.85em;">🔍 Interpretação</h3>
-              <ul style="font-size: 0.8em;">
-                <li><strong>Autovetor (v):</strong> direção que não muda após transformação por A</li>
-                <li><strong>Autovalor (λ):</strong> quanto a direção é "esticada"</li>
-                <li>Autovetores são <strong>ortogonais</strong> entre si</li>
-              </ul>
-              <div class="yellow-box" style="margin-top: 15px;">
-                <p style="font-size: 0.8em;"><strong>Propriedade:</strong> Autovetores de Cov são as direções principais!</p>
+              <div class="highlight-box" style="text-align: center;">
+                <p style="font-size: 0.85em; color: #ff79c6;">\( A \cdot \vec{v_1} = \lambda_1 \cdot \vec{v_1} \)</p>
+                <p style="font-size: 0.85em; color: #50fa7b;">\( A \cdot \vec{v_2} = \lambda_2 \cdot \vec{v_2} \)</p>
+                <p style="font-size: 0.85em; color: #f1fa8c;">\( \lambda_1 > \lambda_2 \Rightarrow \) PC1 = \( \vec{v_1} \)</p>
               </div>
-            </div>
-            <div style="flex: 1;">
-              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/autovetores_matriz.png" 
-                   alt="Autovetores da Matriz de Covariância" style="width: 100%; border-radius: 8px;" />
             </div>
           </multi-col>
         </section>
 
         <!-- SLIDE: Decomposição Espectral -->
         <section data-auto-animate>
-          <h2>Decomposição Espectral: Cov = QΛQᵀ</h2>
+          <h2>Decomposição Espectral</h2>
           <div class="highlight-box">
-            <p><strong>Fórmula:</strong> Cov = Q Λ Qᵀ</p>
+            <p style="font-size: 1.2em; text-align: center; color: #bd93f9;">\( \text{Cov} = Q \Lambda Q^T \)</p>
           </div>
-          <multi-col style="gap: 20px;">
-            <div style="flex: 1; text-align: center;">
-              <p style="font-size: 0.8em; color: #ff79c6;"><strong>Q</strong> = Autovetores<br/><span style="color: #6272a4;">(matriz ortogonal)</span></p>
+          <multi-col style="gap: 15px; margin-top: 15px;">
+            <div style="flex: 1; text-align: center; background: rgba(255,121,198,0.1); padding: 12px; border-radius: 8px;">
+              <p style="font-size: 0.8em; color: #ff79c6;"><strong>Q</strong> = Autovetores<br/><span style="color: #6272a4;">(matriz ortogonal, colunas são v₁, v₂, ...)</span></p>
             </div>
-            <div style="flex: 1; text-align: center;">
-              <p style="font-size: 0.8em; color: #50fa7b;"><strong>Λ</strong> = Autovalores<br/><span style="color: #6272a4;">(matriz diagonal)</span></p>
+            <div style="flex: 1; text-align: center; background: rgba(80,250,123,0.1); padding: 12px; border-radius: 8px;">
+              <p style="font-size: 0.8em; color: #50fa7b;"><strong>Λ</strong> = Autovalores<br/><span style="color: #6272a4;">(matriz diagonal com λ₁, λ₂, ...)</span></p>
             </div>
-            <div style="flex: 1; text-align: center;">
-              <p style="font-size: 0.8em; color: #8be9fd;"><strong>Qᵀ</strong> = Transposta<br/><span style="color: #6272a4;">(inversa de Q)</span></p>
+            <div style="flex: 1; text-align: center; background: rgba(139,233,253,0.1); padding: 12px; border-radius: 8px;">
+              <p style="font-size: 0.8em; color: #8be9fd;"><strong>Q<sup>T</sup></strong> = Transposta<br/><span style="color: #6272a4;">(inversa de Q, pois Q é ortogonal)</span></p>
             </div>
           </multi-col>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/decomposicao_espectral.png" 
-               alt="Decomposição Espectral" style="width: 80%; margin-top: 20px; border-radius: 8px;" />
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/decomposicao_espectral.png"
+               alt="Decomposição espectral" style="width: 75%; margin-top: 15px; border-radius: 8px;" />
         </section>
 
-        <!-- SLIDE: Exemplo Numérico 2x2 -->
+        <!-- SLIDE: Autovetores unitários e ortogonais -->
         <section data-auto-animate>
-          <h2>Exemplo Numérico 2×2</h2>
-          <code-block lang="python" data-trim>
+          <h2>Por que \( V^{-1} = V^T \) ?</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1;">
+              <ul style="font-size: 0.85em;">
+                <li class="fragment fade-in">Autovetores são <strong>unitários</strong>: \( \|\vec{v_i}\| = 1 \)</li>
+                <li class="fragment fade-in">Autovetores são <strong>ortogonais</strong>: \( \vec{v_i} \cdot \vec{v_j} = 0 \)</li>
+                <li class="fragment fade-in">Matriz com colunas ortonormais → <strong>ortogonal</strong></li>
+                <li class="fragment fade-in">Matriz ortogonal → \( V^{-1} = V^T \)</li>
+              </ul>
+              <div class="yellow-box fragment fade-in" style="margin-top: 15px;">
+                <p style="font-size: 0.8em;"><strong>Consequência:</strong> para reconstruir, basta \( X = PC \cdot V^T \)</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/autovetores_ortonormais.png"
+                   alt="Autovetores ortonormais" style="width: 100%; border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim TRANSFORMAÇÕES -->
+
+      <!-- ============================================================
+           SEÇÃO 3: O ALGORITMO PCA — WORKFLOW COMPLETO
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Parte 3: O Algoritmo PCA</h2>
+          <p style="color: #6272a4;">Workflow completo — do dado bruto aos componentes principais</p>
+        </section>
+
+        <!-- SLIDE: Workflow visual -->
+        <section data-auto-animate>
+          <h2>Workflow do PCA em 4 Passos</h2>
+          <div class="mermaid" style="max-width: 800px; margin: 10px auto;">
+            <pre>
+graph LR
+    A["1. Dados&lt;br/&gt;X"] -->|"X - μ"| B["2. Centralizar&lt;br/&gt;Xc"]
+    B -->|"Xcᵀ·Xc / (n-1)"| C["3. Covariância&lt;br/&gt;Cov"]
+    C -->|"eig(Cov)"| D["4. Autovetores V&lt;br/&gt;Autovalores λ"]
+    D -->|"Xc · V"| E["Componentes&lt;br/&gt;Principais"]
+    style A fill:#8be9fd,color:#282a36
+    style B fill:#50fa7b,color:#282a36
+    style C fill:#ff79c6,color:#282a36
+    style D fill:#f1fa8c,color:#282a36
+    style E fill:#bd93f9,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <!-- SLIDE: 4 passos com imagens -->
+        <section data-auto-animate>
+          <h2>4 Passos — Visualmente</h2>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_workflow_4passos.png"
+               alt="Workflow 4 passos" style="width: 90%; border-radius: 8px;" />
+        </section>
+
+        <!-- SLIDE: Código completo PCA -->
+        <section data-auto-animate>
+          <h2>PCA em NumPy — Passo a Passo</h2>
+          <code-block lang="python" data-trim data-line-numbers="1-30|3-4|6-7|9-10|12-13|15-18">
 <textarea>
 import numpy as np
 
-# Dados: X = [[2, 1], [4, 3], [6, 5]]
-X = np.array([[2, 1], [4, 3], [6, 5]])
+# Dados: 5 amostras, 2 variáveis
+X = np.array([[2.5, 2.4],
+              [0.5, 0.7],
+              [2.2, 2.9],
+              [1.9, 2.2],
+              [3.1, 3.0]])
 
 # PASSO 1: Centralizar
 Xc = X - X.mean(axis=0)
-print("X centralizado:\n", Xc)
 
-# PASSO 2: Covariância
-Cov = Xc.T @ Xc / (X.shape[0] - 1)
-print("\nCovariância:\n", Cov)
+# PASSO 2: Matriz de covariância
+Cov = np.cov(Xc.T)    # ou (Xc.T @ Xc) / (n-1)
 
-# PASSO 3: Autovetores e Autovalores
-eigenvalues, eigenvectors = np.linalg.eig(Cov)
-print("\nAutovalores:", eigenvalues)
-print("Autovetores:\n", eigenvectors)
-</textarea>
+# PASSO 3: Autovalores e autovetores
+autovalores, autovetores = np.linalg.eigh(Cov)
+
+# Ordenar pelo maior autovalor
+idx = autovalores.argsort()[::-1]
+autovalores = autovalores[idx]
+autovetores = autovetores[:, idx]
+
+# PASSO 4: Projetar nos componentes
+PC = Xc @ autovetores
+print("Componentes Principais:\n", PC)</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: Transformação direta -->
+        <section data-auto-animate>
+          <h2>Transformação: Dados → Componentes</h2>
+          <div class="highlight-box">
+            <p style="font-size: 1.1em; text-align: center; color: #50fa7b;">\( PC = (X - \mu) \cdot V \)</p>
+            <p style="font-size: 0.85em; color: #6272a4;">Onde V é a matriz de autovetores (colunas ordenadas pelo maior λ)</p>
+          </div>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/transformacao_direta_inversa.png"
+               alt="Transformação direta e inversa" style="width: 90%; margin-top: 10px; border-radius: 8px;" />
+        </section>
+
+        <!-- SLIDE: Reconstrução (back-transform) -->
+        <section data-auto-animate>
+          <h2>Reconstrução: Componentes → Dados</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1;">
+              <div class="highlight-box">
+                <p style="font-size: 1.1em; text-align: center; color: #ff79c6;">\( \hat{X} = PC \cdot V^T \)</p>
+              </div>
+              <ul style="font-size: 0.85em; margin-top: 15px;">
+                <li class="fragment fade-in">\(\|\vec{v_i}\| = 1 \) → autovetores unitários</li>
+                <li class="fragment fade-in">Colunas ortonormais → \( V^{-1} = V^T \)</li>
+                <li class="fragment fade-in">Logo: \( X_c = PC \cdot V^T = PC \cdot V^{-1} \)</li>
+                <li class="fragment fade-in">E reconstruído: \( \hat{X} = PC \cdot V^T + \mu \)</li>
+              </ul>
+              <div class="green-box fragment fade-in" style="margin-top: 15px;">
+                <p style="font-size: 0.8em;">Usando apenas <strong>k</strong> componentes: reconstrução aproximada!</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div style="background: #44475a; padding: 15px; border-radius: 8px; font-size: 0.8em;">
+                <p style="color: #8be9fd;"><strong>Resumo:</strong></p>
+                <p style="color: #50fa7b;">Ida: &nbsp;&nbsp;&nbsp; \( PC = (X - \mu) \cdot V \)</p>
+                <p style="color: #ff79c6;">Volta: \( \hat{X} = PC \cdot V^T + \mu \)</p>
+                <p style="color: #f1fa8c; margin-top: 10px;">V⁻¹ = V<sup>T</sup> pois ‖v‖ = 1 e vᵢ ⊥ vⱼ</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Variância explicada -->
+        <section data-auto-animate>
+          <h2>Variância Explicada por Componente</h2>
+          <div class="highlight-box">
+            <p style="font-size: 0.9em;">A proporção de variância explicada por cada PC:</p>
+            <p style="font-size: 1.1em; text-align: center; color: #f1fa8c;">\( \text{proporção}_k = \frac{\lambda_k}{\sum \lambda_i} \)</p>
+          </div>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/variancia_explicada_componentes.png"
+               alt="Variância explicada" style="width: 65%; margin-top: 10px; border-radius: 8px;" />
+        </section>
+
+        <!-- SLIDE: Chart.js exemplo de variância -->
+        <section data-auto-animate>
+          <h2>Exemplo: Variância Explicada (Iris)</h2>
+          <div style="height: 400px; width: 80%; margin: 0 auto;">
+            <canvas data-chart="bar">
+<!-- { "data": { "labels": ["PC1","PC2","PC3","PC4"], "datasets": [{"label":"Variância %", "backgroundColor":["#ff79c6","#50fa7b","#8be9fd","#bd93f9"]}] }, "options": { "scales": { "y": { "beginAtZero": true, "max": 100, "ticks": {"color": "#f8f8f2"}, "grid": {"color": "#44475a"}, "title": {"display": true, "text": "Variância Explicada (%)", "color": "#f8f8f2"} }, "x": { "ticks": {"color": "#f8f8f2"}, "grid": {"color": "#44475a"} } }, "plugins": { "legend": {"labels": {"color": "#f8f8f2"}} } } } -->
+Iris PCA,92.46,5.31,1.17,1.06
+            </canvas>
+          </div>
+          <div class="green-box" style="margin-top: 10px;">
+            <p style="font-size: 0.8em;">PC1 + PC2 explicam <strong>97.77%</strong> da variância — podemos usar apenas 2 componentes!</p>
+          </div>
+        </section>
+
+      </section><!-- fim ALGORITMO -->
+
+      <!-- ============================================================
+           SEÇÃO 4: PCA NA PRÁTICA COM PYTHON
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Parte 4: PCA na Prática</h2>
+          <p style="color: #6272a4;">Aplicando com scikit-learn no dataset Iris</p>
+        </section>
+
+        <!-- SLIDE: PCA com scikit-learn -->
+        <section data-auto-animate>
+          <h2>PCA com scikit-learn</h2>
+          <code-block lang="python" data-trim data-line-numbers="1-20|3|5-6|8-10|12-15|17-20">
+<textarea>
+from sklearn.decomposition import PCA
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# Carregar e normalizar
+iris = load_iris()
+X = StandardScaler().fit_transform(iris.data)
+
+# PCA para 2 componentes
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+print("Variância explicada:", pca.explained_variance_ratio_)
+# [0.7296, 0.2285]  → 95.81% total
+
+# Reconstruir (inverso)
+X_rec = pca.inverse_transform(X_pca)
+print("Erro de reconstrução:",
+      np.mean((X - X_rec)**2))</textarea>
+          </code-block>
+        </section>
+
+        <!-- SLIDE: Iris PCA scatter -->
+        <section data-auto-animate>
+          <h2>Iris: Visualização em 2D com PCA</h2>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_2d_scatter.png"
+               alt="PCA 2D scatter" style="width: 75%; border-radius: 8px;" />
+          <div class="green-box" style="margin-top: 10px;">
+            <p style="font-size: 0.8em;">De 4 variáveis para 2 componentes — e ainda dá para separar as espécies!</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Método do cotovelo -->
+        <section data-auto-animate>
+          <h2>Quantos componentes usar? Método do Cotovelo</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1;">
+              <code-block lang="python" data-trim>
+<textarea>
+# Todas as componentes
+pca_full = PCA()
+pca_full.fit(X)
+
+# Variância acumulada
+var_acum = np.cumsum(
+    pca_full.explained_variance_ratio_
+)
+print(var_acum)
+# [0.7296, 0.9581, 0.9948, 1.0000]
+
+# Escolher k para ≥ 95%
+k = np.argmax(var_acum >= 0.95) + 1
+print(f"k = {k}")  # k = 2</textarea>
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_sklearn_cotovelo.png"
+                   alt="Cotovelo" style="width: 100%; border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Exemplo Numérico Completo -->
+        <section data-auto-animate>
+          <h2>Exemplo Numérico Completo 2×2</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+import numpy as np
+
+X = np.array([[2, 1], [4, 3], [6, 5]])
+mu = X.mean(axis=0)            # [4, 3]
+Xc = X - mu                    # centralizar
+Cov = np.cov(Xc.T)             # [[4, 4], [4, 4]]
+vals, vecs = np.linalg.eigh(Cov)
+idx = vals.argsort()[::-1]
+vals, vecs = vals[idx], vecs[:, idx]
+# vals = [8, 0], vecs = [[0.707, -0.707], [0.707, 0.707]]
+
+PC = Xc @ vecs                 # transformar
+X_rec = PC @ vecs.T + mu       # reconstruir
+print("Reconstruído:\n", X_rec) # igual ao original!</textarea>
           </code-block>
           <div class="green-box" style="margin-top: 10px;">
-            <p style="font-size: 0.75em;"><strong>Resultado:</strong> PC1 (maior λ) explica a maior parte da variância!</p>
+            <p style="font-size: 0.8em;">λ₂ = 0 → PC2 não adiciona informação. Os dados vivem numa reta!</p>
           </div>
         </section>
 
-        <!-- SLIDE: Por que Autovalores Maiores = Direções Mais Importantes -->
-        <section data-auto-animate>
-          <h2>Por que Autovalores Maiores = Mais Importantes?</h2>
-          <div class="highlight-box">
-            <p><strong>Variância Explicada:</strong> λᵢ / Σλⱼ</p>
-          </div>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/variancia_explicada_cumulativa.png" 
-               alt="Variância Explicada" style="width: 80%; border-radius: 8px;" />
-          <ul style="font-size: 0.85em; margin-top: 20px;">
-            <li><strong>λ maior</strong> = dados mais espalhados nessa direção = mais informação</li>
-            <li><strong>λ menor</strong> = dados mais concentrados = menos informação (ruído?)</li>
-            <li>PC1 com λ₁=4.5 explica mais que PC2 com λ₂=0.8</li>
-          </ul>
-        </section>
-
-      </section><!-- fim MATEMÁTICA DO PCA -->
+      </section><!-- fim PRÁTICA -->
 
       <!-- ============================================================
-           SEÇÃO: QUANDO A MATRIZ NÃO É INVERTÍVEL
+           SEÇÃO 5: POR QUE FUNCIONA — INTUIÇÃO COMPLETA
            ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Seção 3: Quando a Matriz Não é Invertível</h2>
-          <p style="color: #6272a4;">Singularidade, pseudoinversa e regularização</p>
+          <h2 style="color: #bd93f9;">Parte 5: Por que o PCA funciona?</h2>
+          <p style="color: #6272a4;">Conectando toda a matemática</p>
         </section>
 
-        <!-- SLIDE: Condição de Invertibilidade -->
+        <!-- SLIDE: Conexão Cov → Eigen → PCA -->
         <section data-auto-animate>
-          <h2>Quando uma Matriz é Invertível?</h2>
-          <div class="highlight-box">
-            <p><strong>Condição:</strong> det(Cov) ≠ 0 (determinante não-zero)</p>
-          </div>
-          <ul style="font-size: 0.85em; margin-top: 20px;">
-            <li class="fragment fade-in"><strong>Matriz definida positiva:</strong> todos autovalores > 0</li>
-            <li class="fragment fade-in"><strong>Não-singular:</strong> existe matriz inversa Cov⁻¹</li>
-            <li class="fragment fade-in"><strong>Problemas:</strong> features redundantes, mais features que amostras</li>
-          </ul>
-          <div class="red-box fragment fade-in" style="margin-top: 20px;">
-            <p style="font-size: 0.8em;"><strong>⚠️ Caveat:</strong> Matrizes quase-singulares são numericamente instáveis!</p>
+          <h2>A Conexão Completa</h2>
+          <div class="mermaid" style="max-width: 800px; margin: 10px auto;">
+            <pre>
+graph TD
+    D["📊 Dados X"] --> C["Centralizar: Xc = X - μ"]
+    C --> CV["Matriz Covariância:&lt;br/&gt;Cov = XcᵀXc/(n-1)"]
+    CV --> E["Decomposição:&lt;br/&gt;Cov = VΛVᵀ"]
+    E -->|"colunas de V"| PC1["PC1: autovetor de maior λ"]
+    E -->|"colunas de V"| PC2["PC2: autovetor de 2o maior λ"]
+    PC1 --> T["Projetar:&lt;br/&gt;PC = Xc · V"]
+    PC2 --> T
+    T --> R["Reconstruir:&lt;br/&gt;X̂ = PC · Vᵀ + μ"]
+    style D fill:#8be9fd,color:#282a36
+    style C fill:#50fa7b,color:#282a36
+    style CV fill:#ff79c6,color:#282a36
+    style E fill:#f1fa8c,color:#282a36
+    style T fill:#bd93f9,color:#282a36
+    style R fill:#ffb86c,color:#282a36
+            </pre>
           </div>
         </section>
 
-        <!-- SLIDE: Pseudoinversa e Regularização -->
+        <!-- SLIDE: Intuição geométrica -->
         <section data-auto-animate>
-          <h2>Pseudoinversa e Regularização</h2>
-          <multi-col style="gap: 30px;">
+          <h2>Intuição Geométrica</h2>
+          <multi-col style="gap: 20px;">
             <div style="flex: 1;">
-              <h3 style="color: #bd93f9; font-size: 0.85em;">📐 Pseudoinversa (Moore-Penrose)</h3>
-              <code-block lang="python" data-trim>
-<textarea>
-# NumPy
-Cov_pinv = np.linalg.pinv(Cov)
-</textarea>
-              </code-block>
-              <p style="font-size: 0.75em; margin-top: 10px;">Funciona mesmo quando det=0</p>
+              <ol style="font-size: 0.85em;">
+                <li class="fragment fade-in"><strong>Covariância</strong> captura a "forma elipsoidal" dos dados</li>
+                <li class="fragment fade-in"><strong>Autovetores</strong> apontam para os eixos dessa elipse</li>
+                <li class="fragment fade-in"><strong>Autovalores</strong> medem o tamanho de cada eixo</li>
+                <li class="fragment fade-in"><strong>Maior eixo = mais variância = PC1</strong></li>
+              </ol>
+              <div class="yellow-box fragment fade-in" style="margin-top: 15px;">
+                <p style="font-size: 0.8em;">PCA "rotaciona" o sistema de coordenadas para alinhar com os eixos naturais dos dados</p>
+              </div>
             </div>
             <div style="flex: 1;">
-              <h3 style="color: #50fa7b; font-size: 0.85em;">🛡️ Regularização (Tikhonov)</h3>
-              <code-block lang="python" data-trim>
-<textarea>
-# Adicionar pequeno valor à diagonal
-alpha = 0.01
-Cov_reg = Cov + alpha * np.eye(Cov.shape[0])
-</textarea>
-              </code-block>
-              <p style="font-size: 0.75em; margin-top: 10px;">Stabiliza computação, levemente alterando autovetores</p>
+              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_numpy_passo-a-passo.png"
+                   alt="PCA passo a passo" style="width: 100%; border-radius: 8px;" />
             </div>
           </multi-col>
         </section>
 
-      </section><!-- fim NÃO-INVERTÍVEL -->
-
-      <!-- ============================================================
-           SEÇÃO: HANDS-ON PCA
-           ============================================================ -->
-      <section>
-
+        <!-- SLIDE: Propriedades importantes -->
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Seção 4: Hands-On PCA</h2>
-          <p style="color: #6272a4;">Implementando do zero e com scikit-learn</p>
-          <ul style="font-size: 0.8em; color: #f8f8f2;">
-            <li>PCA no NumPy (do zero)</li>
-            <li>PCA com scikit-learn (Wine dataset)</li>
-            <li>Visualização e interpretação</li>
-          </ul>
-          <p style="color: #ffb86c; font-size: 0.8em; margin-top: 30px;">⏱️ Duração: ~40 minutos</p>
-        </section>
-
-        <!-- SLIDE: Demonstração - PCA no NumPy -->
-        <section data-auto-animate>
-          <h2>Demonstração: PCA no NumPy</h2>
-          <p style="color: #6272a4; font-size: 0.8em;">Passo a passo da implementação do zero</p>
-          <code-block lang="python" data-trim>
-<textarea>
-# PASSO 1: Importar bibliotecas
-import numpy as np
-import matplotlib.pyplot as plt
-
-# PASSO 2: Carregar dataset (Iris)
-from sklearn.datasets import load_iris
-iris = load_iris()
-X = iris.data
-y = iris.target
-
-# PASSO 3: Centralizar (média = 0)
-X_centered = X - X.mean(axis=0)
-print(f"Média após centralização: {X_centered.mean(axis=0)}")
-
-# PASSO 4: Matriz de covariância
-cov_matrix = np.cov(X_centered.T)
-
-# PASSO 5: Autovalores e autovetores
-eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
-
-# PASSO 6: Ordenar por importância
-idx = eigenvalues.argsort()[::-1]
-eigenvalues = eigenvalues[idx]
-eigenvectors = eigenvectors[:, idx]
-
-print(f"Autovalores: {eigenvalues}")
-</textarea>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: PCA no NumPy - Projeção -->
-        <section data-auto-animate>
-          <h2>PCA no NumPy: Projeção</h2>
-          <code-block lang="python" data-trim>
-<textarea>
-# PASSO 7: Projetar nos primeiros k componentes
-k = 2  # reduzir para 2D
-top_k_eigenvectors = eigenvectors[:, :k]
-X_transformed = X_centered @ top_k_eigenvectors
-
-print(f"Dados originais shape: {X.shape}")
-print(f"Dados transformados shape: {X_transformed.shape}")
-
-# PASSO 8: Visualizar
-plt.figure(figsize=(8, 6))
-colors = ['red', 'green', 'blue']
-for i in range(3):
-    plt.scatter(X_transformed[y==i, 0], X_transformed[y==i, 1],
-                c=colors[i], label=iris.target_names[i], alpha=0.7)
-plt.xlabel('PC1'); plt.ylabel('PC2')
-plt.title('Iris após PCA (implementação manual)')
-plt.legend(); plt.grid(True); plt.show()
-</textarea>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: Atividade Prática - PCA com scikit-learn -->
-        <section data-auto-animate>
-          <h2>Prática: PCA com scikit-learn</h2>
-          <p style="color: #6272a4; font-size: 0.85em;">Dataset: Wine (sklearn)</p>
-          <code-block lang="python" data-trim>
-<textarea>
-from sklearn.datasets import load_wine
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-
-# Carregar dados
-wine = load_wine()
-X, y = wine.data, wine.target
-
-# Padronizar (OBRIGATÓRIO antes do PCA!)
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Aplicar PCA
-pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X_scaled)
-
-# Variância explicada
-print("Variância por componente:", pca.explained_variance_ratio_)
-print("Variância acumulada:", sum(pca.explained_variance_ratio_))
-</textarea>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: Visualização - Variância Explicada -->
-        <section data-auto-animate>
-          <h2>Visualização: Variância Explicada</h2>
-          <code-block lang="python" data-trim>
-<textarea>
-import matplotlib.pyplot as plt
-import numpy as np
-
-# Gráfico de cotovelo
-plt.figure(figsize=(10, 4))
-
-# Subplot 1: Variância individual
-plt.subplot(1, 2, 1)
-plt.bar(range(1, len(pca.explained_variance_ratio_)+1),
-        pca.explained_variance_ratio_, color='#bd93f9')
-plt.xlabel('Componente'); plt.ylabel('Variância Explicada')
-plt.title('Variância por Componente')
-
-# Subplot 2: Variância acumulada
-plt.subplot(1, 2, 2)
-cumsum = np.cumsum(pca.explained_variance_ratio_)
-plt.plot(range(1, len(cumsum)+1), cumsum, 'bo-', color='#50fa7b')
-plt.axhline(y=0.95, color='r', linestyle='--', label='95%')
-plt.xlabel('Número de Componentes')
-plt.ylabel('Variância Explicada Acumulada')
-plt.title('Variância Acumulada')
-plt.legend(); plt.grid(True)
-plt.tight_layout(); plt.show()
-</textarea>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: Interpretação dos Loadings -->
-        <section data-auto-animate>
-          <h2>Interpretação: Loadings do PCA</h2>
-          <p style="color: #6272a4; font-size: 0.8em;">Cada loading indica quanto cada feature contribui para o componente</p>
-          <code-block lang="python" data-trim>
-<textarea>
-# Ver loadings (contribuição de cada feature)
-print("Loadings do PC1:")
-for feature, loading in zip(wine.feature_names, pca.components_[0]):
-    print(f"  {feature}: {loading:.3f}")
-
-# Visualizar biplot
-# (Código completo no notebook 05_pca_visualizacao_multivariada.ipynb)
-</textarea>
-          </code-block>
-          <div class="yellow-box" style="margin-top: 15px;">
-            <p style="font-size: 0.8em;"><strong>Pergunta:</strong> Por que precisamos padronizar antes do PCA?</p>
-            <p style="font-size: 0.7em; color: #ffb86c;">Resposta: Features em escalas diferentes dominariam a variância!</p>
-          </div>
-        </section>
-
-        <!-- SLIDE: Desafio Visualização -->
-        <section data-auto-animate>
-          <h2>Desafio: Visualize o Wine Dataset</h2>
-          <ls-u font-size="20pt">
-            <li>Abrir o notebook <code>05_pca_visualizacao_multivariada.ipynb</code></li>
-            <li>Executar cada célula</li>
-            <li>Plotar o scatter 2D com cores por classe</li>
-            <li>Responder: Quantos componentes para 95% da variância?</li>
+          <h2>Propriedades do PCA</h2>
+          <ls-u font-size="22pt">
+            <li>Componentes são <strong>ortogonais</strong> (não correlacionados)</li>
+            <li>PC1 captura a <strong>maior variância possível</strong></li>
+            <li>PC2 captura a maior variância <strong>ortogonal a PC1</strong></li>
+            <li>Dados devem ser <strong>numéricos contínuos</strong></li>
+            <li><strong>Sensível à escala</strong> → sempre normalizar primeiro!</li>
           </ls-u>
-          <div class="green-box" style="margin-top: 20px;">
-            <p style="font-size: 0.8em;"><strong>Dica:</strong> Use <code>shift + Enter</code> para executar células</p>
+          <div class="red-box fragment fade-in" style="margin-top: 15px;">
+            <p style="font-size: 0.8em;"><strong>Atenção:</strong> Sem StandardScaler, variáveis com escala maior dominam o PCA!</p>
           </div>
         </section>
 
-      </section><!-- fim HANDS-ON PCA -->
+      </section><!-- fim INTUIÇÃO -->
 
       <!-- ============================================================
-           SEÇÃO: OS TRÊS USOS DO PCA
+           SEÇÃO 6: LDA — COMPARAÇÃO COM PCA
            ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Seção 4.5: Os Três Usos do PCA</h2>
-          <p style="color: #6272a4;">Além de reduzir dimensões: três aplicações principais</p>
-          <div style="display: flex; justify-content: space-around; margin-top: 30px;">
-            <div class="fragment fade-in" style="flex: 1; padding: 15px; margin: 0 10px; background: rgba(139, 233, 253, 0.1); border-radius: 8px;">
-              <p style="font-size: 2em;">👁️</p>
-              <h3 style="color: #8be9fd;">Visualização</h3>
-              <p style="color: #f8f8f2; font-size: 0.7em;">Separabilidade de Classes</p>
-              <p style="color: #6272a4; font-size: 0.6em;">"Posso ver as classes separadas?"</p>
-            </div>
-            <div class="fragment fade-in" style="flex: 1; padding: 15px; margin: 0 10px; background: rgba(189, 147, 249, 0.1); border-radius: 8px;">
-              <p style="font-size: 2em;">🔍</p>
-              <h3 style="color: #bd93f9;">Interpretação</h3>
-              <p style="color: #f8f8f2; font-size: 0.7em;">Relevância das Variáveis</p>
-              <p style="color: #6272a4; font-size: 0.6em;">"Quais variáveis importam mais?"</p>
-            </div>
-            <div class="fragment fade-in" style="flex: 1; padding: 15px; margin: 0 10px; background: rgba(80, 250, 123, 0.1); border-radius: 8px;">
-              <p style="font-size: 2em;">🎯</p>
-              <h3 style="color: #50fa7b;">Pré-processamento</h3>
-              <p style="color: #f8f8f2; font-size: 0.7em;">Modelo como Entrada</p>
-              <p style="color: #6272a4; font-size: 0.6em;">"Reduzir para treinar modelo"</p>
-            </div>
-          </div>
-          <p style="color: #ffb86c; font-size: 0.7em; margin-top: 30px;">⏱️ Duração: ~20 minutos</p>
+          <h2 style="color: #bd93f9;">LDA vs PCA</h2>
+          <p style="color: #6272a4;">Linear Discriminant Analysis — abordagem supervisionada</p>
         </section>
 
-        <!-- SLIDE: USO 1 - Visualização da Separabilidade -->
+        <!-- SLIDE: Diferenças PCA vs LDA -->
         <section data-auto-animate>
-          <h2>Uso 1: Visualizar Separação de Classes</h2>
-          <p style="color: #6272a4; font-size: 0.85em;">Reduzir para 2D/3D e colorir por classe para VER estrutura</p>
-          <div style="display: flex; align-items: flex-start; gap: 20px;">
-            <div style="flex: 1;">
-              <pre style="font-size: 0.6em; background: rgba(40, 42, 54, 0.8); padding: 15px; border-radius: 8px; color: #f8f8f2;">
-PC2
- ↑
- │    ┌─┐
- │  ╱   ╲
- │╱  🍷  ╲
- │  🍷🍷  ╲    ← Classes separadas
- │    ╲    ╲     no espaço PCA!
- │
- ┼────┼────→ PC1
-              </pre>
-            </div>
-            <div style="flex: 1.5;">
-              <code-block lang="python" data-trim>
-<textarea>
-# PCA NÃO usa labels na redução — é não-supervisionado!
-pca = PCA(n_components=2)
-X_2d = pca.fit_transform(X)  # X sem labels!
-
-# Cores são apenas para visualização
-plt.scatter(X_2d[:,0], X_2d[:,1], c=y, alpha=0.7)
-plt.xlabel('PC1'); plt.ylabel('PC2')
-plt.title('Wine: Classes no Espaço PCA')
-</textarea>
-              </code-block>
-              <div class="yellow-box" style="margin-top: 15px;">
-                <p style="font-size: 0.7em;"><strong>⚠️ Lembrete:</strong> PCA não usa labels para fazer a redução — apenas revela estrutura</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SLIDE: USO 2 - Relevância das Variáveis (Loadings) -->
-        <section data-auto-animate>
-          <h2>Uso 2: Entender Relevância das Variáveis</h2>
-          <p style="color: #6272a4; font-size: 0.85em;">Os autovetores revelam a contribuição de cada variável</p>
-          <code-block lang="python" data-trim>
-<textarea>
-# Matriz de Loadings (autovetores transpostos)
-loadings = pca.components_.T  # n_features × n_components
-
-print("Contribuições para PC1:")
-for feature, loading in zip(wine.feature_names, loadings[:, 0]):
-    bar = "█" * int(abs(loading) * 20)
-    sign = "+" if loading > 0 else "-"
-    print(f"  {feature:20s} {sign}{bar}")
-</textarea>
-          </code-block>
-          <pre style="font-size: 0.65em; background: rgba(40, 42, 54, 0.8); padding: 10px; border-radius: 8px; color: #f8f8f2; margin-top: 15px;">
-Resultado:
-  alcohol               ████████████████████
-  malic_acid            █████████
-  ash                   ██
-  alcalinity_of_ash     ████
-  magnesium             ████
-  total_phenols        ████████████████
-  flavanoids           ████████████████████
-  ...
-          </pre>
-        </section>
-
-        <!-- SLIDE: Biplot -->
-        <section data-auto-animate>
-          <h2>Biplot: Loadings e Scores Juntos</h2>
-          <p style="color: #6272a4; font-size: 0.85em;">Combina scatter plot (scores) com setas (loadings)</p>
-          <pre style="font-size: 0.6em; background: rgba(40, 42, 54, 0.8); padding: 15px; border-radius: 8px; color: #f8f8f2; margin-bottom: 15px;">
-Como interpretar setas:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-• Seta longa   → variável importante
-• Mesma direção → variáveis correlacionadas
-• Direções opostas → correlação negativa
-• Ângulo ≈ correlação entre variáveis
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        PC2
-          ↑
-      ╱      ╲
-   ↖│         ↗
-  ╱  └────┘    ╲
- ┼───┼──→ PC1
-     ↑
-  Seta = loading
-  (tamanho = importância)
-          </pre>
-          <code-block lang="python" data-trim>
-<textarea>
-# Plot scores + loadings
-plt.scatter(scores[:,0], scores[:,1], c=y, alpha=0.5)
-for i in range(n_features):
-    plt.arrow(0, 0, loadings[i,0]*3, loadings[i,1]*3,
-              head_width=0.1, head_length=0.05,
-              color='red', alpha=0.7)
-    plt.text(loadings[i,0]*3.5, loadings[i,1]*3.5,
-             wine.feature_names[i], fontsize=8)
-</textarea>
-          </code-block>
-        </section>
-
-
-        <!-- SLIDE: USO 3 - Pré-processamento para Modelos -->
-        <section data-auto-animate>
-          <h2>Uso 3: Pré-processamento para Modelos</h2>
-          <p style="color: #6272a4; font-size: 0.85em;">Reduzir dimensionalidade ANTES de treinar modelo de ML</p>
-          <pre style="font-size: 0.7em; background: rgba(40, 42, 54, 0.8); padding: 15px; border-radius: 8px; color: #f8f8f2; margin-bottom: 15px;">
-FLUXO:
-┌────────────┐    fit()         ┌────────────┐   predict   ┌────────────┐
-│  Dados X   │ ─────────────── │  Transformado │ ──────────│  Modelo    │
-│  (30 dims) │   no treino     │  (10 dims)   │            │  (ex: LR)  │
-└────────────┘                  └────────────┘            └────────────┘
-                                       │
-                                       │ transform (NÃO fit!)
-                                       ▼
-                                  ┌────────────┐
-                                  │  Novas     │ ← reutiliza componentes
-                                  │  Predições │   do treino!
-                                  └────────────┘
-          </pre>
-          <code-block lang="python" data-trim>
-<textarea>
-from sklearn.pipeline import Pipeline
-from sklearn.decomposition import PCA
-from sklearn.linear_model import LogisticRegression
-
-# NO TREINO:
-pipe = Pipeline([
-    ('pca', PCA(n_components=10)),  # reduz 30 → 10 dims
-    ('clf', LogisticRegression())
-])
-pipe.fit(X_train, y_train)
-
-# NA PREDICTION: reutiliza componentes do treino!
-y_pred = pipe.predict(X_new)
-</textarea>
-          </code-block>
-        </section>
-
-        <!-- SLIDE: fit() vs transform() - O Que Fixar -->
-        <section data-auto-animate>
-          <h2>PCA.fit() vs PCA.transform() — O Que Fixar</h2>
-          <div style="display: flex; gap: 20px;">
-            <div style="flex: 1;">
-              <div class="red-box" style="padding: 15px; border-radius: 8px;">
-                <h3 style="color: #ff5555;">❌ ERRADO</h3>
-                <code-block lang="python" data-trim>
-<textarea>
-# Novo fit() a cada predição
-pca_new = PCA(n_components=2)
-pca_new.fit(X_new)  # ← COMPONENTES
-                  #   MUDARAM!
-X_pca = pca_new.transform(X_new)
-</textarea>
-                </code-block>
-              </div>
-            </div>
-            <div style="flex: 1;">
-              <div class="green-box" style="padding: 15px; border-radius: 8px;">
-                <h3 style="color: #50fa7b;">✅ CERTO</h3>
-                <code-block lang="python" data-trim>
-<textarea>
-# Reutilizar componentes do treino
-pca = PCA(n_components=2)
-pca.fit(X_train)  # componentes
-                  # aprendidos
-
-X_pca = pca.transform(X_test)  # mesmos
-                                 # componentes!
-</textarea>
-                </code-block>
-              </div>
-            </div>
-          </div>
-          <div class="yellow-box" style="margin-top: 15px;">
-            <p style="font-size: 0.75em;"><strong>💡 Dica:</strong> Salvar o PCA com <code>joblib.dump(pca, 'pca_modelo.joblib')</code> e carregar com <code>joblib.load()</code></p>
-          </div>
-        </section>
-
-        <!-- SLIDE: Comparação dos 3 Usos -->
-        <section data-auto-animate>
-          <h2>Comparação: Qual Uso Escolher?</h2>
-          <table style="font-size: 0.7em; color: #f8f8f2; width: 100%;">
-            <tr style="background: rgba(139, 233, 253, 0.2);">
-              <th style="padding: 10px; text-align: left;">Uso</th>
-              <th style="padding: 10px; text-align: left;">Quando Usar</th>
-              <th style="padding: 10px; text-align: left;">Resultado</th>
-              <th style="padding: 10px; text-align: left;">sklearn</th>
-            </tr>
-            <tr style="background: rgba(40, 42, 54, 0.5);">
-              <td style="padding: 8px;"><span style="color: #8be9fd;">👁️ Visualizar</span></td>
-              <td style="padding: 8px;">Explorar dados antes de modelar</td>
-              <td style="padding: 8px;">Scatter 2D colorido</td>
-              <td style="padding: 8px;"><code>fit_transform()</code></td>
-            </tr>
-            <tr style="background: rgba(40, 42, 54, 0.8);">
-              <td style="padding: 8px;"><span style="color: #bd93f9;">🔍 Interpretação</span></td>
-              <td style="padding: 8px;">Entender variáveis importantes</td>
-              <td style="padding: 8px;">Matriz de loadings</td>
-              <td style="padding: 8px;"><code>pca.components_</code></td>
-            </tr>
-            <tr style="background: rgba(40, 42, 54, 0.5);">
-              <td style="padding: 8px;"><span style="color: #50fa7b;">🎯 Pré-proc</span></td>
-              <td style="padding: 8px;">Treinar modelo mais rápido</td>
-              <td style="padding: 8px;">Dados reduzidos + score</td>
-              <td style="padding: 8px;"><code>fit()</code> no treino<br/><code>transform()</code> no teste</td>
-            </tr>
-          </table>
-        </section>
-
-        <!-- SLIDE: Resumo - PCA Não é Só Reduzir -->
-        <section data-auto-animate>
-          <h2>PCA: Não é Só Reduzir Dimensionalidade!</h2>
-          <p style="color: #6272a4; font-size: 0.85em;">Depende da sua pergunta → resultado diferente</p>
-          <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
-            <div class="fragment fade-in" style="padding: 15px; background: rgba(139, 233, 253, 0.15); border-left: 4px solid #8be9fd; border-radius: 8px;">
-              <p style="color: #8be9fd; font-size: 0.8em;"><strong>"Posso ver as classes separadas?"</strong></p>
-              <p style="color: #f8f8f2; font-size: 0.75em;">→ Use PCA para visualizar separabilidade</p>
-            </div>
-            <div class="fragment fade-in" style="padding: 15px; background: rgba(189, 147, 249, 0.15); border-left: 4px solid #bd93f9; border-radius: 8px;">
-              <p style="color: #bd93f9; font-size: 0.8em;"><strong>"Quais variáveis são mais importantes?"</strong></p>
-              <p style="color: #f8f8f2; font-size: 0.75em;">→ Analise os loadings (autovetores)</p>
-            </div>
-            <div class="fragment fade-in" style="padding: 15px; background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; border-radius: 8px;">
-              <p style="color: #50fa7b; font-size: 0.8em;"><strong>"Quero usar como entrada de modelo"</strong></p>
-              <p style="color: #f8f8f2; font-size: 0.75em;">→ PCA como pré-processamento, fixe componentes</p>
-            </div>
-          </div>
-          <div class="green-box" style="margin-top: 20px;">
-            <p style="font-size: 0.75em;"><strong>💡 Key Insight:</strong> O mesmo método + mesmo dataset → respostas diferentes dependendo de como você usa os componentes!</p>
-          </div>
-        </section>
-
-      </section><!-- fim OS TRÊS USOS DO PCA -->
-
-
-      <!-- ============================================================
-           SEÇÃO: PCA PARA VISUALIZAÇÃO MULTIVARIADA
-           ============================================================ -->
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Seção 5: PCA para Visualização Multivariada</h2>
-          <p style="color: #6272a4;">Transformando dados de alta dimensionalidade em gráficos 2D</p>
-        </section>
-
-        <!-- SLIDE: Wine Dataset Visualizado -->
-        <section data-auto-animate>
-          <h2>Wine Dataset: 13 Features → 2D</h2>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_visualizacao_wine.png" 
-               alt="Wine Dataset PCA" style="width: 80%; border-radius: 8px;" />
-          <ul style="font-size: 0.8em; margin-top: 20px;">
-            <li><strong>13 dimensões</strong> → <strong>2 dimensões</strong> (97% da variância preservada!)</li>
-            <li>Classes se separam visivelmente no espaço 2D</li>
-            <li>PCA revela estrutura nos dados mesmo sem usar labels</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Biplot - Loadings Visualizados -->
-        <section data-auto-animate>
-          <h2>Biplot: Visualizando Contribuição das Features</h2>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/biplot_wine.png" 
-               alt="Biplot Wine" style="width: 80%; border-radius: 8px;" />
-          <ul style="font-size: 0.8em; margin-top: 15px;">
-            <li><strong>Setas:</strong> direção e magnitude dos loadings</li>
-            <li>Setas longas = feature tem grande influência no PC</li>
-            <li>Setas em mesma direção = features correlacionadas</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Escolhendo Número de Componentes -->
-        <section data-auto-animate>
-          <h2>Escolhendo o Número de Componentes</h2>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/cotovelo_wine.png" 
-               alt="Cotovelo Wine" style="width: 70%; border-radius: 8px;" />
-          <ul style="font-size: 0.85em; margin-top: 15px;">
-            <li><strong>Regra 95%:</strong> manter componentes até acumular 95% da variância</li>
-            <li><strong>Método do cotovelo:</strong> onde a curva "dobra"</li>
-            <li><strong>Trade-off:</strong> mais componentes = mais informação, mas mais dimensionalidade</li>
-          </ul>
-        </section>
-
-      </section><!-- fim VISUALIZAÇÃO MULTIVARIADA -->
-
-      <!-- ============================================================
-           SEÇÃO: PCA COM EMBEDDINGS FACIAIS
-           ============================================================ -->
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #ffb86c;">Seção 6: PCA com Embeddings Faciais</h2>
-          <p style="color: #6272a4;">Uma prévia da aula de Deep Learning</p>
-        </section>
-
-        <!-- SLIDE: O que são Embeddings? -->
-        <section data-auto-animate>
-          <h2>O que são Embeddings Faciais?</h2>
-          <div class="highlight-box">
-            <p><strong>Embedding:</strong> Representação numérica de uma imagem/rostro como um vetor de números</p>
-          </div>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <ul style="font-size: 0.85em;">
-                <li>Uma foto é apenas pixels para o computador</li>
-                <li>Embedding captura características importantes</li>
-                <li>Exemplo: 128 números representam um rosto</li>
-                <li>Rostos similares têm vetores próximos!</li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pipeline_embeddings.png" 
-                   alt="Pipeline Embeddings" style="width: 100%; border-radius: 8px;" />
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- SLIDE: Embeddings Simulandos Visualizados -->
-        <section data-auto-animate>
-          <h2>Visualizando Embeddings com PCA</h2>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/embeddings_faciais_simulated.png" 
-               alt="Embeddings Faciais" style="width: 80%; border-radius: 8px;" />
-          <ul style="font-size: 0.85em; margin-top: 15px;">
-            <li><strong>128D</strong> → <strong>2D</strong> via PCA</li>
-            <li>Pessoas similares aparecem próximas</li>
-            <li>★ = centroide de cada pessoa</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Similaridade Espacial -->
-        <section data-auto-animate>
-          <h2>Similaridade Espacial entre Embeddings</h2>
-          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/similaridade_espacial.png" 
-               alt="Similaridade Espacial" style="width: 80%; border-radius: 8px;" />
-          <ul style="font-size: 0.85em; margin-top: 15px;">
-            <li>Linhas conectam pessoas próximas (distância Euclidiana)</li>
-            <li>Distância no espaço 2D ≈ distância no espaço 128D</li>
-            <li>Usado em reconhecimento facial, clusterização, busca</li>
-          </ul>
-        </section>
-
-        <!-- SLIDE: Prévia para Deep Learning -->
-        <section data-auto-animate>
-          <h2>🔮 Na Próxima Aula: Deep Learning</h2>
-          <div class="green-box">
-            <p><strong>Hoje:</strong> simulamos embeddings para entender o conceito</p>
-            <p style="font-size: 0.85em;"><strong>Na aula de DL:</strong> CNNs geram embeddings reais!</p>
-          </div>
-          <ls-u font-size="20pt" style="margin-top: 20px;">
-            <li>FaceNet, ArcFace, torchvision</li>
-            <li>Foto → CNN → Embedding 128D → Comparação</li>
-            <li>PCA para visualização dos embeddings</li>
-          </ls-u>
-        </section>
-
-      </section><!-- fim EMBEDDINGS FACIAIS -->
-
-      <!-- ============================================================
-           SEÇÃO: EDGE CASES E LIMITAÇÕES
-           ============================================================ -->
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #ff5555;">Edge Cases e Limitações</h2>
-          <p style="color: #6272a4;">Quando o PCA falha</p>
-        </section>
-
-        <!-- SLIDE: Limitações do PCA -->
-        <section data-auto-animate>
-          <h2>Limitações do PCA</h2>
-          <ul style="font-size: 0.85em;">
-            <li class="fragment fade-in"><strong>Dados não-lineares:</strong> PCA assume relações lineares entre variáveis</li>
-            <li class="fragment fade-in"><strong>Sensibilidade a outliers:</strong> Um outlier pode distorcer os primeiros componentes</li>
-            <li class="fragment fade-in"><strong>Variância ≠ Informação:</strong> Alta variância pode ser apenas ruído</li>
-            <li class="fragment fade-in"><strong>Interpretabilidade:</strong> Autovetores são difíceis de interpretar com muitas features</li>
-            <li class="fragment fade-in"><strong>Dados categóricos:</strong> PCA assume variáveis contínuas</li>
-          </ul>
-          <div class="yellow-box fragment fade-in" style="margin-top: 20px;">
-            <p style="font-size: 0.8em;"><strong>💡 Solução:</strong> Para dados não-lineares, use t-SNE, UMAP ou Kernel PCA</p>
-          </div>
-        </section>
-
-      </section><!-- fim EDGE CASES -->
-
-      <!-- ============================================================
-           SEÇÃO: TÉCNICAS NÃO-LINEARES
-           ============================================================ -->
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #bd93f9;">Técnicas Não-Lineares</h2>
-          <p style="color: #6272a4;">Quando PCA não é suficiente</p>
-        </section>
-
-        <!-- SLIDE: Quando usar não-linear -->
-        <section data-auto-animate>
-          <h2>Quando Usar Técnicas Não-Lineares?</h2>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ff79c6; font-size: 0.85em;">Dados não-lineares:</h3>
+          <h2>PCA vs LDA: Diferenças</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1; background: rgba(255,121,198,0.1); padding: 15px; border-radius: 8px;">
+              <h3 style="color: #ff79c6; font-size: 0.9em;">PCA</h3>
               <ul style="font-size: 0.8em;">
-                <li>Manifolds curvos</li>
-                <li>Padrões circulares ou esféricos</li>
-                <li>Relações complexas entre variáveis</li>
+                <li><strong>Não-supervisionado</strong></li>
+                <li>Maximiza <strong>variância total</strong></li>
+                <li>Não usa labels</li>
+                <li>Até min(n-1, p) componentes</li>
               </ul>
-              <h3 style="color: #50fa7b; margin-top: 15px; font-size: 0.85em;">Exemplo:</h3>
-              <code-block lang="python" data-trim>
-              <textarea>
-from sklearn.datasets import make_moons
-X, y = make_moons(n_samples=200)
-# PCA falhará em separar!
-              </textarea>
-              </code-block>
             </div>
-            <div style="flex: 1;">
-              <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/pca_vs_lda_comparacao.png" 
-                   alt="PCA vs LDA" style="width: 100%; border-radius: 8px;" />
+            <div style="flex: 1; background: rgba(80,250,123,0.1); padding: 15px; border-radius: 8px;">
+              <h3 style="color: #50fa7b; font-size: 0.9em;">LDA</h3>
+              <ul style="font-size: 0.8em;">
+                <li><strong>Supervisionado</strong></li>
+                <li>Maximiza <strong>separação entre classes</strong></li>
+                <li>Usa labels!</li>
+                <li>Até (K-1) componentes</li>
+              </ul>
             </div>
           </multi-col>
-        </section>
-
-        <!-- SLIDE: Técnicas disponíveis -->
-        <section data-auto-animate>
-          <h2>Técnicas Não-Lineares Disponíveis</h2>
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th>Técnica</th>
-                <th>Quando usar</th>
-                <th>Exemplo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>t-SNE</strong></td>
-                <td>Visualização 2D/3D</td>
-                <td>MNIST, single-cell</td>
-              </tr>
-              <tr>
-                <td><strong>UMAP</strong></td>
-                <td>Mais rápido que t-SNE</td>
-                <td>Genômica, imagens</td>
-              </tr>
-              <tr>
-                <td><strong>Kernel PCA</strong></td>
-                <td>Redução com kernel RBF</td>
-                <td>Padrões circulares</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="green-box fragment fade-in" style="margin-top: 20px;">
-            <p style="font-size: 0.8em;"><strong>Regra:</strong> Comece com PCA linear. Se não funcionar, experimente não-lineares.</p>
+          <div class="highlight-box" style="margin-top: 15px;">
+            <p style="font-size: 0.85em; text-align: center;">PCA = melhor representação &nbsp;&nbsp; | &nbsp;&nbsp; LDA = melhor separação</p>
           </div>
         </section>
 
-      </section><!-- fim TÉCNICAS NÃO-LINEARES -->
+        <!-- SLIDE: Comparação visual -->
+        <section data-auto-animate>
+          <h2>PCA vs LDA — Visualmente</h2>
+          <img src="../ciencia-dados/aulas/2026-04-30-pca-e-lda/materiais/graficos/iris_pca_lda_lado_a_lado.png"
+               alt="PCA vs LDA" style="width: 85%; border-radius: 8px;" />
+        </section>
+
+        <!-- SLIDE: LDA código -->
+        <section data-auto-animate>
+          <h2>LDA com scikit-learn</h2>
+          <code-block lang="python" data-trim>
+<textarea>
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+# LDA para 2 componentes (3 classes → max 2)
+lda = LinearDiscriminantAnalysis(n_components=2)
+X_lda = lda.fit_transform(X, iris.target)
+
+print("Variância discriminante:",
+      lda.explained_variance_ratio_)
+# [0.9912, 0.0088]</textarea>
+          </code-block>
+          <div class="green-box" style="margin-top: 10px;">
+            <p style="font-size: 0.8em;">LDA usa os labels para encontrar direções que melhor <strong>separam as classes</strong></p>
+          </div>
+        </section>
+
+      </section><!-- fim LDA -->
 
       <!-- ============================================================
-           SEÇÃO: GLOSSÁRIO E ERROS COMUNS
+           SEÇÃO 7: QUIZ INTERATIVO
            ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Glossário e Erros Comuns</h2>
-          <p style="color: #6272a4;">Termos técnicos e como evitá-los</p>
+          <h2 style="color: #bd93f9;">Quiz Interativo</h2>
+          <p style="color: #6272a4;">Teste seus conhecimentos sobre PCA!</p>
         </section>
 
-        <!-- SLIDE: Glossário Rápido -->
-        <section data-auto-animate>
-          <h2>Glossário Rápido</h2>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.75em;">
-            <div class="highlight-box">
-              <p><strong>Centralizar</strong></p>
-              <p>Subtrair a média (mover dados para origem)</p>
-            </div>
-            <div class="highlight-box">
-              <p><strong>Padronizar</strong></p>
-              <p>Centralizar + dividir pelo desvio (média=0, dp=1)</p>
-            </div>
-            <div class="highlight-box">
-              <p><strong>Autovetor</strong></p>
-              <p>Vetor que não muda de direção após transformação</p>
-            </div>
-            <div class="highlight-box">
-              <p><strong>Autovalor</strong></p>
-              <p>Escala do autovetor após transformação</p>
-            </div>
-            <div class="highlight-box">
-              <p><strong>Variância explicada</strong></p>
-              <p>Quanto cada componente explica da variância total</p>
-            </div>
-            <div class="highlight-box">
-              <p><strong>Overfitting</strong></p>
-              <p>Modelo que memoriza ruído em vez de aprender padrão</p>
-            </div>
-          </div>
+        <section>
+          <poll-question
+            id="q1"
+            title="Questão 1: Autovetores"
+            question="Se A·v = 3·v, o que isso significa?"
+            answer="b"
+            answer-text="Autovetores NÃO mudam de direção — só são escalados pelo autovalor λ=3."
+            :options="[
+              { value: 'a', label: 'v é rotacionado em 3 radianos' },
+              { value: 'b', label: 'v não muda de direção, só é escalado por 3' },
+              { value: 'c', label: 'v é um vetor de magnitude 3' },
+              { value: 'd', label: 'A tem 3 dimensões' },
+            ]" />
         </section>
 
-        <!-- SLIDE: Erros Comuns -->
-        <section data-auto-animate>
-          <h2>5 Erros Comuns (e como evitá-los)</h2>
-          <ul style="font-size: 0.8em;">
-            <li class="fragment fade-in"><strong style="color: #ff5555;">1. Esquecer de padronizar:</strong> Features com maior escala dominam → Sempre use StandardScaler()</li>
-            <li class="fragment fade-in"><strong style="color: #ff5555;">2. Usar labels no PCA:</strong> Vazamento de dados → PCA não deve receber y</li>
-            <li class="fragment fade-in"><strong style="color: #ff5555;">3. Escolher componentes demais:</strong> Overfitting → Use gráfico de cotovelo ou 80-95%</li>
-            <li class="fragment fade-in"><strong style="color: #ff5555;">4. Não separar treino/teste:</strong> Métricas otimistas → Aplique PCA só no treino</li>
-            <li class="fragment fade-in"><strong style="color: #ff5555;">5. Confundir centralizar com padronizar:</strong> Resultados incorretos</li>
-          </ul>
-          <div class="green-box fragment fade-in" style="margin-top: 20px;">
-            <p style="font-size: 0.8em;"><strong>💡 Lembre:</strong> Centralizar = média 0, dp original | Padronizar = média 0, dp 1</p>
-          </div>
+        <section>
+          <poll-question
+            id="q2"
+            title="Questão 2: PCA Workflow"
+            question="Qual é a ordem correta do algoritmo PCA?"
+            answer="c"
+            answer-text="A ordem é: centralizar → covariância → autovetores/autovalores → projetar."
+            :options="[
+              { value: 'a', label: 'Covariância → Normalizar → Autovetores → Projetar' },
+              { value: 'b', label: 'Autovetores → Covariância → Centralizar → Projetar' },
+              { value: 'c', label: 'Centralizar → Covariância → Autovetores → Projetar' },
+              { value: 'd', label: 'Normalizar → Projetar → Covariância → Autovetores' },
+            ]" />
         </section>
 
-        <!-- SLIDE: Centralizar vs Padronizar -->
-        <section data-auto-animate>
-          <h2>Centralizar vs Padronizar</h2>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ffb86c; font-size: 0.85em;">CENTRALIZAR</h3>
-              <code-block lang="python" data-trim>
-              <textarea>
-X_centered = X - X.mean(axis=0)
-# média = 0
-# desvio = original
-              </textarea>
-              </code-block>
-              <p style="font-size: 0.75em; margin-top: 10px;">Move os dados para a origem</p>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #50fa7b; font-size: 0.85em;">PADRONIZAR</h3>
-              <code-block lang="python" data-trim>
-              <textarea>
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-# média = 0
-# desvio = 1
-              </textarea>
-              </code-block>
-              <p style="font-size: 0.75em; margin-top: 10px;">Mesma escala para todas as features</p>
-            </div>
-          </multi-col>
+        <section>
+          <poll-question
+            id="q3"
+            title="Questão 3: Reconstrução"
+            question="Por que V⁻¹ = Vᵀ na reconstrução do PCA?"
+            answer="b"
+            answer-text="Autovetores são unitários e ortogonais entre si, formando uma matriz ortogonal. Para matrizes ortogonais, a inversa é igual à transposta."
+            :options="[
+              { value: 'a', label: 'Porque V é uma matriz diagonal' },
+              { value: 'b', label: 'Porque ‖vᵢ‖=1 e vᵢ⊥vⱼ → V é ortogonal → V⁻¹=Vᵀ' },
+              { value: 'c', label: 'Porque os autovalores são todos iguais a 1' },
+              { value: 'd', label: 'Porque a covariância é simétrica' },
+            ]" />
         </section>
 
-      </section><!-- fim GLOSSÁRIO E ERROS -->
+        <section>
+          <poll-question
+            id="q4"
+            title="Questão 4: Variância Explicada"
+            question="Se λ₁=4 e λ₂=1, que proporção da variância PC1 explica?"
+            answer="c"
+            answer-text="Proporção = λ₁/(λ₁+λ₂) = 4/(4+1) = 0.80 = 80%."
+            :options="[
+              { value: 'a', label: '50%' },
+              { value: 'b', label: '60%' },
+              { value: 'c', label: '80%' },
+              { value: 'd', label: '40%' },
+            ]" />
+        </section>
+
+      </section><!-- fim QUIZ -->
 
       <!-- ============================================================
-           SEÇÃO: CONCLUSÃO E RECURSOS
+           SEÇÃO: CONCLUSÃO
            ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Seção 7: Conclusão e Recursos</h2>
-          <p style="color: #6272a4;">Resumo e próximos passos</p>
-        </section>
-
-        <!-- SLIDE: Resumo Final -->
-        <section data-auto-animate>
-          <h2>Resumo: O que Aprendemos</h2>
-          <ul style="font-size: 0.85em;">
-            <li class="fragment fade-in"><strong>PCA</strong> = redução de dimensionalidade <strong>não-supervisionada</strong></li>
-            <li class="fragment fade-in"><strong>Matriz de Covariância</strong>: mede relações entre features</li>
-            <li class="fragment fade-in"><strong>Autovetores</strong>: direções de máxima variância</li>
-            <li class="fragment fade-in"><strong>Decomposição Espectral</strong>: Cov = QΛQᵀ</li>
-            <li class="fragment fade-in"><strong>Visualização</strong>: alta dimensionalidade → 2D/3D</li>
-          </ul>
-          <div class="fragment fade-in" style="margin-top: 20px;">
-            <div class="highlight-box">
-              <p style="font-size: 0.85em; text-align: center;"><strong>Regra prática:</strong><br/>Sempre padronize antes do PCA!<br/>Escolha componentes para 80-95% da variância</p>
-            </div>
+          <h2>Resumo da Aula</h2>
+          <div class="mermaid" style="max-width: 800px; margin: 10px auto;">
+            <pre>
+graph LR
+    A["Variância"] --> B["Covariância"]
+    B --> C["Matriz de&lt;br/&gt;Covariância"]
+    C --> D["Autovetores &lt;br/&gt;Autovalores"]
+    D --> E["PCA"]
+    E --> F["PC = (X-μ)·V"]
+    F --> G["X̂ = PC·Vᵀ + μ"]
+    style A fill:#8be9fd,color:#282a36
+    style B fill:#50fa7b,color:#282a36
+    style C fill:#ff79c6,color:#282a36
+    style D fill:#f1fa8c,color:#282a36
+    style E fill:#bd93f9,color:#282a36
+    style F fill:#ffb86c,color:#282a36
+    style G fill:#8be9fd,color:#282a36
+            </pre>
           </div>
         </section>
 
-        <!-- SLIDE: Checklist de Aprendizado -->
         <section data-auto-animate>
-          <h2>Checklist de Aprendizado</h2>
-          <ls-u font-size="20pt">
-            <li>✅ Entendo a matemática do PCA (covariância, autovetores)</li>
-            <li>✅ Sei implementar PCA do zero com NumPy</li>
-            <li>✅ Sei usar PCA com scikit-learn</li>
-            <li>✅ Sei interpretar variância explicada</li>
-            <li>✅ Entendo quando a matriz não é invertível</li>
-            <li>✅ Conheço técnicas não-lineares (t-SNE, UMAP)</li>
+          <h2>Pontos-Chave</h2>
+          <ls-u font-size="22pt">
+            <li><strong>Variância</strong> mede dispersão; <strong>covariância</strong> mede relação entre pares</li>
+            <li><strong>Autovetores</strong> não rotacionam, só escalam por <strong>autovalores</strong></li>
+            <li>PCA: centralizar → covariância → decomposição → projetar</li>
+            <li>\( V^{-1} = V^T \) pois autovetores são ortonormais</li>
+            <li>Maior autovalor = componente mais importante</li>
+            <li>PCA maximiza variância; LDA maximiza separação</li>
           </ls-u>
-        </section>
-
-        <!-- SLIDE: Recursos para Estudo -->
-        <section data-auto-animate>
-          <h2>Recursos para Estudo</h2>
-          <multi-col style="gap: 30px;">
-            <div style="flex: 1;">
-              <h3 style="color: #ff79c6; font-size: 0.85em;">🎥 Vídeos</h3>
-              <ul style="font-size: 0.75em;">
-                <li><a href="https://www.youtube.com/watch?v=0E8Gf2jK8Xw" target="_blank">StatQuest: PCA</a></li>
-                <li><a href="https://www.youtube.com/watch?v=fNk_zzaMoSs" target="_blank">3Blue1Brown: Autovetores</a></li>
-              </ul>
-            </div>
-            <div style="flex: 1;">
-              <h3 style="color: #8be9fd; font-size: 0.85em;">📖 Documentação</h3>
-              <ul style="font-size: 0.75em;">
-                <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html" target="_blank">scikit-learn PCA</a></li>
-              </ul>
-            </div>
-          </multi-col>
-          <div class="yellow-box" style="margin-top: 20px;">
-            <p style="font-size: 0.8em;"><strong>🌐 Interativo:</strong> <a href="http://setosa.io/ev/principal-component-analysis/" target="_blank">PCA Visualization</a></p>
-          </div>
         </section>
 
         <!-- SLIDE: Próxima Aula -->
         <section data-auto-animate>
           <h2>Próxima Aula</h2>
           <div class="highlight-box">
-            <p><strong>Topic:</strong> Clustering (K-means, Hierarchical)</p>
+            <p><strong>Tema:</strong> Clustering (K-means, Hierárquico)</p>
             <p style="font-size: 0.85em; color: #6272a4;">Aprenderemos a agrupar dados sem labels!</p>
           </div>
           <ul style="font-size: 0.85em; margin-top: 20px;">
@@ -1224,7 +789,7 @@ X_scaled = scaler.fit_transform(X)
 
         <!-- SLIDE: Dúvidas -->
         <section data-auto-animate>
-          <h2>🤔 Dúvidas?</h2>
+          <h2>Dúvidas?</h2>
           <p style="font-size: 1.1em;">Vamos discutir!</p>
           <div class="fragment fade-in" style="margin-top: 30px;">
             <p style="font-size: 0.8em; color: #6272a4;">Slides disponíveis no repositório do curso</p>
@@ -1237,6 +802,7 @@ X_scaled = scaler.fit_transform(X)
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script src="../dist/reveal.js"></script>
   <script src="../plugin/notes/notes.js"></script>
   <script src="../plugin/math/math.js"></script>
@@ -1247,9 +813,14 @@ X_scaled = scaler.fit_transform(X)
   <script src="../plugin/leader-line.min.js"></script>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
-  <script src="../components/md.js"></script>
   <script src="../components/components.js"></script>
+  <!-- Plugin scripts (local for chalkboard — NOT CDN) -->
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
   <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
 
   <script>
     window.app = mountSlideApp();

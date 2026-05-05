@@ -425,34 +425,31 @@ const initChalkboard = function (Reveal) {
 
 	function updateCursorIndicator(e) {
 		if (!cursorOverlay || !cursorIndicator) return;
+		if (!isDrawingModeActive()) { hideCursorIndicator(); return; }
+		if (color[mode] < 0) { hideCursorIndicator(); return; } // eraser uses CSS cursor
+
 		var clientX = e.clientX;
 		var clientY = e.clientY;
 		lastClientX = clientX;
 		lastClientY = clientY;
 
+		var w = boardmarkerWidth;
+		var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
 		cursorOverlay.style.display = 'block';
-		cursorOverlay.style.left = '0';
-		cursorOverlay.style.top = '0';
-
-		if (color[mode] >= 0) {
-			// pen mode — use current color and boardmarkerWidth
-			var w = boardmarkerWidth;
-			var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
-			cursorIndicator.style.width = w + 'px';
-			cursorIndicator.style.height = w + 'px';
-			cursorIndicator.style.border = 'none';
-			cursorIndicator.style.background = colorVal;
-			cursorIndicator.style.left = clientX + 'px';
-			cursorIndicator.style.top = clientY + 'px';
-		}
+		cursorIndicator.style.width = w + 'px';
+		cursorIndicator.style.height = w + 'px';
+		cursorIndicator.style.border = 'none';
+		cursorIndicator.style.background = colorVal;
+		cursorIndicator.style.left = clientX + 'px';
+		cursorIndicator.style.top = clientY + 'px';
 	}
 
 	function redrawCursorIndicator() {
 		if (!cursorOverlay || !cursorIndicator || !cursorOverlay.style.display || cursorOverlay.style.display === 'none') return;
-		var clientX = lastClientX;
-		var clientY = lastClientY;
-
 		if (color[mode] >= 0) {
+			if (cursorOverlay.style.display === 'none') return;
+			var clientX = lastClientX;
+			var clientY = lastClientY;
 			var w = boardmarkerWidth;
 			var colorVal = pens[mode][color[mode]].color || 'rgba(255,255,255,1)';
 			cursorIndicator.style.width = w + 'px';
@@ -461,11 +458,26 @@ const initChalkboard = function (Reveal) {
 			cursorIndicator.style.background = colorVal;
 			cursorIndicator.style.left = clientX + 'px';
 			cursorIndicator.style.top = clientY + 'px';
+		} else {
+			hideCursorIndicator(); // ← ADD THIS
 		}
 	}
 
 	function hideCursorIndicator() {
 		if (cursorOverlay) cursorOverlay.style.display = 'none';
+	}
+
+	function isDrawingModeActive() {
+		// notes canvas is active when pointerEvents is not 'none'
+		if (mode === 0) {
+			var nc = document.getElementById('notescanvas');
+			return nc && nc.style.pointerEvents === 'auto';
+		}
+		// chalkboard is active when visible
+		if (mode === 1) {
+			return drawingCanvas[1].container.style.visibility === 'visible';
+		}
+		return false;
 	}
 
 	function createPalette(colors, length) {
@@ -1077,7 +1089,7 @@ const initChalkboard = function (Reveal) {
 
 	function changeStrokeEraserSize(delta) {
 		if (eraserToggled || color[mode] < 0) {
-			eraser.radius = Math.max(5, Math.min(100, eraser.radius + (delta*5)));
+			eraser.radius = Math.max(5, Math.min(100, eraser.radius + (delta * 5)));
 			updateSpongeCursor();
 		} else {
 			boardmarkerWidth = Math.max(1, Math.min(30, boardmarkerWidth + delta));
@@ -1112,6 +1124,8 @@ const initChalkboard = function (Reveal) {
 		lastX = null;
 		lastY = null;
 		mode = 0;
+		hideCursorIndicator(); // ← ADD THIS 
+
 	}
 
 	/**
@@ -1915,6 +1929,7 @@ const initChalkboard = function (Reveal) {
 					}
 					notescanvas.style.background = 'rgba(0,0,0,0)';
 					notescanvas.style.pointerEvents = 'none';
+					hideCursorIndicator(); // ← ADD THIS
 				}
 				else {
 					// show notes canvas
