@@ -79,7 +79,7 @@ B -->|leitura rápida| C[Query Rápida]
  <div class="red-box">
  <p><strong>Cenário real:</strong> Dashboard de vendas com <strong>~500 mil itens</strong> no banco</p>
  </div>
- <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 -- Relatório de vendas por categoria
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -89,7 +89,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <p class="red-number" style="text-align: center;"> 3-8 segundos</p>
  <p style="text-align: center; font-size: 0.8em;">A diretoria espera 2 segundos. A cada acesso, a query roda do zero.</p>
@@ -121,7 +121,7 @@ GROUP BY c.category_name;
  <!-- SLIDE 4: Por que é lento? (animação linha a linha) -->
  <section data-auto-animate>
  <h2>Por que essa query é lenta?</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="3-6" data-trim>
+ <code-block class="lang-sql" data-line-numbers="3-6" data-trim>
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
  COUNT(DISTINCT o.order_id) AS total_pedidos
@@ -130,7 +130,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **3 JOINs** — cada junção percorre tabelas inteiras
@@ -143,7 +143,7 @@ GROUP BY c.category_name;
 
  <section data-auto-animate>
  <h2>Por que essa query é lenta?</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="2-3" data-trim>
+ <code-block class="lang-sql" data-line-numbers="2-3" data-trim>
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
  COUNT(DISTINCT o.order_id) AS total_pedidos
@@ -152,7 +152,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **2 Agregações pesadas** — recalculadas a cada execução
@@ -164,7 +164,7 @@ GROUP BY c.category_name;
 
  <section data-auto-animate>
  <h2>Por que essa query é lenta?</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="1-8" data-trim>
+ <code-block class="lang-sql" data-line-numbers="1-8" data-trim>
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
  COUNT(DISTINCT o.order_id) AS total_pedidos
@@ -173,7 +173,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **E se pudéssemos rodar essa query UMA VEZ e guardar o resultado?**
@@ -188,7 +188,7 @@ GROUP BY c.category_name;
  <div class="highlight-box">
  <p>Uma <strong>View</strong> é apenas uma <strong>consulta nomeada</strong> — ela não armazena dados.</p>
  </div>
- <pre><code class="code-wrapper lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 CREATE VIEW vw_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -198,7 +198,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="yellow-box">
  <p><strong>Toda vez</strong> que alguém faz <code>SELECT * FROM vw_vendas_categoria</code>, a query inteira roda de novo.</p>
@@ -212,7 +212,7 @@ GROUP BY c.category_name;
  <div class="highlight-box">
  <p>Uma <strong>Materialized View</strong> executa a query <strong>uma vez</strong> e <strong>armazena o resultado</strong> fisicamente.</p>
  </div>
- <pre><code class="code-wrapper lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -223,7 +223,7 @@ JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="green-box">
  <p><strong></strong> <code>SELECT * FROM mv_vendas_categoria</code> lê os dados pré-computados — <strong>como uma tabela comum</strong>.</p>
@@ -280,7 +280,7 @@ WITH DATA;
  <section>
  <h2>Criando uma MV — Passo a Passo</h2>
  <p>Vamos entender cada parte do comando:</p>
- <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -290,13 +290,13 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p class="fragment fade-in" style="color: #bd93f9;"> Vamos explorar cada linha...</p>
  </section>
 
  <section data-auto-animate>
  <h2>Criando uma MV — Passo a Passo</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="1" data-trim>
+ <code-block class="lang-sql" data-line-numbers="1" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -306,7 +306,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linha 1: CREATE MATERIALIZED VIEW**
@@ -319,7 +319,7 @@ WITH DATA;
 
  <section data-auto-animate>
  <h2>Criando uma MV — Passo a Passo</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="2-4" data-trim>
+ <code-block class="lang-sql" data-line-numbers="2-4" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -329,7 +329,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linhas 2-4: SELECT — As colunas do resultado**
@@ -343,7 +343,7 @@ WITH DATA;
 
  <section data-auto-animate>
  <h2>Criando uma MV — Passo a Passo</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="5-7" data-trim>
+ <code-block class="lang-sql" data-line-numbers="5-7" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -353,7 +353,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linhas 5-7: FROM + JOINs**
@@ -367,7 +367,7 @@ WITH DATA;
 
  <section data-auto-animate>
  <h2>Criando uma MV — Passo a Passo</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="8" data-trim>
+ <code-block class="lang-sql" data-line-numbers="8" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -377,7 +377,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linha 8: GROUP BY c.category_name**
@@ -390,7 +390,7 @@ WITH DATA;
 
  <section data-auto-animate>
  <h2>Criando uma MV — Passo a Passo</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="9" data-trim>
+ <code-block class="lang-sql" data-line-numbers="9" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -400,7 +400,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linha 9: WITH DATA**
@@ -417,17 +417,17 @@ WITH DATA;
  <div class="two-cols">
  <div style="text-align: center;">
  <h3>View Regular</h3>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 SELECT * FROM vw_vendas_categoria;
- </code></pre>
+</code-block>
  <p class="red-number">3.000 ms</p>
  <p style="font-size: 0.7em; color: #ff5555;">~500 mil itens processados toda vez</p>
  </div>
  <div style="text-align: center;">
  <h3>Materialized View</h3>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 SELECT * FROM mv_vendas_categoria;
- </code></pre>
+</code-block>
  <p class="big-number">20 ms</p>
  <p style="font-size: 0.7em; color: #50fa7b;">Lê dados pré-computados</p>
  </div>
@@ -440,13 +440,13 @@ SELECT * FROM mv_vendas_categoria;
  <!-- SLIDE 16: Como provar? EXPLAIN ANALYZE -->
  <section>
  <h2>Como provar? EXPLAIN ANALYZE</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 -- View Regular: reexecuta tudo
 EXPLAIN ANALYZE SELECT * FROM vw_vendas_categoria;
 
 -- Materialized View: leitura direta
 EXPLAIN ANALYZE SELECT * FROM mv_vendas_categoria;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="yellow-box">
  <p><strong>Dica:</strong> Use <code>EXPLAIN ANALYZE</code> sempre que quiser comparar performance. Ele mostra o plano de execução e o tempo real.</p>
@@ -460,10 +460,10 @@ EXPLAIN ANALYZE SELECT * FROM mv_vendas_categoria;
  <div class="yellow-box">
  <p><strong>Lembrete:</strong> A MV não atualiza sozinha. Você precisa disparar o <code>REFRESH</code>.</p>
  </div>
- <pre><code class="code-wrapper lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Atualização completa (bloqueia leituras durante o refresh)
 REFRESH MATERIALIZED VIEW mv_vendas_categoria;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="red-box">
  <p><strong>Problema:</strong> Durante o REFRESH, ninguém consegue ler a MV!</p>
@@ -474,14 +474,14 @@ REFRESH MATERIALIZED VIEW mv_vendas_categoria;
  <!-- SLIDE 18: REFRESH CONCURRENTLY (animação) -->
  <section data-auto-animate>
  <h2>REFRESH CONCURRENTLY</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="1-2" data-trim>
+ <code-block class="lang-sql" data-line-numbers="1-2" data-trim>
 -- Passo 1: Criar índice único (OBRIGATÓRIO)
 CREATE UNIQUE INDEX idx_mv_vendas_cat_unique
  ON mv_vendas_categoria(category_name);
 
 -- Passo 2: Refresh sem bloquear leituras
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linha 1-2: Índice único é pré-requisito**
@@ -493,14 +493,14 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
 
  <section data-auto-animate>
  <h2>REFRESH CONCURRENTLY</h2>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="4-5" data-trim>
+ <code-block class="lang-sql" data-line-numbers="4-5" data-trim>
 -- Passo 1: Criar índice único (OBRIGATÓRIO)
 CREATE UNIQUE INDEX idx_mv_vendas_cat_unique
  ON mv_vendas_categoria(category_name);
 
 -- Passo 2: Refresh sem bloquear leituras
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linha 4-5: Refresh concorrente**
@@ -535,7 +535,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
  <section>
  <h2>Índices em Materialized Views</h2>
  <p>Uma MV pode ter seus <strong>próprios índices</strong>, assim como uma tabela.</p>
- <pre><code class="code-wrapper lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Índice para consultas por categoria
 CREATE INDEX idx_mv_categoria
  ON mv_vendas_categoria(category_name);
@@ -547,7 +547,7 @@ CREATE INDEX idx_mv_valor
 -- Índice único (para REFRESH CONCURRENTLY)
 CREATE UNIQUE INDEX idx_mv_unique
  ON mv_vendas_categoria(category_name);
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="green-box">
  <p><strong>Antes:</strong> 120ms | <strong>Depois:</strong> 8ms → <strong>15x mais rápido</strong> nas consultas com filtro</p>
@@ -660,11 +660,11 @@ CREATE UNIQUE INDEX idx_mv_unique
  </table>
  <div class="fragment fade-in" style="margin-top: 15px;">
  <p style="font-size: 0.85em;">Sintaxe básica:</p>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 CREATE MATERIALIZED VIEW mv_nome AS
  SELECT ... FROM ... GROUP BY ...
 WITH DATA;
- </code></pre>
+</code-block>
  </div>
  </section>
 
@@ -672,9 +672,10 @@ WITH DATA;
  <section>
  <h2>Setup do Ambiente</h2>
  <p>Banco: <strong>Northwind</strong> com dados sintéticos para volume realista</p>
- <pre><code class="lang-sql" data-trim>-- Execute o script de geração de dados:
+ <code-block class="lang-sql" data-trim>
+-- Execute o script de geração de dados:
 -- scripts/northwind_synthetic_data.sql
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <table class="comparison-table">
  <thead>
@@ -703,7 +704,7 @@ WITH DATA;
  <div class="red-box">
  <p><strong>Problema:</strong> A diretoria quer um dashboard com vendas por categoria, mas com ~500 mil itens a query demora segundos.</p>
  </div>
- <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 -- Primeiro: veja o volume de dados
 SELECT COUNT(*) AS total_itens FROM order_details;
 SELECT COUNT(*) AS total_pedidos FROM orders;
@@ -717,7 +718,7 @@ JOIN products p ON od.product_id = p.product_id
 JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name;
- </code></pre>
+</code-block>
  <p class="fragment fade-in"><strong>Execute com EXPLAIN ANALYZE e anote o tempo!</strong></p>
  </section>
 
@@ -725,7 +726,7 @@ GROUP BY c.category_name;
  <section data-auto-animate>
  <h2>Prática 1: Criando a MV</h2>
  <p><span class="step-number">1</span> Crie a Materialized View:</p>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="1-3" data-trim>
+ <code-block class="lang-sql" data-line-numbers="1-3" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -736,7 +737,7 @@ JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linhas 1-3: Definição e colunas**
@@ -751,7 +752,7 @@ WITH DATA;
  <section data-auto-animate>
  <h2>Prática 1: Criando a MV</h2>
  <p><span class="step-number">1</span> Crie a Materialized View:</p>
- <pre><code class="code-wrapper lang-sql" data-line-numbers="4-8" data-trim>
+ <code-block class="lang-sql" data-line-numbers="4-8" data-trim>
 CREATE MATERIALIZED VIEW mv_vendas_categoria AS
 SELECT c.category_name,
  SUM(od.unit_price * od.quantity) AS valor_total,
@@ -762,7 +763,7 @@ JOIN categories c ON p.category_id = c.category_id
 JOIN orders o ON od.order_id = o.order_id
 GROUP BY c.category_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p data-markdown>
  <textarea class="fragment fade-in" data-template>
 **Linhas 4-8: Fontes dos dados**
@@ -778,18 +779,18 @@ WITH DATA;
  <section>
  <h2>Prática 1: Verifique o Resultado</h2>
  <p><span class="step-number">2</span> Consulte a MV:</p>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 SELECT * FROM mv_vendas_categoria
 ORDER BY valor_total DESC;
- </code></pre>
+</code-block>
  <p><span class="step-number">3</span> Compare com a view regular:</p>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- View regular
 EXPLAIN ANALYZE SELECT * FROM vw_vendas_categoria;
 
 -- Materialized View
 EXPLAIN ANALYZE SELECT * FROM mv_vendas_categoria;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="green-box">
  <p><strong>Anote os tempos!</strong> A diferença deve ser de ordens de magnitude.</p>
@@ -804,7 +805,7 @@ EXPLAIN ANALYZE SELECT * FROM mv_vendas_categoria;
  <p><strong>Cenário:</strong> RH quer saber o desempenho de cada vendedor nos últimos 90 dias.</p>
  </div>
  <p><span class="step-number">1</span> Crie a view regular primeiro:</p>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 CREATE OR REPLACE VIEW vw_desempenho_funcionarios AS
 SELECT e.employee_id,
  e.first_name || ' ' || e.last_name AS nome,
@@ -816,7 +817,7 @@ FROM employees e
 LEFT JOIN orders o ON e.employee_id = o.employee_id
 LEFT JOIN order_details od ON o.order_id = od.order_id
 GROUP BY e.employee_id, e.first_name, e.last_name, e.title;
- </code></pre>
+</code-block>
  <p class="fragment fade-in"><strong>Execute com EXPLAIN ANALYZE e anote o tempo!</strong></p>
  </section>
 
@@ -824,7 +825,7 @@ GROUP BY e.employee_id, e.first_name, e.last_name, e.title;
  <section>
  <h2>Prática 2: Criando a MV</h2>
  <p><span class="step-number">2</span> Crie a Materialized View:</p>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 CREATE MATERIALIZED VIEW mv_desempenho_funcionarios AS
 SELECT e.employee_id,
  e.first_name || ' ' || e.last_name AS nome,
@@ -837,19 +838,19 @@ LEFT JOIN orders o ON e.employee_id = o.employee_id
 LEFT JOIN order_details od ON o.order_id = od.order_id
 GROUP BY e.employee_id, e.first_name, e.last_name, e.title
 WITH DATA;
- </code></pre>
+</code-block>
  <p><span class="step-number">3</span> Verifique:</p>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 SELECT * FROM mv_desempenho_funcionarios
 ORDER BY valor_total_vendido DESC;
- </code></pre>
+</code-block>
  </section>
 
  <!-- SLIDE 33: Índices (prática) -->
  <section>
  <h2>Adicionando Índices</h2>
  <p><span class="step-number">4</span> Crie índices nas MVs:</p>
- <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 -- MV: vendas por categoria
 CREATE INDEX idx_mv_categoria
  ON mv_vendas_categoria(category_name);
@@ -863,7 +864,7 @@ CREATE INDEX idx_mv_func_valor
  ON mv_desempenho_funcionarios(valor_total_vendido DESC);
 CREATE UNIQUE INDEX idx_mv_func_unique
  ON mv_desempenho_funcionarios(employee_id);
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="green-box">
  <p><strong>Índice único</strong> é obrigatório para <code>REFRESH CONCURRENTLY</code></p>
@@ -874,7 +875,7 @@ CREATE UNIQUE INDEX idx_mv_func_unique
  <!-- SLIDE 34: Medindo o ganho dos índices -->
  <section>
  <h2>Medindo o Ganho dos Índices</h2>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Antes dos índices (já anotou?)
 EXPLAIN ANALYZE
 SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
@@ -882,7 +883,7 @@ SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
 -- Depois dos índices
 EXPLAIN ANALYZE
 SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <table class="comparison-table" style="margin-top: 15px;">
  <thead>
@@ -901,7 +902,7 @@ SELECT * FROM mv_vendas_categoria WHERE category_name = 'Beverages';
  <section>
  <h2>Praticando o REFRESH</h2>
  <p><span class="step-number">5</span> Insira um pedido e veja a MV desatualizada:</p>
- <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 -- Insira um pedido novo para testar
 INSERT INTO orders (order_id, customer_id, employee_id, order_date)
 VALUES ((SELECT MAX(order_id) + 1 FROM orders),
@@ -920,7 +921,7 @@ REFRESH MATERIALIZED VIEW mv_vendas_categoria;
 -- Agora sim! O novo pedido aparece
 SELECT * FROM mv_vendas_categoria
 WHERE category_name = 'Beverages';
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="yellow-box">
  <p><strong></strong> Com ~500 mil itens, o REFRESH leva alguns segundos. Esse é o trade-off!</p>
@@ -931,13 +932,13 @@ WHERE category_name = 'Beverages';
  <!-- SLIDE 36: REFRESH CONCURRENTLY na prática -->
  <section>
  <h2>REFRESH CONCURRENTLY na Prática</h2>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Precisa do índice único (já criamos!)
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vendas_categoria;
 
 -- Para a MV de funcionários:
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <table class="comparison-table" style="margin-top: 15px;">
  <thead>
@@ -955,7 +956,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios;
  <!-- SLIDE 37: Agendamento com cron -->
  <section>
  <h2>Agendamento com pg_cron</h2>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Instalar a extensão (se não tiver)
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
@@ -972,7 +973,7 @@ SELECT cron.schedule(
  '0 * * * *',
  $$REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios$$
 );
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="green-box">
  <p><strong></strong> Com <code>pg_cron</code>, o REFRESH é automático. Sem necessidade de scripts externos!</p>
@@ -983,7 +984,7 @@ SELECT cron.schedule(
  <!-- SLIDE 38: Agendamento com crontab (Linux) -->
  <section>
  <h2>Alternativa: crontab do Linux</h2>
- <pre><code class="lang-bash" data-trim>
+ <code-block class="lang-bash" data-trim>
 # Editar crontab
 crontab -e
 
@@ -992,7 +993,7 @@ crontab -e
 
 # Atualizar MV de funcionários a cada hora
 0 * * * * psql -d northwind -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_desempenho_funcionarios;"
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="yellow-box">
  <p><strong></strong> Se o PostgreSQL não tem <code>pg_cron</code>, o crontab do Linux funciona perfeitamente.</p>
@@ -1003,7 +1004,7 @@ crontab -e
  <!-- SLIDE 39: Monitoramento -->
  <section>
  <h2>Monitorando suas MVs</h2>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Listar todas as MVs e seus tamanhos
 SELECT schemaname, matviewname,
  pg_size_pretty(pg_total_relation_size(
@@ -1014,16 +1015,16 @@ WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(
  schemaname || '.' || matviewname
 ) DESC;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Verificar quantos registros cada MV tem
 SELECT 'mv_vendas_categoria' AS mv,
  COUNT(*) AS registros FROM mv_vendas_categoria
 UNION ALL
 SELECT 'mv_desempenho_funcionarios',
  COUNT(*) FROM mv_desempenho_funcionarios;
- </code></pre>
+</code-block>
  </div>
  </section>
 
@@ -1094,13 +1095,13 @@ SELECT 'mv_desempenho_funcionarios',
  <!-- SLIDE 43: DROP MATERIALIZED VIEW -->
  <section>
  <h2> Removendo uma MV</h2>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- Remover MV e todos os índices
 DROP MATERIALIZED VIEW IF EXISTS mv_vendas_categoria;
 
 -- Remover com CASCADE (se houver dependências)
 DROP MATERIALIZED VIEW IF EXISTS mv_vendas_categoria CASCADE;
- </code></pre>
+</code-block>
  <div class="fragment fade-in">
  <div class="yellow-box">
  <p><strong></strong> <code>CASCADE</code> remove também objetos que dependem da MV. Use com cuidado!</p>
@@ -1166,14 +1167,14 @@ DROP MATERIALIZED VIEW IF EXISTS mv_vendas_categoria CASCADE;
 
  <section data-auto-animate>
  <h2>View Regular Não Resolve</h2>
- <pre><code class="lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 -- View SEMPRE re-executa a query com os dados ATUAIS
 CREATE VIEW vw_vendas_marco AS
 SELECT produto, SUM(quantidade) AS total
 FROM pedidos
 WHERE data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
 GROUP BY produto;
- </code></pre>
+</code-block>
  <p class="fragment fade-in">Cada <code>SELECT</code> reflete o estado <strong>atual</strong> das tabelas.</p>
  <p class="fragment fade-in">Se um pedido foi deletado em abril, ele <strong>desaparece</strong> do resultado.</p>
  </section>
@@ -1211,7 +1212,7 @@ GROUP BY produto;
 
  <section data-auto-animate>
  <h2>Criando um Snapshot</h2>
- <pre><code class="lang-sql" data-line-numbers data-trim>
+ <code-block class="lang-sql" data-line-numbers data-trim>
 CREATE MATERIALIZED VIEW mv_snapshot_vendas_marco AS
 SELECT 
  p.product_name,
@@ -1224,7 +1225,7 @@ JOIN orders o ON od.order_id = o.order_id
 WHERE o.order_date BETWEEN '2026-03-01' AND '2026-03-31'
 GROUP BY p.product_name
 WITH DATA;
- </code></pre>
+</code-block>
  <p class="fragment fade-in">A coluna <code>snapshot_em</code> registra <strong>quando</strong> a foto foi tirada.</p>
  </section>
 
@@ -1233,10 +1234,10 @@ WITH DATA;
  <div class="red-box">
  <p><strong>NUNCA</strong> faça isso em um snapshot:</p>
  </div>
- <pre><code class="lang-sql" data-trim>
+ <code-block class="lang-sql" data-trim>
 -- NUNCA faça REFRESH em um snapshot!
 REFRESH MATERIALIZED VIEW mv_snapshot_vendas_marco;
- </code></pre>
+</code-block>
  <p class="fragment fade-in"><code>REFRESH</code> destrói o snapshot e tira uma <strong>nova foto</strong>.</p>
  <p class="fragment fade-in">Os dados originais de março seriam substituídos pelo estado atual.</p>
  <p class="fragment fade-in" style="color: #ff5555;"><strong>Um snapshot que recebeu REFRESH não é mais um snapshot.</strong></p>

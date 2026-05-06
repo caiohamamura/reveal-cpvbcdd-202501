@@ -39,14 +39,14 @@
     <!-- SLIDE 3: VIEW REGULAR NÃO RESOLVE -->
     <section data-auto-animate>
       <h2>View Regular Não Resolve</h2>
-      <pre><code data-trim data-line-numbers="1-6" lang-sql>
+      <code-block class="data-line-numbers="1-6"  lang-sql">
 -- Uma view regular SEMPRE re-executa a query
 CREATE VIEW vw_vendas_marco AS
 SELECT produto, SUM(quantidade) AS total
 FROM pedidos
 WHERE data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
 GROUP BY produto;
-      </code></pre>
+</code-block>
       <p class="fragment fade-in">Cada <code>SELECT</code> nessa view reflete o estado <strong>atual</strong> das tabelas, não o estado do passado.</p>
       <p class="fragment fade-in">Se um pedido foi deletado em abril, ele <strong>desaparece</strong> do resultado.</p>
     </section>
@@ -80,7 +80,7 @@ GROUP BY produto;
     <!-- SLIDE 5: CRIANDO UM SNAPSHOT -->
     <section data-auto-animate>
       <h2>Criando um Snapshot</h2>
-      <pre><code data-trim data-line-numbers lang-sql>
+      <code-block class="data-line-numbers  lang-sql">
 CREATE MATERIALIZED VIEW mv_snapshot_vendas_marco AS
 SELECT 
     p.produto,
@@ -92,17 +92,17 @@ JOIN pedidos p ON ip.id_pedido = p.id_pedido
 WHERE p.data_pedido BETWEEN '2026-03-01' AND '2026-03-31'
 GROUP BY p.produto
 WITH DATA;
-      </code></pre>
+</code-block>
       <p class="fragment fade-in">A coluna <code>snapshot_em</code> registra <strong>quando</strong> a foto foi tirada.</p>
     </section>
 
     <!-- SLIDE 6: NUNCA DÊ REFRESH -->
     <section data-auto-animate>
       <h2>⚠️ Regra de Ouro do Snapshot</h2>
-      <pre><code data-trim data-line-numbers="1" lang-sql>
+      <code-block class="data-line-numbers="1"  lang-sql">
 -- NUNCA faça isso em um snapshot:
 REFRESH MATERIALIZED VIEW mv_snapshot_vendas_marco;
-      </code></pre>
+</code-block>
       <p class="fragment fade-in"><code>REFRESH</code> destrói o snapshot e tira uma <strong>nova foto</strong>.</p>
       <p class="fragment fade-in">Os dados originais de março seriam substituídos pelo estado atual.</p>
       <p class="fragment fade-in" style="color: #ff5555;"><strong>Um snapshot que recebeu refresh não é mais um snapshot.</strong></p>

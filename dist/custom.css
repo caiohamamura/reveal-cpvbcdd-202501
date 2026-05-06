@@ -432,3 +432,7 @@ div {
 .poll-bar-label { color: #bd93f9; font-weight: bold; font-size: 14px; }
 .poll-bar-track { width: 100%; border-radius: 4px; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
 .poll-bar-fill { background: #bd93f9; width: 100%; border-radius: 4px; display: flex; align-items: flex-start; justify-content: center; padding-top: 4px; min-height: 24px; transition: height 0.5s ease; color: #282a36; font-weight: bold; font-size: 13px; }
+
+.poll > button {
+    font-size: 0.6em;
+}
