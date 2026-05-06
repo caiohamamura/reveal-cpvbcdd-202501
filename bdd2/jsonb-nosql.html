@@ -875,8 +875,8 @@ npx postgraphile \
         </section>
 
         <section>
-          <h2>Configuração PostGraphile v5.x (CORS)</h2>
-          <p style="font-size: 0.85em;">Arquivo <code>postgraphile.config.mjs</code> com CORS habilitado:</p>
+          <h2>Configuração PostGraphile v5.x</h2>
+          <p style="font-size: 0.85em;">Arquivo <code>postgraphile.config.mjs</code> com CORS e dynamicJson:</p>
           <pre><code class="code-wrapper lang-javascript" data-line-numbers data-trim>
 import { PostGraphileAmberPreset } from "postgraphile/presets/amber";
 import { makePgService } from "@dataplan/pg/adaptors/pg";
@@ -885,19 +885,20 @@ export default {
   extends: [PostGraphileAmberPreset],
   pgServices: [
     makePgService({
-      connectionString: "postgres://openclaw@127.0.0.1:5432/jsonb_teste",
-      schemas: ["public"],
+      connectionString: "postgres://postgres:postgres@127.0.0.1:5432/jsonb_api",
+      schemas: ["api"],
     }),
   ],
   grafserv: {
     port: 5123,
     dangerouslyAllowAllCORSRequests: true,
   },
+  dynamicJson: true,
 };
           </code></pre>
           <div class="fragment fade-in">
             <div class="green-box">
-              <p style="font-size: 0.8em;"><strong>Para iniciar com CORS:</strong><br/>
+              <p style="font-size: 0.8em;"><strong>Para iniciar:</strong><br/>
               <code>export GRAPHILE_ENV=development</code><br/>
               <code>npx postgraphile --config postgraphile.config.mjs</code></p>
             </div>
