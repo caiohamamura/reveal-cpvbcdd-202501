@@ -761,65 +761,6 @@ WHERE (atributos->>'ram_gb')::int >= 16;
           </div>
         </section>
 
-        <!-- JSONB Path -->
-        <section data-auto-animate>
-          <h2 style="color: #50fa7b;">SQL/JSON Path (PostgreSQL 12+)</h2>
-          <p style="color: #6272a4;">Queries complexas dentro de documentos — como XPath para JSON</p>
-        </section>
-
-        <section>
-          <h2>jsonb_path_query</h2>
-          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
--- Extrair array de ports
-SELECT nome,
-  jsonb_path_query(atributos, '$.ports[*]') as port
-FROM produtos
-WHERE categoria = 'notebook';
-
--- Filtrar por condição dentro do documento
-SELECT nome, preco
-FROM produtos
-WHERE jsonb_path_exists(
-  atributos,
-  '$.ram_gb ? (@ >= 16)'
-);
-
--- Busca recursiva: encontrar qualquer campo "ram_gb"
-SELECT nome,
-  jsonb_path_query(atributos, '$.**.ram_gb') as ram
-FROM produtos;
-          </code></pre>
-        </section>
-
-        <section>
-          <h2>jsonb_path_query_array</h2>
-          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
--- Agregar resultados como array
-SELECT nome,
-  jsonb_path_query_array(
-    atributos, '$.ports[*]'
-  ) as todas_ports
-FROM produtos
-WHERE atributos ? 'ports';
-
--- Retorno:
--- nome         | todas_ports
--- MacBook Pro  | ["USB-C","HDMI","SD"]
-          </code></pre>
-          <div class="fragment fade-in">
-            <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
--- Comparação com LIKE dentro do JSON
-SELECT nome
-FROM produtos
-WHERE jsonb_path_exists(
-  atributos,
-  '$.** ? (@.string() like_regex "Pro" flag "i")'
-);
-            </code></pre>
-          </div>
-        </section>
-
-      </section><!-- fim SEÇÃO 5 -->
 
       <!-- ============================================================
            SEÇÃO 6: EXPONDO JSONB VIA POSTGRAPHILE
