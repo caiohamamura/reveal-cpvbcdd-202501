@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
   <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
   <link rel="stylesheet" href="../plugin/poll/style.css" />
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
   <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
-  <link rel="stylesheet" href="../dist/custom.css" />
   <style>
     .reveal h2 { text-transform: none; }
     .reveal h3 { text-transform: none; }
@@ -86,21 +86,21 @@ graph LR
         <section>
           <h2>Exemplo: Configurações de App</h2>
           <p>Versão 1.0 — Tabela de configurações:</p>
-          <code-block class="lang-sql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 CREATE TABLE app_config (
   user_id    INT PRIMARY KEY,
   theme      VARCHAR(20) DEFAULT 'light',
   language   VARCHAR(5) DEFAULT 'pt-BR',
   notifications_enabled BOOLEAN DEFAULT true
 );
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="red-box">
               <p><strong>Versão 2.0:</strong> Precisa adicionar <code>font_size</code>, <code>compact_view</code>...</p>
-              <code-block class="lang-sql" data-trim>
+              <pre><code class="code-wrapper lang-sql" data-trim>
 ALTER TABLE app_config ADD COLUMN font_size INT DEFAULT 14;
 ALTER TABLE app_config ADD COLUMN compact_view BOOLEAN DEFAULT false;
-</code-block>
+              </code></pre>
             </div>
           </div>
         </section>
@@ -111,14 +111,14 @@ ALTER TABLE app_config ADD COLUMN compact_view BOOLEAN DEFAULT false;
             <p><strong>Versão 3.0:</strong> Agora precisa de <code>notification_preferences</code> por tipo...</p>
           </div>
           <div class="fragment fade-in">
-            <code-block class="lang-sql" data-line-numbers data-trim>
+            <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Mais migrações...
 ALTER TABLE app_config ADD COLUMN email_notif BOOLEAN DEFAULT true;
 ALTER TABLE app_config ADD COLUMN push_notif BOOLEAN DEFAULT true;
 ALTER TABLE app_config ADD COLUMN sms_notif BOOLEAN DEFAULT false;
 ALTER TABLE app_config ADD COLUMN notif_quiet_hours_start TIME;
 ALTER TABLE app_config ADD COLUMN notif_quiet_hours_end TIME;
-</code-block>
+            </code></pre>
           </div>
           <div class="fragment fade-in">
             <div class="yellow-box">
@@ -212,7 +212,7 @@ ALTER TABLE app_config ADD COLUMN notif_quiet_hours_end TIME;
 
         <section>
           <h2>O que o MongoDB Prometia</h2>
-          <code-block class="lang-javascript" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-javascript" data-line-numbers data-trim>
 // Sem esquema! Insira qualquer JSON
 db.products.insertOne({
   name: "MacBook Pro 16",
@@ -237,7 +237,7 @@ db.products.insertOne({
   },
   price: 119.90
 });
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="green-box">
               <p style="font-size: 0.8em;"><strong>Vantagem real:</strong> Sem migration, sem downtime, sem colunas NULL. Desenvolvedor itera rápido.</p>
@@ -345,7 +345,7 @@ db.products.insertOne({
 
         <section>
           <h2>Nosso Dataset: E-commerce</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 CREATE TABLE produtos (
   id          SERIAL PRIMARY KEY,
   nome        VARCHAR(200) NOT NULL,
@@ -354,9 +354,9 @@ CREATE TABLE produtos (
   atributos   JSONB NOT NULL DEFAULT '{}',
   criado_em   TIMESTAMPTZ DEFAULT now()
 );
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
-            <code-block class="lang-sql" data-line-numbers data-trim>
+            <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Notebook
 INSERT INTO produtos (nome, categoria, preco, atributos) VALUES
 ('MacBook Pro 16', 'notebook', 14999.90,
@@ -369,7 +369,7 @@ INSERT INTO produtos (nome, categoria, preco, atributos) VALUES
 ('Clean Code', 'livro', 119.90,
  '{"autor":"Robert C. Martin","paginas":464,
    "isbn":"978-0132350884","idioma":"en","edicao":1}');
-</code-block>
+            </code></pre>
           </div>
         </section>
 
@@ -413,8 +413,8 @@ db.produtos.find({
             </div>
             <div>
               <div class="green-box">
-                <p style="font-size: 0.6em;"><strong>PostgreSQL JSONB</strong></p>
-                <pre style="font-size: 0.6em;"><code class="lang-sql" data-trim>
+                <p style="font-size: 0.8em;"><strong>PostgreSQL JSONB</strong></p>
+                <pre style="font-size: 0.65em;"><code class="lang-sql" data-trim>
 -- Tabela com coluna JSONB
 INSERT INTO produtos (nome,
   categoria, preco, atributos)
@@ -426,7 +426,7 @@ VALUES ('MacBook Pro 16',
 -- Query por campo aninhado
 SELECT * 
 FROM produtos
-WHERE
+WHERE 
   atributos->>'ram_gb'::int >= 16;
                 </code></pre>
               </div>
@@ -458,8 +458,7 @@ WHERE
           <div class="green-box">
             <p style="font-size: 0.85em;">Com JSONB você pode fazer <strong>em um único SELECT</strong>:</p>
           </div>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- JOIN tabela relacional + filtro em JSONB + agregação SQL
 SELECT c.nome as categoria,
        COUNT(*) as total,
@@ -469,10 +468,9 @@ SELECT c.nome as categoria,
        ) as processadores
 FROM produtos p
 JOIN categorias c ON p.categoria_id = c.id
-WHERE atributos->>'ram_gb'::int >= 16;
+WHERE p.atributos @> '{"ram_gb": 16}'::jsonb
 GROUP BY c.nome;
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="highlight-box">
               <p style="font-size: 0.8em;"><strong>Isso no MongoDB?</strong> Precisa de $lookup + $match + $group — mais complexo e sem otimizações de query planner.</p>
@@ -573,8 +571,7 @@ GROUP BY c.nome;
         <!-- Queries práticas -->
         <section>
           <h2>Queries na Prática</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- 1. Filtrar por campo aninhado (retorna TEXT)
 SELECT nome, atributos->>'processador' as cpu
 FROM produtos
@@ -594,13 +591,12 @@ WHERE atributos @> '{"ssd_gb": 512}'::jsonb;
 SELECT nome, atributos->>'isbn' as isbn
 FROM produtos
 WHERE atributos ? 'isbn';
-</textarea>
-</code-block>
+          </code></pre>
         </section>
 
         <section>
           <h2>Inserindo Dados em Massa</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Notebooks
 INSERT INTO produtos (nome, categoria, preco, atributos) VALUES
 ('Dell XPS 15', 'notebook', 12999.00,
@@ -628,13 +624,13 @@ INSERT INTO produtos (nome, categoria, preco, atributos) VALUES
 ('Refactoring', 'livro', 129.90,
  '{"autor":"Martin Fowler","paginas":448,
    "isbn":"978-0134757599","idioma":"en","edicao":2}');
-</code-block>
+          </code></pre>
         </section>
 
         <!-- Modificação -->
         <section>
           <h2>Modificando Documentos JSONB</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Atualizar um campo
 UPDATE produtos
 SET atributos = jsonb_set(atributos, '{ram_gb}', '32')
@@ -654,7 +650,7 @@ WHERE nome = 'MacBook Pro 16';
 UPDATE produtos
 SET atributos = jsonb_set(atributos, '{ports,0}', '"Thunderbolt 4"')
 WHERE nome = 'MacBook Pro 16';
-</code-block>
+          </code></pre>
         </section>
 
         <!-- Indexação -->
@@ -665,14 +661,12 @@ WHERE nome = 'MacBook Pro 16';
 
         <section>
           <h2>Sem Índice (Full Scan)</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Sem índice: PostgreSQL escaneia TODAS as linhas
 EXPLAIN ANALYZE
 SELECT * FROM produtos
 WHERE atributos @> '{"ram_gb": 16}'::jsonb;
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="red-box">
               <pre style="font-size: 0.65em;"><code data-trim>
@@ -689,8 +683,7 @@ Execution Time: 45.23 ms
 
         <section>
           <h2>Índice GIN (Default)</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- GIN default: suporta @>, ?, ?|, ?&
 CREATE INDEX idx_produtos_atributos_gin
   ON produtos USING GIN (atributos);
@@ -699,8 +692,7 @@ CREATE INDEX idx_produtos_atributos_gin
 EXPLAIN ANALYZE
 SELECT * FROM produtos
 WHERE atributos @> '{"ram_gb": 16}'::jsonb;
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="green-box">
               <pre style="font-size: 0.65em;"><code data-trim>
@@ -716,14 +708,12 @@ Execution Time: 0.35 ms
 
         <section>
           <h2>GIN com jsonb_path_ops (Mais Leve)</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- jsonb_path_ops: menor, mais rápido para @>
 -- MAS só funciona com @> (não suporta ?, ?|, ?&)
 CREATE INDEX idx_produtos_atributos_path
   ON produtos USING GIN (atributos jsonb_path_ops);
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="two-cols">
               <div>
@@ -752,8 +742,7 @@ CREATE INDEX idx_produtos_atributos_path
 
         <section>
           <h2>Índice em Campo Específico</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Para queries com ->> (retorna TEXT), use B-tree ou GIN
 -- B-tree: ideal para =, <, >, BETWEEN
 CREATE INDEX idx_produtos_ram
@@ -764,8 +753,7 @@ EXPLAIN ANALYZE
 SELECT nome, atributos->>'ram_gb' as ram
 FROM produtos
 WHERE (atributos->>'ram_gb')::int >= 16;
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
             <div class="yellow-box">
               <p style="font-size: 0.8em;"><strong>Dica:</strong> Se sempre filtra pelo mesmo campo JSONB, índice de expressão (B-tree) > GIN. Para campos variados, use GIN.</p>
@@ -781,8 +769,7 @@ WHERE (atributos->>'ram_gb')::int >= 16;
 
         <section>
           <h2>jsonb_path_query</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Extrair array de ports
 SELECT nome,
   jsonb_path_query(atributos, '$.ports[*]') as port
@@ -801,13 +788,12 @@ WHERE jsonb_path_exists(
 SELECT nome,
   jsonb_path_query(atributos, '$.**.ram_gb') as ram
 FROM produtos;
-</textarea>
-</code-block>
+          </code></pre>
         </section>
 
         <section>
           <h2>jsonb_path_query_array</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Agregar resultados como array
 SELECT nome,
   jsonb_path_query_array(
@@ -819,9 +805,9 @@ WHERE atributos ? 'ports';
 -- Retorno:
 -- nome         | todas_ports
 -- MacBook Pro  | ["USB-C","HDMI","SD"]
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
-            <code-block class="lang-sql" data-line-numbers data-trim>
+            <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Comparação com LIKE dentro do JSON
 SELECT nome
 FROM produtos
@@ -829,7 +815,7 @@ WHERE jsonb_path_exists(
   atributos,
   '$.** ? (@.string() like_regex "Pro" flag "i")'
 );
-</code-block>
+            </code></pre>
           </div>
         </section>
 
@@ -867,7 +853,7 @@ graph LR
 
         <section>
           <h2>Setup Rápido</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- 1. Criar a tabela (já temos)
 -- 2. Adicionar comment para documentação GraphQL
 COMMENT ON TABLE produtos IS
@@ -875,23 +861,53 @@ COMMENT ON TABLE produtos IS
 
 COMMENT ON COLUMN produtos.atributos IS
   'Atributos variáveis por categoria (specs do produto)';
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
-            <code-block class="lang-bash" data-line-numbers data-trim>
-# 3. Iniciar PostGraphile
+            <pre><code class="code-wrapper lang-bash" data-line-numbers data-trim>
+# Opção 1: CLI simples (sem CORS)
+export GRAPHILE_ENV=development
 npx postgraphile \
-  --connection "postgres://user:pass@localhost/mydb" \
-  --schema public \
-  --watch \
-  --enhance-graphiql
-</code-block>
+  --preset postgraphile/presets/amber \
+  --connection "postgres://openclaw@127.0.0.1:5432/jsonb_teste" \
+  --port 5123
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>Configuração PostGraphile v5.x</h2>
+          <p style="font-size: 0.85em;">Arquivo <code>postgraphile.config.mjs</code> com CORS e dynamicJson:</p>
+          <pre><code class="code-wrapper lang-javascript" data-line-numbers data-trim>
+import { PostGraphileAmberPreset } from "postgraphile/presets/amber";
+import { makePgService } from "@dataplan/pg/adaptors/pg";
+
+export default {
+  extends: [PostGraphileAmberPreset],
+  pgServices: [
+    makePgService({
+      connectionString: "postgres://postgres:postgres@127.0.0.1:5432/jsonb_api",
+      schemas: ["api"],
+    }),
+  ],
+  grafserv: {
+    port: 5123,
+    dangerouslyAllowAllCORSRequests: true,
+  },
+  dynamicJson: true,
+};
+          </code></pre>
+          <div class="fragment fade-in">
+            <div class="green-box">
+              <p style="font-size: 0.8em;"><strong>Para iniciar:</strong><br/>
+              <code>export GRAPHILE_ENV=development</code><br/>
+              <code>npx postgraphile --config postgraphile.config.mjs</code></p>
+            </div>
           </div>
         </section>
 
         <section>
           <h2>Query Automática: Produtos</h2>
-          <multi-col>
-          <code-block class="lang-graphql" style="font-size: 0.9em;line-height: 1.06;" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-graphql" data-line-numbers data-trim>
 query {
   allProdutos {
     nodes {
@@ -903,9 +919,9 @@ query {
     }
   }
 }
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
-            <pre style="font-size: 0.3em;"><code class="lang-json" data-trim>
+            <pre style="font-size: 0.8em;"><code class="lang-json" data-trim>
 {
   "data": {
     "allProdutos": {
@@ -927,15 +943,13 @@ query {
   }
 }
             </code></pre>
-            </multi-col>
           </div>
         </section>
 
         <section>
           <h2>Computed Column para Filtros JSONB</h2>
           <p style="font-size: 0.85em;">PostGraphile não filtra dentro de JSONB por padrão. Solução: <strong>computed columns</strong>.</p>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Computed column: extrai ram_gb como integer
 CREATE FUNCTION produtos_ram_gb(p produtos)
 RETURNS INTEGER AS $$
@@ -943,27 +957,25 @@ RETURNS INTEGER AS $$
 $$ LANGUAGE sql STABLE;
 
 -- Agora aparece no GraphQL!
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
-            <code-block class="lang-graphql" data-line-numbers data-trim>
+            <pre><code class="code-wrapper lang-graphql" data-line-numbers data-trim>
 query {
-  allProdutos(filter: { ramGb: { greaterThan: 15 } }) {
+  allProdutos {
     nodes {
       nome
-      ramGb
+      ramGb  # ← computed column funciona no SELECT!
       preco
     }
   }
 }
-</code-block>
+            </code></pre>
           </div>
         </section>
 
         <section>
           <h2>Custom Query: Busca por Atributos</h2>
-          <code-block class="lang-sql" data-line-numbers data-trim>
-<textarea>
+          <pre><code class="code-wrapper lang-sql" data-line-numbers data-trim>
 -- Função para buscar por containment
 CREATE FUNCTION search_produtos_by_spec(
   spec JSONB
@@ -972,10 +984,9 @@ CREATE FUNCTION search_produtos_by_spec(
   FROM produtos
   WHERE atributos @> spec;
 $$ LANGUAGE sql STABLE;
-</textarea>
-</code-block>
+          </code></pre>
           <div class="fragment fade-in">
-            <code-block class="lang-graphql" data-line-numbers data-trim>
+            <pre><code class="code-wrapper lang-graphql" data-line-numbers data-trim>
 query {
   searchProdutosBySpec(spec: { ram_gb: 16 }) {
     nodes {
@@ -985,13 +996,13 @@ query {
     }
   }
 }
-</code-block>
+            </code></pre>
           </div>
         </section>
 
         <section>
           <h2>Mutation: Insert com JSONB</h2>
-          <code-block class="lang-graphql" data-line-numbers data-trim>
+          <pre><code class="code-wrapper lang-graphql" data-line-numbers data-trim>
 mutation {
   createProduto(
     input: {
@@ -1016,7 +1027,7 @@ mutation {
     }
   }
 }
-</code-block>
+          </code></pre>
         </section>
 
       </section><!-- fim SEÇÃO 6 -->

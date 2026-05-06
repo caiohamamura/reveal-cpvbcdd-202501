@@ -358,7 +358,7 @@ graph TD
     <!-- SLIDE 19: Primeiro Código -->
     <section data-auto-animate>
       <h2>👋 "Olá, Acordei!"</h2>
-      <code-block class="lang-cpp" data-trim data-line-numbers>
+      <pre><code class="lang-cpp" data-trim data-line-numbers>
 void setup() {
   Serial.begin(115200);
   Serial.println("Acordei!");     // Primeira mensagem
@@ -370,13 +370,13 @@ void setup() {
 void loop() {
   // NUNCA executa após deep sleep!
 }
-</code-block>
+      </code></pre>
     </section>
 
     <!-- SLIDE 20: Primeiro Código — Destaque -->
     <section data-auto-animate>
       <h2>👋 "Olá, Acordei!" — Entendendo</h2>
-      <code-block class="lang-cpp" data-trim data-line-numbers="6-8">
+      <pre><code class="lang-cpp" data-trim data-line-numbers="6-8">
 void setup() {
   Serial.begin(115200);
   Serial.println("Acordei!");
@@ -388,7 +388,7 @@ void setup() {
 void loop() {
   // NUNCA executa após deep sleep!
 }
-</code-block>
+      </code></pre>
       <div class="fragment fade-in">
         <ls-u font-size="20">
           <li><code>10e6</code> = 10 × 10⁶ μs = 10 segundos</li>
@@ -498,7 +498,7 @@ void loop() {
     <!-- SLIDE 24: Acordar por Botão -->
     <section data-auto-animate>
       <h2>🔘 Acordar por Botão (Interrupt Externo)</h2>
-      <code-block class="lang-cpp" data-trim data-line-numbers>
+      <pre><code class="lang-cpp" data-trim data-line-numbers>
 void setup() {
   Serial.begin(115200);
   Serial.println("Acordei por botão!");
@@ -508,13 +508,13 @@ void setup() {
 }
 
 void loop() {}
-</code-block>
+      </code></pre>
     </section>
 
     <!-- SLIDE 25: Acordar por Botão — Destaque -->
     <section data-auto-animate>
       <h2>🔘 Acordar por Botão — Detalhes</h2>
-      <code-block class="lang-cpp" data-trim data-line-numbers="6">
+      <pre><code class="lang-cpp" data-trim data-line-numbers="6">
 void setup() {
   Serial.begin(115200);
   Serial.println("Acordei por botão!");
@@ -524,7 +524,7 @@ void setup() {
 }
 
 void loop() {}
-</code-block>
+      </code></pre>
       <div class="fragment fade-in">
         <ls-u font-size="20">
           <li>Botão entre <b>RST</b> e <b>GND</b> — pula o pino para LOW</li>
@@ -561,11 +561,11 @@ void loop() {}
         <li><b style="color: #ff5555">Não</b> sobrevive a desconexão de energia</li>
       </ls-u>
       <div class="fragment">
-        <code-block class="lang-cpp" data-trim>
+        <pre><code class="lang-cpp" data-trim>
 RTC_DATA_ATTR int contador = 0;            // Persiste ao acordar!
 RTC_DATA_ATTR float ultimaTemperatura = 0;  // Persiste ao acordar!
 RTC_DATA_ATTR bool primeiraVez = true;      // Persiste ao acordar!
-</code-block>
+        </code></pre>
       </div>
     </section>
 
@@ -656,8 +656,7 @@ graph TD
     <!-- SLIDE 31: Código NTP + RTC -->
     <section data-auto-animate>
       <h2>⏰ Código: NTP + RTC Memory</h2>
-      <code-block class="lang-cpp" data-trim data-line-numbers>
-<textarea>
+      <pre><code class="lang-cpp" data-trim data-line-numbers>
 RTC_DATA_ATTR bool ntpOk = false;
 RTC_DATA_ATTR time_t epochBase = 0;
 RTC_DATA_ATTR unsigned long millisBase = 0;
@@ -684,15 +683,13 @@ void setup() {
 }
 
 void loop() {}
-</textarea>
-</code-block>
+      </code></pre>
     </section>
 
     <!-- SLIDE 32: Código NTP — Destaque -->
     <section data-auto-animate>
       <h2>⏰ Código NTP — Linhas-Chave</h2>
-      <code-block class="lang-cpp" data-trim data-line-numbers="10-11,20-21">
-<textarea>
+      <pre><code class="lang-cpp" data-trim data-line-numbers="10-11,20-21">
 RTC_DATA_ATTR bool ntpOk = false;
 RTC_DATA_ATTR time_t epochBase = 0;
 RTC_DATA_ATTR unsigned long millisBase = 0;
@@ -715,8 +712,7 @@ void setup() {
   Serial.printf("Hora: %s", ctime(&agora));
   ESP.deepSleep(300e6);
 }
-</textarea>
-</code-block>
+      </code></pre>
     </section>
 
     <!-- ============================================================

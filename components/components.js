@@ -507,7 +507,7 @@ const pollQuestionComponent = {
       </multi-col>
       <p>Total: <span class="voters" :data-poll="id">0</span> votos</p>
       
-      <div v-if="answer" ref="answerRef" class="fragment" data-fragment-index="1" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;font-size:0.6em;">
+      <div v-if="answer" ref="answerRef" class="fragment" data-fragment-index="1" style="background: #50fa7b20; border: 1px solid #50fa7b; padding: 8px; margin-top: 8px; border-radius: 8px;">
         <span style="color: #50fa7b;">
           Resposta: <strong>{{ String(answer).toUpperCase() }}</strong><span v-if="answerText"> — {{ answerText }}</span>
         </span>
