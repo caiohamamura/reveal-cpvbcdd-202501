@@ -1049,8 +1049,7 @@ graph TD
             <li><strong>JSONB</strong> existe desde 2014 — tipo nativo, binário, indexável</li>
             <li><strong>Operadores</strong>: <code>-></code>, <code>->></code>, <code>@></code>, <code>?</code>, <code>#></code> para navegar e filtrar</li>
             <li><strong>GIN index</strong> (default ou jsonb_path_ops) para queries rápidas</li>
-            <li><strong>SQL/JSON Path</strong> para queries complexas dentro de documentos</li>
-            <li><strong>PostGraphile</strong> expõe JSONB como GraphQL, com computed columns para filtros</li>
+                        <li><strong>PostGraphile</strong> expõe JSONB como GraphQL, com computed columns para filtros</li>
             <li><strong>Na dúvida</strong>: use JSONB dentro do PostgreSQL — raramente precisa de MongoDB</li>
           </ol>
         </section>
@@ -1120,22 +1119,7 @@ graph TD
             ]"></poll-question>
         </section>
 
-        <section>
-          <poll-question
-                         id="q5"
-                         title="Questão 5: jsonb_path_query"
-                         question="O que jsonb_path_query(atributos, '$.**.ram_gb') retorna?"
-                         answer="a"
-                         answer-text='$.** faz busca recursiva em qualquer nível do documento. Encontra todas as ocorrências da chave "ram_gb" independentemente de onde esteja aninhada.'
-                         :options="[
-              { value: 'a', label: 'Todos os valores de ram_gb em qualquer nível de aninhamento' },
-              { value: 'b', label: 'Apenas o valor de ram_gb no nível raiz' },
-              { value: 'c', label: 'O caminho completo até ram_gb' },
-              { value: 'd', label: 'True se ram_gb existir em qualquer lugar' },
-            ]"></poll-question>
-        </section>
-
-      </section><!-- fim SEÇÃO 8 -->
+        </section><!-- fim SEÇÃO 8 -->
 
     </div>
   </div>
