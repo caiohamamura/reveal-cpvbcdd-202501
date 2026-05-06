@@ -818,7 +818,8 @@ npx postgraphile \
         <section>
           <h2>Configuração PostGraphile v5.x</h2>
           <p style="font-size: 0.85em;">Arquivo <code>postgraphile.config.mjs</code> com CORS e dynamicJson:</p>
-          <pre><code class="code-wrapper lang-javascript" data-line-numbers data-trim>
+          <code-block class="lang-javascript" data-line-numbers data-trim>
+<textarea>
 import { PostGraphileAmberPreset } from "postgraphile/presets/amber";
 import { makePgService } from "@dataplan/pg/adaptors/pg";
 
@@ -836,7 +837,8 @@ export default {
   },
   dynamicJson: true,
 };
-          </code></pre>
+</textarea>
+          </code-block>
           <div class="fragment fade-in">
             <div class="green-box">
               <p style="font-size: 0.8em;"><strong>Para iniciar:</strong><br/>
