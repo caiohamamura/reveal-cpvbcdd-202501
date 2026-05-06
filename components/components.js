@@ -396,6 +396,14 @@ const pollQuestionComponent = {
     const results = el.querySelector('.poll-results');
     const pollEl = el.querySelector('.poll');
     const pollBarTracks = el.querySelectorAll(".poll-bar-track");
+    let locked = false;
+
+    pollEl.addEventListener('click', (e) => {
+      if (locked) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+      }
+    }, true);
 
     pollBarTracks.forEach(track => {
       setTimeout(() => {
@@ -405,6 +413,7 @@ const pollQuestionComponent = {
 
     const highlightAnswer = () => {
       if (!this.answer || !pollEl) return;
+      locked = true; //
       // Highlight the correct button
       pollEl.querySelectorAll('button').forEach(btn => {
         btn.style.outline = '';
