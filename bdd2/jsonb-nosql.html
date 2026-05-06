@@ -772,25 +772,7 @@ WHERE (atributos->>'ram_gb')::int >= 16;
           <p style="color: #6272a4;">GraphQL automático sobre PostgreSQL — incluindo campos JSONB</p>
         </section>
 
-        <section>
-          <h2>PostGraphile: Visão Rápida</h2>
-          <div class="mermaid" style="width:100%; max-width:none;">
-            <pre style="font-size:20px;">
-graph LR
-  A[PostgreSQL] -->|PostGraphile| B[GraphQL API]
-  B -->|Auto-gerado| C[Queries]
-  B -->|Auto-gerado| D[Mutations]
-  B -->|Auto-gerado| E[Types]
-  C --> F[Frontend]
-  D --> F
-            </pre>
-          </div>
-          <div class="fragment fade-in">
-            <div class="green-box">
-              <p style="font-size: 0.8em;">PostGraphile lê o schema PostgreSQL e <strong>gera GraphQL automaticamente</strong>. JSONB vira tipo <code>JSON</code> no GraphQL.</p>
-            </div>
-          </div>
-        </section>
+       
 
         <section>
           <h2>Setup Rápido</h2>
@@ -818,8 +800,7 @@ npx postgraphile \
         <section>
           <h2>Configuração PostGraphile v5.x</h2>
           <p style="font-size: 0.85em;">Arquivo <code>postgraphile.config.mjs</code> com CORS e dynamicJson:</p>
-          <code-block class="lang-javascript" data-line-numbers data-trim>
-<textarea>
+          <code-block lang="js" data-line-numbers data-trim>
 import { PostGraphileAmberPreset } from "postgraphile/presets/amber";
 import { makePgService } from "@dataplan/pg/adaptors/pg";
 
@@ -837,7 +818,6 @@ export default {
   },
   dynamicJson: true,
 };
-</textarea>
           </code-block>
           <div class="fragment fade-in">
             <div class="green-box">
