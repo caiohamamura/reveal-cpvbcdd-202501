@@ -1002,21 +1002,7 @@ mutation {
           </div>
         </section>
 
-        <section>
-          <h2>Guia de Decisão</h2>
-          <div class="mermaid" style="width:100%; max-width:none;">
-            <pre style="font-size:18px;">
-graph TD
-  A["Precisa de esquema flexível?"] -->|Não| B["Tabelas normalizadas"]
-  A -->|Sim| C["Precisa de relações + ACID?"]
-  C -->|Não| D{"Dados em petabytes?"}
-  D -->|Sim| E["MongoDB com sharding"]
-  D -->|Não| F["PostgreSQL JSONB"]
-  C -->|Sim| F
-            </pre>
-          </div>
-        </section>
-
+        
       </section><!-- fim SEÇÃO 7 -->
 
       <!-- ============================================================
@@ -1087,20 +1073,7 @@ graph TD
             ]"></poll-question>
         </section>
 
-        <section>
-          <poll-question
-                         id="q4"
-                         title="Questão 4: PostGraphile"
-                         question="Como expor filtros de campos JSONB no GraphQL gerado pelo PostGraphile?"
-                         answer="c"
-                         answer-text="Computed columns (funções SQL com parâmetro do tipo da tabela) são reconhecidas pelo PostGraphile como campos virtuais, habilitando filtros automáticos no GraphQL."
-                         :options="[
-              { value: 'a', label: 'PostGraphile filtra JSONB automaticamente' },
-              { value: 'b', label: 'Precisa escrever resolvers customizados em Node.js' },
-              { value: 'c', label: 'Criar computed columns (funções SQL) que extraem campos' },
-              { value: 'd', label: 'Não é possível filtrar JSONB via GraphQL' },
-            ]"></poll-question>
-        </section>
+        
 
         </section><!-- fim SEÇÃO 8 -->
 
