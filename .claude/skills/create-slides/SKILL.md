@@ -12,6 +12,8 @@ When the user asks to create slides, a new lesson, a new presentation, or says "
 
 You will be given a topic and course context. Generate a complete `.html` slide file following the patterns below exactly. Ask the user for: course name, lesson number, and topic if not provided.
 
+> **Fonte de consulta:** Consulte `docs/ECOSSISTEMA.md` para documentação completa do ecossistema — componentes Vue (`<header1>`, `<code-block>`, `<multi-col>`, `<ls-u>`, `<md>`, `<poll-question>`, `<leader-line>`, `<copy-btn>`), plugins (chalkboard, chart, poll, seminar, customcontrols), convenções CSS (classes utilitárias, paleta Dracula, estilos de `<h2>`/`<h3>`/`<h4>`/`<li>`), arquitetura do projeto, e padrões de inicialização Vue + Reveal.js.
+
 ### File location
 Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new folder as instructed.
 
@@ -29,9 +31,9 @@ Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new fol
 
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
-  <link rel="stylesheet" href="../dist/theme/night.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
-  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
   <!-- Optional plugins -->
   <link rel="stylesheet" href="../plugin/poll/style.css" />
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
@@ -59,30 +61,35 @@ Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new fol
   <script src="../plugin/leader-line.min.js"></script>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
-  <script src="../components/md.js"></script>
   <script src="../components/components.js"></script>
-  <!-- Plugin scripts (local for chalkboard — NOT CDN) -->
+  <!-- Plugin scripts (local — NOT CDN) -->
   <script src="../plugin/poll/plugin.js"></script>
   <script src="../plugin/customcontrols/plugin.js"></script>
   <script src="../plugin/chalkboard/plugin.js"></script>
+  <!-- socket.io required by seminar plugin — must load before init.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
 
-  <script type="module">
-    import { mountSlideApp } from '../slides_template/init.js';
-    mountSlideApp();
+  <script>
+    window.app = mountSlideApp();
   </script>
 
 </body>
 </html>
 ```
 
-Theme: use `night.css` for IoT, `dracula.css` for BDD.
+Theme: use `dracula.css` for all courses (IoT, BDD, Ciência de Dados).
 
-**CRITICAL: Use `mountSlideApp()` from `slides_template/init.js`.** This:
-1. Injects the seminar connect panel into `<body>` (host button + status display)
-2. Sets `window.seminarConfig` automatically (server is shared, room defaults to `location.pathname`)
-3. To override the room, set `window.seminarConfig = { room: 'my-room' }` BEFORE calling `mountSlideApp()`
-4. Creates Vue app, registers components, initializes Reveal.js with all plugins
-5. Do NOT call `new Reveal()` or set `window.seminarConfig` yourself
+**CRITICAL: Use `mountSlideApp()` from `slides_template/init.js` loaded as a regular script.** This:
+1. Sets default configs for chalkboard, customcontrols, poll, and seminar
+2. Injects the seminar connect panel into `<body>` (host button + status display)
+3. Sets `window.seminarConfig` automatically (server is shared, room defaults to `location.pathname`)
+4. To override the room, set `window.seminarConfig = { room: 'my-room' }` BEFORE the `<script src="../slides_template/init.js">` tag
+5. Creates the Vue app, registers components, initializes Reveal.js with all auto-detected plugins
+6. Load init.js as a **regular `<script>` tag** (NOT `<script type="module">`) — init.js defines `mountSlideApp()` as a global function
+7. Must include `socket.io` (CDN) **before** `init.js` and `seminar/plugin.js` **after** `init.js` for seminar to work
+8. Call `window.app = mountSlideApp();` in a regular `<script>` block after all plugins are loaded
 
 ### Slide Structure Patterns
 

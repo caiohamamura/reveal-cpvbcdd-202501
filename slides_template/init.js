@@ -23,7 +23,28 @@ window.seminarConfig = {
   hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
   autoJoin: true,
 };
-window.pollConfig = {};
+window.pollConfig = window.pollConfig || {};
+
+// Default chalkboard config — customize via window.chalkboardConfig before mountSlideApp()
+window.chalkboardConfig = window.chalkboardConfig || {
+  readOnly: false,
+  toggleReadOnly: true,
+  toggleNotesButton: { left: "70px", bottom: "50px" },
+  boardmarkerWidth: 3,
+  chalkboardWidth: 3,
+  color: '#8be9fd',
+  backgroundColor: '#282a36',
+  src: null
+};
+
+// Default custom controls config
+window.customControlsConfig = window.customControlsConfig || {
+  toggle: true,
+  toggleClass: 'toggled',
+  width: 48,
+  height: 48,
+  offset: 12
+};
 
 // Seminar panel HTML (injected by injectSeminarPanel)
 const SEMINAR_PANEL_HTML = `

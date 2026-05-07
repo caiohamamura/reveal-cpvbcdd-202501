@@ -6,5 +6,8 @@
     "opencode-go": {
       "models": {}
     }
+  },
+  "permission": {
+    "websearch": "allow"
   }
 }
