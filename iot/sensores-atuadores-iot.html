@@ -197,7 +197,7 @@ for (int i = 0; i <= 255; i++) {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="tcrt5000-usage">
                 <pre>
-graph LR
+graph TD
   LED["IR Emissor"] -->|"Luz IR"| SUP[Superfície]
   SUP -->|"Reflexão"| FOTO[Fototransistor]
   FOTO -->|"Sinal"| MCU
@@ -375,7 +375,7 @@ void loop() {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="vl53l0x-i2c">
                 <pre>
-graph LR
+graph TD
   MCU -->|"SDA/SCL"| VLX
   VCC["3.3V"] --> VLX
   VLX[VL53L0X<br/>0x29]
@@ -420,7 +420,7 @@ void loop() {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="rcwl-radar">
                 <pre>
-graph LR
+graph TD
   RCWL[RCWL-0516] -->|"Antena TX"| ONDA
   ONDA["Micro-ondas 3.2GHz"]
   ONDA -->|"Atravessa"| PAREDE
@@ -497,7 +497,7 @@ if (movimento == HIGH) {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="mq2-alert">
                 <pre>
-graph LR
+graph TD
   GAS[Gás GLP] --> MQ2[MQ-2]
   MQ2 -->|"A0"| MCU
   MCU -->|"ppm > limiar?"| ALERT["🚨 Alarme"]
@@ -569,7 +569,7 @@ Serial.println("%");
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="sw420-vibration">
                 <pre>
-graph LR
+graph TD
   SHOCK[💥 Vibração] --> SW[SW-420]
   SW -->|"DO = HIGH"| MCU
   MCU -->|"> limiar"| ALARM["🚨 Alarme!"]
@@ -609,7 +609,7 @@ if (contador > 5) {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="rain-sensor">
                 <pre>
-graph LR
+graph TD
   RAIN[🌧️ Chuva] --> PLACA[Placa Sensora]
   PLACA -->|"A0"| MCU
   MCU --> ALERT2["🔔 Fechar janela!"]
@@ -800,7 +800,7 @@ void loop() {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="voltage-divider">
                 <pre>
-graph LR
+graph TD
   VIN["Bateria 12V"] --> R1[100kΩ]
   R1 --> VOUT["Vout (ADC)"]
   VOUT --> R2[33kΩ]
@@ -1012,7 +1012,7 @@ digitalWrite(PIN_SOL, LOW);  // desativa
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="oled-ssd1306">
                 <pre>
-graph LR
+graph TD
   MCU -->|"SDA/SCL"| OLED
   VCC["3.3V"] --> OLED
   OLED[OLED SSD1306<br/>0x3C]
@@ -1058,7 +1058,7 @@ void setup() {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="tm1637-wiring">
                 <pre>
-graph LR
+graph TD
   MCU -->|"CLK/DIO"| TM[TM1637]
   VCC["5V"] --> TM
   TM --> DIGITS["8 8 8 8"]
@@ -1138,7 +1138,7 @@ void loop() {
             <div style="flex:0 0 260px; text-align:center">
               <div class="mermaid" data-id="mqtt-pubsub">
                 <pre>
-graph LR
+graph TD
   SENSOR[ESP8266] -->|"publish"| BROKER["☁️ Broker"]
   BROKER -->|"subscribe"| APP["📱 Dashboard"]
   style BROKER fill:#bd93f9,color:#f8f8f2
