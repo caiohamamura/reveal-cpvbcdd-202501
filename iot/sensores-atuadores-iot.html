@@ -54,7 +54,7 @@ graph LR
           <h2>LDR — Sensor de Luz</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/ldr.jpg" alt="LDR - Light Dependent Resistor" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/bb/LDR_1480405_6_7_HDR_Enhancer_1.jpg" alt="LDR - Light Dependent Resistor" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -83,7 +83,7 @@ if (luz < 200) {
           <h2>DHT22 — Temperatura + Umidade</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/dht22-module.jpg" alt="DHT22 Temperature and Humidity Sensor Module" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/DHT22_digital_temperature_and_humidity_sensor_module_pcb.jpg" alt="DHT22 Temperature and Humidity Sensor Module" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -116,7 +116,7 @@ Serial.println(" °C");
           <h2>LCD I2C + Relé</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/relay-module.jpg" alt="Relay Module" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Mizar32_I2C_LCD_module_16x2.jpg" alt="LCD 16x2 I2C Module" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -151,7 +151,7 @@ digitalWrite(PIN_RELE, LOW);  // desliga
           <h2>Motor DC + MOSFET (PWM)</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/mosfet-irfz44n.jpg" alt="MOSFET IRLZ44N" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/D2PAK.JPG" alt="MOSFET IRLZ44N" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -236,7 +236,7 @@ int reflexao = analogRead(A0);
           <h2>DS18B20 — Temperatura OneWire</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/ds18b20.jpg" alt="DS18B20 Temperature Sensor - Waterproof Probe" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/d/dc/SparkFun_DS18B20_1.jpg" alt="DS18B20 Temperature Sensor - Waterproof Probe" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -271,7 +271,7 @@ Serial.println(" °C");
           <h2>TMP36 — Temperatura Analógica</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/tmp36.jpg" alt="TMP36 Analog Temperature Sensor" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Temperature_Sensor_%28TMP36%29.jpg" alt="TMP36 Analog Temperature Sensor" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -339,7 +339,7 @@ Serial.println(" °C");
           <h2>HC-SR04 — Ultrassônico</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/hc-sr04.jpg" alt="HC-SR04 Ultrasonic Distance Sensor" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/SparkFun_HC-SR04_Ultrasonic-Sensor_13959-01a.jpg" alt="HC-SR04 Ultrasonic Distance Sensor" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -418,16 +418,7 @@ void loop() {
           <h2>RCWL-0516 — Radar Doppler</h2>
           <div style="display:flex; gap:10px; align-items:start">
             <div style="flex:0 0 260px; text-align:center">
-              <div class="mermaid" data-id="rcwl-radar">
-                <pre>
-graph TD
-  RCWL[RCWL-0516] -->|"Antena TX"| ONDA
-  ONDA["Micro-ondas 3.2GHz"]
-  ONDA -->|"Atravessa"| PAREDE
-  PAREDE --> OBJ[Movimento]
-  style RCWL fill:#ff5555,color:#f8f8f2
-                </pre>
-              </div>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/RCWL-0516_Microwave_Radar_Sensor_module_%281%29.jpg" alt="RCWL-0516 Microwave Radar Sensor Module" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex:1">
               <ul>
@@ -536,7 +527,7 @@ if (gas > LIMIAR) {
           <h2>Capacitive Soil Moisture</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/soil-moisture.jpg" alt="Soil Moisture Sensor" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Soil_moisture_sensor.JPG" alt="Soil Moisture Sensor" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -646,7 +637,7 @@ if (intensidade > 30) {
           <h2>MPU-6050 — Acelerômetro + Giroscópio</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/mpu-6050.jpg" alt="MPU-6050 Accelerometer and Gyroscope IC" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/IvenSense_3-Axis-Gyro-Accelerometer-IC_MPU-6050_10937-01.jpg" alt="MPU-6050 Accelerometer and Gyroscope IC" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -682,7 +673,7 @@ void loop() {
           <h2>Sensor Hall — Campo Magnético</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/hall-sensor.gif" alt="Hall Effect Sensor - Magnetic Field Detection" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Hall_sensor_tach.gif" alt="Hall Effect Sensor - Magnetic Field Detection" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -716,7 +707,7 @@ if (campo == LOW &&
           <h2>PIR HC-SR501 — Presença (IV)</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/pir-hc-sr501.png" alt="PIR HC-SR501 Motion Sensor" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/PIR_Motion_Sensor-Sensinova_%28SN-PR11%29.png" alt="PIR HC-SR501 Motion Sensor" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -761,7 +752,7 @@ if (presenca == HIGH) {
           <h2>INA219 — Corrente e Tensão (I2C)</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/ina219.jpg" alt="INA219 Current and Voltage Sensor Module" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Adafruit_INA219_high_side_DC_current_sensor_module.jpg" alt="INA219 Current and Voltage Sensor Module" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -853,7 +844,7 @@ Serial.println(" V");
           <h2>SG90 — Servo Motor</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/sg90-servo.jpg" alt="SG90 Micro Servo Motor" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Tower_Pro_SG90_micro_servo_motor.jpg" alt="SG90 Micro Servo Motor" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -890,7 +881,7 @@ void loop() {
           <h2>28BYJ-48 + ULN2003 — Motor de Passo</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/28byj-48.jpg" alt="28BYJ-48 Stepper Motor with ULN2003 Driver" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/28BYJ-48_unipolar_stepper_motor_with_ULN2003_driver.jpg" alt="28BYJ-48 Stepper Motor with ULN2003 Driver" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -926,7 +917,7 @@ void loop() {
           <h2>WS2812B — LED Endereçável (Neopixel)</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/ws2812b.jpg" alt="WS2812B Addressable RGB LED" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Pack1_-_BTF-WS2812B_-_John_McMaster.jpg" alt="WS2812B Addressable RGB LED" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -966,7 +957,7 @@ void loop() {
           <h2>Solenóide + Válvula Solenóide</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/solenoid-valve.jpg" alt="Solenoid Valve" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Solonoid_valves.jpg" alt="Solenoid Valve" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
@@ -1182,7 +1173,7 @@ void loop() {
           <h2>ESP8266 — Wi-Fi Nativo + HTTP</h2>
           <multi-col cols="3" style="gap:10px">
             <div style="flex: 0.8; text-align:center">
-              <img src="img/sensores/esp8266.jpg" alt="ESP8266 Wi-Fi IC" style="max-width:100%;border-radius:6px" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/1/16/ESP8266_IC.jpg" alt="ESP8266 Wi-Fi IC" style="max-width:100%;border-radius:6px" />
             </div>
             <div style="flex: 1;">
               <ul>
