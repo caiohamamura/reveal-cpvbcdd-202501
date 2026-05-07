@@ -134,10 +134,10 @@ int ldr = analogRead(A0);
               <p style="font-size: 10pt; color: #6272a4; margin-top: 2px;">
                 LCD 16x2 + I2C Backpack — Fonte: Adafruit (CC BY-NC-SA 3.0)
               </p>
-              <img src="https://cdn-shop.adafruit.com/970x728/2895-05.jpg" width="240" style="margin-top: 8px;"
+              <img src="https://images.pexels.com/photos/5276099/pexels-photo-5276099.jpeg" width="240" style="margin-top: 8px;"
                    alt="Módulo relé de 1 canal para ESP8266" />
               <p style="font-size: 10pt; color: #6272a4; margin-top: 2px;">
-                Módulo Relé — Fonte: Adafruit (CC BY-NC-SA 3.0)
+                Módulo Relé — Foto: Malte Luk / Pexels
               </p>
             </div>
           </multi-col>
@@ -242,11 +242,11 @@ void loop() {
               </ul>
             </div>
             <div style="flex: 1; text-align: center;">
-              <img src="https://cdn-shop.adafruit.com/970x728/4646-06.jpg" width="240"
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Float_switch.jpg" width="240"
                    alt="Sensor boia de nível de água com contato magnético" />
               <p style="font-size: 10pt; color: #6272a4; margin-top: 5px;">
                 Imagem: Float Switch / Sensor Boia<br />
-                Fonte: Adafruit (CC BY-NC-SA 3.0)
+                Fonte: Wikimedia Commons (CC BY-SA 3.0)
               </p>
             </div>
           </multi-col>
@@ -358,27 +358,27 @@ void loop() {
           </script></code-block>
         </section>
 
-        <!-- SLIDE 13: Laser VL53L1X -->
+        <!-- SLIDE 13: Sensor Infravermelho (Obstáculo / Seguidor de Linha) -->
         <section data-auto-animate>
-          <h2>VL53L1X — Laser de Longo Alcance</h2>
+          <h2>Sensor Infravermelho — Obstáculo e Linha</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
-              <p style="color: #ffb86c; font-size: 18pt;">Evolução do VL53L0X</p>
+              <p style="color: #ffb86c; font-size: 18pt;">Par Emissor + Receptor IR</p>
               <ul style="font-size: 17pt;">
-                <li>Alcance: <strong>40 mm a 4000 mm</strong> (4 metros!)</li>
-                <li>Campo de visão programável (ROI)</li>
-                <li>Modo de consumo ultra-baixo</li>
-                <li>Comunicação: <strong>I2C</strong></li>
-                <li>Imune à cor e reflexibilidade da superfície</li>
-                <li>Ideal para robótica e drones</li>
+                <li><strong>LED IR transparente</strong> (emissor) + <strong>fototransistor escuro</strong> (receptor)</li>
+                <li>Detecta luz IR refletida por superfícies próximas</li>
+                <li>Alcance: <strong>1 a 15 mm</strong> (curtíssimo, ajustável)</li>
+                <li>Saída: <strong>digital</strong> (HIGH/LOW) com阈值 ajustável por potenciômetro</li>
+                <li>Módulos comuns: TCRT5000, FC-51, KY-033</li>
+                <li style="margin-top: 10px;"><strong>Seguidor de linha:</strong> preto (absorve IR) vs branco (reflete IR)</li>
               </ul>
             </div>
             <div style="flex: 1; text-align: center;">
-              <img src="https://cdn-shop.adafruit.com/970x728/3967-00.jpg" width="280"
-                   alt="Sensor VL53L1X laser Time-of-Flight de longo alcance" />
+              <img src="https://images.pexels.com/photos/35686441/pexels-photo-35686441.jpeg" width="280"
+                   alt="Módulo sensor infravermelho TCRT5000 com par emissor LED e fototransistor receptor" />
               <p style="font-size: 10pt; color: #6272a4; margin-top: 5px;">
-                Imagem: VL53L1X ToF Sensor<br />
-                Fonte: Adafruit (CC BY-NC-SA 3.0)
+                Imagem: Módulo Sensor IR<br />
+                Foto: Tanha Tamanna Syed / Pexels
               </p>
             </div>
           </multi-col>
@@ -389,7 +389,7 @@ void loop() {
             <tbody>
               <tr><td>HC-SR04</td><td>2–400 cm</td><td>±0.3 cm</td><td>Ultrassom 40 kHz</td></tr>
               <tr><td>VL53L0X</td><td>3–120 cm</td><td>±3–12%</td><td>Laser IR ToF</td></tr>
-              <tr><td>VL53L1X</td><td>4–400 cm</td><td>±1–3%</td><td>Laser IR ToF (ROI)</td></tr>
+              <tr><td>IR (TCRT5000)</td><td>0.1–1.5 cm</td><td>Digital (limiar)</td><td>Reflexão IR (LED+Fototransistor)</td></tr>
             </tbody>
           </table>
         </section>
@@ -410,11 +410,11 @@ void loop() {
               </ul>
             </div>
             <div style="flex: 1; text-align: center;">
-              <img src="https://cdn-shop.adafruit.com/970x728/4662-00.jpg" width="280"
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2b/RCWL-0516_Microwave_Radar_Sensor_module_%281%29.jpg" width="280"
                    alt="Sensor de radar Doppler RCWL-0516 para detecção de movimento" />
               <p style="font-size: 10pt; color: #6272a4; margin-top: 5px;">
                 Imagem: Radar Doppler RCWL-0516<br />
-                Fonte: Adafruit (CC BY-NC-SA 3.0)
+                Fonte: Wikimedia Commons (CC0 / Domínio Público)
               </p>
             </div>
           </multi-col>
@@ -944,7 +944,7 @@ if (irrecv.decode(&results)) {
         <h2>Resumo da Aula</h2>
         <ls-u>
           <li><strong>Sensores Simples:</strong> DS18B20 (OneWire), Boia (nível)</li>
-          <li><strong>Distância:</strong> HC-SR04 (ultrassom) vs VL53L0X/VL53L1X (laser ToF) vs Doppler</li>
+          <li><strong>Distância:</strong> HC-SR04 (ultrassom), VL53L0X (laser ToF), IR TCRT5000 (reflexão), Doppler (radar)</li>
           <li><strong>Ambientais:</strong> MQ-2 (gás), Umidade Solo, Chuva, MPU6050 (IMU), Hall, PIR</li>
           <li><strong>Atuadores:</strong> Servo (posição), Motor de Passo (precisão), Solenóide (linear)</li>
           <li><strong>Comunicação IoT:</strong> LoRa (longo alcance), IR (controle remoto)</li>
