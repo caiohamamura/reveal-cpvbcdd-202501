@@ -49,16 +49,19 @@ graph LR
           <p>Componentes que vocês já conhecem</p>
         </section>
 
-        <!-- SLIDE 3: LDR + DHT22 -->
+        <!-- SLIDE 3: LDR -->
         <section data-auto-animate>
-          <h2>LDR + DHT22 (Revisão)</h2>
-          <multi-col style="gap:15px">
+          <h2>LDR — Sensor de Luz</h2>
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/ldr.jpg" alt="LDR - Light Dependent Resistor" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li><strong>LDR</strong>: resistor que varia com luz → <code>analogRead()</code></li>
-                <li><strong>DHT22</strong>: temperatura + umidade digital</li>
-                <li>Protocolo proprietário (1-wire like)</li>
-                <li>Precisão DHT22: ±0.5°C, ±2% UR</li>
+                <li>Resistor que varia com luz → <code>analogRead()</code></li>
+                <li>Resistor pull-down de 10kΩ forma divisor de tensão</li>
+                <li>Módulo pronto: saída analógica + digital (limiar ajustável)</li>
+                <li>Usos: sensor crepuscular, alarme de claridade</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -66,51 +69,96 @@ graph LR
 // LDR - leitura analógica
 int luz = analogRead(A0);
 
-// DHT22 - leitura digital
-float temp = dht.readTemperature();
-float umid = dht.readHumidity();
+// Quanto mais luz, maior o valor
+if (luz < 200) {
+  Serial.println("Escuro!");
+}
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 4: LCD I2C + Relé -->
+        <!-- SLIDE 4: DHT22 -->
         <section data-auto-animate>
-          <h2>LCD I2C + Relé (Revisão)</h2>
-          <multi-col style="gap:15px">
+          <h2>DHT22 — Temperatura + Umidade</h2>
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/dht22-module.jpg" alt="DHT22 Temperature and Humidity Sensor Module" style="max-width:100%;border-radius:6px" />
+            </div>
+            <div style="flex: 1;">
+              <ul>
+                <li>Temperatura + umidade digital</li>
+                <li>Protocolo proprietário (1-wire like)</li>
+                <li>Precisão: ±0.5°C, ±2% UR</li>
+                <li>Faixa: −40°C a +80°C</li>
+                <li>Alta confiabilidade para projetos IoT</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <code-block lang="cpp" data-trim>
+// DHT22 com biblioteca DHT
+#include &lt;DHT.h&gt;
+DHT dht(DHTPIN, DHT22);
+
+float temp = dht.readTemperature();
+float umid = dht.readHumidity();
+
+Serial.print("Temp: ");
+Serial.print(temp);
+Serial.println(" °C");
+              </code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 5: LCD I2C + Relé -->
+        <section data-auto-animate>
+          <h2>LCD I2C + Relé</h2>
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/relay-module.jpg" alt="Relay Module" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li><strong>LCD 16x2 I2C</strong>: endereço 0x27 ou 0x3F</li>
                 <li><strong>Relé</strong>: switch eletromecânico para cargas AC/DC</li>
-                <li>Relé = isolação galvânica entre MCU e carga</li>
+                <li>Isolação galvânica entre MCU e carga</li>
+                <li>Relé suporta até 10A/250VAC</li>
               </ul>
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
 // LCD I2C
+#include &lt;LiquidCrystal_I2C.h&gt;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 lcd.init();
 lcd.backlight();
 lcd.setCursor(0, 0);
-lcd.print("Temp: ");
-lcd.print(temp);
+lcd.print("Temp: 25.5C");
 
 // Relé
 digitalWrite(PIN_RELE, HIGH); // liga
+delay(5000);
 digitalWrite(PIN_RELE, LOW);  // desliga
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 5: Motor DC + MOSFET -->
+        <!-- SLIDE 6: Motor DC + MOSFET -->
         <section data-auto-animate>
-          <h2>Motor DC + MOSFET (Revisão)</h2>
-          <multi-col style="gap:15px">
+          <h2>Motor DC + MOSFET (PWM)</h2>
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/mosfet-irfz44n.jpg" alt="MOSFET IRLZ44N" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li><strong>MOSFET (IRLZ44N)</strong>: gate recebe PWM do MCU</li>
                 <li><code>analogWrite()</code> controla velocidade (0-255)</li>
                 <li>Díodo flyback protege contra EMF reversa</li>
+                <li>MOSFET canal N: fonte → GND, dreno → carga</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -119,8 +167,11 @@ digitalWrite(PIN_RELE, LOW);  // desliga
 int velocidade = 180; // 0-255
 analogWrite(PIN_MOTOR, velocidade);
 
-// Parar motor
-analogWrite(PIN_MOTOR, 0);
+// Aceleração gradual
+for (int i = 0; i <= 255; i++) {
+  analogWrite(PIN_MOTOR, i);
+  delay(10);
+}
               </code-block>
             </div>
           </multi-col>
@@ -133,88 +184,119 @@ analogWrite(PIN_MOTOR, 0);
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 6: Seção header -->
+        <!-- SLIDE 7: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #50fa7b;">Bloco 2: Sensores de Luz e Temperatura</h2>
           <p>Evoluindo do familiar</p>
         </section>
 
-        <!-- SLIDE 7: TCRT5000 -->
+        <!-- SLIDE 8: TCRT5000 -->
         <section data-auto-animate>
           <h2>TCRT5000 — Sensor Infravermelho Reflexivo</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="tcrt5000-usage" style="max-width:100%">
+                <pre>
+graph LR
+  LED["IR Emissor"] -->|"Luz IR"| SUP[Superfície]
+  SUP -->|"Reflexão"| FOTO[Fototransistor]
+  FOTO -->|"Sinal"| MCU
+  SUP -->|"Clara: reflete"| FOTO
+  SUP -->|"Escura: absorve"| FOTO
+  style LED fill:#ff5555,color:#f8f8f2
+  style FOTO fill:#8be9fd,color:#282a36
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li>Emissor IR + fototransistor</li>
-                <li>Deteta superfície clara/escura</li>
-                <li>Saída digital (0/1) ou analógica</li>
-                <li>Usos: seguidor de linha, detector de obstáculo</li>
+                <li>Emissor IR + fototransistor no mesmo encapsulamento</li>
+                <li>Deteta superfície clara/escura por reflexão</li>
+                <li>Saída digital (0/1) ou analógica (distância)</li>
+                <li>Usos: seguidor de linha, detector de obstáculo proximal</li>
               </ul>
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
 // TCRT5000 - leitura digital
 int linha = digitalRead(PIN_TCRT);
-// LOW = superfície escura (linha)
-// HIGH = superfície clara
+// LOW = escuro (detetou linha preta)
+// HIGH = claro (superfície branca)
 
-// Leitura analógica (distância)
+// Leitura analógica
 int reflexao = analogRead(A0);
+// Quanto maior, mais reflexão
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 8: DS18B20 -->
+        <!-- SLIDE 9: DS18B20 -->
         <section data-auto-animate>
           <h2>DS18B20 — Temperatura OneWire</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/ds18b20.jpg" alt="DS18B20 Temperature Sensor - Waterproof Probe" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Protocolo <strong>OneWire</strong> (1 fio de dados)</li>
                 <li>À prova d'água (sonda metálica)</li>
                 <li>Precisão: ±0.5°C (−55 a +125°C)</li>
-                <li>Múltiplos sensores no mesmo barramento</li>
+                <li>Múltiplos sensores no mesmo barramento (ROM ID único)</li>
               </ul>
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
 // DS18B20 com DallasTemperature
+#include &lt;OneWire.h&gt;
+#include &lt;DallasTemperature.h&gt;
+
 OneWire oneWire(PIN_ONEWIRE);
 DallasTemperature sensors(&oneWire);
 
 sensors.requestTemperatures();
-float tempC = sensors.getTempCByIndex(0);
+float tempC =
+  sensors.getTempCByIndex(0);
+
+Serial.print(tempC);
+Serial.println(" °C");
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 9: TMP36 -->
+        <!-- SLIDE 10: TMP36 -->
         <section data-auto-animate>
           <h2>TMP36 — Temperatura Analógica</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/tmp36.jpg" alt="TMP36 Analog Temperature Sensor" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Saída analógica linear: 10 mV/°C</li>
                 <li>Faixa: −40°C a +125°C</li>
-                <li>Sem protocolo — direto no ADC</li>
-                <li>Barato e simples, porém menos preciso</li>
+                <li>Offset 500 mV = 0°C</li>
+                <li>Barato e simples, porém menos preciso que DS18B20/DHT22</li>
               </ul>
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
 // TMP36 - conversão analógica
 int raw = analogRead(A0);
-float voltage = raw * (5.0 / 1023.0);
+float voltage = raw * (3.3 / 1024.0);
 float tempC = (voltage - 0.5) * 100;
-// 500mV offset = 0°C
+
+Serial.print("Temp: ");
+Serial.print(tempC);
+Serial.println(" °C");
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 10: Comparação sensores temperatura -->
+        <!-- SLIDE 11: Comparação sensores temperatura -->
         <section data-auto-animate>
           <h2>Comparação: Sensores de Temperatura</h2>
           <table>
@@ -246,16 +328,19 @@ float tempC = (voltage - 0.5) * 100;
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 11: Seção header -->
+        <!-- SLIDE 12: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #ffb86c;">Bloco 3: Sensores de Distância</h2>
           <p>Ultrasom, laser e radar</p>
         </section>
 
-        <!-- SLIDE 12: HC-SR04 -->
+        <!-- SLIDE 13: HC-SR04 -->
         <section data-auto-animate>
           <h2>HC-SR04 — Ultrassônico</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/hc-sr04.jpg" alt="HC-SR04 Ultrasonic Distance Sensor" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Emite pulso ultrassônico (40 kHz)</li>
@@ -276,16 +361,29 @@ void loop() {
   Serial.print("Distância: ");
   Serial.print(dist);
   Serial.println(" cm");
+  delay(500);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 13: VL53L0X -->
+        <!-- SLIDE 14: VL53L0X -->
         <section data-auto-animate>
           <h2>VL53L0X — ToF Laser</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="vl53l0x-i2c" style="max-width:100%">
+                <pre>
+graph LR
+  MCU -->|"SDA/SCL"| VLX
+  VCC["3.3V"] --> VLX
+  VLX[VL53L0X<br/>0x29]
+  VLX -->|"Laser IR"| OBST
+  style VLX fill:#ff79c6,color:#f8f8f2
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li><strong>Time-of-Flight</strong> a laser infravermelho</li>
@@ -315,16 +413,27 @@ void loop() {
           </multi-col>
         </section>
 
-        <!-- SLIDE 14: RCWL-0516 -->
+        <!-- SLIDE 15: RCWL-0516 -->
         <section data-auto-animate>
           <h2>RCWL-0516 — Radar Doppler</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="rcwl-radar" style="max-width:100%">
+                <pre>
+graph LR
+  RCWL[RCWL-0516] -->|"Antena TX"| ONDA
+  ONDA["Micro-ondas 3.2GHz"]
+  ONDA -->|"Atravessa"| PAREDE
+  PAREDE --> OBJ[Movimento]
+  style RCWL fill:#ff5555,color:#f8f8f2
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li>Radar de micro-ondas 3.2 GHz</li>
+                <li>Radar de micro-ondas 3.2 GHz (Doppler)</li>
                 <li>Deteta <strong>movimento</strong> através de paredes/vidro</li>
                 <li>Faixa: ~7 m (ajustável)</li>
-                <li>Saída digital (HIGH = movimento)</li>
                 <li>Não depende de calor (diferente do PIR)</li>
               </ul>
             </div>
@@ -334,14 +443,17 @@ void loop() {
 int movimento = digitalRead(PIN_RCWL);
 
 if (movimento == HIGH) {
-  Serial.println("Movimento detetado!");
+  Serial.println("Movimento!");
+  digitalWrite(PIN_LED, HIGH);
+  delay(5000);
+  digitalWrite(PIN_LED, LOW);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 15: Comparação sensores distância -->
+        <!-- SLIDE 16: Comparação sensores distância -->
         <section data-auto-animate>
           <h2>Comparação: Sensores de Distância</h2>
           <table>
@@ -372,16 +484,27 @@ if (movimento == HIGH) {
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 16: Seção header -->
+        <!-- SLIDE 17: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #ff79c6;">Bloco 4: Sensores Ambientais</h2>
           <p>Gás, solo, vibração, chuva, aceleração</p>
         </section>
 
-        <!-- SLIDE 17: MQ-2 -->
+        <!-- SLIDE 18: MQ-2 -->
         <section data-auto-animate>
           <h2>MQ-2 — Gás Inflamável / Fumaça</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="mq2-alert" style="max-width:100%">
+                <pre>
+graph LR
+  GAS[Gás GLP] --> MQ2[MQ-2]
+  MQ2 -->|"A0"| MCU
+  MCU -->|"ppm > limiar?"| ALERT["🚨 Alarme"]
+  style MQ2 fill:#ff5555,color:#f8f8f2
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Deteta GLP, metano, álcool, fumaça</li>
@@ -395,27 +518,31 @@ if (movimento == HIGH) {
 // MQ-2 - leitura analógica
 int gas = analogRead(A0);
 
-// Conversão aproximada para ppm
-float ppm = gas * (5.0 / 1023.0);
-
-if (ppm > LIMIAR) {
-  Serial.println("ALERTA: Gás detetado!");
+if (gas > LIMIAR) {
+  digitalWrite(PIN_BUZZER, HIGH);
+  digitalWrite(PIN_LED, HIGH);
+  Serial.println("ALERTA: Gás!");
+} else {
+  digitalWrite(PIN_BUZZER, LOW);
+  digitalWrite(PIN_LED, LOW);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 18: Capacitive Soil Moisture -->
+        <!-- SLIDE 19: Capacitive Soil Moisture -->
         <section data-auto-animate>
           <h2>Capacitive Soil Moisture</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/soil-moisture.jpg" alt="Soil Moisture Sensor" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Mede umidade do solo por <strong>capacitância</strong></li>
                 <li>Não oxida (diferente do resistivo)</li>
                 <li>Saída analógica: seco ~530, molhado ~260</li>
-                <li>Tensão: 3.3–5.5V</li>
                 <li>Ideal: irrigação automática</li>
               </ul>
             </div>
@@ -424,7 +551,6 @@ if (ppm > LIMIAR) {
 // Capacitive Soil Moisture
 int raw = analogRead(A0);
 
-// Mapear para porcentagem
 int umidade = map(raw, 530, 260, 0, 100);
 umidade = constrain(umidade, 0, 100);
 
@@ -436,10 +562,21 @@ Serial.println("%");
           </multi-col>
         </section>
 
-        <!-- SLIDE 19: SW-420 -->
+        <!-- SLIDE 20: SW-420 -->
         <section data-auto-animate>
           <h2>SW-420 — Vibração</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="sw420-vibration" style="max-width:100%">
+                <pre>
+graph LR
+  SHOCK[💥 Vibração] --> SW[SW-420]
+  SW -->|"DO = HIGH"| MCU
+  MCU -->|"> limiar"| ALARM["🚨 Alarme!"]
+  style SW fill:#ffb86c,color:#282a36
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Switch de mercúrio / mola vibrátil</li>
@@ -454,22 +591,37 @@ Serial.println("%");
 int vib = digitalRead(PIN_SW420);
 
 if (vib == HIGH) {
-  Serial.println("Vibração detetada!");
+  Serial.println("Vibração!");
+  contador++;
+}
+if (contador > 5) {
+  digitalWrite(PIN_LED, HIGH);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 20: Sensor de Chuva -->
+        <!-- SLIDE 21: Sensor de Chuva -->
         <section data-auto-animate>
           <h2>Sensor de Chuva</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="rain-sensor" style="max-width:100%">
+                <pre>
+graph LR
+  RAIN[🌧️ Chuva] --> PLACA[Placa Sensora]
+  PLACA -->|"A0"| MCU
+  MCU --> ALERT2["🔔 Fechar janela!"]
+  style RAIN fill:#8be9fd,color:#282a36
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li>Placa com trilhas resistivas</li>
+                <li>Placa com trilhas resistivas expostas</li>
                 <li>Água fecha circuito → resistência cai</li>
-                <li>Saída analógica (intensidade) e digital (limiar)</li>
+                <li>Saída analógica (intensidade) + digital (limiar)</li>
                 <li>Proteger conexões da água!</li>
               </ul>
             </div>
@@ -478,21 +630,24 @@ if (vib == HIGH) {
 // Sensor de chuva
 int chuva = analogRead(A0);
 
-// Valores altos = seco, baixos = chuva
 int intensidade = map(chuva, 1023, 200, 0, 100);
+intensidade = constrain(intensidade, 0, 100);
 
-Serial.print("Chuva: ");
-Serial.print(intensidade);
-Serial.println("%");
+if (intensidade > 30) {
+  Serial.println("Chovendo!");
+}
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 21: MPU-6050 -->
+        <!-- SLIDE 22: MPU-6050 -->
         <section data-auto-animate>
           <h2>MPU-6050 — Acelerômetro + Giroscópio</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/mpu-6050.jpg" alt="MPU-6050 Accelerometer and Gyroscope IC" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>6 eixos: 3 accel + 3 gyro</li>
@@ -511,54 +666,63 @@ Adafruit_MPU6050 mpu;
 void loop() {
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
+
   Serial.print("Accel X: ");
   Serial.print(a.acceleration.x);
   Serial.println(" m/s²");
+  delay(500);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 22: Sensor Hall -->
+        <!-- SLIDE 23: Sensor Hall -->
         <section data-auto-animate>
           <h2>Sensor Hall — Campo Magnético</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/hall-sensor.gif" alt="Hall Effect Sensor - Magnetic Field Detection" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li><strong>US1881</strong>: digital (on/off)</li>
-                <li><strong>SS49E</strong>: analógico (intensidade)</li>
-                <li>Deteta ímãs / campo magnético</li>
+                <li><strong>US1881</strong>: digital (liga/desliga com ímã)</li>
+                <li><strong>SS49E</strong>: analógico (intensidade do campo)</li>
                 <li>Usos: velocímetro (ímã no eixo), contador de voltas</li>
               </ul>
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
-// US1881 - digital
+// US1881 - contador de voltas
 int campo = digitalRead(PIN_HALL);
 
-// SS49E - analógico
-int intensidade = analogRead(A0);
+static int voltas = 0;
+static unsigned long t = 0;
 
-// Contar voltas com ímã
-if (campo == LOW) {
+if (campo == LOW &&
+    millis() - t > 100) {
   voltas++;
+  t = millis();
+  Serial.print("Voltas: ");
+  Serial.println(voltas);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 23: PIR HC-SR501 -->
+        <!-- SLIDE 24: PIR HC-SR501 -->
         <section data-auto-animate>
-          <h2>PIR HC-SR501 — Presença</h2>
-          <multi-col style="gap:15px">
+          <h2>PIR HC-SR501 — Presença (IV)</h2>
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/pir-hc-sr501.png" alt="PIR HC-SR501 Motion Sensor" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Deteta <strong>calor infravermelho</strong> em movimento</li>
                 <li>Faixa: ~7 m, ângulo 120°</li>
                 <li>2 potenciômetros: sensibilidade e tempo</li>
-                <li>Saída digital (HIGH = presença)</li>
                 <li>Usos: alarme, iluminação automática</li>
               </ul>
             </div>
@@ -569,7 +733,8 @@ int presenca = digitalRead(PIN_PIR);
 
 if (presenca == HIGH) {
   digitalWrite(PIN_LED, HIGH);
-  Serial.println("Presença detetada!");
+  Serial.println("Presença!");
+  delay(10000);
 } else {
   digitalWrite(PIN_LED, LOW);
 }
@@ -585,23 +750,25 @@ if (presenca == HIGH) {
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 24: Seção header -->
+        <!-- SLIDE 25: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #bd93f9;">Bloco 5: Sensores de Corrente e Tensão</h2>
           <p>Monitoramento energético</p>
         </section>
 
-        <!-- SLIDE 25: INA219 -->
+        <!-- SLIDE 26: INA219 -->
         <section data-auto-animate>
           <h2>INA219 — Corrente e Tensão (I2C)</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/ina219.jpg" alt="INA219 Current and Voltage Sensor Module" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Mede <strong>corrente</strong> via shunt integrado</li>
                 <li>Mede <strong>tensão</strong> do barramento</li>
                 <li>I2C (0x40 ou 0x41)</li>
                 <li>Faixa: até 26V, ±3.2A</li>
-                <li>Precisão: 0.1 mA</li>
                 <li>Ideal: monitorar consumo de projetos IoT</li>
               </ul>
             </div>
@@ -612,42 +779,55 @@ if (presenca == HIGH) {
 Adafruit_INA219 ina219;
 
 void loop() {
-  float shuntV = ina219.getShuntVoltage_mV();
-  float busV   = ina219.getBusVoltage_V();
+  float busV = ina219.getBusVoltage_V();
   float current = ina219.getCurrent_mA();
-  float power   = busV * (current / 1000.0);
-  Serial.print("Potência: ");
-  Serial.print(power);
-  Serial.println(" W");
+  float power = busV * (current / 1000.0);
+
+  Serial.print("Tensão: ");
+  Serial.print(busV);
+  Serial.println(" V");
+  delay(1000);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 26: Divisor de Tensão -->
+        <!-- SLIDE 27: Divisor de Tensão -->
         <section data-auto-animate>
           <h2>Divisor de Tensão — Medição de Tensão</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="voltage-divider" style="max-width:100%">
+                <pre>
+graph LR
+  VIN["Bateria 12V"] --> R1[100kΩ]
+  R1 --> VOUT["Vout (ADC)"]
+  VOUT --> R2[33kΩ]
+  R2 --> GND
+  style R1 fill:#ff5555,color:#f8f8f2
+  style R2 fill:#8be9fd,color:#282a36
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>2 resistores em série: <code>Vout = Vin × R2/(R1+R2)</code></li>
                 <li>Permite ler tensões acima de VCC</li>
-                <li>Ex: medir bateria 12V com ADC 3.3V</li>
-                <li>Atenção: resistores afetam consumo!</li>
+                <li>Ex: bateria 12V → ADC 3.3V (fator 4.03)</li>
+                <li>Resistores altos (> 10kΩ) reduzem consumo</li>
               </ul>
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
-// Divisor de tensão (R1=100k, R2=33k)
-// Fator: 133k/33k = 4.03
+// Divisor R1=100k, R2=33k
 float fator = (100.0 + 33.0) / 33.0;
 
 int raw = analogRead(A0);
-float vout = raw * (3.3 / 1023.0);
-float vin  = vout * fator;
+float vout = raw * (3.3 / 1024.0);
+float vin = vout * fator;
 
-Serial.print("Tensão: ");
+Serial.print("Bateria: ");
 Serial.print(vin);
 Serial.println(" V");
               </code-block>
@@ -662,22 +842,25 @@ Serial.println(" V");
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 27: Seção header -->
+        <!-- SLIDE 28: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #ff5555;">Bloco 6: Atuadores — Motores e Movimento</h2>
           <p>Controlando o mundo físico</p>
         </section>
 
-        <!-- SLIDE 28: SG90 Servo -->
+        <!-- SLIDE 29: SG90 Servo -->
         <section data-auto-animate>
           <h2>SG90 — Servo Motor</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/sg90-servo.jpg" alt="SG90 Micro Servo Motor" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Rotação precisa: 0° a 180°</li>
-                <li>Controle via PWM (servo library)</li>
+                <li>Controle via PWM (biblioteca Servo)</li>
                 <li>Torque: ~1.8 kg·cm (4.8V)</li>
-                <li>Usos: braço robótico, fechadura, ventoinha direcional</li>
+                <li>Usos: braço robótico, fechadura, câmera pan/tilt</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -702,17 +885,19 @@ void loop() {
           </multi-col>
         </section>
 
-        <!-- SLIDE 29: 28BYJ-48 -->
+        <!-- SLIDE 30: 28BYJ-48 -->
         <section data-auto-animate>
           <h2>28BYJ-48 + ULN2003 — Motor de Passo</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/28byj-48.jpg" alt="28BYJ-48 Stepper Motor with ULN2003 Driver" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Motor de passo 5V, 4 fases</li>
-                <li>Driver <strong>ULN2003</strong> (darlington array)</li>
+                <li>Driver <strong>ULN2003</strong> (transistores Darlington)</li>
                 <li>2048 passos/volta (half-step)</li>
-                <li>Rotação precisa em passos discretos</li>
-                <li>Usos: dispensador, cortina automática</li>
+                <li>Usos: dispensador, cortina automática, foco de câmera</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -736,17 +921,19 @@ void loop() {
           </multi-col>
         </section>
 
-        <!-- SLIDE 30: WS2812B -->
+        <!-- SLIDE 31: WS2812B -->
         <section data-auto-animate>
           <h2>WS2812B — LED Endereçável (Neopixel)</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/ws2812b.jpg" alt="WS2812B Addressable RGB LED" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>LED RGB com <strong>controlador integrado</strong></li>
-                <li>1 pino de dados controla N LEDs</li>
+                <li>1 pino de dados controla N LEDs (daisy-chain)</li>
                 <li>Cada LED: 16M cores, endereço individual</li>
-                <li>Cascateável (daisy-chain)</li>
-                <li>Usos: indicação visual, fita decorativa</li>
+                <li>Usos: indicação visual, fita decorativa, matriz de LEDs</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -758,23 +945,29 @@ Adafruit_NeoPixel strip(NUM, PIN, NEO_GRB);
 
 void setup() {
   strip.begin();
-  strip.setBrightness(50); // 0-255
+  strip.setBrightness(50);
 }
 
 void loop() {
   strip.setPixelColor(0,
-    strip.Color(255, 0, 0)); // LED 0 = vermelho
+    strip.Color(255, 0, 0)); // vermelho
+  strip.setPixelColor(1,
+    strip.Color(0, 255, 0)); // verde
   strip.show();
+  delay(500);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 31: Solenóide + Válvula -->
+        <!-- SLIDE 32: Solenóide + Válvula -->
         <section data-auto-animate>
           <h2>Solenóide + Válvula Solenóide</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/solenoid-valve.jpg" alt="Solenoid Valve" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li><strong>Solenóide</strong>: eletroímã linear (puxa/empurra)</li>
@@ -786,17 +979,14 @@ void loop() {
             </div>
             <div style="flex: 1;">
               <code-block lang="cpp" data-trim>
-// Solenóide via MOSFET (N-channel)
-// Gate → pino MCU via resistor 220Ω
-// Drain → solenóide negativo
-// Source → GND
-
-digitalWrite(PIN_SOLENOIDE, HIGH); // abre
+// Solenóide via MOSFET
+digitalWrite(PIN_SOL, HIGH); // ativa
 delay(3000);
-digitalWrite(PIN_SOLENOIDE, LOW);  // fecha
+digitalWrite(PIN_SOL, LOW);  // desativa
 
-// Válvula solenóide funciona igual
-// HIGH = água passa, LOW = bloqueia
+// Válvula solenóide
+// HIGH = água passa
+// LOW = bloqueia
               </code-block>
             </div>
           </multi-col>
@@ -809,23 +999,35 @@ digitalWrite(PIN_SOLENOIDE, LOW);  // fecha
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 32: Seção header -->
+        <!-- SLIDE 33: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #8be9fd;">Bloco 7: Displays Alternativos</h2>
           <p>Além do LCD 16x2</p>
         </section>
 
-        <!-- SLIDE 33: OLED SSD1306 -->
+        <!-- SLIDE 34: OLED SSD1306 -->
         <section data-auto-animate>
           <h2>OLED SSD1306 — Display 128×64 (I2C)</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="oled-ssd1306" style="max-width:100%">
+                <pre>
+graph LR
+  MCU -->|"SDA/SCL"| OLED
+  VCC["3.3V"] --> OLED
+  OLED[OLED SSD1306<br/>0x3C]
+  OLED --> CONTENT["📟 Texto/Formas/Bitmaps"]
+  style OLED fill:#8be9fd,color:#282a36
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li>Display gráfico monocromático</li>
-                <li>128×64 pixels, alto contraste</li>
+                <li>Display gráfico monocromático 128×64</li>
+                <li>Alto contraste, ângulo de visão amplo</li>
                 <li>I2C (0x3C ou 0x3D)</li>
-                <li>Texto, formas, bitmaps</li>
                 <li>Consome muito pouco (~10 mA)</li>
+                <li>Texto, formas geométricas, bitmaps</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -849,16 +1051,29 @@ void setup() {
           </multi-col>
         </section>
 
-        <!-- SLIDE 34: TM1637 -->
+        <!-- SLIDE 35: TM1637 -->
         <section data-auto-animate>
           <h2>TM1637 — Display 4 Dígitos</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="tm1637-wiring" style="max-width:100%">
+                <pre>
+graph LR
+  MCU -->|"CLK/DIO"| TM[TM1637]
+  VCC["5V"] --> TM
+  TM --> DIGITS["8 8 8 8"]
+  DIGITS --> EX1["25.5°C"]
+  DIGITS --> EX2["12:30"]
+  style TM fill:#ffb86c,color:#282a36
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>4 dígitos 7 segmentos + 2 pontos</li>
                 <li>Protocolo próprio (2 fios: CLK + DIO)</li>
-                <li>Ideal para mostrar: relógio, temperatura, contagem</li>
-                <li>Muito barato e simples</li>
+                <li>Ideal para: relógio, temperatura, contagem</li>
+                <li>Muito barato e simples de usar</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -867,13 +1082,12 @@ void setup() {
 TM1637Display display(CLK, DIO);
 
 void setup() {
-  display.setBrightness(0x0F); // max
+  display.setBrightness(0x0F);
 }
 
 void loop() {
   int temp = dht.readTemperature();
   display.showNumberDec(temp);
-  // Mostra: "  25" se temp=25
   delay(2000);
 }
               </code-block>
@@ -888,13 +1102,13 @@ void loop() {
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 35: Seção header -->
+        <!-- SLIDE 36: Seção header -->
         <section data-auto-animate>
           <h2 style="color: #50fa7b;">Bloco 8: Comunicação IoT</h2>
           <p>Protocolos e conectividade</p>
         </section>
 
-        <!-- SLIDE 36: Protocolos I2C vs SPI vs OneWire -->
+        <!-- SLIDE 37: Protocolos I2C vs SPI vs OneWire -->
         <section data-auto-animate>
           <h2>Protocolos: I2C vs SPI vs OneWire vs UART</h2>
           <table>
@@ -917,17 +1131,26 @@ void loop() {
           <copy-btn></copy-btn>
         </section>
 
-        <!-- SLIDE 37: MQTT -->
+        <!-- SLIDE 38: MQTT -->
         <section data-auto-animate>
           <h2>MQTT — Protocolo IoT por Excelência</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <div class="mermaid" data-id="mqtt-pubsub" style="max-width:100%">
+                <pre>
+graph LR
+  SENSOR[ESP8266] -->|"publish"| BROKER["☁️ Broker"]
+  BROKER -->|"subscribe"| APP["📱 Dashboard"]
+  style BROKER fill:#bd93f9,color:#f8f8f2
+                </pre>
+              </div>
+            </div>
             <div style="flex: 1;">
               <ul>
-                <li><strong>Publish/Subscribe</strong> via broker</li>
+                <li><strong>Publish/Subscribe</strong> via broker central</li>
                 <li>Leve: header mínimo de 2 bytes</li>
                 <li>Tópicos hierárquicos: <code>casa/sala/temp</code></li>
-                <li>QoS: 0 (fire&amp;forget), 1 (pelo menos 1), 2 (exatamente 1)</li>
-                <li>Broker popular: <strong>Mosquitto</strong></li>
+                <li>QoS: 0, 1, ou 2</li>
               </ul>
             </div>
             <div style="flex: 1;">
@@ -939,29 +1162,33 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 void setup() {
-  client.setServer("broker.hivemq.com",
-                   1883);
+  client.setServer(
+    "broker.hivemq.com", 1883);
 }
 
 void loop() {
   char msg[8];
   dtostrf(temp, 1, 1, msg);
-  client.publish("casa/sala/temp", msg);
+  client.publish(
+    "casa/sala/temp", msg);
 }
               </code-block>
             </div>
           </multi-col>
         </section>
 
-        <!-- SLIDE 38: ESP8266 Wi-Fi -->
+        <!-- SLIDE 39: ESP8266 Wi-Fi -->
         <section data-auto-animate>
           <h2>ESP8266 — Wi-Fi Nativo + HTTP</h2>
-          <multi-col style="gap:15px">
+          <multi-col cols="3" style="gap:10px">
+            <div style="flex: 0.8; text-align:center">
+              <img src="img/sensores/esp8266.jpg" alt="ESP8266 Wi-Fi IC" style="max-width:100%;border-radius:6px" />
+            </div>
             <div style="flex: 1;">
               <ul>
                 <li>Wi-Fi integrado (802.11 b/g/n)</li>
-                <li>HTTP GET/POST para APIs</li>
-                <li>REST API: ThingsBoard, Blynk, Firebase</li>
+                <li>HTTP GET/POST para APIs REST</li>
+                <li>Compatível com ThingsBoard, Blynk, Firebase</li>
                 <li>Substitui Arduino + shield Ethernet</li>
               </ul>
             </div>
@@ -973,7 +1200,7 @@ void loop() {
 
 HTTPClient http;
 http.begin("http://api.exemplo.com"
-           "/dados?temp=" + String(temp));
+  "/dados?temp=" + String(temp));
 int code = http.GET();
 if (code > 0) {
   String payload = http.getString();
@@ -991,7 +1218,7 @@ http.end();
          ============================================================ -->
       <section>
 
-        <!-- SLIDE 39: Atividade Prática -->
+        <!-- SLIDE 40: Atividade Prática -->
         <section data-auto-animate>
           <h2>Atividade: Sistema de Monitoramento Inteligente</h2>
           <p style="font-size: 18pt; color: #ffb86c;">Em grupos, escolham:</p>
@@ -1011,7 +1238,7 @@ http.end();
           </div>
         </section>
 
-        <!-- SLIDE 40: Resumo -->
+        <!-- SLIDE 41: Resumo -->
         <section data-auto-animate>
           <h2>Resumo da Aula</h2>
           <ls-u font-size="20pt">
