@@ -193,9 +193,9 @@ for (int i = 0; i <= 255; i++) {
         <!-- SLIDE 8: TCRT5000 -->
         <section data-auto-animate>
           <h2>TCRT5000 — Sensor Infravermelho Reflexivo</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="tcrt5000-usage" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="tcrt5000-usage">
                 <pre>
 graph LR
   LED["IR Emissor"] -->|"Luz IR"| SUP[Superfície]
@@ -208,7 +208,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>Emissor IR + fototransistor no mesmo encapsulamento</li>
                 <li>Deteta superfície clara/escura por reflexão</li>
@@ -216,7 +216,7 @@ graph LR
                 <li>Usos: seguidor de linha, detector de obstáculo proximal</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // TCRT5000 - leitura digital
 int linha = digitalRead(PIN_TCRT);
@@ -228,7 +228,7 @@ int reflexao = analogRead(A0);
 // Quanto maior, mais reflexão
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 9: DS18B20 -->
@@ -371,9 +371,9 @@ void loop() {
         <!-- SLIDE 14: VL53L0X -->
         <section data-auto-animate>
           <h2>VL53L0X — ToF Laser</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="vl53l0x-i2c" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="vl53l0x-i2c">
                 <pre>
 graph LR
   MCU -->|"SDA/SCL"| VLX
@@ -384,7 +384,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li><strong>Time-of-Flight</strong> a laser infravermelho</li>
                 <li>I2C (endereço 0x29)</li>
@@ -393,7 +393,7 @@ graph LR
                 <li>Ideal: robótica, drone, nível de tanque</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // VL53L0X com Adafruit_VL53L0X
 #include &lt;Adafruit_VL53L0X.h&gt;
@@ -410,15 +410,15 @@ void loop() {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 15: RCWL-0516 -->
         <section data-auto-animate>
           <h2>RCWL-0516 — Radar Doppler</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="rcwl-radar" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="rcwl-radar">
                 <pre>
 graph LR
   RCWL[RCWL-0516] -->|"Antena TX"| ONDA
@@ -429,7 +429,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>Radar de micro-ondas 3.2 GHz (Doppler)</li>
                 <li>Deteta <strong>movimento</strong> através de paredes/vidro</li>
@@ -437,7 +437,7 @@ graph LR
                 <li>Não depende de calor (diferente do PIR)</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // RCWL-0516 - leitura digital
 int movimento = digitalRead(PIN_RCWL);
@@ -450,7 +450,7 @@ if (movimento == HIGH) {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 16: Comparação sensores distância -->
@@ -493,9 +493,9 @@ if (movimento == HIGH) {
         <!-- SLIDE 18: MQ-2 -->
         <section data-auto-animate>
           <h2>MQ-2 — Gás Inflamável / Fumaça</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="mq2-alert" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="mq2-alert">
                 <pre>
 graph LR
   GAS[Gás GLP] --> MQ2[MQ-2]
@@ -505,7 +505,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>Deteta GLP, metano, álcool, fumaça</li>
                 <li>Saída analógica (ppm proporcional)</li>
@@ -513,7 +513,7 @@ graph LR
                 <li><strong>Aquecimento</strong>: precisa de ~20 s para estabilizar</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // MQ-2 - leitura analógica
 int gas = analogRead(A0);
@@ -528,7 +528,7 @@ if (gas > LIMIAR) {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 19: Capacitive Soil Moisture -->
@@ -565,9 +565,9 @@ Serial.println("%");
         <!-- SLIDE 20: SW-420 -->
         <section data-auto-animate>
           <h2>SW-420 — Vibração</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="sw420-vibration" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="sw420-vibration">
                 <pre>
 graph LR
   SHOCK[💥 Vibração] --> SW[SW-420]
@@ -577,7 +577,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>Switch de mercúrio / mola vibrátil</li>
                 <li>Digital: HIGH quando vibra</li>
@@ -585,7 +585,7 @@ graph LR
                 <li>Usos: alarme, deteção de terremoto</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // SW-420 - deteção de vibração
 int vib = digitalRead(PIN_SW420);
@@ -599,15 +599,15 @@ if (contador > 5) {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 21: Sensor de Chuva -->
         <section data-auto-animate>
           <h2>Sensor de Chuva</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="rain-sensor" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="rain-sensor">
                 <pre>
 graph LR
   RAIN[🌧️ Chuva] --> PLACA[Placa Sensora]
@@ -617,7 +617,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>Placa com trilhas resistivas expostas</li>
                 <li>Água fecha circuito → resistência cai</li>
@@ -625,7 +625,7 @@ graph LR
                 <li>Proteger conexões da água!</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // Sensor de chuva
 int chuva = analogRead(A0);
@@ -638,7 +638,7 @@ if (intensidade > 30) {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 22: MPU-6050 -->
@@ -796,9 +796,9 @@ void loop() {
         <!-- SLIDE 27: Divisor de Tensão -->
         <section data-auto-animate>
           <h2>Divisor de Tensão — Medição de Tensão</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="voltage-divider" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="voltage-divider">
                 <pre>
 graph LR
   VIN["Bateria 12V"] --> R1[100kΩ]
@@ -810,7 +810,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>2 resistores em série: <code>Vout = Vin × R2/(R1+R2)</code></li>
                 <li>Permite ler tensões acima de VCC</li>
@@ -818,7 +818,7 @@ graph LR
                 <li>Resistores altos (> 10kΩ) reduzem consumo</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // Divisor R1=100k, R2=33k
 float fator = (100.0 + 33.0) / 33.0;
@@ -832,7 +832,7 @@ Serial.print(vin);
 Serial.println(" V");
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
       </section><!-- fim Bloco 5 -->
@@ -1008,9 +1008,9 @@ digitalWrite(PIN_SOL, LOW);  // desativa
         <!-- SLIDE 34: OLED SSD1306 -->
         <section data-auto-animate>
           <h2>OLED SSD1306 — Display 128×64 (I2C)</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="oled-ssd1306" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="oled-ssd1306">
                 <pre>
 graph LR
   MCU -->|"SDA/SCL"| OLED
@@ -1021,7 +1021,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>Display gráfico monocromático 128×64</li>
                 <li>Alto contraste, ângulo de visão amplo</li>
@@ -1030,7 +1030,7 @@ graph LR
                 <li>Texto, formas geométricas, bitmaps</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 #include &lt;Adafruit_SSD1306.h&gt;
 #define W 128
@@ -1048,15 +1048,15 @@ void setup() {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 35: TM1637 -->
         <section data-auto-animate>
           <h2>TM1637 — Display 4 Dígitos</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="tm1637-wiring" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="tm1637-wiring">
                 <pre>
 graph LR
   MCU -->|"CLK/DIO"| TM[TM1637]
@@ -1068,7 +1068,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li>4 dígitos 7 segmentos + 2 pontos</li>
                 <li>Protocolo próprio (2 fios: CLK + DIO)</li>
@@ -1076,7 +1076,7 @@ graph LR
                 <li>Muito barato e simples de usar</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 #include &lt;TM1637Display.h&gt;
 TM1637Display display(CLK, DIO);
@@ -1092,7 +1092,7 @@ void loop() {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
       </section><!-- fim Bloco 7 -->
@@ -1134,9 +1134,9 @@ void loop() {
         <!-- SLIDE 38: MQTT -->
         <section data-auto-animate>
           <h2>MQTT — Protocolo IoT por Excelência</h2>
-          <multi-col cols="3" style="gap:10px">
-            <div style="flex: 0.8; text-align:center">
-              <div class="mermaid" data-id="mqtt-pubsub" style="max-width:100%">
+          <div style="display:flex; gap:10px; align-items:start">
+            <div style="flex:0 0 260px; text-align:center">
+              <div class="mermaid" data-id="mqtt-pubsub">
                 <pre>
 graph LR
   SENSOR[ESP8266] -->|"publish"| BROKER["☁️ Broker"]
@@ -1145,7 +1145,7 @@ graph LR
                 </pre>
               </div>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <ul>
                 <li><strong>Publish/Subscribe</strong> via broker central</li>
                 <li>Leve: header mínimo de 2 bytes</li>
@@ -1153,7 +1153,7 @@ graph LR
                 <li>QoS: 0, 1, ou 2</li>
               </ul>
             </div>
-            <div style="flex: 1;">
+            <div style="flex:1">
               <code-block lang="cpp" data-trim>
 // ESP8266 + PubSubClient
 #include &lt;PubSubClient.h&gt;
@@ -1174,7 +1174,7 @@ void loop() {
 }
               </code-block>
             </div>
-          </multi-col>
+          </div>
         </section>
 
         <!-- SLIDE 39: ESP8266 Wi-Fi -->
