@@ -50,6 +50,13 @@ BONUS_URL_PATTERNS = [
 ]
 
 
+def safe_dim(val):
+    try:
+        return int(float(re.sub(r"[^\d.]", "", str(val))))
+    except (ValueError, TypeError):
+        return 0
+
+
 def reject_url(url: str) -> bool:
     url_lower = url.lower()
     for pat in REJECT_URL_PATTERNS:
@@ -94,8 +101,8 @@ def collect_candidates(soup: BeautifulSoup, base_url: str) -> list[dict]:
     for container in soup.find_all(["article", "main"]) or []:
         for img in container.find_all("img", src=True):
             alt = img.get("alt", "").strip()
-            w = int(img.get("width", 0) or 0)
-            h = int(img.get("height", 0) or 0)
+            w = safe_dim(img.get("width"))
+            h = safe_dim(img.get("height"))
             if w and w <= 80 or h and h <= 80:
                 continue
             _add(img["src"], alt, "article")
@@ -106,8 +113,8 @@ def collect_candidates(soup: BeautifulSoup, base_url: str) -> list[dict]:
         if div:
             for img in div.find_all("img", src=True):
                 alt = img.get("alt", "").strip()
-                w = int(img.get("width", 0) or 0)
-                h = int(img.get("height", 0) or 0)
+                w = safe_dim(img.get("width"))
+                h = safe_dim(img.get("height"))
                 if w and w <= 80 or h and h <= 80:
                     continue
                 _add(img["src"], alt, "content-div")
@@ -117,8 +124,8 @@ def collect_candidates(soup: BeautifulSoup, base_url: str) -> list[dict]:
     if body:
         for img in body.find_all("img", src=True):
             alt = img.get("alt", "").strip()
-            w = int(img.get("width", 0) or 0)
-            h = int(img.get("height", 0) or 0)
+            w = safe_dim(img.get("width"))
+            h = safe_dim(img.get("height"))
             if w and w <= 80 or h and h <= 80:
                 continue
             _add(img["src"], alt, "body")
@@ -138,12 +145,8 @@ def validate_image(img_entry: dict) -> dict | None:
         return None
 
     content_type = resp.headers.get("Content-Type", "")
-    if not content_type.startswith("image/"):
-        return None
-
     content_length = resp.headers.get("Content-Length")
-    if content_length is None:
-        # Try a GET with stream to peek
+    if not content_type or not content_length:
         try:
             resp2 = requests.get(url, headers=HEADERS, timeout=10, stream=True)
             if resp2.status_code != 200:
@@ -151,6 +154,7 @@ def validate_image(img_entry: dict) -> dict | None:
             ct = resp2.headers.get("Content-Type", "")
             if not ct.startswith("image/"):
                 return None
+            content_type = ct
             size = 0
             for chunk in resp2.iter_content(chunk_size=8192):
                 size += len(chunk)
