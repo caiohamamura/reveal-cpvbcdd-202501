@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Ciência de Dados - Análise de Agrupamento</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SLIDE 1: CAPA
+         ============================================================ -->
+      <section data-auto-animate>
+        <header1 aula="12" curso="Ciência de Dados" title-size="22"
+                 title="Análise de Agrupamento (Cluster Analysis)">
+          <div class="mermaid" data-id="cover-diagram" style="width:480px">
+            <pre>
+graph LR
+  A["Dados<br/>sem rótulos"] -->|"Cluster<br/>Analysis"| B["Grupos<br/>Naturais"]
+  B --> C["Padrões<br/>Segmentação"]
+  B --> D["Outliers<br/>Anomalias"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#bd93f9,color:#282a36
+  style C fill:#50fa7b,color:#282a36
+  style D fill:#ff79c6,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         SLIDE 2: REVISÃO
+         ============================================================ -->
+      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.3">
+        <h2>Revisão: Aula Passada</h2>
+        <ls-u>
+          <li>PCA: reduz dimensionalidade preservando variância</li>
+          <li>Componentes principais = combinações lineares das variáveis originais</li>
+          <li>LDA: maximiza separação entre classes conhecidas</li>
+          <li>PCA é não supervisionado; LDA usa rótulos de classe</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO 1: MOTIVAÇÃO
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Motivação intro -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">O Problema: Descobrir Estrutura sem Rótulos</h2>
+          <ul>
+            <li>Em muitos cenários, <strong>não temos classes pré-definidas</strong> para os dados</li>
+            <li>Queremos organizar objetos em grupos <strong>naturais</strong> baseados em similaridade</li>
+            <li>Clientes de um e-commerce: quem são os perfis de compra?</li>
+            <li>Genes com expressão similar: quais funções biológicas?</li>
+            <li>Documentos de texto: quais tópicos emergem?</li>
+          </ul>
+          <div class="fragment" style="margin-top: 20px; background: #44475a; border-left: 4px solid #50fa7b; padding: 15px;">
+            <p style="color: #50fa7b; font-weight: bold;">Aprendizado Não Supervisionado</p>
+            <p style="font-size: 0.9em;">Diferente da classificação, aqui não há <em>ground truth</em> — o algoritmo descobre a estrutura sozinho.</p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Supervisionado vs Não Supervisionado -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Supervisionado vs Não Supervisionado</h2>
+          <multi-col style="gap:20px">
+            <div style="flex:1;">
+              <div style="background: #44475a; border-radius: 8px; padding: 15px; border-left: 4px solid #ff5555;">
+                <p style="color: #ff5555; font-weight: bold;">Supervisionado</p>
+                <ul style="font-size:0.85em">
+                  <li>Dados possuem <strong>rótulos</strong> (y)</li>
+                  <li>Objetivo: <strong>prever</strong> rótulos</li>
+                  <li>Ex: classificação, regressão</li>
+                  <li>Avaliação: acurácia, RMSE</li>
+                </ul>
+              </div>
+            </div>
+            <div style="flex:1;">
+              <div style="background: #44475a; border-radius: 8px; padding: 15px; border-left: 4px solid #50fa7b;">
+                <p style="color: #50fa7b; font-weight: bold;">Não Supervisionado</p>
+                <ul style="font-size:0.85em">
+                  <li>Dados <strong>sem rótulos</strong></li>
+                  <li>Objetivo: <strong>descobrir</strong> padrões</li>
+                  <li>Ex: clustering, PCA</li>
+                  <li>Avaliação: coesão, separação</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Motivação -->
+
+      <!-- ============================================================
+         SEÇÃO 2: FUNDAMENTOS
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: O que é Cluster Analysis -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">O que é Cluster Analysis?</h2>
+          <ul>
+            <li>Técnica de aprendizado <strong>não supervisionado</strong></li>
+            <li>Agrupa objetos em <strong>clusters</strong> (grupos) coesos</li>
+            <li>Objetos dentro do mesmo cluster são mais <strong>similares</strong> entre si</li>
+            <li>Objetos de clusters diferentes são mais <strong>dissimilares</strong></li>
+          </ul>
+          <div class="fragment" style="margin-top: 15px;">
+            <h3>Objetivos principais</h3>
+            <ol>
+              <li>Descoberta de padrões e estruturas implícitas</li>
+              <li>Redução de dimensionalidade (agrupamento)</li>
+              <li>Segmentação para análise e ação</li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- SLIDE: Distâncias e Similaridades -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Medidas de Distância</h2>
+          <p style="font-size:0.85em; color: #6272a4;">O clustering depende de como medimos <em>proximidade</em> entre objetos.</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; font-size: 0.8em;">
+            <div style="background: #44475a; border-radius: 6px; padding: 12px;">
+              <p style="color: #bd93f9; font-weight: bold;">Euclidiana</p>
+              <p style="font-size: 0.85em;">\( d = \sqrt{\sum (x_i - y_i)^2} \)</p>
+              <p style="color: #6272a4;">Distância em linha reta</p>
+            </div>
+            <div style="background: #44475a; border-radius: 6px; padding: 12px;">
+              <p style="color: #50fa7b; font-weight: bold;">Manhattan</p>
+              <p style="font-size: 0.85em;">\( d = \sum |x_i - y_i| \)</p>
+              <p style="color: #6272a4;">Soma das diferenças absolutas</p>
+            </div>
+            <div style="background: #44475a; border-radius: 6px; padding: 12px;">
+              <p style="color: #8be9fd; font-weight: bold;">Cosseno</p>
+              <p style="font-size: 0.85em;">\( d = 1 - \frac{x \cdot y}{\|x\|\|y\|} \)</p>
+              <p style="color: #6272a4;">Ângulo entre vetores</p>
+            </div>
+            <div style="background: #44475a; border-radius: 6px; padding: 12px;">
+              <p style="color: #ff79c6; font-weight: bold;">Correlação</p>
+              <p style="font-size: 0.85em;">\( d = 1 - \rho(x, y) \)</p>
+              <p style="color: #6272a4;">Dependência linear</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE: Algoritmos - Tabela Comparativa -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Três Algoritmos de Clusterização</h2>
+          <table>
+            <thead>
+              <tr><th>Algoritmo</th><th>Abordagem</th><th>Força</th><th>Limitação</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>K-Means</strong></td>
+                <td>Particional (centróides)</td>
+                <td>Rápido, escalável</td>
+                <td>K precisa ser definido; clusters esféricos</td>
+              </tr>
+              <tr>
+                <td><strong>Hierárquico</strong></td>
+                <td>Dendrograma (bottom-up)</td>
+                <td>Não precisa definir K; dendrograma visual</td>
+                <td>Lento para N grande; sensível a ruído</td>
+              </tr>
+              <tr>
+                <td><strong>DBSCAN</strong></td>
+                <td>Densidade</td>
+                <td>Detecta outliers; clusters arbitrários</td>
+                <td>Sensível aos parâmetros ε e minPts</td>
+              </tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+        <!-- SLIDE: Normalização -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Por que Normalizar os Dados?</h2>
+          <div class="mermaid" data-id="scale-why" style="width:100%">
+            <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '20px', 'fontFamily': 'Roboto'}}}%%
+graph TD
+  A["Renda (R$): ✗ escala 10³"] --> C["Distância dominada pela renda!"]
+  B["Idade (anos): ✗ escala 10¹"] --> C
+  C --> D["Solução: StandardScaler"]
+  D --> E["x' = (x - μ) / σ"]
+  style A fill:#ff5555,color:#f8f8f2
+  style B fill:#ff5555,color:#f8f8f2
+  style C fill:#ffb86c,color:#282a36
+  style D fill:#50fa7b,color:#282a36
+  style E fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
+          <ul>
+            <li>Variáveis em escalas diferentes distorcem as distâncias</li>
+            <li><strong>StandardScaler</strong>: \( z = \frac{x - \mu}{\sigma} \) (média 0, desvio 1)</li>
+            <li><strong>MinMaxScaler</strong>: escala para intervalo [0, 1]</li>
+            <li>Sempre padronize <strong>antes</strong> de aplicar clustering</li>
+          </ul>
+        </section>
+
+      </section><!-- fim Fundamentos -->
+
+      <!-- ============================================================
+         SEÇÃO 3: DATASET
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Dataset: Marketing Campaign</h2>
+          <ul>
+            <li><strong>2240 clientes</strong> de uma empresa de varejo</li>
+            <li><strong>29 colunas</strong>: demografia, gastos por categoria, canais de compra</li>
+            <li>Colunas de gasto: MntWines, MntFruits, MntMeatProducts, MntFishProducts, MntSweetProducts, MntGoldProds</li>
+            <li>Colunas de compra: NumDealsPurchases, NumWebPurchases, NumCatalogPurchases, NumStorePurchases</li>
+            <li>Colunas de campanha: AcceptedCmp1-5, Response</li>
+          </ul>
+          <code-block lang="python" data-trim><script type="text/plain">
+import pandas as pd
+dados = pd.read_csv('marketing_campaign.csv', sep='\t')
+dados.head()
+</script></code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Engenharia de Atributos</h2>
+          <code-block lang="python" data-trim><script type="text/plain">
+# Criar novas features a partir das existentes
+dados['Idade'] = 2014 - dados['Year_Birth']
+dados['Tempo_cliente'] = (pd.to_datetime('2015-01-01')
+                          - dados['Dt_Customer']).dt.days
+# Gasto total em todos os produtos
+colunas_mnt = [c for c in dados.columns if c.startswith('Mnt')]
+dados['Gasto_total'] = dados[colunas_mnt].sum(axis=1)
+# Total de filhos
+dados['Filhos'] = dados['Kidhome'] + dados['Teenhome']
+dados['Tamanho_familia'] = dados['Filhos'] + \
+    dados['Marital_Status'].replace({0:1, 1:2})
+</script></code-block>
+          <ul>
+            <li>Idade, Tempo_cliente, Gasto_total, Filhos, Tamanho_familia</li>
+            <li>Variáveis de resposta (AcceptedCmp, Complain) separadas do perfil</li>
+          </ul>
+        </section>
+
+      </section><!-- fim Dataset -->
+
+      <!-- ============================================================
+         SEÇÃO 4: K-MEANS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">K-Means: Conceito</h2>
+          <div class="mermaid" data-id="kmeans-concept" style="width:100%">
+            <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '18px', 'fontFamily': 'Roboto'}}}%%
+graph TD
+  A["1. Escolher K centróides aleatórios"] --> B["2. Atribuir cada ponto ao centróide mais próximo"]
+  B --> C["3. Recalcular centróides como média dos pontos atribuídos"]
+  C --> D{"Centróides mudaram?"}
+  D -->|"Sim"| B
+  D -->|"Não"| E["Convergência!"]
+  style A fill:#bd93f9,color:#f8f8f2
+  style B fill:#50fa7b,color:#282a36
+  style C fill:#8be9fd,color:#282a36
+  style D fill:#ffb86c,color:#282a36
+  style E fill:#ff79c6,color:#f8f8f2
+            </pre>
+          </div>
+          <ul>
+            <li>Algoritmo <strong>iterativo</strong> que minimiza a inércia (soma dos quadrados intra-cluster)</li>
+            <li>Assume clusters <strong>esféricos</strong> de tamanho similar</li>
+            <li>Complexidade O(n·K·d·i) — rápido para grandes datasets</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">K-Means no Scikit-Learn</h2>
+          <code-block lang="python" data-trim><script type="text/plain">
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(dados_perfil)
+
+kmeans = KMeans(n_clusters=5, random_state=42, n_init=10)
+kmeans.fit(X_scaled)
+
+# Rótulos de cada amostra
+labels = kmeans.labels_
+# Posição dos centróides
+centroids = kmeans.cluster_centers_
+# Inércia (quão compactos são os clusters)
+print(f"Inércia: {kmeans.inertia_:.2f}")
+</script></code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Escolhendo o Número K</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul>
+                <li>Método do <strong>cotovelo</strong>: plotar inércia vs K</li>
+                <li>Quanto maior K, menor a inércia (overfitting com K=N)</li>
+                <li>Buscar o <strong>ponto de inflexão</strong> onde o ganho marginal diminui</li>
+                <li>Alternativa: <strong>silhouette score</strong> (coesão vs separação)</li>
+              </ul>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="images/kmeans-inertia.png" alt="Gráfico da inércia do K-Means por número de clusters K" width="100%" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim K-Means -->
+
+      <!-- ============================================================
+         SEÇÃO 5: CLUSTER HIERÁRQUICO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Cluster Hierárquico: Conceito</h2>
+          <ul>
+            <li>Constrói uma <strong>hierarquia</strong> de clusters (dendrograma)</li>
+            <li>Abordagem <strong>aglomerativa</strong> (bottom-up): cada ponto começa como cluster próprio</li>
+            <li>A cada passo, funde os dois clusters <strong>mais próximos</strong></li>
+            <li>Critério de ligação (<em>linkage</em>) define como medir distância entre clusters</li>
+          </ul>
+          <div class="mermaid" data-id="hier-approach" style="width:100%">
+            <pre>
+graph LR
+  A["N clusters<br/>(cada ponto)"] --> B["N-1 clusters"] --> C["..."] --> D["1 cluster<br/>(todos juntos)"]
+  style A fill:#ff5555,color:#f8f8f2
+  style B fill:#ffb86c,color:#282a36
+  style C fill:#bd93f9,color:#f8f8f2
+  style D fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Critérios de Linkage</h2>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.75em; margin-top: 10px;">
+            <div style="background: #44475a; border-radius: 6px; padding: 10px;">
+              <p style="color: #ff5555; font-weight: bold;">Single (mínimo)</p>
+              <p>\( d(A,B) = \min d(x,y) \)</p>
+              <p style="color: #6272a4;">Clusters alongados, sensível a ruído</p>
+            </div>
+            <div style="background: #44475a; border-radius: 6px; padding: 10px;">
+              <p style="color: #ff79c6; font-weight: bold;">Complete (máximo)</p>
+              <p>\( d(A,B) = \max d(x,y) \)</p>
+              <p style="color: #6272a4;">Clusters compactos e esféricos</p>
+            </div>
+            <div style="background: #44475a; border-radius: 6px; padding: 10px;">
+              <p style="color: #8be9fd; font-weight: bold;">Average (média)</p>
+              <p>\( d(A,B) = \frac{1}{|A||B|}\sum\sum d(x,y) \)</p>
+              <p style="color: #6272a4;">Equilíbrio entre single e complete</p>
+            </div>
+            <div style="background: #44475a; border-radius: 6px; padding: 10px;">
+              <p style="color: #50fa7b; font-weight: bold;">Ward</p>
+              <p>Minimiza variância intra-cluster</p>
+              <p style="color: #6272a4;">Grupos homogêneos e compactos</p>
+            </div>
+          </div>
+          <p style="margin-top: 10px; font-size: 0.85em; color: #6272a4;">Ward é o padrão no scikit-learn — minimiza a variância, produzindo clusters mais equilibrados.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">AgglomerativeClustering no Scikit-Learn</h2>
+          <code-block lang="python" data-trim><script type="text/plain">
+from sklearn.cluster import AgglomerativeClustering
+
+cluster = AgglomerativeClustering(
+    n_clusters=5,
+    linkage='ward'     # minimiza variância
+)
+cluster.fit(dados_perfil)
+labels = cluster.labels_
+
+# Para visualizar o dendrograma:
+from scipy.cluster.hierarchy import dendrogram, linkage
+linked = linkage(cluster.children_, 'ward')
+dendrogram(linked, no_labels=True)
+</script></code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Dendrograma</h2>
+          <div style="text-align:center;">
+            <img src="images/dendrograma.png" alt="Dendrograma do cluster hierárquico com linkage Ward mostrando a estrutura de agrupamento" width="90%" />
+          </div>
+          <ul>
+            <li>Eixo Y: distância de fusão entre clusters</li>
+            <li>Cortar o dendrograma em uma altura define o número de clusters</li>
+            <li>Fusões em alturas baixas = clusters naturais; fusões altas = grupos forçados</li>
+          </ul>
+        </section>
+
+      </section><!-- fim Hierárquico -->
+
+      <!-- ============================================================
+         SEÇÃO 6: DBSCAN
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">DBSCAN: Baseado em Densidade</h2>
+          <div class="mermaid" data-id="dbscan-concept" style="width:100%">
+            <pre>
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '20px', 'fontFamily': 'Roboto'}}}%%
+graph TD
+  A["ε (epsilon): raio da vizinhança"] --> B["minPts: pontos mínimos para formar cluster"]
+  B --> C["Core point: ≥ minPts vizinhos em ε"]
+  B --> D["Border point: &lt; minPts, mas alcançável"]
+  B --> E["Noise point (outlier): não alcançável"]
+  style A fill:#8be9fd,color:#282a36
+  style B fill:#bd93f9,color:#f8f8f2
+  style C fill:#50fa7b,color:#282a36
+  style D fill:#ffb86c,color:#282a36
+  style E fill:#ff5555,color:#f8f8f2
+            </pre>
+          </div>
+          <ul>
+            <li><strong>Não</strong> assume formato esférico — clusters podem ter qualquer geometria</li>
+            <li>Detecta <strong>outliers</strong> automaticamente (rótulo = -1)</li>
+            <li>Não precisa especificar K — o algoritmo descobre o número de clusters</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">DBSCAN: Demonstração</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <code-block lang="python" data-trim><script type="text/plain">
+from sklearn.cluster import DBSCAN
+
+dbscan = DBSCAN(eps=0.15, min_samples=5)
+labels = dbscan.fit_predict(X)
+
+# labels = -1 são outliers
+n_outliers = (labels == -1).sum()
+n_clusters = len(set(labels)) - 1
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="images/dbscan-demo.png" alt="Demonstração do DBSCAN em dados com formato de duas luas, mostrando detecção de outliers" width="100%" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim DBSCAN -->
+
+      <!-- ============================================================
+         SEÇÃO 7: ELBOW METHOD
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ffb86c;">Método do Cotovelo (Elbow Method)</h2>
+          <ul>
+            <li>Técnica para determinar o <strong>número ótimo de clusters</strong></li>
+            <li>Calcula a <strong>variância interna média</strong> para cada K</li>
+            <li>Quanto mais clusters, menor a variância interna</li>
+            <li>O "cotovelo" é o ponto onde a redução deixa de ser significativa</li>
+          </ul>
+          <div style="background: #44475a; border-left: 4px solid #ffb86c; padding: 12px; margin-top: 12px;">
+            <p><strong>Variância interna média para K clusters:</strong></p>
+            <p>\( \bar{\sigma}^2 = \frac{1}{K} \sum_{k=1}^{K} \text{mean}\left( \text{Var}(X_k) \right) \)</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ffb86c;">Método do Cotovelo — Resultado</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <code-block lang="python" data-trim><script type="text/plain">
+from sklearn.cluster import AgglomerativeClustering
+
+variancias = []
+for k in range(1, 16):
+    cluster = AgglomerativeClustering(
+        n_clusters=k, linkage='ward'
+    )
+    cluster.fit(dados_perfil)
+    # Calcula variância interna média
+    var = media_variancia_por_cluster(
+        dados_perfil, cluster.labels_, k
+    )
+    variancias.append(var)
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="images/cotovelo.png" alt="Gráfico do método do cotovelo mostrando a variância interna por número de clusters" width="100%" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Elbow Method -->
+
+      <!-- ============================================================
+         SEÇÃO 8: ANÁLISE DOS CLUSTERS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Visualizando os Clusters</h2>
+          <div style="text-align:center;">
+            <img src="images/scatter-gasto-income.png" alt="Gráfico de dispersão mostrando Renda vs Gasto Total colorido por cluster" width="85%" />
+          </div>
+          <ul>
+            <li>Cada cor representa um cluster (5 grupos identificados)</li>
+            <li>Eixo X: gasto total em 2 anos; Eixo Y: renda anual</li>
+            <li>Cluster 2 (azul) = alto gasto, renda intermediária-alta</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Perfis de Consumo por Cluster</h2>
+          <div style="text-align:center;">
+            <img src="images/boxplot-consumo.png" alt="Boxplots comparando compras em oferta, visitas ao site, compras web e gasto total por cluster" width="85%" />
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Comparação K-Means vs Hierárquico</h2>
+          <div style="text-align:center;">
+            <img src="images/kmeans-hierarchical-comparison.png" alt="Comparação visual entre K-Means e clustering hierárquico usando projeção PCA 2D" width="85%" />
+          </div>
+          <ul>
+            <li>Projeção PCA 2D para visualizar os clusters em espaço reduzido</li>
+            <li>K-Means e Hierárquico (Ward) produzem agrupamentos similares nos dados de marketing</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Perfis dos 5 Clusters</h2>
+          <table>
+            <thead>
+              <tr><th>Cluster</th><th>Perfil</th><th>Renda</th><th>Gasto</th><th>Filhos</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>Famílias maiores, filhos adolescentes e crianças</td><td>Média</td><td>Intermediário</td><td>2+</td></tr>
+              <tr><td>1</td><td>Famílias com 1 filho adolescente</td><td>Média-Alta</td><td>Alto</td><td>1</td></tr>
+              <tr><td>2</td><td>Sem filhos</td><td>Média-Alta</td><td>Alto</td><td>0</td></tr>
+              <tr><td>3</td><td>Sem filhos</td><td>Baixa-Média</td><td>Baixo</td><td>0</td></tr>
+              <tr><td>4</td><td>Famílias com 1 filho criança</td><td>Baixa</td><td>Baixo</td><td>1</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+      </section><!-- fim Análise -->
+
+      <!-- ============================================================
+         SEÇÃO 9: QUIZ INTERATIVO
+         ============================================================ -->
+      <section>
+
+        <section>
+          <h2>Quiz Interativo</h2>
+          <p>Conecte-se à sala e vote!</p>
+        </section>
+
+        <section>
+          <poll-question
+            id="q1"
+            title="Questão 1: Linkage"
+            question="Qual critério de linkage minimiza a variância dentro dos clusters, produzindo grupos mais homogêneos?"
+            answer="c"
+            answer-text="Ward minimiza a variância intra-cluster, resultando em grupos mais compactos e homogêneos!"
+            :options="[
+              { value: 'a', label: 'Single Linkage (mínimo)' },
+              { value: 'b', label: 'Complete Linkage (máximo)' },
+              { value: 'c', label: 'Ward (minimiza variância)' },
+              { value: 'd', label: 'Average Linkage (média)' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q2"
+            title="Questão 2: Elbow Method"
+            question="Para que serve o método do cotovelo (elbow method)?"
+            answer="b"
+            answer-text="O método do cotovelo ajuda a escolher o número ótimo de clusters K analisando a redução marginal da variância interna!"
+            :options="[
+              { value: 'a', label: 'Remover outliers do dataset' },
+              { value: 'b', label: 'Escolher o número ótimo de clusters K' },
+              { value: 'c', label: 'Definir os centróides iniciais do K-Means' },
+              { value: 'd', label: 'Escolher entre K-Means e Hierárquico' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q3"
+            title="Questão 3: DBSCAN vs K-Means"
+            question="Em qual cenário o DBSCAN é preferível ao K-Means?"
+            answer="d"
+            answer-text="DBSCAN é ideal quando há outliers e os clusters não são esféricos, pois detecta ruído e clusters com geometria arbitrária!"
+            :options="[
+              { value: 'a', label: 'Dados perfeitamente esféricos e balanceados' },
+              { value: 'b', label: 'Dataset com 1 milhão de linhas (K-Means é mais rápido)' },
+              { value: 'c', label: 'Quando o número K já é conhecido de antemão' },
+              { value: 'd', label: 'Há outliers e clusters têm formato arbitrário' },
+            ]" />
+        </section>
+
+      </section><!-- fim Quiz -->
+
+      <!-- ============================================================
+         SLIDE: COMPARAÇÃO DOS MÉTODOS
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Quando Usar Cada Método?</h2>
+        <table>
+          <thead>
+            <tr><th>Situação</th><th>Método Recomendado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Dataset grande, clusters esféricos</td><td>K-Means</td></tr>
+            <tr><td>Precisa de dendrograma (visualização hierárquica)</td><td>Hierárquico</td></tr>
+            <tr><td>Clusters com formato arbitrário</td><td>DBSCAN</td></tr>
+            <tr><td>Precisa detectar outliers automaticamente</td><td>DBSCAN</td></tr>
+            <tr><td>Não sabe quantos clusters existem</td><td>DBSCAN ou Hierárquico</td></tr>
+            <tr><td>Quer interpretar cada cluster em detalhe</td><td>Hierárquico (Ward)</td></tr>
+          </tbody>
+        </table>
+        <copy-btn></copy-btn>
+      </section>
+
+      <!-- ============================================================
+         SLIDE: EXERCÍCIO PRÁTICO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Exercício Prático</h2>
+        <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+          <p><strong>Objetivo:</strong> Aplicar os 3 métodos de clusterização ao dataset de marketing e comparar os resultados.</p>
+          <ls-u>
+            <li>Carregar e pré-processar o dataset (StandardScaler)</li>
+            <li>Aplicar K-Means com K=5 e visualizar os centróides</li>
+            <li>Aplicar Hierárquico (Ward) com 5 clusters e gerar dendrograma</li>
+            <li>Aplicar DBSCAN e analisar quantos outliers foram detectados</li>
+            <li>Comparar os 3 métodos: quais grupos são consistentes entre eles?</li>
+          </ls-u>
+        </div>
+        <div class="fragment">
+          <code-block lang="python"><script type="text/plain">
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
+
+scaler = StandardScaler()
+X = scaler.fit_transform(dados_perfil)
+
+# K-Means
+kmeans = KMeans(n_clusters=5, random_state=42, n_init=10)
+
+# Hierárquico
+hier = AgglomerativeClustering(n_clusters=5, linkage='ward')
+
+# DBSCAN
+dbscan = DBSCAN(eps=0.5, min_samples=10)
+
+# sua análise aqui
+</script></code-block>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SLIDE: ENCERRAMENTO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Cluster analysis agrupa dados não rotulados em grupos coesos</li>
+          <li><strong>K-Means</strong>: rápido, particional, assume clusters esféricos</li>
+          <li><strong>Hierárquico</strong>: dendrograma, múltiplos linkages (Ward é padrão)</li>
+          <li><strong>DBSCAN</strong>: baseado em densidade, detecta outliers automaticamente</li>
+          <li>Normalização (StandardScaler) é essencial antes do clustering</li>
+          <li>Método do cotovelo ajuda a escolher o número ótimo de clusters</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>Redes Neurais e Deep Learning</strong></p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
