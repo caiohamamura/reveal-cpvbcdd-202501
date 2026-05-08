@@ -395,12 +395,12 @@ Technical details:
 3. **Motivation** — Why this topic matters, real-world scenario
 4. **Concept sections** — 2-5 slides per concept, with code + explanation
 5. **Practical exercise** — Hands-on task
-6. **Summary** — Recap + preview of next lesson
+6. **Summary**
 
 ### Language
-- All slide content in **Portuguese (Brazilian)** NEVER write Chinese letters!
-- Technical terms can stay in English (WiFi, Deep Sleep, MQTT, etc.)
-- Code comments in Portuguese
+- All slides content in **Portuguese (Brazilian)** NEVER write Chinese letters!
+- Technical terms can stay in English (WiFi, Deep Sleep, MQTT, ...)
+- Code comments in pt-BR
 
 
 ---
@@ -409,7 +409,7 @@ Technical details:
 
 ### Final Testing
 
-- Never skip testing, specially images for status 200, valid binary data (not <=1KB) and mime type image
+- Never skip testing, specially images status 200 and MIME type image, valid binary data (not placeholders <=1KB)
 - Test other links for 200
 - Double-check spelling for correct Portuguese (Brazilian) never Chinese characters only technical english terms
 are acceptable
