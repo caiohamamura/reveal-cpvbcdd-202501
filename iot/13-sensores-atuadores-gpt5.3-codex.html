@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Internet das Coisas - Sensores e Atuadores para Projetos IoT</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <!-- Optional plugins -->
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="13" curso="Internet das Coisas" title-size="24"
+                 title="Sensores e Atuadores para Projetos IoT">
+          <div class="mermaid" data-id="cover-sensores-atuadores" style="width: 500px;">
+            <pre>
+graph LR
+  A["📡 Sensores"] --> B["🧠 ESP8266/ESP32"]
+  B --> C["⚙️ Atuadores"]
+  B --> D["☁️ Dashboard"]
+  style A fill:#8be9fd,color:#282a36
+  style B fill:#bd93f9,color:#282a36
+  style C fill:#50fa7b,color:#282a36
+  style D fill:#ff79c6,color:#f8f8f2
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: Revisão -->
+      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.3">
+        <h2>Revisão: Base para a Aula de Hoje</h2>
+        <ls-u>
+          <li>Leituras analógicas e digitais com NodeMCU</li>
+          <li>Controle de saída com PWM, transistor e MOSFET</li>
+          <li>Integração com LCD I2C e sensores clássicos</li>
+          <li>Desafio agora: escolher componentes para projeto final com critério técnico</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         FASE 1: MOTIVAÇÃO E CRITÉRIOS DE ESCOLHA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 1 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 1: Motivação e Critérios de Escolha</h2>
+          <p>Vocês terão cerca de 2 meses para o projeto final.</p>
+          <p>Hoje o foco e ampliar repertório e decidir melhor entre alternativas.</p>
+        </section>
+
+        <!-- SLIDE: Critérios -->
+        <section data-auto-animate>
+          <h2>Como selecionar sensor ou atuador?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>Faixa de operação:</strong> atende o cenário real?</li>
+                <li><strong>Precisão:</strong> erro aceitável para a aplicação?</li>
+                <li><strong>Consumo:</strong> vai rodar na bateria por quanto tempo?</li>
+                <li><strong>Custo:</strong> cabe no orçamento da equipe?</li>
+                <li><strong>Interface:</strong> digital, analógico, I2C, SPI, OneWire, UART?</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="criterios-escolha-fluxo">
+                <pre>
+flowchart TD
+  A["Problema real"] --> B{"Medição ou ação?"}
+  B -->|"Medição"| C["Sensor"]
+  B -->|"Ação"| D["Atuador"]
+  C --> E["Faixa + precisão + interface"]
+  D --> F["Corrente + tensão + driver"]
+  E --> G["Escolha final"]
+  F --> G
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+         FASE 2: REVISÃO RÁPIDA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 2 header -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 2: Revisão Rápida</h2>
+          <p>Começamos do que vocês já dominam para conectar com os novos componentes.</p>
+        </section>
+
+        <!-- SLIDE: LDR + DHT22 -->
+        <section data-auto-animate>
+          <h2>LDR + DHT22 (Revisão)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>LDR</strong> converte luminosidade em variação resistiva.</li>
+                <li><strong>DHT22</strong> fornece temperatura e umidade com protocolo digital.</li>
+                <li>Bom par para monitoramento ambiental de baixo custo.</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/04/ESP8266-DHT11-DHT22-Web-Server-Arduino-IDE.jpg"
+                   width="430" alt="ESP8266 com sensor DHT22 em protoboard" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials</p>
+            </div>
+          </multi-col>
+          <code-block lang="cpp" data-trim><script type="text/plain">
+const int PIN_LDR = A0;
+
+int luz = analogRead(PIN_LDR);
+float temp = dht.readTemperature();
+float umid = dht.readHumidity();
+
+Serial.printf("LDR=%d | T=%.1f C | U=%.1f %%\n", luz, temp, umid);
+</script></code-block>
+        </section>
+
+        <!-- SLIDE: LCD + Relé -->
+        <section data-auto-animate>
+          <h2>LCD I2C + Relé (Revisão)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>LCD I2C</strong> reduz fios para 2 linhas de dados (SDA/SCL).</li>
+                <li><strong>Relé</strong> isola microcontrolador da carga externa.</li>
+                <li>Útil para ligar bomba, lâmpada ou ventilador de maior potência.</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <code-block lang="cpp" data-trim><script type="text/plain">
+lcd.setCursor(0, 0);
+lcd.print("Temp:");
+lcd.print(temp, 1);
+
+if (temp > 30.0) {
+  digitalWrite(PIN_RELE, HIGH); // liga carga
+  lcd.setCursor(0, 1);
+  lcd.print("RELE: ON ");
+} else {
+  digitalWrite(PIN_RELE, LOW);  // desliga carga
+}
+</script></code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Motor DC + MOSFET -->
+        <section data-auto-animate>
+          <h2>Motor DC + MOSFET (Revisão)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>MOSFET canal N funciona como chave eletrônica eficiente.</li>
+                <li><code>analogWrite()</code> permite controlar velocidade por PWM.</li>
+                <li>Diodo flyback é obrigatório para proteger o circuito.</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="motor-mosfet-revisao">
+                <pre>
+flowchart LR
+  MCU["GPIO PWM"] --> G["Gate MOSFET"]
+  FONTE["Fonte 12V"] --> MOTOR["Motor DC"]
+  MOTOR --> DRENO["Drain"]
+  DRENO --> SOURCE["Source -> GND"]
+  DIODE["Diodo flyback"] --- MOTOR
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+          <code-block lang="cpp" data-trim><script type="text/plain">
+const int PIN_MOTOR = D5;
+
+void loop() {
+  analogWrite(PIN_MOTOR, 200); // acelera
+  delay(1200);
+  analogWrite(PIN_MOTOR, 80);  // reduz
+  delay(1200);
+}
+</script></code-block>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: SENSORES SIMPLES
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 3 header -->
+        <section data-auto-animate>
+          <h2 style="color: #ffb86c;">Fase 3: Sensores Simples</h2>
+          <p>Evoluindo do familiar para componentes de projeto final.</p>
+        </section>
+
+        <!-- SLIDE: DS18B20 -->
+        <section data-auto-animate>
+          <h2>DS18B20 - Temperatura OneWire</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Protocolo OneWire: vários sensores no mesmo barramento.</li>
+                <li>Faixa ampla: -55 C a +125 C.</li>
+                <li>Precisão típica de +-0,5 C.</li>
+                <li>Versão encapsulada é ideal para ambiente úmido.</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/09/DS18B20-temperature-sensor-pinout.jpg"
+                   width="420" alt="Sensor DS18B20 e pinagem" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials</p>
+            </div>
+          </multi-col>
+          <code-block lang="cpp" data-trim><script type="text/plain">
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+OneWire oneWire(D2);
+DallasTemperature ds(&oneWire);
+
+void loop() {
+  ds.requestTemperatures();
+  float t = ds.getTempCByIndex(0);
+  Serial.println(t);
+  delay(1000);
+}
+</script></code-block>
+        </section>
+
+        <!-- SLIDE: Boia -->
+        <section data-auto-animate>
+          <h2>Sensor de Nível por Boia (Float Switch)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Saída digital simples: nível atingido ou não.</li>
+                <li>Baixo custo e instalação direta em reservatórios.</li>
+                <li>Ótimo para proteção contra falta de água em bomba.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+const int PIN_BOIA = D6;
+
+void loop() {
+  bool nivelBaixo = digitalRead(PIN_BOIA) == LOW;
+  if (nivelBaixo) {
+    Serial.println("Reservatorio abaixo do minimo");
+  }
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="boia-tanque-esquema">
+                <pre>
+flowchart TB
+  T["Tanque"] --> N{"Boia fechou contato?"}
+  N -->|"Sim"| A["Nivel baixo"]
+  N -->|"Nao"| B["Nivel ok"]
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Comparação simples -->
+        <section data-auto-animate>
+          <h2>Comparação Rápida: Temperatura e Nível</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Componente</th>
+                <th>Tipo</th>
+                <th>Faixa/Resposta</th>
+                <th>Precisão</th>
+                <th>Custo médio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>DHT22</td><td>Digital</td><td>-40 a 80 C + umidade</td><td>+-0,5 C</td><td>R$ 15-25</td></tr>
+              <tr><td>DS18B20</td><td>OneWire</td><td>-55 a 125 C</td><td>+-0,5 C</td><td>R$ 10-20</td></tr>
+              <tr><td>TMP36</td><td>Analógico</td><td>-40 a 125 C</td><td>+-2 C</td><td>R$ 3-8</td></tr>
+              <tr><td>Boia magnética</td><td>Digital</td><td>Nível alto/baixo</td><td>Binário</td><td>R$ 8-20</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+         FASE 4: SENSORES DE DISTÂNCIA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 4 header -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 4: Sensores de Distância</h2>
+          <p>Ultrassom, laser e radar para cenários diferentes.</p>
+        </section>
+
+        <!-- SLIDE: HC-SR04 -->
+        <section data-auto-animate>
+          <h2>HC-SR04 - Ultrassônico</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Faixa típica: 2 cm a 4 m.</li>
+                <li>Bom custo-benefício para robótica e medição de nível.</li>
+                <li>Precisa de linha de visada e pode sofrer com superfícies inclinadas.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <NewPing.h>
+
+NewPing sonar(D5, D6, 400);
+
+void loop() {
+  int cm = sonar.ping_cm();
+  Serial.printf("Distancia: %d cm\n", cm);
+  delay(300);
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2018/12/HC-SR04-Ultrasonic-Arduino.jpg"
+                   width="410" alt="Sensor ultrassonico HC-SR04" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: VL53L0X -->
+        <section data-auto-animate>
+          <h2>VL53L0X - Laser Time-of-Flight</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Mede tempo de voo do laser infravermelho.</li>
+                <li>Leitura estável para curtas distâncias com boa precisão.</li>
+                <li>I2C simplifica integração com outros sensores no barramento.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <Adafruit_VL53L0X.h>
+
+Adafruit_VL53L0X lox;
+
+void loop() {
+  VL53L0X_RangingMeasurementData_t m;
+  lox.rangingTest(&m, false);
+  if (m.RangeStatus == 0) {
+    Serial.printf("Dist: %d mm\n", m.RangeMilliMeter);
+  }
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://cdn-shop.adafruit.com/970x728/3317-05.jpg"
+                   width="420" alt="Modulo VL53L0X ToF" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Comparação distância -->
+        <section data-auto-animate>
+          <h2>Quando usar cada tecnologia?</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Sensor</th>
+                <th>Princípio</th>
+                <th>Faixa típica</th>
+                <th>Melhor uso</th>
+                <th>Limitação principal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>HC-SR04</td><td>Ultrassom</td><td>2 cm a 4 m</td><td>Robô, tanque, protótipo barato</td><td>Eco ruim em ângulo</td></tr>
+              <tr><td>VL53L0X</td><td>Laser ToF</td><td>3 cm a 1,2 m</td><td>Medição curta com mais precisão</td><td>Custo maior</td></tr>
+              <tr><td>TCRT5000</td><td>IR reflexivo</td><td>Milímetros</td><td>Seguidor de linha</td><td>Distância muito curta</td></tr>
+              <tr><td>RCWL-0516</td><td>Doppler</td><td>Presença ~7 m</td><td>Detecção de movimento</td><td>Não mede distância em cm</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+         FASE 5: SENSORES AMBIENTAIS
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 5 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 5: Sensores Ambientais</h2>
+          <p>Monitoramento de gás, solo, chuva, presença e movimento físico.</p>
+        </section>
+
+        <!-- SLIDE: MQ-2 -->
+        <section data-auto-animate>
+          <h2>MQ-2 - Gás e Fumaça</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Detecta gases inflamáveis e fumaça.</li>
+                <li>Exige aquecimento inicial para estabilizar.</li>
+                <li>Saída analógica é útil para tendência; não para ppm absoluto sem calibração.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+const int PIN_MQ2 = A0;
+const int LIMIAR = 450;
+
+void loop() {
+  int leitura = analogRead(PIN_MQ2);
+  if (leitura > LIMIAR) {
+    Serial.println("Alerta: possivel gas/fumaca");
+  }
+  delay(400);
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://cdn.sparkfun.com//assets/parts/1/2/1/0/6/13972-01.jpg"
+                   width="420" alt="Sensor de gas MQ-2" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: SparkFun</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Solo chuva presenca -->
+        <section data-auto-animate>
+          <h2>Solo, Chuva, Presença e Campo Magnético</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>Capacitive Soil Moisture:</strong> umidade do solo sem corrosão.</li>
+                <li><strong>Sensor de chuva:</strong> intensidade de água na superfície.</li>
+                <li><strong>PIR:</strong> presença por variação de IR térmico.</li>
+                <li><strong>Hall:</strong> campo magnético para contagem de voltas.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+int solo = analogRead(A0);
+int chuva = analogRead(A0);
+int presenca = digitalRead(D7);
+int hall = digitalRead(D3);
+
+Serial.printf("Solo=%d Chuva=%d PIR=%d Hall=%d\n",
+              solo, chuva, presenca, hall);
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="ambiental-loop-farm">
+                <pre>
+flowchart TD
+  A["Le sensores"] --> B{"Solo seco?"}
+  B -->|"Sim"| C["Aciona irrigacao"]
+  B -->|"Nao"| D["Mantem bomba off"]
+  C --> E["Publica no dashboard"]
+  D --> E
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Não bloqueante -->
+        <section data-auto-animate>
+          <h2>Padrão de Código Não Bloqueante (IoT real)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <code-block lang="cpp" data-trim><script type="text/plain">
+unsigned long tSensores = 0;
+const unsigned long INTERVALO = 5000;
+
+void loop() {
+  if (millis() - tSensores >= INTERVALO) {
+    float temp = lerDS18B20();
+    int solo = lerSolo();
+    int gas = analogRead(A0);
+
+    publicarDados(temp, solo, gas);
+    tSensores = millis();
+  }
+
+  tratarComandosRemotos();
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1;">
+              <ul>
+                <li>Sem <code>delay()</code> longo travando o dispositivo.</li>
+                <li>Permite ler sensores e responder comandos ao mesmo tempo.</li>
+                <li>Facilita escalar para MQTT, Telegram ou dashboard web.</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- ============================================================
+         FASE 6: ATUADORES E MOVIMENTO
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 6 header -->
+        <section data-auto-animate>
+          <h2 style="color: #ff5555;">Fase 6: Atuadores e Movimento</h2>
+          <p>Comandos digitais virando ação física no mundo real.</p>
+        </section>
+
+        <!-- SLIDE: Servo -->
+        <section data-auto-animate>
+          <h2>Servo SG90</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Posicionamento angular preciso (0 a 180 graus).</li>
+                <li>Controle simples via biblioteca Servo.</li>
+                <li>Aplicações: fechadura, direcionamento de câmera, mini braços.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <Servo.h>
+
+Servo servo;
+
+void setup() {
+  servo.attach(D5);
+}
+
+void loop() {
+  servo.write(0);
+  delay(800);
+  servo.write(90);
+  delay(800);
+  servo.write(180);
+  delay(800);
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://cdn-shop.adafruit.com/970x728/169-06.jpg"
+                   width="420" alt="Micro servo SG90" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Stepper -->
+        <section data-auto-animate>
+          <h2>Motor de Passo 28BYJ-48 + ULN2003</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Movimento em passos discretos para melhor controle de posição.</li>
+                <li>Driver ULN2003 simplifica acionamento das bobinas.</li>
+                <li>Aplicações: dosador, persiana, automação de pequenos eixos.</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <Stepper.h>
+
+const int STEPS = 2048;
+Stepper motor(STEPS, D1, D3, D2, D4);
+
+void setup() {
+  motor.setSpeed(10);
+}
+
+void loop() {
+  motor.step(512);
+  delay(700);
+  motor.step(-512);
+  delay(700);
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://cdn.sparkfun.com//assets/parts/1/8/2/7/6/17146-Stepper_Motor_-_Small-01.jpg"
+                   width="420" alt="Motor de passo 28BYJ-48" />
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: SparkFun</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Relé vs MOSFET -->
+        <section data-auto-animate>
+          <h2>Relé vs MOSFET vs Solenóide</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Elemento</th>
+                <th>Quando usar</th>
+                <th>Vantagem</th>
+                <th>Cuidado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Relé</td><td>Carga AC/DC com isolamento</td><td>Robusto e simples</td><td>Contato mecânico desgasta</td></tr>
+              <tr><td>MOSFET</td><td>Carga DC e PWM</td><td>Rápido e eficiente</td><td>Escolher modelo logic-level</td></tr>
+              <tr><td>Solenóide</td><td>Abertura/fechamento linear</td><td>Ação direta</td><td>Corrente alta, usar driver</td></tr>
+              <tr><td>WS2812B</td><td>Sinalização visual rica</td><td>RGB endereçável</td><td>Fonte adequada para vários LEDs</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+          <code-block lang="cpp" data-trim><script type="text/plain">
+digitalWrite(PIN_RELE, HIGH);      // liga carga AC
+analogWrite(PIN_MOSFET, 180);      // controle PWM em DC
+digitalWrite(PIN_SOLENOIDE, HIGH); // aciona pino linear
+</script></code-block>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+      <!-- ============================================================
+         FASE 7: COMUNICAÇÃO IOT
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 7 header -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 7: Comunicação IoT</h2>
+          <p>Do sensor local para o mundo: barramentos e rede.</p>
+        </section>
+
+        <!-- SLIDE: Protocolos -->
+        <section data-auto-animate>
+          <h2>Protocolos Locais: I2C, SPI, OneWire e UART</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Protocolo</th>
+                <th>Fios</th>
+                <th>Velocidade típica</th>
+                <th>Uso comum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>I2C</td><td>2</td><td>100-400 kHz</td><td>MPU-6050, OLED, INA219</td></tr>
+              <tr><td>SPI</td><td>4+</td><td>MHz</td><td>LoRa, SD, displays rápidos</td></tr>
+              <tr><td>OneWire</td><td>1</td><td>kbps</td><td>DS18B20</td></tr>
+              <tr><td>UART</td><td>2</td><td>9600-115200 baud</td><td>GPS, debug serial, módulos legados</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+        <!-- SLIDE: MQTT e LoRa -->
+        <section data-auto-animate>
+          <h2>MQTT, LoRa e IR no ecossistema IoT</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>MQTT:</strong> publish/subscribe leve para telemetria.</li>
+                <li><strong>LoRa:</strong> longo alcance e baixo consumo.</li>
+                <li><strong>IR:</strong> útil para controle remoto local (TV/AC).</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <PubSubClient.h>
+
+PubSubClient client(espClient);
+
+void publicar(float temp) {
+  char msg[12];
+  dtostrf(temp, 1, 1, msg);
+  client.publish("ifsp/sala13/temperatura", msg);
+}
+</script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="mqtt-lora-arquitetura">
+                <pre>
+graph TD
+  S["Sensores"] --> N["NodeMCU"]
+  N --> M["Broker MQTT"]
+  M --> D["Dashboard"]
+  N --> L["LoRa Gateway"]
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 7 -->
+
+      <!-- ============================================================
+         FASE 8: ATIVIDADE PRÁTICA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Fase 8 header -->
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 8: Atividade Prática</h2>
+          <p>Projeto: Sistema de Monitoramento Inteligente</p>
+        </section>
+
+        <!-- SLIDE: Exercício prático -->
+        <section data-auto-animate>
+          <h2>Exercício Prático</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+            <p><strong>Objetivo:</strong> escolher componentes para um protótipo IoT e justificar tecnicamente as escolhas.</p>
+            <ls-u>
+              <li>Escolher 1 sensor de temperatura.</li>
+              <li>Escolher 1 sensor ambiental (solo, gás, chuva, presença).</li>
+              <li>Escolher 1 atuador (servo, relé, WS2812B, solenóide).</li>
+              <li>Justificar faixa, precisão, consumo e custo.</li>
+            </ls-u>
+          </div>
+          <div>
+            <code-block lang="cpp"><script type="text/plain">
+#include <Arduino.h>
+
+void setup() {
+  Serial.begin(115200);
+  // sua lógica aqui
+}
+
+void loop() {
+  // sua lógica aqui
+}
+</script></code-block>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 8 -->
+
+      <!-- SLIDE: Encerramento -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Sensores e atuadores devem ser escolhidos pelo contexto do problema.</li>
+          <li>Comparar faixa, precisão, energia, custo e interface evita retrabalho.</li>
+          <li>MQTT e LoRa ampliam o projeto para cenários reais de IoT.</li>
+          <li>Vocês já têm base para decidir a arquitetura do projeto final.</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>Arquitetura e prototipação do projeto final IoT</strong></p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <!-- Plugin scripts (local - NOT CDN) -->
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <!-- socket.io required by seminar plugin - must load before init.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
