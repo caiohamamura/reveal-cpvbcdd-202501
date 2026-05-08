@@ -25,12 +25,12 @@ Use this skill when the user asks to find images, search for pictures, get photo
 
 ## How I work
 
-### Phase 1: Specific Site Search (Preferred)
+### Phase 1: Specific Random Site Search (Preferred)
 
-Call `ollama_web_web_search` with site-specific queries using `site:` operator to target educational/technical sites. Then run the `extract_images.py` script on promising result URLs to fetch pages and extract images.
+Call `ollama_web_web_search` with site-specific queries using `site:` operator to target a random educational/technical site. Then run the `extract_images.py` script on promising result URLs to fetch pages and extract images.
 
 Target sites (searched via `site:` prefix in query):
-- `randomnerdtutorials.com` — ESP32/Arduino tutorials with hardware photos
+- `randomnerdtutorials.com` — ESP8266/ESP32/Arduino tutorials with hardware photos
 - `learn.adafruit.com` — Only adafruit tutorials, not boring product spec photos
 - `sparkfun.com` — SparkFun product images
 - `docs.espressif.com` — Espressif official docs
@@ -49,9 +49,11 @@ Target sites (searched via `site:` prefix in query):
 
 Usage pattern:
 1. Call `ollama_web_web_search` with the topic and `site:` prefix in the query (see example below). Search **one site at a time** to get focused results; start with the most relevant 2-3 sites.
-2. From the search result URLs, pick the most promising tutorial pages.
-3. Run `python3 .opencode/skills/search-images/extract_images.py` on the selected URLs. The script fetches each page, extracts and validates images, and returns ranked JSON.
-4. Return the best images with attribution.
+2. From the search result URLs, pick the most promising tutorial page.
+3. Run `python3 .opencode/skills/search-images/extract_images.py` on the selected URLs. The script fetches each page, extracts and validates images and returns ranked JSON.
+4. Check the alt attribute and create one if not available
+5. Return the best images with attribution.
+6. In case of invalid images or nonsense alt="" repeat from beggining selecting another site
 
 ### Phase 2: General Web Search (Fallback)
 
@@ -84,18 +86,11 @@ python3 .opencode/skills/search-images/extract_images.py URL1 URL2 URL3...
 
 ### Example `ollama_web_web_search` calls with site-specific queries
 
-Search one site at a time for best results. Use `site:` prefix in the query string:
+Select one random site. Use `site:` prefix in the query string:
 
 ```json
 {
-  "query": "hall sensor site:randomnerdtutorials.com",
-  "max_results": 5
-}
-```
-
-```json
-{
-  "query": "ESP32 PWM site:learn.adafruit.com",
+  "query": "hall sensor site:www.random.com",
   "max_results": 5
 }
 ```
@@ -104,7 +99,7 @@ For general fallback search (Phase 2):
 
 ```json
 {
-  "query": "hall sensor ESP32 tutorial",
+  "query": "hall sensor tutorial",
   "max_results": 5
 }
 ```

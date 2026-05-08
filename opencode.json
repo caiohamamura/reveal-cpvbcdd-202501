@@ -17,7 +17,7 @@
   "mcp": {
     "ollama_web": {
       "type": "local",
-      "command": ["uv", "run", "/home/openclaw/.openclaw/mcp-servers/ollama-web-search/web_search_mcp.py"],
+      "command": ["uv", "run", "/home/openclaw/.opencode/mcp-servers/ollama-web-search/web_search_mcp.py"],
       "environment": {
         "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}"
       }
