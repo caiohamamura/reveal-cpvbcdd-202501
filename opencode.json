@@ -21,6 +21,15 @@
       "environment": {
         "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}"
       }
+    },
+    "MiniMax": {
+      "type": "local",
+      "command": ["/home/linuxbrew/.linuxbrew/bin/uvx", "minimax-coding-plan-mcp"],
+      "environment": {
+        "MINIMAX_API_KEY": "{env:MINIMAX_API_KEY}",
+        "MINIMAX_API_HOST": "https://api.minimax.io"
+      },
+      "enabled": true
     }
   }
 }

@@ -10,12 +10,12 @@ metadata:
 
 ### VERY IMPORTANT
 
-- NEVER do `ollama_web_web_search` calls in parallel because the tool will return too many requests
+- NEVER do `MiniMax_web_search` calls in parallel because the tool will return too many requests
 - NEVER add words like "image", "diagram", "photo", "picture", or "foto" to the `query`. Search for the topic directly (e.g. `hall sensor`, `ESP32 WiFi`, `LED PWM`). Tutorial pages already contain images; adding English keywords hurts results on Brazilian/Portuguese domains.
 
 ## What I do
 
-- Use Ollama's web search API with site-specific queries on educational/technical sites (Random Nerd Tutorials, Adafruit, SparkFun, etc.) and fallback to general sites
+- Use MiniMax web search API with site-specific queries on educational/technical sites (Random Nerd Tutorials, Adafruit, SparkFun, etc.) and fallback to general sites
 - Extract image URLs from web pages deterministically
 - Provide attribution information for every image found
 
@@ -27,7 +27,9 @@ Use this skill when the user asks to find images, search for pictures, get photo
 
 ### Phase 1: Specific Random Site Search (Preferred)
 
-Call `ollama_web_web_search` with site-specific queries using `site:` operator to target a random educational/technical site. Then run the `extract_images.py` script on promising result URLs to fetch pages and extract images.
+Call `MiniMax_web_search` with site-specific queries using `site:` operator to target a random educational/technical site. 
+Then run the `extract_images.py` script on promising result URLs to fetch pages and extract images.
+Note that this order is RANDOM, DO NOT assume you need to use the first one!
 
 Target sites (searched via `site:` prefix in query):
 - `randomnerdtutorials.com` — ESP8266/ESP32/Arduino tutorials with hardware photos
@@ -48,7 +50,7 @@ Target sites (searched via `site:` prefix in query):
 - `portal.vidadesilicio.com.br` — Brazilian maker content
 
 Usage pattern:
-1. Call `ollama_web_web_search` with the topic and `site:` prefix in the query (see example below). Search **one site at a time** to get focused results; start with the most relevant 2-3 sites.
+1. Call `MiniMax_web_search` with the topic and `site:` prefix in the query (see example below). Search **one site at a time** to get focused results; start with the most relevant 2-3 sites.
 2. From the search result URLs, pick the most promising tutorial page.
 3. Run `python3 .opencode/skills/search-images/extract_images.py` on the selected URLs. The script fetches each page, extracts and validates images and returns ranked JSON.
 4. Check the alt attribute and create one if not available
@@ -57,7 +59,7 @@ Usage pattern:
 
 ### Phase 2: General Web Search (Fallback)
 
-Only if Phase 1 yields no usable images, call `ollama_web_web_search` again **without** `site:` prefix, using the topic-only query with `max_results: 5`. Then apply the same deterministic extraction.
+Only if Phase 1 yields no usable images, call `MiniMax_web_search` again **without** `site:` prefix, using the topic-only query with `max_results: 5`. Then apply the same deterministic extraction.
 
 ### Deterministic Image Extraction
 
@@ -84,14 +86,13 @@ python3 .opencode/skills/search-images/extract_images.py URL1 URL2 URL3...
    - URL ends in `.png` → +5
 7. **Return top 5** per page as JSON with `url`, `alt`, `content_type`, `size_bytes`, `score`, `source_page`, `source_domain`.
 
-### Example `ollama_web_web_search` calls with site-specific queries
+### Example `MiniMax_web_search` calls with site-specific queries
 
 Select one random site. Use `site:` prefix in the query string:
 
 ```json
 {
-  "query": "hall sensor site:www.random.com",
-  "max_results": 5
+  "query": "hall sensor site:randomnerdtutorials.com"
 }
 ```
 
@@ -99,8 +100,7 @@ For general fallback search (Phase 2):
 
 ```json
 {
-  "query": "hall sensor tutorial",
-  "max_results": 5
+  "query": "hall sensor tutorial"
 }
 ```
 
