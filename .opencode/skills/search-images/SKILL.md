@@ -1,6 +1,6 @@
 ---
 name: search-images
-description: Search for images to use in slides, documentation, or educational materials. Uses dedicated image APIs first, then falls back to web search + extraction.
+description: Search for images to use in slides, documentation, or educational materials. web search + extraction.
 license: MIT
 compatibility: opencode
 metadata:
@@ -8,10 +8,15 @@ metadata:
   domain: education
 ---
 
+### VERY IMPORTANT
+
+- Never flood any API/server, always sleep randomly from 1 to 4 seconds between requests
+- NEVER search in parallel
+
+
 ## What I do
 
-- Search for licensed images across multiple sources (Wikimedia Commons, Openverse, Unsplash, Pexels, Pixabay)
-- Fall back to site-specific searches on educational/technical sites (Random Nerd Tutorials, Adafruit, SparkFun, etc.)
+- Use site-specific searches on educational/technical sites (Random Nerd Tutorials, Adafruit, SparkFun, etc.) and fallback to general sites
 - Extract image URLs from web pages when needed
 - Provide attribution information for every image found
 
@@ -21,23 +26,9 @@ Use this skill when the user asks to find images, search for pictures, get photo
 
 ## How I work
 
-### Phase 1: Dedicated Image APIs (Preferred)
+### Phase 1: Specific Site Search (Fallback)
 
-Call multiple tools in parallel with the same query:
-
-| Tool | Best For | License Info |
-|------|----------|--------------|
-| `wikimedia_search_commons` | Technical diagrams, hardware, scientific images | CC licenses, public domain |
-| `openverse_search_images` | Creative Commons images from Flickr, Wikimedia, etc. | CC licenses |
-| `unsplash_search_photos` | High-quality photos (nature, tech, people) | Unsplash License |
-| `pexels_photos_search` | General stock photos | Pexels License |
-| `pixabay_search_pixabay_images` | Illustrations, vectors, general images | Pixabay License |
-
-Select the best image based on relevance, visual clarity, license appropriateness, and attribution requirements.
-
-### Phase 2: Specific Site Search (Fallback)
-
-If dedicated APIs don't return suitable results, search these educational/technical sites:
+Search these educational/technical and other education/technical sites:
 
 1. `randomnerdtutorials.com` — ESP32/Arduino tutorials with hardware photos
 2. `learn.adafruit.com` — Adafruit product images
@@ -83,3 +74,4 @@ For educational slides, prefer images that are:
 - **Have neutral backgrounds** — white or simple backgrounds work best on slides
 - **Are properly licensed** — CC licenses, public domain, or permissive licenses
 - **Have reasonable file size** — avoid 4K+ images that slow slide loading
+

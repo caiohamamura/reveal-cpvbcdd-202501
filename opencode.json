@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode-go/deepseek-v4-pro",
+  "model": "opencode-go/kimi-k2.6",
   "small_model": "opencode-go/kimi-k2.6",
   "tools": {
     "websearch": true,
@@ -13,55 +13,5 @@
   },
   "permission": {
     "websearch": "allow"
-  },
-  "mcp": {
-    "unsplash": {
-      "type": "local",
-      "command": [
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/unsplash/.venv/bin/fastmcp",
-        "run",
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/unsplash/server.py"
-      ],
-      "enabled": true,
-      "environment": {
-        "UNSPLASH_ACCESS_KEY": "YvGveCcY4fO0NCsMMOQJuvgc67E-8NDfQHWkivTH9tA"
-      }
-    },
-    "pexels": {
-      "type": "local",
-      "command": [
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/pexels/.venv/bin/pexels-mcp-server"
-      ],
-      "enabled": true,
-      "environment": {
-        "PEXELS_API_KEY": "4KtUaoLRJVhSmrOlix2rJQcyVfC38VowQRey10n8R53F2seorFgFqvnK"
-      }
-    },
-    "pixabay": {
-      "type": "local",
-      "command": [
-        "bash",
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/pixabay/start.sh"
-      ],
-      "enabled": true
-    },
-    "wikimedia": {
-      "type": "local",
-      "command": [
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/wikimedia/.venv/bin/fastmcp",
-        "run",
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/wikimedia/server.py"
-      ],
-      "enabled": true
-    },
-    "openverse": {
-      "type": "local",
-      "command": [
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/openverse/.venv/bin/fastmcp",
-        "run",
-        "/home/openclaw/.openclaude/plugins/marketplaces/claude-plugins-official/external_plugins/openverse/server.py"
-      ],
-      "enabled": true
-    }
   }
 }
