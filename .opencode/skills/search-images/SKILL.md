@@ -10,8 +10,7 @@ metadata:
 
 ### VERY IMPORTANT
 
-- Never flood any API/server, always sleep randomly from 1 to 4 seconds between requests
-- NEVER search in parallel
+- NEVER do websearch in parallel because websearch tool will return too many requests
 
 
 ## What I do
@@ -28,24 +27,24 @@ Use this skill when the user asks to find images, search for pictures, get photo
 
 ### Phase 1: Specific Site Search (Fallback)
 
-Search these educational/technical and other education/technical sites:
+Search these educational/technical these and other education/technical sites in round-robin:
 
-1. `randomnerdtutorials.com` — ESP32/Arduino tutorials with hardware photos
-2. `learn.adafruit.com` — Adafruit product images
-3. `sparkfun.com` — SparkFun product images
-4. `docs.espressif.com` — Espressif official docs
-5. `circuits-diy.com` — Circuit diagrams and project images
-6. `makerhero.com` — Brazilian maker community images
-7. `usinainfo.com.br` — Brazilian electronics store images
-8. `instructables.com` — DIY project photos
-9. `guiarobotica.com` — Robotics guides
-10. `create.arduino.cc` — Arduino project hub
-11. `circuitsbasics.com` — Basic circuit images
-12. `arduinogetstarted.com` — Arduino tutorials
-13. `arduinoecia.com.br` — Brazilian Arduino community
-14. `hackster.io` — Hardware projects
-15. `how2electronics.com` — Electronics tutorials
-16. `portal.vidadesilicio.com.br` — Brazilian maker content
+- `randomnerdtutorials.com` — ESP32/Arduino tutorials with hardware photos
+- `learn.adafruit.com` — Only adafruit tutorials, not boring product spec photos
+- `sparkfun.com` — SparkFun product images
+- `docs.espressif.com` — Espressif official docs
+- `circuits-diy.com` — Circuit diagrams and project images
+- `makerhero.com` — Brazilian maker community images
+- `usinainfo.com.br` — Brazilian electronics store images
+- `instructables.com` — DIY project photos
+- `guiarobotica.com` — Robotics guides
+- `create.arduino.cc` — Arduino project hub
+- `circuitsbasics.com` — Basic circuit images
+- `arduinogetstarted.com` — Arduino tutorials
+- `arduinoecia.com.br` — Brazilian Arduino community
+- `hackster.io` — Hardware projects
+- `how2electronics.com` — Electronics tutorials
+- `portal.vidadesilicio.com.br` — Brazilian maker content
 
 Usage pattern: search with `site:randomnerdtutorials.com OR site:learn.adafruit.com`, then `webfetch` promising pages and extract direct image URLs from the HTML.
 
@@ -53,9 +52,10 @@ Usage pattern: search with `site:randomnerdtutorials.com OR site:learn.adafruit.
 
 Use `websearch` with a descriptive query plus `"image"`, then `webfetch` promising pages. Extract image URLs from `<meta property="og:image">`, `<link rel="preload">`, or `<img>` tags.
 
-### Attribution Rules
+### Alt labelling and attribution Rules
 
-Always include image attribution in slides:
+- Create a short and objective description of the image and put is as `alt` attribute.
+- Always include image attribution in slides:
 
 ```html
 <p style="font-size: 12pt; color: #6272a4;">Fonte: [Site] ([License])</p>
@@ -72,6 +72,5 @@ For educational slides, prefer images that are:
 - **Clear and well-lit** — students need to see component details
 - **Show components in context** — connected to breadboard/ESP32 when possible
 - **Have neutral backgrounds** — white or simple backgrounds work best on slides
-- **Are properly licensed** — CC licenses, public domain, or permissive licenses
 - **Have reasonable file size** — avoid 4K+ images that slow slide loading
 

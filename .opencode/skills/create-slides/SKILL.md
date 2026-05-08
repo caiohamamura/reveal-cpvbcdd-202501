@@ -398,6 +398,20 @@ Technical details:
 6. **Summary** — Recap + preview of next lesson
 
 ### Language
-- All slide content in **Portuguese (Brazilian)**
+- All slide content in **Portuguese (Brazilian)** NEVER write Chinese letters!
 - Technical terms can stay in English (WiFi, Deep Sleep, MQTT, etc.)
 - Code comments in Portuguese
+
+
+---
+# IMPORTANT!!!!!
+---
+
+### Final Testing
+
+- Never skip testing, specially images for status 200, valid binary data (not <=1KB) and mime type image
+- Test other links for 200
+- Double-check spelling for correct Portuguese (Brazilian) never Chinese characters only technical english terms
+are acceptable
+
+
