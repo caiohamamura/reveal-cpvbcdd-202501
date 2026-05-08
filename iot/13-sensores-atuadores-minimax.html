@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - Sensores e Atuadores para Projetos IoT</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SLIDE 1: CAPA
+         ============================================================ -->
+      <section data-auto-animate>
+        <header1 aula="13" curso="Programação Avançada IoT" title-size="22"
+                 title="Sensores e Atuadores para Projetos IoT">
+          <div class="mermaid" data-id="cover-diagram" style="width:400px">
+            <pre>
+graph TD
+  A["📡 ESP8266"] --> B["🔍 Sensores"]
+  A --> C["⚙️ Atuadores"]
+  B --> D["🌡️ Temp"]
+  B --> E["📏 Distância"]
+  B --> F["🌦️ Ambiente"]
+  C --> G["🎯 Motores"]
+  C --> H["📡 Comunc."]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#ff79c6,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         SLIDE 2: REVISÃO RÁPIDA
+         ============================================================ -->
+      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.3">
+        <h2>Revisão: O que já sabemos 💪</h2>
+        <multi-col style="gap: 30px;">
+          <div style="flex:1;">
+            <h3 style="color: #8be9fd;">Sensores</h3>
+            <ul>
+              <li><b>LDR</b> — luz analógica</li>
+              <li><b>DHT22</b> — temperatura e umidade</li>
+              <li><b>HC-SR04</b> — distância por ultrassom</li>
+            </ul>
+          </div>
+          <div style="flex:1;">
+            <h3 style="color: #ff79c6;">Atuadores</h3>
+            <ul>
+              <li><b>LCD I2C</b> — display</li>
+              <li><b>Relé</b> — controlar cargas AC</li>
+              <li><b>Motor DC + MOSFET</b> — PWM</li>
+            </ul>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- ============================================================
+         SLIDE 3: MOTIVAÇÃO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Hoje: Expandindo seu repertório 🚀</h2>
+        <ls-u>
+          <li>Já dominamos o básico — mas que tal <b style="color:#50fa7b">70+ sensores</b> e <b style="color:#50fa7b">atuadores</b> disponíveis?</li>
+          <li>Cada projeto pode ter necessidades diferentes — know how é poder!</li>
+          <li>Objetivo: <b style="color:#8be9fd">identificar e selecionar</b> o componente certo</li>
+        </ls-u>
+        <div style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 24pt; color: #ff79c6;">"Não é sobre saber tudo — é sobre saber que existe"</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         BLOCO: SENSORES SIMPLES
+         ============================================================ -->
+      <section>
+
+        <!-- HEADER: Sensores Simples -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Bloco 1: Sensores Simples</h2>
+          <p style="font-size: 28pt; color: #f8f8f2;">Evoluindo do familiar</p>
+          <div class="mermaid" data-id="simples-header" style="width:350px">
+            <pre>
+graph LR
+  A["✅ Já known"] --> B["➡️ Próximo nível"]
+  style A fill:#50fa7b,color:#282a36
+  style B fill:#8be9fd,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <!-- SLIDE: DS18B20 -->
+        <section data-auto-animate>
+          <h2>🌡️ DS18B20 — Temperatura Digital</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/ds18b20.jpg" alt="Sensor de temperatura DS18B20" width="280" />
+              <p style="font-size: 14pt; color: #6272a4; margin-top: 5px;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Faixa de medição</td><td>-55°C a 125°C</td></tr>
+                  <tr><td>Precisão</td><td>±0.5°C</td></tr>
+                  <tr><td>Interface</td><td>1-Wire (GPIO)</td></tr>
+                  <tr><td>Resolução</td><td>9 a 12 bits</td></tr>
+                  <tr><td>Precisa Pull-Up</td><td>4.7kΩ</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: DS18B20 Código -->
+        <section data-auto-animate>
+          <h2>🌡️ DS18B20 — Código</h2>
+          <code-block lang="cpp" data-trim><script type="text/plain">
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+#define PINO_DS18B20 2  // GPIO2 = D4 no ESP8266
+
+OneWire oneWire(PINO_DS18B20);
+DallasTemperature sensors(&oneWire);
+
+void setup() {
+    Serial.begin(115200);
+    sensors.begin();
+}
+
+void loop() {
+    sensors.requestTemperatures();
+    float temp = sensors.getTempCByIndex(0);
+    Serial.println(temp);
+    delay(1000);
+}
+</script></code-block>
+          <p style="font-size: 16pt; color: #6272a4; margin-top: 10px;">Biblioteca: <code>OneWire</code> + <code>DallasTemperature</code></p>
+        </section>
+
+        <!-- SLIDE: Boia (Nível de Água) -->
+        <section data-auto-animate>
+          <h2>💧 Boia — Nível de Água</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1; text-align: center;">
+              <img src="https://i.imgur.com/WtLBKjP.jpg" alt="Boia / sensor de nível de água" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Tipo</td><td>Contato seco (ON/OFF)</td></tr>
+                  <tr><td>Tensão</td><td>até 100V AC/DC</td></tr>
+                  <tr><td>Corrente máx</td><td>0.5A / 1A</td></tr>
+                  <tr><td>Saída</td><td>Digital (0 ou 1)</td></tr>
+                  <tr><td>Instalação</td><td>Horizontal ou vertical</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Sensores Simples -->
+
+      <!-- ============================================================
+         BLOCO: SENSORES DE DISTÂNCIA
+         ============================================================ -->
+      <section>
+
+        <!-- HEADER: Sensores de Distância -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Bloco 2: Sensores de Distância</h2>
+          <p style="font-size: 28pt; color: #f8f8f2;">Medir sem tocar —超声波, laser e mais</p>
+          <multi-col style="gap: 30px; margin-top: 20px;">
+            <div style="flex:1; text-align: center;">
+              <img src="img/sensores/hc-sr04.jpg" alt="HC-SR04 ultrassônico" width="200" />
+              <p style="font-size: 14pt;">Ultrassônico</p>
+            </div>
+            <div style="flex:1; text-align: center;">
+              <img src="https://cdn-learn.adafruit.com/assets/assets/000/093/495/medium800/adafruit_products_VL53L0X_top_angle.jpg" alt="VL53L0X laser" width="200" />
+              <p style="font-size: 14pt;">Laser</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: HC-SR04 Ultrassônico -->
+        <section data-auto-animate>
+          <h2>📏 HC-SR04 — Ultrassônico</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/hc-sr04.jpg" alt="Sensor ultrassônico HC-SR04" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Faixa</td><td>2cm a 400cm</td></tr>
+                  <tr><td>Precisão</td><td>±3mm</td></tr>
+                  <tr><td>Ângulo</td><td>~15°</td></tr>
+                  <tr><td>Pinos</td><td>Trigger + Echo</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: VL53L0X Laser -->
+        <section data-auto-animate>
+          <h2>📏 VL53L0X — Laser ToF</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="https://cdn-learn.adafruit.com/assets/assets/000/093/495/medium800/adafruit_products_VL53L0X_top_angle.jpg" alt="Sensor laser VL53L0X" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: Adafruit (Kattni Rembor)<br/>Licença: CC BY</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Faixa</td><td>50mm a 1200mm</td></tr>
+                  <tr><td>Precisão</td><td>±3mm</td></tr>
+                  <tr><td>Interface</td><td>I2C (SDA/SCL)</td></tr>
+                  <tr><td>Fov</td><td>25° (estreito)</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #ff5555; background: rgba(255,85,85,0.1);">
+                <p style="font-size: 16pt; color: #ff5555;">⚠️ Não funciona bem ao sol direto!</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: HC-SR04 vs VL53L0X Comparação -->
+        <section data-auto-animate>
+          <h2>📏 Ultrassônico vs Laser</h2>
+          <table style="font-size: 20pt;">
+            <thead>
+              <tr><th>Característica</th><th>HC-SR04</th><th>VL53L0X</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Princípio</td><td>Ultrassom</td><td>ToF (Time of Flight)</td></tr>
+              <tr><td>Faixa</td><td>2–400 cm</td><td>5–120 cm</td></tr>
+              <tr><td>Precisão</td><td>±3mm</td><td>±3mm</td></tr>
+              <tr><td>Custo</td><td style="color:#50fa7b;">~$3 (barato)</td><td style="color:#ff5555;">~$10 (caro)</td></tr>
+              <tr><td>Sol direto</td><td>OK</td><td>Prejudicado</td></tr>
+              <tr><td>Superfícies</td><td>Problemas com tecidos</td><td>Melhor em superfícies lisas</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+      </section><!-- fim Sensores de Distância -->
+
+      <!-- ============================================================
+         BLOCO: SENSORES AMBIENTAIS
+         ============================================================ -->
+      <section>
+
+        <!-- HEADER: Sensores Ambientais -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Bloco 3: Sensores Ambientais</h2>
+          <p style="font-size: 28pt; color: #f8f8f2;">Gás, solo, chuva, movimento...</p>
+          <div class="mermaid" data-id="ambientais-header" style="width:400px">
+            <pre>
+graph TD
+  A["🌍 Sensores Ambientais"] --> B["💨 Gás"]
+  A --> C["🌱 Solo"]
+  A --> D["💧 Chuva"]
+  A --> E["🚶 Presença"]
+  style A fill:#8be9fd,color:#282a36
+  style B fill:#ff5555,color:#f8f8f2
+  style C fill:#50fa7b,color:#282a36
+  style D fill:#8be9fd,color:#282a36
+  style E fill:#f1fa8c,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <!-- SLIDE: MQ-2 Gás/Fumaça -->
+        <section data-auto-animate>
+          <h2>💨 MQ-2 — Gás e Fumaça</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2016/04/smoke-sensor-r.jpg?resize=400%2C308" alt="Sensor de gás MQ-2" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Gases detectados</td><td>CH4, CO, LPG, H2, fumaça</td></tr>
+                  <tr><td>Interface</td><td>Analógico + Digital</td></tr>
+                  <tr><td>Tensão</td><td>5V DC</td></tr>
+                  <tr><td>Sensibilidade</td><td>Ajustável (trimpot)</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #f1fa8c; background: rgba(241,250,140,0.1);">
+                <p style="font-size: 16pt; color: #f1fa8c;">⚠️ Precisa pré-aquecimento (5–10 min)</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Umidade do Solo -->
+        <section data-auto-animate>
+          <h2>🌱 Umidade do Solo</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/soil-moisture.jpg" alt="Sensor de umidade do solo" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Interface</td><td>Analógico + Digital</td></tr>
+                  <tr><td>Tensão</td><td>3.3V–5V</td></tr>
+                  <tr><td>Saída</td><td>0–1023 (ADC)</td></tr>
+                  <tr><td>Consumo</td><td>Muito baixo</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #50fa7b; background: rgba(80,250,123,0.1);">
+                <p style="font-size: 16pt; color: #50fa7b;">💡 Para irrigação automática:阈值 ~500</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Sensor de Chuva -->
+        <section data-auto-animate>
+          <h2>💧 Sensor de Chuva FC-37 / YL-83</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2016/06/rain-sensor.jpg?resize=375%2C405" alt="Sensor de chuva FC-37" width="260" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Interface</td><td>Analógico + Digital</td></tr>
+                  <tr><td>Tensão</td><td>3.3V–5V</td></tr>
+                  <tr><td>Saída digital</td><td>HIGH = seco / LOW = molhado</td></tr>
+                  <tr><td>Uso típico</td><td>Janelas, telhados, estufas</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Acelerômetro MPU-6050 -->
+        <section data-auto-animate>
+          <h2>📐 MPU-6050 — Acelerômetro + Giroscópio</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/mpu-6050.jpg" alt="Módulo MPU-6050" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Interface</td><td>I2C</td></tr>
+                  <tr><td>Eixos</td><td>3 eixos (X, Y, Z)</td></tr>
+                  <tr><td>Resolução</td><td>16 bits</td></tr>
+                  <tr><td>Uso típico</td><td>Orientação, movimento, queda</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #bd93f9; background: rgba(189,147,249,0.1);">
+                <p style="font-size: 16pt; color: #bd93f9;">📦 Biblioteca: <code>Adafruit_MPU6050</code></p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Sensor Hall -->
+        <section data-auto-animate>
+          <h2>🧲 Sensor Hall — Detecção de Campos Magnéticos</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/hall-sensor.gif" alt="Sensor Hall analógico" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Tipo</td><td>Analógico (linear)</td></tr>
+                  <tr><td>Tensão</td><td>3.3V–5V</td></tr>
+                  <tr><td>Saída</td><td>Tensão proporcional ao campo</td></tr>
+                  <tr><td>Uso típico</td><td>Tachímetro, porta magnética,blinds</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <code-block lang="cpp" style="margin-top: 10px;" data-trim><script type="text/plain">
+int valor = analogRead(A0);
+// 0-4095: 2048 = sem campo magnético
+</script></code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: PIR HC-SR501 -->
+        <section data-auto-animate>
+          <h2>🚶 PIR HC-SR501 — Detecção de Presença</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/pir-hc-sr501.png" alt="Sensor PIR HC-SR501" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Alcance</td><td>3–7 metros</td></tr>
+                  <tr><td>Ângulo</td><td>~120°</td></tr>
+                  <tr><td>Saída</td><td>Digital (HIGH/LOW)</td></tr>
+                  <tr><td>Delay</td><td>Ajustável (trimpot)</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #8be9fd; background: rgba(139,233,253,0.1);">
+                <p style="font-size: 16pt; color: #8be9fd;">🔧 Ajustar sensibilidade e tempo de delay!</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Sensores Ambientais -->
+
+      <!-- ============================================================
+         BLOCO: ATUADORES — MOTORES E MOVIMENTO
+         ============================================================ -->
+      <section>
+
+        <!-- HEADER: Atuadores Motores -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Bloco 4: Atuadores — Motores e Movimento</h2>
+          <p style="font-size: 28pt; color: #f8f8f2;">Mover, girar, atuar...</p>
+          <div class="mermaid" data-id="atuadores-header" style="width:400px">
+            <pre>
+graph TD
+  A["⚙️ Atuadores"] --> B["🔄 Servo"]
+  A --> C["🔢 Stepper"]
+  A --> D["➡️ Solenóide"]
+  style A fill:#ff79c6,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <!-- SLIDE: Servo SG90 -->
+        <section data-auto-animate>
+          <h2>🔄 Servo SG90</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/sg90-servo.jpg" alt="Micro servo SG90" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Torque</td><td>2.5 kg·cm</td></tr>
+                  <tr><td>Ângulo</td><td>0° a 180°</td></tr>
+                  <tr><td>Tensão</td><td>4.8V–6V</td></tr>
+                  <tr><td>Interface</td><td>PWM (GPIO)</td></tr>
+                  <tr><td>Consumo</td><td>~650mA (em carga)</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <code-block lang="cpp" style="margin-top: 10px;" data-trim><script type="text/plain">
+#include <Servo.h>
+Servo myServo;
+myServo.attach(D4);  // GPIO2
+myServo.write(90);   // centro
+</script></code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Motor de Passo 28BYJ-48 -->
+        <section data-auto-animate>
+          <h2>🔢 Motor de Passo 28BYJ-48</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/28byj-48.jpg" alt="Motor de passo 28BYJ-48 com driver ULN2003" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Passos/revolução</td><td>4096 (meio passo: 2048)</td></tr>
+                  <tr><td>Tensão</td><td>5V</td></tr>
+                  <tr><td>Driver</td><td>ULN2003 incluso</td></tr>
+                  <tr><td>Uso típico</td><td>Rotores, CNC, persianas</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #ff5555; background: rgba(255,85,85,0.1);">
+                <p style="font-size: 16pt; color: #ff5555;">⚠️ Não liga direto no ESP! Use driver.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Solenóide -->
+        <section data-auto-animate>
+          <h2>➡️ Solenóide — Atuação Linear</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1;">
+              <img src="img/sensores/solenoid-valve.jpg" alt="Válvula solenóide" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Função</td><td>Movimento linear rápido</td></tr>
+                  <tr><td>Tensão</td><td>5V–12V</td></tr>
+                  <tr><td>Uso típico</td><td>Trava elétrica, dispensers</td></tr>
+                  <tr><td>Controle</td><td>Transistor ou relé</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #f1fa8c; background: rgba(241,250,140,0.1);">
+                <p style="font-size: 16pt; color: #f1fa8c;">⚡ Pode consumir 1A+ — Use transistor/MOSFET!</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Atuadores -->
+
+      <!-- ============================================================
+         BLOCO: COMUNICAÇÃO IoT
+         ============================================================ -->
+      <section>
+
+        <!-- HEADER: Comunicação IoT -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Bloco 5: Comunicação IoT</h2>
+          <p style="font-size: 28pt; color: #f8f8f2;">Conectando sem Wi-Fi</p>
+        </section>
+
+        <!-- SLIDE: LoRa -->
+        <section data-auto-animate>
+          <h2>📡 LoRa — Long Range</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1; text-align: center;">
+              <img src="https://makeradvisor.com/wp-content/uploads/2020/08/RFM95W-Lora-module_1.jpg" alt="Módulo LoRa RFM95W" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: Maker Advisor</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Alcance</td><td>2–20 km (campo aberto)</td></tr>
+                  <tr><td>Freqüência</td><td>433 MHz / 868 MHz / 915 MHz</td></tr>
+                  <tr><td>Potência</td><td>até 100mW (+20dBm)</td></tr>
+                  <tr><td>Taxa</td><td>Baixa (0.3–50 kbps)</td></tr>
+                  <tr><td>Consumo TX</td><td>~100mA</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #50fa7b; background: rgba(80,250,123,0.1);">
+                <p style="font-size: 16pt; color: #50fa7b;">📦 Biblioteca: <code>LoRa.h</code> (Sandeep Mistry)</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Infrared (IR) -->
+        <section data-auto-animate>
+          <h2>📺 Infravermelho (IR)</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex:1; text-align: center;">
+              <img src="https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2019/05/tsop1738-1.jpg?resize=400%2C300" alt="Receptor IR TSOP1738" width="280" />
+              <p style="font-size: 14pt; color: #6272a4;">Fonte: RandomNerd Tutorials<br/>Licença: CC BY-NC-SA 4.0</p>
+            </div>
+            <div style="flex:1.2;">
+              <table style="font-size: 18pt;">
+                <thead><tr><th>Especificação</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td>Frequência</td><td>38 kHz (padrão)</td></tr>
+                  <tr><td>Protocolos</td><td>NEC, Sony, Samsung...</td></tr>
+                  <tr><td>Interface</td><td>Digital (GPIO)</td></tr>
+                  <tr><td>Uso típico</td><td>Controle remoto, automação</td></tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+              <div style="margin-top: 10px; padding: 10px; border-left: 4px solid #bd93f9; background: rgba(189,147,249,0.1);">
+                <p style="font-size: 16pt; color: #bd93f9;">📦 Biblioteca: <code>IRremote.h</code></p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Comunicação IoT -->
+
+      <!-- ============================================================
+         SLIDE: RESUMO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Resumo: Repertório Expandido 🎉</h2>
+        <ls-u>
+          <li><b>Sensores simples:</b> DS18B20, Boia — temperatura e nível</li>
+          <li><b>Distância:</b> HC-SR04 (ultrassom) vs VL53L0X (laser)</li>
+          <li><b>Ambientais:</b> MQ-2 (gás), solo, chuva, MPU-6050, Hall, PIR</li>
+          <li><b>Atuadores:</b> Servo, Stepper, Solenóide</li>
+          <li><b>Comunicação:</b> LoRa (long range), IR (controle)</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt; color: #8be9fd;">Próxima aula: <strong>Escolha do Projeto Final!</strong></p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SLIDE: EXERCÍCIO PRÁTICO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Exercício: Sistema de Monitoramento Inteligente 🏗️</h2>
+        <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 15px; margin-bottom: 15px;">
+          <p style="font-size: 20pt;"><strong>Objetivo:</strong> Cada grupo deve selecionar componentes para um sistema de monitoramento, justificando a escolha técnica.</p>
+        </div>
+        <multi-col style="gap: 20px;">
+          <div style="flex:1;">
+            <h3 style="color: #8be9fd;">Escolha obrigatória:</h3>
+            <ul>
+              <li>1 sensor de temperatura</li>
+              <li>1 sensor ambiente (gás, solo, etc.)</li>
+              <li>1 atuador (LED, servo, relé)</li>
+            </ul>
+          </div>
+          <div style="flex:1;">
+            <h3 style="color: #ff79c6;">Justificativas:</h3>
+            <ul>
+              <li>Faixa de medição/atuação</li>
+              <li>Precisão requerida</li>
+              <li>Consumo de energia</li>
+              <li>Custo</li>
+            </ul>
+          </div>
+        </multi-col>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
