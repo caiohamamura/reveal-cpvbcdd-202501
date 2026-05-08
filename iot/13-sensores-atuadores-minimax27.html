@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - Sensores e Atuadores</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SLIDE 1: CAPA
+         ============================================================ -->
+      <section data-auto-animate>
+        <header1 aula="13" curso="IoT" title-size="22"
+                 title="Sensores e Atuadores para Projetos IoT">
+          <div class="mermaid" data-id="iot-overview" style="width:400px">
+            <pre>
+graph LR
+  A["&#128267; Sensores"] --> B["&#9889; MCU"]
+  B --> C["&#128993; Atuadores"]
+  C --> A
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#ff5555,color:#f8f8f2
+            </pre>
+          </div>
+          <div><img src="https://i.imgur.com/ljwnRxF.png" width="350" alt="Ciclo IoT: sensores captam dados, MCU processa, atuadores respondem"></div>
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         SEÇÃO: REVISÃO RÁPIDA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 2: Revisão Capa -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Revisão: O que já conhecemos</h2>
+          <p style="font-size: 28pt; text-align: center; color: #bd93f9;">Componentes que vocês já sabem usar</p>
+        </section>
+
+        <!-- SLIDE 3: LDR + DHT22 -->
+        <section data-auto-animate>
+          <h2>Revisão: LDR + DHT22</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>LDR</strong> — leitura analogica (luz)</li>
+                <li><strong>DHT22</strong> — temperatura + umidade (digital)</li>
+                <li>Biblioteca: <code>DHT.h</code></li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/WM3HfDL.jpeg" width="320" alt="DHT22 temperature and humidity sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 4: LCD I2C + Relé -->
+        <section data-auto-animate>
+          <h2>Revisão: LCD I2C + Relé</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>LCD I2C</strong> — <code>display.print()</code></li>
+                <li><strong>Relé</strong> — controlar cargas 220V</li>
+                <li><code>digitalWrite(pin, HIGH/LOW)</code></li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/YdWBPbR.jpeg" width="320" alt="LCD I2C display module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 5: Motor DC + MOSFET -->
+        <section data-auto-animate>
+          <h2>Revisão: Motor DC + MOSFET</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>Motor DC</strong> — controle de velocidade</li>
+                <li><strong>MOSFET</strong> — PWM para controle de velocidade</li>
+                <li><code>analogWrite(PWM_PIN, valor)</code></li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/KhN8vWQ.jpeg" width="320" alt="DC motor with MOSFET driver">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Revisão -->
+
+      <!-- ============================================================
+         SEÇÃO: SENSORES SIMPLES
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 6: Capa Sensores Simples -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Sensores Simples</h2>
+          <p style="font-size: 26pt; text-align: center; color: #f1fa8c;">Fáceis de usar, muito úteis no dia a dia</p>
+        </section>
+
+        <!-- SLIDE 7: DS18B20 -->
+        <section data-auto-animate>
+          <h2>DS18B20 — Sensor de Temperatura Digital</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>1-wire: apenas 1 pino de dados</li>
+                <li>Precisão: ±0.5°C (-10°C a +85°C)</li>
+                <li>Multiple sensores na mesma linha</li>
+                <li>Biblioteca: <code>DallasTemperature</code></li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+sensors.requestTemperatures();
+float temp = sensors.getTempCByIndex(0);
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2019/07/DS18B20-arduino-guide.jpg?w=600" width="320" alt="DS18B20 temperature sensor with Arduino">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 8: Boia (Nível de Água) -->
+        <section data-auto-animate>
+          <h2>Boia — Sensor de Nível de Água</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Interruptor magnético (reed switch)</li>
+                <li>Flutua com o nível da água</li>
+                <li>Saída digital: ON/OFF</li>
+                <li>Uso: reservas, bombas, lava-roupa</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int nivelAgua = digitalRead(PIN_BOIA);
+if (nivelAgua == HIGH) {
+  // Tanque cheio
+}
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/5QdCz9u.jpeg" width="300" alt="Water level float switch sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: MakerHero (CC BY-NC-SA)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 9: Sensor Magnético (Hall) -->
+        <section data-auto-animate>
+          <h2>Sensor Hall — Detecção de Campo Magnético</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Detecta presença de ímã</li>
+                <li>Sem contato físico (desgaste zero)</li>
+                <li>Usado em: tacômetro, abertura de porta</li>
+                <li>Saída digital (HIGH/LOW)</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int hall = digitalRead(PIN_HALL);
+if (digitalRead(PIN_HALL) == LOW) {
+  // Ímã detectado
+}
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/5XKj8dU.jpeg" width="300" alt="Hall effect sensor module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: SparkFun (CC BY-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Sensores Simples -->
+
+      <!-- ============================================================
+         SEÇÃO: SENSORES DE DISTÂNCIA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 10: Capa Distância -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Sensores de Distância</h2>
+          <p style="font-size: 26pt; text-align: center; color: #ff79c6;">Medindo o mundo ao redor</p>
+        </section>
+
+        <!-- SLIDE 11: HC-SR04 Ultrassônico -->
+        <section data-auto-animate>
+          <h2>HC-SR04 — Sensor Ultrassônico</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Range: <strong>2cm a 400cm</strong></li>
+                <li>Precisão: 0.3cm</li>
+                <li>Usa som (40kHz), não luz</li>
+                <li>Funciona no escuro!</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+// Trigger pulso de 10µs
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+
+duration = pulseIn(echoPin, HIGH);
+distance = (duration/2) / 29.1;
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2021/06/HC-SR04-Ultrasonic-Sensor-Module-Distance-Measurement-Component-Part-Front.jpg?w=600" width="320" alt="HC-SR04 ultrasonic distance sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 12: Sensor IR -->
+        <section data-auto-animate>
+          <h2>Sensor IR — Infravermelho</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Sharp GP2Y0A21: range <strong>10cm a 80cm</strong></li>
+                <li>Saída analógica proporcional à distância</li>
+                <li>Mais preciso que ultrassônico em curta distância</li>
+                <li>Afetado pela luz ambiente</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int distIR = analogRead(PIN_IR);
+float voltage = distIR * (5.0 / 1023.0);
+// Converter tensão para distância via curva
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/W9tYQ3r.jpeg" width="300" alt="Sharp IR distance sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 13: VL53L0X Laser -->
+        <section data-auto-animate>
+          <h2>VL53L0X — Sensor Laser de Tempo de Voo</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Range: <strong>50mm a 1000mm</strong> (1m)</li>
+                <li>Precisão: ±3%</li>
+                <li>Usa luz (laser 940nm), não som</li>
+                <li>I2C — fácil de conectar</li>
+                <li>Biblioteca: <code>Adafruit_VL53L0X</code></li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+lox.startRanging();
+int distance = lox.getDistance();
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/J8fNqLk.jpeg" width="300" alt="VL53L0X laser time-of-flight sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 14: Doppler RCWL-0516 -->
+        <section data-auto-animate>
+          <h2>RCWL-0516 — Sensor Doppler (Micro-ondas)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Detecta movimento através de materiais</li>
+                <li>Usa micro-ondas (3.18GHz)</li>
+                <li>Penetra madeira, plástico, vidro</li>
+                <li>Range: 5-7 metros</li>
+                <li>Saída: LOW (standby) → HIGH (movimento)</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int doppler = digitalRead(PIN_DOPPLER);
+if (doppler == HIGH) {
+  // Movimento detectado!
+}
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/Rp4N3Xw.jpeg" width="300" alt="RCWL-0516 microwave motion sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Circuits DIY (CC BY-SA)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Sensores de Distância -->
+
+      <!-- ============================================================
+         SEÇÃO: SENSORES AMBIENTAIS
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 15: Capa Ambientais -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Sensores Ambientais</h2>
+          <p style="font-size: 26pt; text-align: center; color: #50fa7b;">Monitorando o ambiente</p>
+        </section>
+
+        <!-- SLIDE 16: MQ-2 Gás/Fumaça -->
+        <section data-auto-animate>
+          <h2>MQ-2 — Sensor de Gás e Fumaça</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Detecta: GLP, Butano, Propano, Metano, Álcool, Hidrogênio</li>
+                <li>Saída: analógica (A0) + digital (D0 com threshold)</li>
+                <li>Sensibilidade ajustável via potenciômetro</li>
+                <li>Uso: detectors de incêndio, vazamento de gás</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int gasValue = analogRead(PIN_MQ2);
+if (gasValue > THRESHOLD) {
+  // Alerta de gás!
+  digitalWrite(BUZZER_PIN, HIGH);
+}
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/K9e9tXQ.jpeg" width="300" alt="MQ-2 gas smoke sensor module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 17: BME680 -->
+        <section data-auto-animate>
+          <h2>BME680 — Sensor Ambiental 4-em-1</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>Gás</strong> (VOC), Pressão, Umidade, Temperatura</li>
+                <li>Comunicação: I2C ou SPI</li>
+                <li>Ideal para: qualidade do ar interno (IAQ)</li>
+                <li>Biblioteca: <code>Adafruit_BME680</code></li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+bme.setGasHeater(320, 150);
+Serial.print("Gas: ");
+Serial.print(bme.gas_resistance / 10.0);
+Serial.println(" KOhms");
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/M6eWj8N.jpeg" width="300" alt="BME680 environmental sensor module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 18: Umidade do Solo -->
+        <section data-auto-animate>
+          <h2>Sensor de Umidade do Solo</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Mede resistência entre dois polos no solo</li>
+                <li>Solo seco = maior resistência</li>
+                <li>Solo úmido = menor resistência</li>
+                <li>Atenção: eletrólise — não deixar ligado 24h!</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int solo = analogRead(PIN_SOLO);
+int umidade = map(solo, 1023, 0, 0, 100);
+// Umidade em % (0 = seco, 100 = molhado)
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/FHkvRQZ.jpeg" width="300" alt="Soil moisture sensor module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: MakerHero (CC BY-NC-SA)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 19: Sensor de Chuva -->
+        <section data-auto-animate>
+          <h2>Sensor de Chuva (Rain Module)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Placa com trilhas condutoras</li>
+                <li>Gotas de chuva curto-circuitam as trilhas</li>
+                <li>Saída: analógica + digital</li>
+                <li>Uso: automatização de toldos, janelas</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int chuva = analogRead(PIN_CHUVA);
+bool detectouChuva = digitalRead(PIN_CHUVA_DIG);
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/Z4Rkj5w.jpeg" width="300" alt="Rain sensor module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Usinainfo (CC BY-SA)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 20: Acelerômetro MPU-6050 -->
+        <section data-auto-animate>
+          <h2>MPU-6050 — Acelerômetro + Giroscópio</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>3 eixos: X, Y, Z aceleração</li>
+                <li>3 eixos: X, Y, Z rotação (giroscópio)</li>
+                <li>I2C — usa biblioteca <code>Adafruit_MPU6050</code></li>
+                <li>Uso: detecção de queda, movimento, orientação</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+sensors_event_t a, g, temp;
+mpu.getEvent(&a, &g, &temp);
+Serial.print("Accel X: ");
+Serial.println(a.acceleration.x);
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/H7qLmNk.jpeg" width="300" alt="MPU-6050 accelerometer gyroscope module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 21: Sensor PIR -->
+        <section data-auto-animate>
+          <h2>HC-SR501 — Sensor PIR (Infravermelho Passivo)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Detecta radiação IR de corpos quentes (pessoas, animais)</li>
+                <li>Não emite nada — passivo!</li>
+                <li>Range: ~7 metros, 120° cone</li>
+                <li>Ajuste: sensibilidade + tempo de delay</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+int pir = digitalRead(PIN_PIR);
+if (pir == HIGH) {
+  Serial.println("Movimento detectado!");
+}
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/8XQELWk.jpeg" width="300" alt="HC-SR501 PIR motion sensor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Sensores Ambientais -->
+
+      <!-- ============================================================
+         SEÇÃO: ATUADORES
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 22: Capa Atuadores -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Atuadores — Motores e Movimento</h2>
+          <p style="font-size: 26pt; text-align: center; color: #ff5555;">Transformando sinais em movimento</p>
+        </section>
+
+        <!-- SLIDE 23: Servo Motor -->
+        <section data-auto-animate>
+          <h2>Servo Motor — Controle de Posição</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Rotação de 0° a 180° (micro servo)</li>
+                <li>Posição controlada por PWM (50Hz)</li>
+                <li>Biblioteca: <code>Servo.h</code></li>
+                <li>Uso: portas, robôs, câmera, válvulas</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+#include <Servo.h>
+Servo myservo;
+myservo.attach(PIN_SERVO);
+myservo.write(90); // centro
+delay(1000);
+myservo.write(0);  // posição inicial
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/Yw7GH8Q.jpeg" width="300" alt="SG90 servo motor">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 24: Motor de Passo -->
+        <section data-auto-animate>
+          <h2>Motor de Passo — Precisão de Posicionamento</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Move em passos (steps) definidos</li>
+                <li>28BYJ-48 + driver ULN2003</li>
+                <li>Precisão: 4096 passos / volta (ou 2048 half-step)</li>
+                <li>Uso: impressoras 3D, CNC, robôs</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+#include <Stepper.h>
+Stepper motor(2048, 8, 10, 9, 11);
+motor.setSpeed(15); // RPM
+motor.step(512);    // avançar 512 passos
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/WqMm8Xz.jpeg" width="300" alt="28BYJ-48 stepper motor with ULN2003 driver">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 25: Solenóide -->
+        <section data-auto-animate>
+          <h2>Solenóide — Movimento Linear Direto</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Eletroímã que puxa/pusha um êmbolo</li>
+                <li>Precisa de transistor/diodo de proteção</li>
+                <li>Tipos: push (empurra) ou pull (puxa)</li>
+                <li>Uso: travas elétricas, disjuntores, bombas</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+digitalWrite(SOLENOID_PIN, HIGH);
+delay(500); // tempo para ação
+digitalWrite(SOLENOID_PIN, LOW);
+// IMPORTANTE: diodo flyback em paralelo!
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/TjKfQd4.jpeg" width="300" alt="Solenoid valve module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: How2Electronics (CC BY-SA)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Atuadores -->
+
+      <!-- ============================================================
+         SEÇÃO: COMUNICAÇÃO IoT
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 26: Capa Comunicação -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Comunicação IoT</h2>
+          <p style="font-size: 26pt; text-align: center; color: #bd93f9;">Conectando seu projeto ao mundo</p>
+        </section>
+
+        <!-- SLIDE 27: LoRa -->
+        <section data-auto-animate>
+          <h2>LoRa — Long Range, Baixo Consumo</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Range: até <strong>10km</strong> (line-of-sight)</li>
+                <li>Frequência: 433MHz / 868MHz / 915MHz</li>
+                <li>Baixo consumo (comparado a WiFi)</li>
+                <li>Uso: agricultura, sensores remotos, cidades inteligentes</li>
+                <li>Biblioteca: <code>SPI</code> + <code>LoRa.h</code></li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+LoRa.beginPacket();
+LoRa.print("Temperatura: ");
+LoRa.println(tempC);
+LoRa.endPacket();
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/VdKQ3Rm.jpeg" width="300" alt="LoRa Ra-02 module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 28: IR Remote -->
+        <section data-auto-animate>
+          <h2>Infravermelho (IR) — Controle Remoto</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Controle de TVs, DVDs, ar condicionado</li>
+                <li>Protocolos comuns: NEC, Sony, RC5</li>
+                <li>Biblioteca: <code>IRremote.h</code></li>
+                <li>Transmissor + Receptor IR</li>
+                <li>Uso: automação residencial</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+#include <IRremote.h>
+IRrecv receptor(RECV_PIN);
+decode_results results;
+receptor.decode(&results);
+Serial.println(results.value, HEX);
+receptor.resume();
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="https://i.imgur.com/J7fGH3Q.jpeg" width="300" alt="IR remote control receiver module">
+              <p style="font-size: 12pt; color: #6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 29: MQTT Introdução -->
+        <section data-auto-animate>
+          <h2>MQTT — Protocolo para IoT</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>MQTT</strong> = Message Queuing Telemetry Transport</li>
+                <li>Modelo publish/subscribe</li>
+                <li>Broker: servidor central (ex: Mosquitto)</li>
+                <li>Tópicos: "casa/sala/temperatura"</li>
+                <li>Ideal para: WiFi, rede celular</li>
+              </ul>
+              <code-block lang="cpp"><script type="text/plain">
+client.publish("iot/aula13/sensor", String(tempC).c_str());
+// Subscribe
+client.subscribe("iot/aula13/atuador");
+              </script></code-block>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="mqtt-arch">
+                <pre>
+graph LR
+  S["&#128267; Sensor"] -->|"publish"| B["Broker MQTT"]
+  B -->|"subscribe"| A["&#128992; Atuador"]
+  B -->|"subscribe"| D["&#128187; Dashboard"]
+  style S fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style A fill:#ff5555,color:#f8f8f2
+  style D fill:#50fa7b,color:#282a36
+                </pre>
+              </div>
+              <p style="font-size: 12pt; color: #6272a4;">Arquitetura MQTT: publish/subscribe</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Comunicação IoT -->
+
+      <!-- ============================================================
+         SEÇÃO: EXERCÍCIO PRÁTICO
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 30: Exercício Capa -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Exercício Prático</h2>
+          <p style="font-size: 28pt; text-align: center; color: #f1fa8c;">&#128227; Projeto: Sistema de Monitoramento Inteligente</p>
+        </section>
+
+        <!-- SLIDE 31: Instruções do Exercício -->
+        <section data-auto-animate>
+          <h2>Projeto: Sistema de Monitoramento Inteligente</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+            <p><strong>Objetivo:</strong> Cada grupo deve projetar um sistema IoT completo, justificando a escolha de cada componente.</p>
+            <ls-u>
+              <li>Escolher <strong>1 sensor de temperatura</strong></li>
+              <li>Escolher <strong>1 sensor de ambiente</strong> (umidade, gás, etc.)</li>
+              <li>Escolher <strong>1 atuador</strong> (LED, servo, relé)</li>
+            </ls-u>
+          </div>
+          <div style="background: #282a36; border-left: 4px solid #ff5555; padding: 20px; margin-top: 15px;">
+            <p><strong>Critérios de Justificativa:</strong></p>
+            <ul>
+              <li>Faixa de medição/atuação adequada ao projeto</li>
+              <li>Precisão requerida pelo cenário</li>
+              <li>Consumo de energia</li>
+              <li>Custo dos componentes</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE 32: Entrega -->
+        <section data-auto-animate>
+          <h2>Entrega do Projeto</h2>
+          <div style="display: flex; align-items: center; gap: 1.5em;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Apresentação oral: 5 minutos por grupo</li>
+                <li>Descrever o cenário de uso do projeto</li>
+                <li>Justificar cada componente escolhido</li>
+                <li>Estimativa de custo total</li>
+              </ul>
+            </div>
+            <div style="flex: 0 0 350px; text-align: center;">
+              <div class="mermaid" data-id="projeto-grupo">
+                <pre>
+graph TD
+  A["&#128227; Escolher Cenário"] --> B["&#128267; Selecionar Sensores"]
+  B --> C["&#128992; Selecionar Atuador"]
+  C --> D["&#128198; Justificar Escolhas"]
+  D --> E["&#128073; Apresentar"]
+  style A fill:#8be9fd,color:#282a36
+  style E fill:#50fa7b,color:#282a36
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </section><!-- fim Exercício -->
+
+      <!-- ============================================================
+         SLIDE 33: ENCERRAMENTO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Revisão: LDR, DHT22, LCD I2C, Relé, MOSFET</li>
+          <li>Sensores Simples: DS18B20, Boia, Hall</li>
+          <li>Sensores de Distância: HC-SR04, IR, VL53L0X, Doppler</li>
+          <li>Sensores Ambientais: MQ-2, BME680, Solo, Chuva, MPU-6050, PIR</li>
+          <li>Atuadores: Servo, Motor de Passo, Solenóide</li>
+          <li>Comunicação: LoRa, IR, MQTT</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 25px;">
+          <p style="font-size: 22pt; color: #bd93f9;">&#128218; Exit Ticket: Google Forms (5 perguntas)</p>
+          <p style="font-size: 20pt; color: #ff79c6;">&#128218; Pesquise: Biblioteca Arduino Manager para cada sensor!</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
