@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>IoT - Sensores e Atuadores para Projetos IoT</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================
+         SLIDE 1: CAPA
+         ============================================================ -->
+      <section data-auto-animate>
+        <header1 aula="13" curso="Programacao Avancada IoT" title-size="24"
+                 title="Sensores e Atuadores para Projetos IoT">
+          <div class="mermaid" data-id="cover-arch" style="width:500px">
+            <pre>
+graph LR
+  A["Sensores"] -->|"ESP32/ESP8266"| B["Atuadores"]
+  C["Temperatura"] --> A
+  D["Distancia"] --> A
+  E["Ambiente"] --> A
+  B --> F["Motores"]
+  B --> G["Valvulas"]
+  B --> H["Comunicacao"]
+  style A fill:#50fa7b,color:#282a36
+  style B fill:#ff79c6,color:#282a36
+  style C fill:#8be9fd,color:#282a36
+  style D fill:#8be9fd,color:#282a36
+  style E fill:#8be9fd,color:#282a36
+  style F fill:#ffb86c,color:#282a36
+  style G fill:#ffb86c,color:#282a36
+  style H fill:#ffb86c,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         SLIDE 2: REVISAO RAPIDA - SENSORES
+         ============================================================ -->
+      <section data-auto-animate data-background-image="https://i.imgur.com/A62GI4n.png" data-background-opacity="0.3">
+        <h2>Revisao: O Que Ja Sabemos</h2>
+        <ls-u>
+          <li><b style="color: #ffb86c">LDR</b> -- leitura analogica de luminosidade</li>
+          <li><b style="color: #ffb86c">DHT22</b> -- temperatura e umidade (digital, 1 fio)</li>
+          <li><b style="color: #50fa7b">LCD I2C</b> -- display de informacoes (endereco 0x27)</li>
+          <li><b style="color: #8be9fd">Rele</b> -- controle de cargas AC/alta potencia</li>
+          <li><b style="color: #ff79c6">Motor DC + MOSFET</b> -- PWM para velocidade</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         SLIDE 3: REVISAO - CODIGO BASE
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Revisao: Codigo Base</h2>
+        <multi-col style="gap:15px">
+          <div style="flex:1;">
+            <h4 style="color:#ffb86c">Sensor (LDR/DHT)</h4>
+            <code-block lang="cpp" data-trim><script type="text/plain">
+int ldr = analogRead(A0);       // 0-1023
+float temp = dht.readTemperature();
+float umid = dht.readHumidity();
+</script></code-block>
+          </div>
+          <div style="flex:1;">
+            <h4 style="color:#ff79c6">Atuador (LED/Motor/Rele)</h4>
+            <code-block lang="cpp" data-trim><script type="text/plain">
+digitalWrite(RELE_PIN, HIGH);  // liga
+analogWrite(MOTOR_PIN, 128);   // 50% PWM
+digitalWrite(LED_PIN, LOW);    // inverte
+</script></code-block>
+          </div>
+        </multi-col>
+        <div class="fragment" style="text-align:center; margin-top:15px;">
+          <p style="font-size:22pt; color:#bd93f9;">Voce ja programa sensores e atuadores -- hoje vamos conhecer <b>dezenas</b> de opcoes!</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         SLIDE 4: MOTIVACAO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>O Catalogo IoT</h2>
+        <multi-col style="gap:15px">
+          <div style="flex:1;">
+            <p style="font-size:20pt;">Para seu <b style="color:#50fa7b">projeto final</b> (2 meses), voce tem a disposicao:</p>
+            <ul style="font-size:18pt;">
+              <li>+50 tipos de sensores diferentes</li>
+              <li>+30 tipos de atuadores</li>
+              <li>Diversos protocolos de comunicacao</li>
+            </ul>
+          </div>
+          <div style="flex:1; text-align:center;">
+            <div style="background:#44475a; border-radius:12px; padding:20px; border:2px dashed #6272a4;">
+              <p style="font-size:28pt; color:#50fa7b;">Objetivo<br/>Hoje</p>
+              <p style="font-size:18pt; color:#f8f8f2;">Identificar e selecionar o componente certo para cada cenario</p>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- ============================================================
+         BLOCO 2: SENSORES SIMPLES
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color:#8be9fd;">Bloco 2: Sensores Simples</h2>
+          <p style="font-size:22pt;">Alem do DHT22 e LDR, temos outras opcoes faceis de usar</p>
+        </section>
+
+        <!-- DS18B20 -->
+        <section data-auto-animate>
+          <h2>DS18B20 -- Temperatura Digital</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Protocolo OneWire:</b> 1 fio de dados</li>
+                <li><b style="color:#50fa7b">Precisao:</b> +-0.5C (-10 a +85C)</li>
+                <li><b style="color:#ffb86c">Faixa:</b> -55C a +125C</li>
+                <li>Multiplos sensores no mesmo pino</li>
+                <li>A prova d'agua (versao com cabo)</li>
+                <li>Ideal para: estufas, tanques, solo</li>
+              </ul>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/07/ESP8266-DS18B20-Temperature-Sensor-Arduino-IDE-Web-Server.jpg" width="350" alt="Sensor de temperatura DS18B20 conectado ao ESP8266">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Boia - Nivel de Agua -->
+        <section data-auto-animate>
+          <h2>Boia (Float Switch) -- Nivel de Agua</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Funcionamento:</b> reed switch magnetico</li>
+                <li>Sinal digital simples: HIGH ou LOW</li>
+                <li>Detecta se liquido atingiu determinado nivel</li>
+                <li>Nao mede altura exata -- apenas <b style="color:#ffb86c">liga/desliga</b></li>
+                <li>Uso: caixa d'agua, poco, tanque, aquario</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+pinMode(FLOAT_PIN, INPUT_PULLUP);
+bool cheio = digitalRead(FLOAT_PIN);
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Float_switch_on.jpg" width="300" alt="Sensor boia float switch para deteccao de nivel de agua">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Wikimedia Commons (I, Cschirp, CC BY-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Bloco 2 -->
+
+      <!-- ============================================================
+         BLOCO 3: SENSORES DE DISTANCIA
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color:#8be9fd;">Bloco 3: Sensores de Distancia</h2>
+          <p style="font-size:22pt;">Medir distancia sem contato fisico: ultrassom, infravermelho, laser</p>
+        </section>
+
+        <!-- HC-SR04 Ultrassonico -->
+        <section data-auto-animate>
+          <h2>HC-SR04 -- Ultrassonico</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Principio:</b> pulso sonoro + eco</li>
+                <li><b style="color:#50fa7b">Faixa:</b> 2 cm a 400 cm</li>
+                <li><b style="color:#ffb86c">Precisao:</b> ~3 mm</li>
+                <li>4 pinos: VCC, Trig, Echo, GND</li>
+                <li>Angulo de abertura: ~15 graus</li>
+                <li>Barato (R$ 10-15) e abundante</li>
+              </ul>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2018/07/Arduino-HC-SR04-Guide-Tutorial.jpg" width="350" alt="Sensor ultrassonico HC-SR04 para medicao de distancia">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- VL53L0X Laser + Infravermelho -->
+        <section data-auto-animate>
+          <h2>VL53L0X -- Laser ToF (Time of Flight)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Principio:</b> laser infravermelho + tempo de voo</li>
+                <li><b style="color:#50fa7b">Faixa:</b> 3 cm a 200 cm</li>
+                <li><b style="color:#ffb86c">Precisao:</b> +-3% (muito superior ao HC-SR04)</li>
+                <li>Comunicacao I2C</li>
+                <li>Pequeno e leve (4,4 x 2,5 mm)</li>
+                <li>Imune a cor e reflexao do objeto</li>
+                <li>Ideal para: robos, drones, medicao precisa</li>
+              </ul>
+              <p style="font-size:14pt; color:#6272a4;">Sensor Infravermelho (IR): similar, porem mais barato, menor precisao, afetado pela cor do objeto</p>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://cdn-learn.adafruit.com/guides/images/000/001/516/medium800/VL53L0X_top.jpg" width="300" alt="Sensor laser VL53L0X Time of Flight para medicao precisa de distancia">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Adafruit (CC BY-NC-SA 3.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Tabela Comparativa de Distancia -->
+        <section data-auto-animate>
+          <h2>Comparativo: Sensores de Distancia</h2>
+          <table>
+            <thead>
+              <tr><th>Sensor</th><th>Faixa</th><th>Precisao</th><th>Preco</th><th>Protocolo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>HC-SR04</td><td>2-400 cm</td><td>~3 mm</td><td>R$ 10</td><td>GPIO (pulsos)</td></tr>
+              <tr><td>VL53L0X</td><td>3-200 cm</td><td>~3%</td><td>R$ 35</td><td>I2C</td></tr>
+              <tr><td>IR Sharp</td><td>10-80 cm</td><td>~5%</td><td>R$ 20</td><td>Analogico</td></tr>
+              <tr><td>TFMini Plus</td><td>10-1200 cm</td><td>+-1 cm</td><td>R$ 120</td><td>UART/I2C</td></tr>
+            </tbody>
+          </table>
+          <copy-btn></copy-btn>
+        </section>
+
+      </section><!-- fim Bloco 3 -->
+
+      <!-- ============================================================
+         BLOCO 4: SENSORES AMBIENTAIS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color:#8be9fd;">Bloco 4: Sensores Ambientais</h2>
+          <p style="font-size:22pt;">Gas, umidade do solo, chuva, acelerometro, campo magnetico, presenca</p>
+        </section>
+
+        <!-- MQ-2 Gas + Chuva -->
+        <section data-auto-animate>
+          <h2>MQ-2 -- Gas / Fumaca / Inflamaveis</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#ff5555">Detecta:</b> GLP, butano, metano, alcool, H2</li>
+                <li>Leitura <b style="color:#ffb86c">analogica</b> (concentracao)</li>
+                <li>Requer aquecimento (~20s warm-up)</li>
+                <li>Saida digital com threshold ajustavel</li>
+                <li>Familia MQ: MQ-3 (alcool), MQ-7 (CO), MQ-135 (qualidade do ar)</li>
+              </ul>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2016/04/smoke-sensor-label.png" width="350" alt="Sensor de gas MQ-2 para deteccao de fumaca e gases inflamaveis">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Sensor de Chuva FC-37 / YL-83</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li>Duas partes: <b style="color:#8be9fd">placa coletora</b> + modulo comparador</li>
+                <li>Leitura analogica: nivel de agua na superficie</li>
+                <li>Saida digital: ajustavel via potenciometro</li>
+                <li>Aplicacao: fechar janela, alerta de chuva, irrigacao</li>
+              </ul>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2016/06/rain-sensor.jpg" width="350" alt="Sensor de chuva FC-37 com placa coletora e modulo comparador">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Umidade do Solo -->
+        <section data-auto-animate>
+          <h2>Higrometro -- Umidade do Solo</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#ffb86c">Resistivo (YL-69/HL-69):</b> duas hastes, mede resistencia</li>
+                <li><b style="color:#50fa7b">Capacitivo (v1.2):</b> nao oxida, mais duravel</li>
+                <li>Leitura analogica: 0-1023 (seco a molhado)</li>
+                <li>Aplicacao: irrigacao automatica, jardim inteligente</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+int umidade = analogRead(A0);
+if (umidade < 500) {
+  ligarIrrigacao();
+}
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2016/07/moisture-sensor.jpg" width="300" alt="Sensor de umidade do solo YL-69 para irrigacao inteligente">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Acelerometro MPU6050 + Hall -->
+        <section data-auto-animate>
+          <h2>MPU6050 -- Acelerometro + Giroscopio</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">6 eixos:</b> 3 aceleracao + 3 giroscopio</li>
+                <li><b style="color:#ffb86c">Sensor de temperatura</b> embutido</li>
+                <li>Comunicacao I2C</li>
+                <li>Mede: inclinacao, vibracao, movimento, queda</li>
+                <li>Ideal para: drones, robos, controle gestual, pedometro</li>
+              </ul>
+              <p style="font-size:14pt; color:#bd93f9; margin-top:10px;">Sensor Hall: detecta campo magnetico (ima proximo). ESP32 ja tem um embutido!</p>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2021/01/Arduino-Board-MPU6050-Module-Accelerometer-Gyroscope-Temperature-Sensor.jpg" width="320" alt="Modulo MPU6050 acelerometro e giroscopio 6 eixos conectado ao Arduino">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Sensor PIR -->
+        <section data-auto-animate>
+          <h2>Sensor PIR -- Deteccao de Presenca</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Passive InfraRed:</b> detecta calor corporal</li>
+                <li>Saida digital: HIGH = movimento detectado</li>
+                <li><b style="color:#50fa7b">Alcance:</b> 3-7 metros, angulo ~110 graus</li>
+                <li>3 pinos: VCC (5-12V), OUT, GND</li>
+                <li>Ajustes: sensibilidade e tempo de saida</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+pinMode(PIR_PIN, INPUT);
+if (digitalRead(PIR_PIN)) {
+  Serial.println("Movimento!");
+}
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2014/08/Thumbnail-Blog.jpg" width="300" alt="Sensor PIR de movimento para deteccao de presenca">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Hall Sensor -->
+        <section data-auto-animate>
+          <h2>Sensor de Efeito Hall</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li>Detecta <b style="color:#8be9fd">campo magnetico</b> proximo</li>
+                <li><b style="color:#50fa7b">ESP32:</b> sensor Hall embutido (<code>hallRead()</code>)</li>
+                <li>Modulo externo: KY-003 / KY-024 (saida digital/analogica)</li>
+                <li>Ideal para: tacaometro, sensor de porta, contador de pulsos</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+// ESP32 - sensor Hall embutido
+int campo = hallRead();
+// Modulo KY-024: digitalRead(pino)
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2019/04/ESP32-Hall-Effect-Sensor-featured.jpg" width="320" alt="Sensor de efeito Hall do ESP32 detectando proximidade de ima">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Bloco 4 -->
+
+      <!-- ============================================================
+         BLOCO 5: ATUADORES - MOTORES E MOVIMENTO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color:#8be9fd;">Bloco 5: Atuadores -- Motores e Movimento</h2>
+          <p style="font-size:22pt;">Servo, motor de passo, solenoide -- transformando sinais em acao</p>
+        </section>
+
+        <!-- Servo Motor -->
+        <section data-auto-animate>
+          <h2>Servo Motor -- Posicao Angular Precisa</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Angulo controlado:</b> 0 a 180 graus</li>
+                <li>3 pinos: VCC (5V), GND, Sinal (PWM)</li>
+                <li><b style="color:#ffb86c">PWM:</b> 500-2500 us de pulso</li>
+                <li>Torque: SG90 ~1,8 kg/cm, MG996R ~10 kg/cm</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <Servo.h>
+Servo meuServo;
+meuServo.attach(9);
+meuServo.write(90); // 90 graus
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2024/01/ESP32-Servo-Motor-Web-Server.jpg" width="320" alt="Servo motor SG90 conectado ao ESP32 para controle de posicao angular">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Motor de Passo -->
+        <section data-auto-animate>
+          <h2>Motor de Passo 28BYJ-48 + ULN2003</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Passos precisos:</b> 2048 passos/volta</li>
+                <li>5V, unipolar, 4 fases + driver ULN2003</li>
+                <li><b style="color:#50fa7b">Vantagem:</b> mantem posicao sem energia (holding torque)</li>
+                <li>Baixa velocidade, mas alta precisao</li>
+                <li>Ideal para: CNC, cortinas, posicionadores, dispensers</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <Stepper.h>
+Stepper motor(2048, IN1, IN3, IN2, IN4);
+motor.step(512); // 1/4 de volta
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2021/08/ESP8266-Stepper-Motor-Tutorial-Arduino-IDE.jpg" width="320" alt="Motor de passo 28BYJ-48 com driver ULN2003 conectado ao ESP8266">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Solenoide -->
+        <section data-auto-animate>
+          <h2>Solenoide -- Movimento Linear</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Eletroima:</b> move pino metalico ao energizar</li>
+                <li>Movimento <b style="color:#ffb86c">linear</b> (empurra/puxa)</li>
+                <li>Tipicamente 12V, requer driver (MOSFET/transistor)</li>
+                <li>Acao: push (empurra) ou pull (puxa)</li>
+                <li>Ideal para: fechaduras, valvulas, percussao, dispensers</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+pinMode(SOLENOID_PIN, OUTPUT);
+digitalWrite(SOLENOID_PIN, HIGH); // ativa
+delay(500);
+digitalWrite(SOLENOID_PIN, LOW);  // desativa
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/0/07/Solenoid_Valve_Closed.png" width="280" alt="Diagrama de valvula solenoide mostrando bobina eletromagnetica e pistao">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Wikimedia Commons (Damon R. Venn, Public Domain)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Bloco 5 -->
+
+      <!-- ============================================================
+         BLOCO 6: COMUNICACAO IOT
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color:#8be9fd;">Bloco 6: Comunicacao IoT</h2>
+          <p style="font-size:22pt;">Alem do Wi-Fi: LoRa (longa distancia) e Infravermelho (controle remoto)</p>
+        </section>
+
+        <!-- LoRa -->
+        <section data-auto-animate>
+          <h2>LoRa -- Comunicacao de Longa Distancia</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Alcance:</b> ate 10 km (area aberta)</li>
+                <li><b style="color:#50fa7b">Frequencias:</b> 433/868/915 MHz (Brasil: 915 MHz)</li>
+                <li>Baixo consumo, baixa largura de banda</li>
+                <li>Modulos: Ra-02 (SX1278), RFM95, TTGO LoRa32</li>
+                <li>Protocolo: ponto a ponto ou LoRaWAN</li>
+                <li>Ideal para: fazendas, cidades, sensores remotos</li>
+              </ul>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2018/06/LoRa-ESP32-thumbnail-1.jpg" width="320" alt="Modulo LoRa SX1278 conectado ao ESP32 para comunicacao de longa distancia">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Infravermelho IR -->
+        <section data-auto-animate>
+          <h2>Infravermelho (IR) -- Controle Remoto</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1;">
+              <ul style="font-size:18pt;">
+                <li><b style="color:#8be9fd">Receptor IR:</b> demodula sinal 38 kHz</li>
+                <li><b style="color:#ffb86c">Emissor IR:</b> LED infravermelho (940 nm)</li>
+                <li>Comando por codigos hexadecimais (NEC, Sony, RC5)</li>
+                <li>Biblioteca: IRremote</li>
+                <li>Ideal para: controle remoto universal, TV, automacao</li>
+              </ul>
+              <code-block lang="cpp" data-trim><script type="text/plain">
+#include <IRremote.h>
+IRrecv receptor(PINO_IR);
+if (receptor.decode(&results)) {
+  Serial.println(results.value, HEX);
+  receptor.resume();
+}
+</script></code-block>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <img src="https://randomnerdtutorials.com/wp-content/uploads/2013/02/control-led-with-remote.jpg" width="320" alt="Receptor infravermelho IR com Arduino controlando LED via controle remoto">
+              <p style="font-size:12pt; color:#6272a4;">Fonte: Random Nerd Tutorials (CC BY-NC-SA 4.0)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Bloco 6 -->
+
+      <!-- ============================================================
+         QUIZ INTERATIVO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2>Quiz Interativo</h2>
+          <p style="font-size:22pt;">Conecte-se a sala e vote!</p>
+        </section>
+
+        <section>
+          <poll-question
+            id="q1"
+            title="Questao 1: Temperatura"
+            question="Qual sensor voce usaria para medir temperatura ambiente com precisao de +-0.5C?"
+            answer="b"
+            answer-text="O DS18B20 oferece precisao de +-0.5C, protocolo OneWire digital e versao a prova d'agua."
+            :options="[
+              { value: 'a', label: 'DHT22 -- leitura digital, mas precisao de +-0.5C apenas em parte da faixa' },
+              { value: 'b', label: 'DS18B20 -- digital, precisao de +-0.5C, OneWire, versao a prova d\'agua' },
+              { value: 'c', label: 'LM35 -- analogico, suscetivel a ruido em cabos longos' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q2"
+            title="Questao 2: Distancia"
+            question="Qual a principal diferenca entre HC-SR04 e VL53L0X?"
+            answer="c"
+            answer-text="O HC-SR04 usa ultrassom (faixa maior, precisao menor), o VL53L0X usa laser ToF (mais preciso, imune a cor)."
+            :options="[
+              { value: 'a', label: 'HC-SR04 e mais caro, mas mais preciso' },
+              { value: 'b', label: 'VL53L0X tem maior alcance maximo' },
+              { value: 'c', label: 'HC-SR04 usa ultrassom (mais alcance), VL53L0X usa laser ToF (mais preciso)' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q3"
+            title="Questao 3: Rele vs MOSFET"
+            question="Quando usar rele vs transistor MOSFET como atuador?"
+            answer="b"
+            answer-text="Rele para cargas AC ou alta potencia com isolamento galvanico; MOSFET para cargas DC com PWM/alta frequencia."
+            :options="[
+              { value: 'a', label: 'Rele para tudo que precisa de PWM' },
+              { value: 'b', label: 'Rele para AC/alta potencia com isolamento; MOSFET para DC com PWM/frequencia' },
+              { value: 'c', label: 'MOSFET para substituir rele em qualquer situacao' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q4"
+            title="Questao 4: Estacao Meteorologica"
+            question="Para um projeto de estacao meteorologica IoT, qual conjunto de sensores voce usaria?"
+            answer="c"
+            answer-text="DS18B20 (temperatura), DHT22 (umidade), BMP280 (pressao), FC-37 (chuva), anemometro com sensor Hall."
+            :options="[
+              { value: 'a', label: 'Apenas um DHT22 -- ja mede temperatura e umidade' },
+              { value: 'b', label: 'DS18B20 + LDR + HC-SR04' },
+              { value: 'c', label: 'DS18B20 + DHT22 + BMP280 (pressao) + FC-37 (chuva) + sensor Hall (vento)' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q5"
+            title="Questao 5: LoRa"
+            question="Para que serve o protocolo LoRa em projetos IoT?"
+            answer="a"
+            answer-text="LoRa permite comunicacao sem fio de longa distancia (ate 10 km) com baixissimo consumo de energia."
+            :options="[
+              { value: 'a', label: 'Comunicacao de longa distancia (ate 10 km) com baixo consumo' },
+              { value: 'b', label: 'Substituir o Wi-Fi em redes domesticas' },
+              { value: 'c', label: 'Transferencia de arquivos em alta velocidade' },
+            ]" />
+        </section>
+
+      </section><!-- fim Quiz -->
+
+      <!-- ============================================================
+         ATIVIDADE PRATICA
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Atividade Pratica</h2>
+        <div style="background:#282a36; border-left:4px solid #50fa7b; padding:20px;">
+          <p style="font-size:20pt;"><strong>Objetivo:</strong> Projeto: Sistema de Monitoramento Inteligente</p>
+          <p style="font-size:18pt;">Cada grupo deve escolher e justificar:</p>
+          <ul style="font-size:18pt;">
+            <li><b style="color:#ffb86c">1 sensor de temperatura</b> (DS18B20, DHT22, LM35, BMP280)</li>
+            <li><b style="color:#8be9fd">1 sensor de ambiente</b> (umidade, gas, chuva, presenca)</li>
+            <li><b style="color:#ff79c6">1 atuador</b> (LED, servo, rele, motor, solenoide)</li>
+          </ul>
+        </div>
+        <div style="background:#44475a; border-left:4px solid #bd93f9; padding:15px; margin-top:15px;">
+          <p style="font-size:16pt; color:#bd93f9;"><b>Entrega:</b> Justificar cada componente considerando: faixa de medicao/atuacao, precisao, consumo de energia, custo</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         TABELA COMPARATIVA GERAL
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Visao Geral: Sensores</h2>
+        <table style="font-size:14pt;">
+          <thead>
+            <tr><th>Categoria</th><th>Sensor</th><th>Faixa</th><th>Protocolo</th><th>Custo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Temperatura</td><td>DS18B20</td><td>-55 a +125C</td><td>OneWire</td><td>R$ 8</td></tr>
+            <tr><td>Temperatura</td><td>DHT22</td><td>-40 a +80C</td><td>Digital</td><td>R$ 12</td></tr>
+            <tr><td>Distancia</td><td>HC-SR04</td><td>2-400 cm</td><td>GPIO</td><td>R$ 10</td></tr>
+            <tr><td>Distancia</td><td>VL53L0X</td><td>3-200 cm</td><td>I2C</td><td>R$ 35</td></tr>
+            <tr><td>Gas</td><td>MQ-2</td><td>300-10000 ppm</td><td>Analogico</td><td>R$ 10</td></tr>
+            <tr><td>Umidade Solo</td><td>YL-69/HL-69</td><td>0-100%</td><td>Analogico</td><td>R$ 5</td></tr>
+            <tr><td>Chuva</td><td>FC-37</td><td>Analogico</td><td>Analogico</td><td>R$ 15</td></tr>
+            <tr><td>Movimento</td><td>MPU6050</td><td>+-16g/+-2000dps</td><td>I2C</td><td>R$ 20</td></tr>
+            <tr><td>Presenca</td><td>PIR HC-SR501</td><td>3-7 m</td><td>Digital</td><td>R$ 8</td></tr>
+          </tbody>
+        </table>
+        <copy-btn></copy-btn>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Visao Geral: Atuadores e Comunicacao</h2>
+        <table style="font-size:14pt;">
+          <thead>
+            <tr><th>Categoria</th><th>Componente</th><th>Controle</th><th>Protocolo</th><th>Custo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Motor</td><td>Servo SG90</td><td>0-180 graus</td><td>PWM</td><td>R$ 12</td></tr>
+            <tr><td>Motor</td><td>28BYJ-48 Passo</td><td>2048 passos/volta</td><td>GPIO</td><td>R$ 18</td></tr>
+            <tr><td>Motor</td><td>DC + MOSFET</td><td>PWM 0-100%</td><td>PWM</td><td>R$ 5</td></tr>
+            <tr><td>Chaveamento</td><td>Rele</td><td>ON/OFF</td><td>GPIO</td><td>R$ 6</td></tr>
+            <tr><td>Linear</td><td>Solenoide</td><td>Push/Pull</td><td>GPIO+MOSFET</td><td>R$ 25</td></tr>
+            <tr><td>Comunicacao</td><td>LoRa Ra-02</td><td>ate 10 km</td><td>SPI</td><td>R$ 40</td></tr>
+            <tr><td>Comunicacao</td><td>IR Receptor</td><td>curta distancia</td><td>GPIO</td><td>R$ 3</td></tr>
+          </tbody>
+        </table>
+        <copy-btn></copy-btn>
+      </section>
+
+      <!-- ============================================================
+         ENCERRAMENTO
+         ============================================================ -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Conhecemos <b style="color:#50fa7b">+15 sensores e atuadores</b> do ecossistema IoT</li>
+          <li>Cada sensor tem seu caso de uso ideal: <b style="color:#8be9fd">nao existe bala de prata</b></li>
+          <li>Escolha do componente envolve: precisao, custo, consumo e protocolo</li>
+          <li>Voce tem <b style="color:#ff79c6">2 meses</b> para escolher e desenvolver seu projeto final</li>
+        </ls-u>
+        <div class="fragment" style="text-align:center; margin-top:20px;">
+          <p style="font-size:22pt;">Proxima aula: <strong>Protocolos de Comunicacao IoT (MQTT, HTTP, ESP-NOW)</strong></p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
