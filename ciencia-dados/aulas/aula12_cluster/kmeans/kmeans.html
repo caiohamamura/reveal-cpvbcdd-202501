@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <meta charset="utf-8">
+
+  <title>Composable Plotly</title>
+
+  <!-- Reveal -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css"
+  >
+
+  <!-- Vue -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+  <style>
+
+    body {
+      background: #111;
+    }
+
+    .plot {
+      width: 800px;
+      height: 600px;
+      margin: auto;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div id="app">
+
+  <div class="reveal">
+
+    <div class="slides">
+    <section>
+        <h1>Hello!!!</h1>
+    </section>
+      <section>
+
+        <h2>K-Means Clustering</h2>
+
+        <plotly-figure
+          :layout="layout"
+        >
+
+          <!-- Neutral points -->
+
+          <scatter-trace
+            :x="pointsX"
+            :y="pointsY"
+            :color="neutralColors"
+          />
+
+          <!-- Initial centroids -->
+
+          <frame-step :at="1">
+
+            <scatter-trace
+              :x="[c1.x, c2.x]"
+              :y="[c1.y, c2.y]"
+              :size="28"
+              symbol="x"
+              :color="['red', 'blue']"
+            />
+
+          </frame-step>
+
+          <!-- Assignment 1 -->
+
+          <frame-step :at="2">
+
+            <scatter-trace
+              :x="pointsX"
+              :y="pointsY"
+              :color="assign1.colors"
+            />
+
+          </frame-step>
+
+          <!-- Move 1 -->
+
+          <frame-step :at="3">
+
+            <scatter-trace
+              :x="[move1[0].x, move1[1].x]"
+              :y="[move1[0].y, move1[1].y]"
+              :size="28"
+              symbol="x"
+              :color="['red', 'blue']"
+            />
+
+          </frame-step>
+
+          <!-- Assignment 2 -->
+
+          <frame-step :at="4">
+
+            <scatter-trace
+              :x="pointsX"
+              :y="pointsY"
+              :color="assign2.colors"
+            />
+
+          </frame-step>
+
+          <!-- Move 2 -->
+
+          <frame-step :at="5">
+
+            <scatter-trace
+              :x="[move2[0].x, move2[1].x]"
+              :y="[move2[0].y, move2[1].y]"
+              :size="28"
+              symbol="x"
+              :color="['red', 'blue']"
+            />
+
+          </frame-step>
+
+        </plotly-figure>
+
+        <!-- Reveal fragments -->
+
+        <p class="fragment" id="step1">
+          Step 1 — Initial centroids
+        </p>
+
+        <p class="fragment" id="step2">
+          Step 2 — Assign clusters
+        </p>
+
+        <p class="fragment" id="step3">
+          Step 3 — Move centroids
+        </p>
+
+        <p class="fragment" id="step4">
+          Step 4 — Reassign clusters
+        </p>
+
+        <p class="fragment" id="step5">
+          Step 5 — Move centroids again
+        </p>
+
+      </section>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+
+<script src="./components.js"></script>
+<script src="./kmeans.js"></script>
+
+<script>
+
+  Reveal.initialize({ hash: true }).then(() => {
+    initApp();
+  });
+ 
+</script>
+
+</body>
+
+</html>
