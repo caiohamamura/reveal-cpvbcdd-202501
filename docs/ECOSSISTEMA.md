@@ -625,7 +625,7 @@ RevealChalkboard.download()
 ## Chart.js Plugin (Gráficos Interativos)
 
 ### Visão Geral
-Permite插入 Chart.js gráficos diretamente nos slides via markup HTML com `data-chart`. Requer Chart.js 4.x (3.x tem APIs incompatíveis).
+Permite usar Chart.js gráficos diretamente nos slides via markup HTML com `data-chart`. Requer Chart.js 4.x (3.x tem APIs incompatíveis).
 
 ### Inclusão em um HTML
 
