@@ -49,7 +49,8 @@ const PlotlyFigure = {
     data() {
 
         return {
-            traces: []
+            traces: [],
+            plotReady: false
         };
     },
 
@@ -64,16 +65,25 @@ const PlotlyFigure = {
                         t => t.uid === trace.uid
                     );
 
-                if (idx >= 0) {
+                const isNew = idx < 0;
 
-                    this.traces[idx] = trace;
+                if (isNew) {
+
+                    this.traces.push(trace);
 
                 } else {
 
-                    this.traces.push(trace);
+                    this.traces[idx] = trace;
                 }
 
-                this.renderPlot();
+                if (!this.plotReady || isNew) {
+
+                    this.renderPlot();
+
+                } else {
+
+                    this.animatePlot();
+                }
             },
 
             removeTrace: uid => {
@@ -94,13 +104,59 @@ const PlotlyFigure = {
 
         renderPlot() {
 
-            Plotly.react(
+            if (!this.plotReady) {
+
+                Plotly.newPlot(
+
+                    this.$refs.plot,
+
+                    this.traces,
+
+                    this.layout
+
+                );
+
+                this.plotReady = true;
+
+            } else {
+
+                Plotly.react(
+
+                    this.$refs.plot,
+
+                    this.traces,
+
+                    this.layout
+
+                );
+            }
+        },
+
+        animatePlot() {
+
+            Plotly.animate(
 
                 this.$refs.plot,
 
-                this.traces,
+                { data: this.traces },
 
-                this.layout
+                {
+
+                    transition: {
+
+                        duration: 800,
+                        easing: 'cubic-in-out'
+
+                    },
+
+                    frame: {
+
+                        duration: 800,
+                        redraw: false
+
+                    }
+
+                }
 
             );
         }
@@ -118,6 +174,8 @@ const PlotlyFigure = {
             this.layout
 
         );
+
+        this.plotReady = true;
     },
 
     template: `

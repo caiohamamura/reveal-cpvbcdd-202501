@@ -142,6 +142,40 @@ function initApp() {
           }
 
         };
+      },
+
+      currentColors() {
+
+        if (revealState.step >= 4)
+          return this.assign2.colors;
+        if (revealState.step >= 2)
+          return this.assign1.colors;
+
+        return this.neutralColors;
+      },
+
+      currentCentroidsX() {
+
+        if (revealState.step >= 5)
+          return [this.move2[0].x, this.move2[1].x];
+        if (revealState.step >= 3)
+          return [this.move1[0].x, this.move1[1].x];
+        if (revealState.step >= 1)
+          return [this.c1.x, this.c2.x];
+
+        return [];
+      },
+
+      currentCentroidsY() {
+
+        if (revealState.step >= 5)
+          return [this.move2[0].y, this.move2[1].y];
+        if (revealState.step >= 3)
+          return [this.move1[0].y, this.move1[1].y];
+        if (revealState.step >= 1)
+          return [this.c1.y, this.c2.y];
+
+        return [];
       }
 
     }
