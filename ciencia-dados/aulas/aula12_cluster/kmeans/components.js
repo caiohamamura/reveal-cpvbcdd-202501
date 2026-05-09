@@ -43,122 +43,54 @@ Reveal.on('fragmenthidden', event => {
 const PlotlyFigure = {
 
     props: {
+        traces: {
+            type: Array,
+            default: () => []
+        },
         layout: Object
     },
 
     data() {
 
         return {
-            traces: [],
             plotReady: false
         };
     },
 
-    provide() {
+    watch: {
 
-        return {
+        traces: {
+            deep: true,
+            handler() {
 
-            addTrace: trace => {
+                if (!this.plotReady) return;
 
-                const idx =
-                    this.traces.findIndex(
-                        t => t.uid === trace.uid
-                    );
-
-                const isNew = idx < 0;
-
-                if (isNew) {
-
-                    this.traces.push(trace);
-
-                } else {
-
-                    this.traces[idx] = trace;
-                }
-
-                if (!this.plotReady || isNew) {
-
-                    this.renderPlot();
-
-                } else {
-
-                    this.animatePlot();
-                }
-            },
-
-            removeTrace: uid => {
-
-                this.traces =
-                    this.traces.filter(
-                        t => t.uid !== uid
-                    );
-
-                this.renderPlot();
-            },
-
-            revealState
-        };
-    },
-
-    methods: {
-
-        renderPlot() {
-
-            if (!this.plotReady) {
-
-                Plotly.newPlot(
+                Plotly.animate(
 
                     this.$refs.plot,
 
-                    this.traces,
+                    { data: this.traces },
 
-                    this.layout
+                    {
 
-                );
+                        transition: {
 
-                this.plotReady = true;
+                            duration: 800,
+                            easing: 'cubic-in-out'
 
-            } else {
+                        },
 
-                Plotly.react(
+                        frame: {
 
-                    this.$refs.plot,
+                            duration: 800,
+                            redraw: false
 
-                    this.traces,
-
-                    this.layout
-
-                );
-            }
-        },
-
-        animatePlot() {
-
-            Plotly.animate(
-
-                this.$refs.plot,
-
-                { data: this.traces },
-
-                {
-
-                    transition: {
-
-                        duration: 800,
-                        easing: 'cubic-in-out'
-
-                    },
-
-                    frame: {
-
-                        duration: 800,
-                        redraw: false
+                        }
 
                     }
 
-                }
-
-            );
+                );
+            }
         }
 
     },
@@ -169,7 +101,7 @@ const PlotlyFigure = {
 
             this.$refs.plot,
 
-            [],
+            this.traces,
 
             this.layout
 
@@ -180,20 +112,10 @@ const PlotlyFigure = {
 
     template: `
 
-    <div>
-
-      <!-- Hidden Vue components -->
-      <div style="display:none">
-        <slot />
-      </div>
-
-      <!-- Actual Plotly target -->
-      <div
-        ref="plot"
-        class="plot"
-      ></div>
-
-    </div>
+    <div
+      ref="plot"
+      class="plot"
+    ></div>
 
   `
 };

@@ -176,6 +176,33 @@ function initApp() {
           return [this.c1.y, this.c2.y];
 
         return [];
+      },
+
+      currentTraces() {
+
+        return [
+          {
+            x: this.pointsX,
+            y: this.pointsY,
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+              color: this.currentColors,
+              size: 14
+            }
+          },
+          {
+            x: this.currentCentroidsX,
+            y: this.currentCentroidsY,
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+              color: ['red', 'blue'],
+              size: 28,
+              symbol: 'x'
+            }
+          }
+        ];
       }
 
     }
@@ -185,16 +212,6 @@ function initApp() {
   app.component(
     'plotly-figure',
     PlotlyFigure
-  );
-
-  app.component(
-    'scatter-trace',
-    ScatterTrace
-  );
-
-  app.component(
-    'frame-step',
-    FrameStep
   );
 
   app.mount('#app');

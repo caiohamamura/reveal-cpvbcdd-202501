@@ -54,23 +54,8 @@
 
         <plotly-figure
           :layout="layout"
-        >
-
-          <scatter-trace
-            :x="pointsX"
-            :y="pointsY"
-            :color="currentColors"
-          ></scatter-trace>
-
-          <scatter-trace
-            :x="currentCentroidsX"
-            :y="currentCentroidsY"
-            :size="28"
-            symbol="x"
-            :color="['red', 'blue']"
-          ></scatter-trace>
-
-        </plotly-figure>
+          :traces="currentTraces"
+        ></plotly-figure>
 
         <!-- Reveal fragments -->
 
