@@ -303,6 +303,67 @@ Cada questão é um slide separado dentro de uma `<section>`. Requer `<section>`
 
 **Dependência:** Requer `plugin/leader-line.min.js` carregado via `<script>` antes do módulo principal.
 
+#### `plotly-figure` — Gráficos Plotly.js Interativos
+
+Renderiza gráficos Plotly.js com suporte a animações reativas via Vue. Quando a prop `traces` muda, o gráfico anima automaticamente com `Plotly.animate()`.
+
+**Dependência (CDN):** Requer Plotly.js carregado **antes** do componente montar:
+```html
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+```
+Se Plotly.js não estiver carregado, o componente exibe um aviso no console e não renderiza o gráfico (não quebra a apresentação).
+
+**Uso:**
+```html
+<!-- No <head> ou antes dos scripts do slide -->
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<!-- No slide -->
+<section data-auto-animate>
+  <h2>K-Means Clustering</h2>
+  <plotly-figure
+    :traces="currentTraces"
+    :layout="plotLayout"
+  ></plotly-figure>
+</section>
+```
+
+**Props:**
+| Prop | Tipo | Default | Descrição |
+|------|------|---------|-----------|
+| `traces` | Array | `[]` | Array de objetos trace do Plotly (reactive — mudanças animam o gráfico) |
+| `layout` | Object | — | Objeto layout do Plotly (paper_bgcolor, plot_bgcolor, eixos, etc.) |
+
+**Estilo CSS necessário:**
+O componente renderiza uma `<div class="plot">`. Defina largura/altura no CSS:
+```css
+.plot {
+  width: 700px;
+  height: 500px;
+  margin: auto;
+}
+```
+
+**Reatividade com Reveal.js Fragments:**
+Para sincronizar o gráfico com fragments do Reveal.js, use `Vue.reactive()` no data do app e escute os eventos `fragmentshown`/`fragmenthidden`:
+```js
+const revealState = Vue.reactive({ step: 0 });
+
+Reveal.on('fragmentshown', event => {
+  revealState.step = +event.fragment.dataset.fragmentIndex + 1;
+});
+
+Reveal.on('fragmenthidden', event => {
+  revealState.step = +event.fragment.dataset.fragmentIndex;
+});
+```
+Use `revealState.step` em `computed` para derivar `traces` diferentes para cada etapa. O deep watcher do componente chama `Plotly.animate()` automaticamente.
+
+**Cores Dracula para Plotly:**
+```js
+const draculaColors = ['#8be9fd', '#ff5555', '#f1fa8c', '#50fa7b', '#bd93f9', '#ff79c6', '#6272a4'];
+```
+
 ---
 
 ## Sistema de Plugins

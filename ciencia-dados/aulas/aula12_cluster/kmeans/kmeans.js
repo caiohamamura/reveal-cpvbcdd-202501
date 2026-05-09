@@ -198,7 +198,7 @@ function initApp() {
             type: 'scatter',
             marker: {
               color: ['red', 'blue'],
-              size: 28,
+              size: revealState.step > 0 ? 28 : 10,
               symbol: 'x'
             }
           }

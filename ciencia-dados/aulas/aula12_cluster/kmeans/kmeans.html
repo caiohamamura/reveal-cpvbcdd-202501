@@ -52,34 +52,37 @@
 
         <h2>K-Means Clustering</h2>
 
+        
         <plotly-figure
           :layout="layout"
           :traces="currentTraces"
         ></plotly-figure>
 
-        <!-- Reveal fragments -->
 
-        <p class="fragment" id="step1">
+        <!-- Reveal fragments -->
+        <div class="r-stack" style="margin-top:20px">
+        <p class="fragment fade-in-then-out" id="step1">
           Step 1 — Initial centroids
         </p>
 
-        <p class="fragment" id="step2">
+        <p class="fragment fade-in-then-out" id="step2">
           Step 2 — Assign clusters
         </p>
 
-        <p class="fragment" id="step3">
+        <p class="fragment fade-in-then-out" id="step3">
           Step 3 — Move centroids
         </p>
 
-        <p class="fragment" id="step4">
+        <p class="fragment fade-in-then-out" id="step4">
           Step 4 — Reassign clusters
         </p>
 
-        <p class="fragment" id="step5">
+        <p class="fragment fade-in-then-out" id="step5">
           Step 5 — Move centroids again
         </p>
+        </div>
 
-      </section>
+      </div>
 
     </div>
 

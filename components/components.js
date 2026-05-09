@@ -516,6 +516,62 @@ const pollQuestionComponent = {
   `,
 };
 
+const plotlyFigureComponent = {
+  props: {
+    traces: {
+      type: Array,
+      default: () => []
+    },
+    layout: Object
+  },
+  data() {
+    return {
+      plotReady: false
+    };
+  },
+  watch: {
+    traces: {
+      deep: true,
+      handler() {
+        if (!this.plotReady) return;
+        if (typeof Plotly === 'undefined') return;
+        Plotly.animate(
+          this.$refs.plot,
+          { data: this.traces },
+          {
+            transition: {
+              duration: 800,
+              easing: 'cubic-in-out'
+            },
+            frame: {
+              duration: 800,
+              redraw: false
+            }
+          }
+        );
+      }
+    }
+  },
+  mounted() {
+    if (typeof Plotly === 'undefined') {
+      console.warn('plotly-figure: Plotly.js not loaded. Include <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script> before this component.');
+      return;
+    }
+    Plotly.newPlot(
+      this.$refs.plot,
+      this.traces,
+      this.layout
+    );
+    this.plotReady = true;
+  },
+  template: `
+    <div
+      ref="plot"
+      class="plot"
+    ></div>
+  `
+};
+
 function initializeComponents(app) {
   app.component('copy-btn', copyBtnComponent);
   app.component('code-block', codeBlockComponent);
@@ -526,6 +582,7 @@ function initializeComponents(app) {
   app.component("md", mdComponent);
   app.component("leader-line", leaderLineComponent);
   app.component('poll-question', pollQuestionComponent);
+  app.component('plotly-figure', plotlyFigureComponent);
 }
 
 

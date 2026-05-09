@@ -15,6 +15,10 @@
   <link rel="stylesheet" href="../plugin/poll/style.css" />
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
   <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    .plot { width: 700px; height: 480px; margin: auto; }
+  </style>
 </head>
 
 <body>
@@ -55,10 +59,10 @@ graph TD
         <section data-auto-animate>
           <h2>Discussão em Sala</h2>
           <ls-u>
-            <li>Por que existem tamanhos标准化 de roupa?</li>
+            <li>Por que existem tamanhos padronizados de roupa?</li>
             <li>Por que duas pessoas usam tamanho 42 mas têm corpos diferentes?</li>
             <li>Por que algumas marcas vestem diferente?</li>
-            <li>Por quealguns dizem: "42 aperta na cintura, 44 é longo demais"?</li>
+            <li>Por que alguns dizem: "42 aperta na cintura, 44 é longo demais"?</li>
           </ls-u>
         </section>
 
@@ -395,6 +399,32 @@ graph LR
           </multi-col>
         </section>
 
+        <!-- SLIDE: K-Means Demo Interativo -->
+        <section data-auto-animate id="kmeans-demo">
+          <h2>K-Means ao Vivo! 🎬</h2>
+          <plotly-figure
+            :traces="currentTraces"
+            :layout="plotLayout"
+          ></plotly-figure>
+          <div class="r-stack" style="margin-top: 15px;">
+            <p class="fragment fade-in-then-out kmeans-step" data-fragment-index="0">
+              <span style="color: #8be9fd;">Passo 1 — Centroides iniciais (aleatórios)</span>
+            </p>
+            <p class="fragment fade-in-then-out kmeans-step" data-fragment-index="1">
+              <span style="color: #ff5555;">Passo 2 — Atribuir pontos ao centroide mais próximo</span>
+            </p>
+            <p class="fragment fade-in-then-out kmeans-step" data-fragment-index="2">
+              <span style="color: #f1fa8c;">Passo 3 — Mover centroides para a média</span>
+            </p>
+            <p class="fragment fade-in-then-out kmeans-step" data-fragment-index="3">
+              <span style="color: #ff79c6;">Passo 4 — Reatribuir clusters</span>
+            </p>
+            <p class="fragment fade-in-then-out kmeans-step" data-fragment-index="4">
+              <span style="color: #50fa7b;">Passo 5 — Mover centroides (convergência)</span>
+            </p>
+          </div>
+        </section>
+
         <!-- SLIDE: Elbow method -->
         <section data-auto-animate>
           <h2>Método do Cotovelo (Elbow) 💪</h2>
@@ -444,9 +474,9 @@ graph LR
           <h2>Limitações do K-Means</h2>
           <ul>
             <li><strong>Precisa escolher k</strong> — não sabemos o número ideal</li>
-            <li><strong>Assume clusters esféricos</strong> — não funciona bem com formasarbitrárias</li>
+            <li><strong>Assume clusters esféricos</strong> — não funciona bem com formatos arbitrários</li>
             <li><strong>Sensível à inicialização</strong> — resultados podem variar</li>
-            <li><strong>Difícil com formatos irregulares</strong> — não detecta clustersalongados</li>
+            <li><strong>Difícil com formatos irregulares</strong> — não detecta clusters alongados</li>
           </ul>
         </section>
 
@@ -644,7 +674,7 @@ graph LR
           <li>Clustering é aprendizado <strong>não supervisionado</strong></li>
           <li>3 métodos principais: <strong>Hierárquico, K-Means, DBSCAN</strong></li>
           <li>K-Means: rápido, mas assume clusters esféricos</li>
-          <li>DBSCAN: detecta ruído e formasarbitrárias</li>
+          <li>DBSCAN: detecta ruído e formatos arbitrários</li>
           <li>Escolha do método depende do problema e dos dados</li>
           <li>Clusters são modelagem, não verdade absoluta</li>
         </ls-u>
@@ -676,6 +706,150 @@ graph LR
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
   <script src="../slides_template/init.js"></script>
   <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    const _originalMountSlideApp = mountSlideApp;
+
+    const kmeansState = Vue.reactive({ step: 0 });
+
+    function assignClusters(pointsX, pointsY, c1, c2) {
+      const colors = [];
+      const assignments = [];
+      for (let i = 0; i < pointsX.length; i++) {
+        const d1 = (pointsX[i] - c1.x) ** 2 + (pointsY[i] - c1.y) ** 2;
+        const d2 = (pointsX[i] - c2.x) ** 2 + (pointsY[i] - c2.y) ** 2;
+        if (d1 < d2) {
+          colors.push('#ff5555');
+          assignments.push(0);
+        } else {
+          colors.push('#8be9fd');
+          assignments.push(1);
+        }
+      }
+      return { colors, assignments };
+    }
+
+    function recomputeCentroids(pointsX, pointsY, assignments) {
+      let sx1 = 0, sy1 = 0, c1n = 0;
+      let sx2 = 0, sy2 = 0, c2n = 0;
+      for (let i = 0; i < assignments.length; i++) {
+        if (assignments[i] === 0) {
+          sx1 += pointsX[i]; sy1 += pointsY[i]; c1n++;
+        } else {
+          sx2 += pointsX[i]; sy2 += pointsY[i]; c2n++;
+        }
+      }
+      return [
+        { x: sx1 / c1n, y: sy1 / c1n },
+        { x: sx2 / c2n, y: sy2 / c2n }
+      ];
+    }
+
+    mountSlideApp = function() {
+      injectSeminarPanel();
+
+      const app = Vue.createApp({
+        setup() {
+          const pointsX = [1.0, 1.5, 2.0, 2.2, 3.2, 4.8, 6.5, 7.2, 8.0, 8.5];
+          const pointsY = [1.0, 1.8, 1.2, 2.5, 3.8, 5.0, 6.8, 7.5, 8.2, 7.8];
+          const c1 = { x: 2, y: 7 };
+          const c2 = { x: 7, y: 2 };
+
+          const neutralColors = Array(pointsX.length).fill('#6272a4');
+
+          const assign1 = assignClusters(pointsX, pointsY, c1, c2);
+          const move1 = recomputeCentroids(pointsX, pointsY, assign1.assignments);
+          const assign2 = assignClusters(pointsX, pointsY, move1[0], move1[1]);
+          const move2 = recomputeCentroids(pointsX, pointsY, assign2.assignments);
+
+          const currentTraces = Vue.computed(() => {
+            let colors, centroidX, centroidY, centroidSize;
+
+            if (kmeansState.step >= 4) {
+              colors = assign2.colors;
+            } else if (kmeansState.step >= 2) {
+              colors = assign1.colors;
+            } else {
+              colors = neutralColors;
+            }
+
+            if (kmeansState.step >= 5) {
+              centroidX = [move2[0].x, move2[1].x];
+              centroidY = [move2[0].y, move2[1].y];
+            } else if (kmeansState.step >= 3) {
+              centroidX = [move1[0].x, move1[1].x];
+              centroidY = [move1[0].y, move1[1].y];
+            } else if (kmeansState.step >= 1) {
+              centroidX = [c1.x, c2.x];
+              centroidY = [c1.y, c2.y];
+            } else {
+              centroidX = [];
+              centroidY = [];
+            }
+
+            centroidSize = kmeansState.step > 0 ? 28 : 10;
+
+            return [
+              {
+                x: pointsX,
+                y: pointsY,
+                mode: 'markers',
+                type: 'scatter',
+                marker: { color: colors, size: 14 },
+                name: 'Pontos'
+              },
+              {
+                x: centroidX,
+                y: centroidY,
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                  color: ['#ff5555', '#8be9fd'],
+                  size: centroidSize,
+                  symbol: 'x',
+                  line: { width: 3, color: ['#ff5555', '#8be9fd'] }
+                },
+                name: 'Centroides'
+              }
+            ];
+          });
+
+          const plotLayout = Vue.computed(() => ({
+            title: { text: 'K-Means: Iteração Passo a Passo', font: { color: '#f8f8f2', size: 16 } },
+            paper_bgcolor: '#282a36',
+            plot_bgcolor: '#44475a',
+            font: { color: '#f8f8f2' },
+            xaxis: { range: [0, 10], gridcolor: '#6272a4', zerolinecolor: '#6272a4' },
+            yaxis: { range: [0, 10], gridcolor: '#6272a4', zerolinecolor: '#6272a4' },
+            showlegend: false,
+            margin: { t: 40, b: 40, l: 50, r: 20 }
+          }));
+
+          Vue.onMounted(() => {
+            initializeReveal();
+
+            window.deck.on('fragmentshown', event => {
+              if (event.fragment.classList.contains('kmeans-step')) {
+                kmeansState.step = +event.fragment.dataset.fragmentIndex + 1;
+              }
+            });
+            window.deck.on('fragmenthidden', event => {
+              if (event.fragment.classList.contains('kmeans-step')) {
+                kmeansState.step = +event.fragment.dataset.fragmentIndex;
+              }
+            });
+          });
+
+          return { currentTraces, plotLayout };
+        }
+      });
+
+      initializeComponents(app);
+      initializeHeader(app);
+      app.mount('#app');
+      return app;
+    };
+  </script>
 
   <script>
     window.app = mountSlideApp();
