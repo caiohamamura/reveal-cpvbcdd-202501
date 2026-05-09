@@ -1,0 +1,703 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <title>K-Means Clustering Animation</title>
+
+  <!-- Reveal.js -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/black.css"
+  >
+
+  <!-- Plotly -->
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+  <style>
+
+    body {
+      background: #111;
+    }
+
+    .plot {
+      width: 700px;
+      height: 600px;
+      margin: auto;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<section>
+
+<h2>K-Means Clustering</h2>
+
+<div id="kmeansPlot" class="plot"></div>
+
+<p class="fragment" id="step1">
+  Step 1 — Initial random centroids
+</p>
+
+<p class="fragment" id="step2">
+  Step 2 — Assign points to nearest centroid
+</p>
+
+<p class="fragment" id="step3">
+  Step 3 — Move centroids to cluster centers
+</p>
+
+<p class="fragment" id="step4">
+  Step 4 — Reassign clusters
+</p>
+
+</section>
+
+</div>
+</div>
+
+<!-- Reveal.js -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+
+<script>
+
+Reveal.initialize({
+  hash: true
+});
+
+// =====================================================
+// Dataset
+// =====================================================
+
+// Intentionally asymmetric dataset
+// so reassignment makes sense visually
+
+const pointsX = [
+  1.0, 1.5, 2.0, 2.2, 3.2,
+  4.8,
+  6.5, 7.2, 8.0, 8.5
+];
+
+const pointsY = [
+  1.0, 1.8, 1.2, 2.5, 3.8,
+  5.0,
+  6.8, 7.5, 8.2, 7.8
+];
+
+// Neutral color initially
+const neutralColors =
+  Array(pointsX.length).fill("gray");
+
+// =====================================================
+// Initial centroids
+// =====================================================
+
+let centroid1 = { x: 2, y: 7 };
+let centroid2 = { x: 7, y: 2 };
+
+// =====================================================
+// K-Means Helpers
+// =====================================================
+
+function squaredDistance(px, py, c) {
+
+  return (
+    (px - c.x) ** 2 +
+    (py - c.y) ** 2
+  );
+}
+
+function assignClusters(c1, c2) {
+
+  const colors = [];
+  const assignments = [];
+
+  for (let i = 0; i < pointsX.length; i++) {
+
+    const d1 = squaredDistance(
+      pointsX[i],
+      pointsY[i],
+      c1
+    );
+
+    const d2 = squaredDistance(
+      pointsX[i],
+      pointsY[i],
+      c2
+    );
+
+    if (d1 < d2) {
+
+      colors.push("red");
+      assignments.push(0);
+
+    } else {
+
+      colors.push("blue");
+      assignments.push(1);
+    }
+  }
+
+  return {
+    colors,
+    assignments
+  };
+}
+
+function recomputeCentroids(assignments) {
+
+  let sumX1 = 0;
+  let sumY1 = 0;
+  let count1 = 0;
+
+  let sumX2 = 0;
+  let sumY2 = 0;
+  let count2 = 0;
+
+  for (let i = 0; i < pointsX.length; i++) {
+
+    if (assignments[i] === 0) {
+
+      sumX1 += pointsX[i];
+      sumY1 += pointsY[i];
+      count1++;
+
+    } else {
+
+      sumX2 += pointsX[i];
+      sumY2 += pointsY[i];
+      count2++;
+    }
+  }
+
+  return [
+
+    {
+      x: sumX1 / count1,
+      y: sumY1 / count1
+    },
+
+    {
+      x: sumX2 / count2,
+      y: sumY2 / count2
+    }
+
+  ];
+}
+
+// =====================================================
+// K-Means Iterations
+// =====================================================
+
+// --------------------
+// Iteration 1
+// --------------------
+
+const firstAssignment =
+  assignClusters(
+    centroid1,
+    centroid2
+  );
+
+const [
+  movedCentroid1,
+  movedCentroid2
+] = recomputeCentroids(
+  firstAssignment.assignments
+);
+
+// --------------------
+// Iteration 2
+// --------------------
+
+const secondAssignment =
+  assignClusters(
+    movedCentroid1,
+    movedCentroid2
+  );
+
+const [
+  movedCentroid1b,
+  movedCentroid2b
+] = recomputeCentroids(
+  secondAssignment.assignments
+);
+
+// --------------------
+// Iteration 3
+// (final assignment)
+// --------------------
+
+const thirdAssignment =
+  assignClusters(
+    movedCentroid1b,
+    movedCentroid2b
+  );
+
+// =====================================================
+// Traces
+// =====================================================
+
+const pointsTrace = {
+
+  x: pointsX,
+  y: pointsY,
+
+  mode: 'markers',
+  type: 'scatter',
+
+  marker: {
+    size: 14,
+    color: neutralColors
+  },
+
+  name: 'Points'
+};
+
+const centroidTrace = {
+
+  x: [],
+  y: [],
+
+  mode: 'markers',
+  type: 'scatter',
+
+  marker: {
+    size: 28,
+    color: ['red', 'blue'],
+    symbol: 'x'
+  },
+
+  name: 'Centroids'
+};
+
+// =====================================================
+// Initial plot
+// =====================================================
+
+Plotly.newPlot(
+
+  'kmeansPlot',
+
+  [
+    pointsTrace,
+    centroidTrace
+  ],
+
+  {
+
+    title: 'K-Means Clustering Process',
+
+    xaxis: {
+      range: [0, 10]
+    },
+
+    yaxis: {
+      range: [0, 10]
+    },
+
+    transition: {
+      duration: 700
+    },
+
+    paper_bgcolor: '#111',
+    plot_bgcolor: '#111',
+
+    font: {
+      color: 'white'
+    }
+
+  }
+
+);
+
+// =====================================================
+// Forward animations
+// =====================================================
+
+Reveal.on('fragmentshown', event => {
+
+  // ---------------------------------------------------
+  // Step 1
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step1') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {},
+
+          {
+            x: [
+              centroid1.x,
+              centroid2.x
+            ],
+
+            y: [
+              centroid1.y,
+              centroid2.y
+            ]
+          }
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 800
+        }
+      }
+
+    );
+  }
+
+  // ---------------------------------------------------
+  // Step 2
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step2') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {
+            marker: {
+              color:
+                firstAssignment.colors
+            }
+          },
+
+          {}
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 800
+        }
+      }
+
+    );
+  }
+
+  // ---------------------------------------------------
+  // Step 3
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step3') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {},
+
+          {
+
+            x: [
+              movedCentroid1.x,
+              movedCentroid2.x
+            ],
+
+            y: [
+              movedCentroid1.y,
+              movedCentroid2.y
+            ]
+
+          }
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 1200,
+          easing: 'cubic-in-out'
+        }
+      }
+
+    );
+  }
+
+  // ---------------------------------------------------
+  // Step 4
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step4') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {
+            marker: {
+              color:
+                secondAssignment.colors
+            }
+          },
+
+          {}
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 800
+        }
+      }
+
+    );
+  }
+  // ---------------------------------------------------
+// Step 5
+// ---------------------------------------------------
+
+if (event.fragment.id === 'step5') {
+
+  Plotly.animate(
+
+    'kmeansPlot',
+
+    {
+      data: [
+
+        {},
+
+        {
+          x: [
+            movedCentroid1b.x,
+            movedCentroid2b.x
+          ],
+
+          y: [
+            movedCentroid1b.y,
+            movedCentroid2b.y
+          ]
+        }
+
+      ]
+    },
+
+    {
+      transition: {
+        duration: 1200,
+        easing: 'cubic-in-out'
+      }
+    }
+
+  );
+}
+
+// ---------------------------------------------------
+// Step 6
+// ---------------------------------------------------
+
+if (event.fragment.id === 'step6') {
+
+  Plotly.animate(
+
+    'kmeansPlot',
+
+    {
+      data: [
+
+        {
+          marker: {
+            color:
+              thirdAssignment.colors
+          }
+        },
+
+        {}
+
+      ]
+    },
+
+    {
+      transition: {
+        duration: 800
+      }
+    }
+
+  );
+}
+ 
+});
+
+// =====================================================
+// Backward animations
+// =====================================================
+
+Reveal.on('fragmenthidden', event => {
+
+  // ---------------------------------------------------
+  // Back from step 4
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step4') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {
+            marker: {
+              color:
+                firstAssignment.colors
+            }
+          },
+
+          {}
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 500
+        }
+      }
+
+    );
+  }
+
+  // ---------------------------------------------------
+  // Back from step 3
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step3') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {},
+
+          {
+            x: [
+              centroid1.x,
+              centroid2.x
+            ],
+
+            y: [
+              centroid1.y,
+              centroid2.y
+            ]
+          }
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 1000
+        }
+      }
+
+    );
+  }
+
+  // ---------------------------------------------------
+  // Back from step 2
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step2') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {
+            marker: {
+              color: neutralColors
+            }
+          },
+
+          {}
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 500
+        }
+      }
+
+    );
+  }
+
+  // ---------------------------------------------------
+  // Back from step 1
+  // ---------------------------------------------------
+
+  if (event.fragment.id === 'step1') {
+
+    Plotly.animate(
+
+      'kmeansPlot',
+
+      {
+        data: [
+
+          {},
+
+          {
+            x: [],
+            y: []
+          }
+
+        ]
+      },
+
+      {
+        transition: {
+          duration: 500
+        }
+      }
+
+    );
+  }
+
+});
+
+</script>
+
+</body>
+</html>
