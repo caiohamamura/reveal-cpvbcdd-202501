@@ -266,24 +266,10 @@ lib_deps =
               <copy-btn></copy-btn>
             </div>
             <div style="flex: 1; text-align: center;">
-              <div class="mermaid" data-id="keyboard-flow" style="width: 100%;">
-                <pre>
-graph TD
-  U["👤 Usuário"] -->|/start| B["🤖 Bot"]
-  B -->|Envia teclado| K["⌨️ Inline Keyboard"]
-  K -->|Tap: LED ON| C1["📩 Callback: ledon"]
-  K -->|Tap: LED OFF| C2["📩 Callback: ledoff"]
-  C1 --> ESP["📦 ESP8266 liga LED"]
-  C2 --> ESP2["📦 ESP8266 desliga LED"]
-  style U fill:#6272a4,color:#f8f8f2
-  style B fill:#bd93f9,color:#f8f8f2
-  style K fill:#ff79c6,color:#f8f8f2
-  style C1 fill:#50fa7b,color:#282a36
-  style C2 fill:#ff5555,color:#f8f8f2
-  style ESP fill:#50fa7b,color:#282a36
-  style ESP2 fill:#ff5555,color:#f8f8f2
-                </pre>
-              </div>
+              <img src="https://core.telegram.org/file/464001863/110f3/I47qTXAD9Z4.120010/e0ea04f66357b640ec"
+                   alt="Exemplo de Inline Keyboard no Telegram"
+                   style="max-width: 100%; max-height: 420px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+              <p style="font-size: 12pt; color: #6272a4; margin-top: 8px;">Inline Keyboard com botões de callback</p>
             </div>
           </multi-col>
         </section>
