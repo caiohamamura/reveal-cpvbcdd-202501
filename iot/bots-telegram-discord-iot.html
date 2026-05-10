@@ -269,10 +269,10 @@ lib_deps =
               <div class="mermaid" data-id="keyboard-flow" style="width: 100%;">
                 <pre>
 graph TD
-  U["👤 Usuário"] -->|"/start"| B["🤖 Bot"]
-  B -->|"Envia teclado"| K["⌨️ Inline Keyboard"]
-  K -->|"Tap: LED ON"| C1["📩 Callback: ledon"]
-  K -->|"Tap: LED OFF"| C2["📩 Callback: ledoff"]
+  U["👤 Usuário"] -->|/start| B["🤖 Bot"]
+  B -->|Envia teclado| K["⌨️ Inline Keyboard"]
+  K -->|Tap: LED ON| C1["📩 Callback: ledon"]
+  K -->|Tap: LED OFF| C2["📩 Callback: ledoff"]
   C1 --> ESP["📦 ESP8266 liga LED"]
   C2 --> ESP2["📦 ESP8266 desliga LED"]
   style U fill:#6272a4,color:#f8f8f2
