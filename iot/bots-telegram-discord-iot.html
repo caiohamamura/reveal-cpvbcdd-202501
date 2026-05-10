@@ -32,7 +32,7 @@
             <pre>
 %%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '46px', 'fontFamily': 'Roboto'}}}%%
 graph LR
-  A["📱 Telegram Bot"] -->|"HTTPS/Polling"| B["📦 ESP8266"]
+  A["📱 Telegram Bot"] -->|"Inline Keyboard"| B["📦 ESP8266"]
   B -->|"Sensores"| D["💡 LDR"]
   B -->|"Atuadores"| E["🔴 LED"]
   style A fill:#6272a4,color:#f8f8f2
@@ -87,7 +87,7 @@ graph TB
           <h2>Por que Telegram para IoT?</h2>
           <ul style="font-size: 20pt;">
             <li style="margin-bottom: 15px;">Bot API oficial e bem documentada</li>
-            <li style="margin-bottom: 15px;">Biblioteca Arduino pronta (UniversalTelegramBot)</li>
+            <li style="margin-bottom: 15px;">Biblioteca Arduino pronta (AsyncTelegram2)</li>
             <li style="margin-bottom: 15px;">Comunicação direta ESP8266 ↔ Telegram (polling)</li>
             <li style="margin-bottom: 15px;">Comandos com prefixo <code>/</code></li>
             <li style="margin-bottom: 15px;">Notificações push automáticas</li>
@@ -194,13 +194,14 @@ secrets.h
           <img src="" alt="">
         </section>
 
-        <!-- SLIDE 10: Biblioteca Universal Telegram Bot -->
+        <!-- SLIDE 10: Biblioteca AsyncTelegram2 -->
         <section data-auto-animate>
-          <h2>Biblioteca Universal Telegram Bot</h2>
-
-          <h4 style="color: #ffb86c;">Instalação (PlatformIO)</h4>
-          <code-block lang="ini" data-trim>
-            <textarea>
+          <h2>Biblioteca AsyncTelegram2</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">Instalação (PlatformIO)</h4>
+              <code-block lang="ini" data-trim>
+                <textarea>
 [env:nodemcuv2]
 platform = espressif8266
 board = nodemcuv2
@@ -208,55 +209,83 @@ framework = arduino
 monitor_speed = 115200
 upload_speed = 921600
 lib_deps =
-    witnessmenow/UniversalTelegramBot @ ^1.3.0
-    bblanchon/ArduinoJson @ ^7.4.3
-              </textarea>
-          </code-block>
-
-
-
+    cotestatnt/AsyncTelegram2 @ ^2.3.4
+    bblanchon/ArduinoJson @ ^6.21.5
+                </textarea>
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #50fa7b;">Vantagens sobre UniversalTelegramBot</h4>
+              <ul style="font-size: 18pt;">
+                <li style="margin-bottom: 10px;">Totalmente <strong>assíncrono</strong> — não bloqueia o loop</li>
+                <li style="margin-bottom: 10px;">Suporte nativo a <strong>InlineKeyboard</strong></li>
+                <li style="margin-bottom: 10px;">Callback queries para botões</li>
+                <li style="margin-bottom: 10px;">Hardware independente</li>
+                <li style="margin-bottom: 10px;">Certificado TLS integrado</li>
+              </ul>
+            </div>
+          </multi-col>
         </section>
 
-        <!-- SLIDE 11: Comandos do Bot -->
+        <!-- SLIDE 11: Comandos e Teclado Interativo -->
         <section data-auto-animate>
-          <h2>Comandos do Bot</h2>
-          <table style="font-size: 16pt; width: 100%;">
-            <thead>
-              <tr style="background: #44475a;">
-                <th>Comando</th>
-                <th>Descrição</th>
-                <th>Ação no ESP8266</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code style="color: #50fa7b;">/start</code></td>
-                <td>Inicia conversa</td>
-                <td>Envia mensagem de boas-vindas</td>
-              </tr>
-              <tr>
-                <td><code style="color: #50fa7b;">/status</code></td>
-                <td>Status do dispositivo</td>
-                <td>Retorna IP, uptime, temperatura</td>
-              </tr>
-              <tr>
-                <td><code style="color: #50fa7b;">/ledon</code></td>
-                <td>Liga LED</td>
-                <td>GPIO HIGH</td>
-              </tr>
-              <tr>
-                <td><code style="color: #50fa7b;">/ledoff</code></td>
-                <td>Desliga LED</td>
-                <td>GPIO LOW</td>
-              </tr>
-              <tr>
-                <td><code style="color: #50fa7b;">/temp</code></td>
-                <td>Lê temperatura</td>
-                <td>Retorna valor do DHT22</td>
-              </tr>
-            </tbody>
-          </table>
-          <copy-btn></copy-btn>
+          <h2>Comandos e Teclado Interativo</h2>
+          <multi-col style="gap: 30px;">
+            <div style="flex: 1;">
+              <table style="font-size: 16pt; width: 100%;">
+                <thead>
+                  <tr style="background: #44475a;">
+                    <th>Tipo</th>
+                    <th>Ação</th>
+                    <th>Resposta</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code style="color: #50fa7b;">/start</code></td>
+                    <td>Inicia conversa</td>
+                    <td>Mostra teclado com botões</td>
+                  </tr>
+                  <tr>
+                    <td><code style="color: #ff79c6;">Botão "LED ON"</code></td>
+                    <td>Callback query</td>
+                    <td>GPIO LOW → LED liga</td>
+                  </tr>
+                  <tr>
+                    <td><code style="color: #8be9fd;">Botão "LED OFF"</code></td>
+                    <td>Callback query</td>
+                    <td>GPIO HIGH → LED desliga</td>
+                  </tr>
+                  <tr>
+                    <td><code style="color: #50fa7b;">/status</code></td>
+                    <td>Status do LED</td>
+                    <td>Retorna estado atual</td>
+                  </tr>
+                </tbody>
+              </table>
+              <copy-btn></copy-btn>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div class="mermaid" data-id="keyboard-flow" style="width: 100%;">
+                <pre>
+graph TD
+  U["👤 Usuário"] -->|"/start"| B["🤖 Bot"]
+  B -->|"Envia teclado"| K["⌨️ Inline Keyboard"]
+  K -->|"Tap: LED ON"| C1["📩 Callback: ledon"]
+  K -->|"Tap: LED OFF"| C2["📩 Callback: ledoff"]
+  C1 --> ESP["📦 ESP8266 liga LED"]
+  C2 --> ESP2["📦 ESP8266 desliga LED"]
+  style U fill:#6272a4,color:#f8f8f2
+  style B fill:#bd93f9,color:#f8f8f2
+  style K fill:#ff79c6,color:#f8f8f2
+  style C1 fill:#50fa7b,color:#282a36
+  style C2 fill:#ff5555,color:#f8f8f2
+  style ESP fill:#50fa7b,color:#282a36
+  style ESP2 fill:#ff5555,color:#f8f8f2
+                </pre>
+              </div>
+            </div>
+          </multi-col>
         </section>
 
         <section data-auto-animate>
@@ -277,19 +306,18 @@ lib_deps =
           <h2>Código: Telegram Bot (Setup)</h2>
           <multi-col>
             <code-block style="line-height: 1.2;min-height:max-content;" data-fragment-index="1" lang="cpp"
-                        data-line-numbers="1-26|6,11|4,10,24" data-fragment-index="1">
-              <textarea>
+                        data-line-numbers="1-26|3,9-11|16-18|21-25" data-fragment-index="1">
+<script type="text/plain">
 #include <Arduino.h>
-#include <ArduinoJson.h>
-#include <UniversalTelegramBot.h>
-#include <WiFiClientSecure.h>
 #include <ESP8266WiFi.h>
+#include <AsyncTelegram2.h>
 #include "secrets.h"
 
 #define LED_PIN D4
 
-WiFiClientSecure client;
-UniversalTelegramBot bot(BOT_TOKEN, client);
+BearSSL::WiFiClientSecure client;
+AsyncTelegram2 bot(client);
+InlineKeyboard kbd;
 
 void setup()
 {
@@ -302,14 +330,22 @@ void setup()
   }
   Serial.println("\nConectado!");
   pinMode(LED_PIN, OUTPUT);
-  client.setInsecure(); // Aceita certificados
-}
-}</textarea>
+
+  configTime("GMT0", "pool.ntp.org", "time.google.com");
+  bot.setTelegramToken(BOT_TOKEN);
+  bot.enableInsecureFallback();
+  bot.begin();
+
+  kbd.addButton("💡 LED ON", "ledon", KeyboardButtonQuery);
+  kbd.addButton("💡 LED OFF", "ledoff", KeyboardButtonQuery);
+}</script>
             </code-block>
 
             <ls-u>
-              <li data-fragment-index="1">Usar o secrets.h para BOT_TOKEN</li>
-              <li data-fragment-index="2">O telegram usa o HTTPS</li>
+              <li data-fragment-index="1">AsyncTelegram2 usa BearSSL + InlineKeyboard</li>
+              <li data-fragment-index="2">configTime() sincroniza relógio para TLS</li>
+              <li data-fragment-index="3">enableInsecureFallback() simplifica certificado</li>
+              <li data-fragment-index="4">Botões do teclado enviam callback queries</li>
             </ls-u>
           </multi-col>
         </section>
@@ -317,29 +353,32 @@ void setup()
         <!-- SLIDE 13: Código Telegram Bot - Loop -->
         <section data-auto-animate>
           <h2>Código: Telegram Bot (Loop)</h2>
-          <code-block style="line-height: 1.5;min-height:max-content;" lang="cpp" data-line-numbers="1-20|5|8-15"
+          <code-block style="line-height: 1.5;min-height:max-content;" lang="cpp" data-line-numbers="1-24|2|4-9|10-22"
                       data-fragment-index="1">
             <textarea>
 void loop() {
-  int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
-
-  while (numNewMessages) {
-    for (int i = 0; i < numNewMessages; i++) {
-      String chat_id = bot.messages[i].chat_id;
-      String text = bot.messages[i].text;
-
-      if (text == "/ledon") {
-        digitalWrite(LED_PIN, LOW);
-        bot.sendMessage(chat_id, "💡 LED ligado!");
+  TBMessage msg;
+  if (bot.getNewMessage(msg)) {
+    if (msg.messageType == MessageText) {
+      if (msg.text == "/start") {
+        bot.sendMessage(msg, "Controle o LED:", kbd);
       }
-      else if (text == "/ledoff") {
-        digitalWrite(LED_PIN, HIGH);
-        bot.sendMessage(chat_id, "💡 LED desligado!");
+      else if (msg.text == "/status") {
+        String s = digitalRead(LED_PIN) ? "Desligado":"Ligado";
+        bot.sendMessage(msg, "🔌 LED: " + s);
       }
     }
-    numNewMessages = bot.getUpdates(bot.last_message_received + 1);
+    else if (msg.messageType == MessageQuery) {
+      if (msg.callbackQueryData == "ledon") {
+        digitalWrite(LED_PIN, LOW);
+        bot.endQuery(msg, "💡 LED ligado!");
+      }
+      else if (msg.callbackQueryData == "ledoff") {
+        digitalWrite(LED_PIN, HIGH);
+        bot.endQuery(msg, "💡 LED desligado!");
+      }
+    }
   }
-}
 }</textarea>
           </code-block>
         </section>
@@ -386,20 +425,19 @@ void loop() {
 
         <!-- SLIDE 24: Código Completo Telegram -->
         <section data-auto-animate>
-          <h2>Código Completo: Telegram LED</h2>
+          <h2>Código Completo: Telegram LED + Teclado</h2>
           <code-block lang="cpp" data-trim>
-            <textarea>
+            <script type="text/plain">
 #include <Arduino.h>
-#include <ArduinoJson.h>
-#include <UniversalTelegramBot.h>
-#include <WiFiClientSecure.h>
 #include <ESP8266WiFi.h>
+#include <AsyncTelegram2.h>
 #include "secrets.h"
 
 #define LED_PIN D4
 
-WiFiClientSecure client;
-UniversalTelegramBot bot(BOT_TOKEN, client);
+BearSSL::WiFiClientSecure client;
+AsyncTelegram2 bot(client);
+InlineKeyboard kbd;
 
 void setup()
 {
@@ -412,37 +450,40 @@ void setup()
   }
   Serial.println("\nConectado!");
   pinMode(LED_PIN, OUTPUT);
-  client.setInsecure(); // Aceita certificados
-}
 
-void processaMsg(int numeroMensagens) {
-  for (int i = 0; i < numeroMensagens; i++) {
-    String chat_id = bot.messages[i].chat_id;
-    String text = bot.messages[i].text;
-    
-    if (text == "/start") {
-      bot.sendMessage(chat_id, "👋 Olá! Use /ledon ou /ledoff");
-    } else if (text == "/ledon") {
-      digitalWrite(LED_PIN, LOW);
-      bot.sendMessage(chat_id, "💡 LED ligado!");
-    } else if (text == "/ledoff") {
-      digitalWrite(LED_PIN, HIGH);
-      bot.sendMessage(chat_id, "💡 LED desligado!");
-    } else if (text == "/status") {
-      String status = digitalRead(LED_PIN) ? "Desligado": "Ligado";
-      bot.sendMessage(chat_id, "🔌 LED: " + status);
-    }
-  }
+  configTime("GMT0", "pool.ntp.org", "time.google.com");
+  bot.setTelegramToken(BOT_TOKEN);
+  bot.enableInsecureFallback();
+  bot.begin();
+
+  kbd.addButton("💡 LED ON", "ledon", KeyboardButtonQuery);
+  kbd.addButton("💡 LED OFF", "ledoff", KeyboardButtonQuery);
 }
 
 void loop() {
-  int qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
-
-  while (qdeMensagens) {
-    processaMsg(qdeMensagens);
-    qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
+  TBMessage msg;
+  if (bot.getNewMessage(msg)) {
+    if (msg.messageType == MessageText) {
+      if (msg.text == "/start") {
+        bot.sendMessage(msg, "Controle o LED:", kbd);
+      }
+      else if (msg.text == "/status") {
+        String s = digitalRead(LED_PIN) ? "Desligado":"Ligado";
+        bot.sendMessage(msg, "🔌 LED: " + s);
+      }
+    }
+    else if (msg.messageType == MessageQuery) {
+      if (msg.callbackQueryData == "ledon") {
+        digitalWrite(LED_PIN, LOW);
+        bot.endQuery(msg, "💡 LED ligado!");
+      }
+      else if (msg.callbackQueryData == "ledoff") {
+        digitalWrite(LED_PIN, HIGH);
+        bot.endQuery(msg, "💡 LED desligado!");
+      }
+    }
   }
-}</textarea>
+}</script>
           </code-block>
         </section>
 
@@ -452,9 +493,9 @@ void loop() {
           <div style="background: #44475a; border-radius: 12px; padding: 30px; text-align: center;">
             <p style="font-size: 24pt; margin-bottom: 25px;">Demonstre para o professor:</p>
             <ol style="font-size: 20pt; text-align: left; display: inline-block;">
-              <li style="margin-bottom: 15px;">Enviar <code>/start</code> e receber mensagem</li>
-              <li style="margin-bottom: 15px;">Enviar <code>/ledon</code> e ver LED acender</li>
-              <li style="margin-bottom: 15px;">Enviar <code>/ledoff</code> e ver LED apagar</li>
+              <li style="margin-bottom: 15px;">Enviar <code>/start</code> e receber teclado com botões</li>
+              <li style="margin-bottom: 15px;">Tocar em <code>💡 LED ON</code> e ver LED acender</li>
+              <li style="margin-bottom: 15px;">Tocar em <code>💡 LED OFF</code> e ver LED apagar</li>
               <li style="margin-bottom: 15px;">Enviar <code>/status</code> e ver estado</li>
             </ol>
           </div>
@@ -528,17 +569,17 @@ void loop() {
             <div style="flex: 1;">
               <h4 style="color: #50fa7b;">Código Completo</h4>
               <code-block lang="cpp" data-trim>
-                <textarea>
+                <script type="text/plain">
 #include <Arduino.h>
-#include <WiFiClientSecure.h>
-#include <UniversalTelegramBot.h>
+#include <ESP8266WiFi.h>
+#include <AsyncTelegram2.h>
 
 #define LDR_PIN A0
 #define BOT_TOKEN "SEU_TOKEN"
-String chat_id="";
+int64_t chat_id = 0;
 
-WiFiClientSecure client;
-UniversalTelegramBot bot(BOT_TOKEN, client);
+BearSSL::WiFiClientSecure client;
+AsyncTelegram2 bot(client);
 
 int limiar = 500;
 int lastState = -1;
@@ -551,40 +592,32 @@ void setup()
     // CONECTE WIFI
     ///////////////////
 
-    client.setInsecure();
+    configTime("GMT0", "pool.ntp.org", "time.google.com");
+    bot.setTelegramToken(BOT_TOKEN);
+    bot.enableInsecureFallback();
+    bot.begin();
 }
 
 void sendAlert(String message)
 {
-    bot.sendMessage(chat_id, message);
-}
-
-void processaMsgs() {
-    int qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
-    while (qdeMensagens)
-    {
-        for (int i = 0; i < qdeMensagens; i++)
-        {
-            chat_id = bot.messages[i].chat_id;
-            String text = bot.messages[i].text;
-
-            if (text == "/start")
-            {
-                bot.sendMessage(chat_id, "👋 Olá!");
-            }
-            
-        }
-        qdeMensagens = bot.getUpdates(bot.last_message_received + 1);
+    if (chat_id != 0) {
+        bot.sendTo(chat_id, message);
     }
 }
 
 void loop()
 {
-    // Enquanto não receber /start e tiver chat_id
-    if (chat_id == "") {
-        processaMsgs();
-        return;
+    TBMessage msg;
+    if (bot.getNewMessage(msg)) {
+        if (msg.messageType == MessageText) {
+            chat_id = msg.chatId;
+            if (msg.text == "/start") {
+                bot.sendMessage(msg, "👋 Olá!");
+            }
+        }
     }
+
+    if (chat_id == 0) return;
 
     //////////////////////////
     // IMPLEMENTAR HISTERESE
@@ -606,7 +639,7 @@ void loop()
     }
     delay(100);
 }
-                    </textarea>
+                    </script>
               </code-block>
               <p style="color: #bd93f9; font-size: 0.85em; margin-top: 10px;">⚙️ Ajuste o <code>limiar</code>
                 conforme seu ambiente</p>
@@ -648,65 +681,66 @@ void loop()
     ]" />
 </section> 
 
-        <!-- ============================================================
+      </section><!-- fim Quiz -->
+
+      <!-- ============================================================
          SEÇÃO: REFERÊNCIAS E PRÓXIMOS PASSOS
          ============================================================ -->
-        <section>
+      <section>
 
-          <!-- SLIDE 33: Seção - Referências -->
-          <section data-auto-animate>
-            <h2 style="color: #8be9fd;">📚 Referências e Próximos Passos</h2>
-            <p style="color: #6272a4;">Recursos para continuar aprendendo</p>
-          </section>
+        <!-- SLIDE 33: Seção - Referências -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">📚 Referências e Próximos Passos</h2>
+          <p style="color: #6272a4;">Recursos para continuar aprendendo</p>
+        </section>
 
-          <!-- SLIDE 34: Links Úteis -->
-          <section data-auto-animate>
-            <h2>Links Úteis</h2>
+        <!-- SLIDE 34: Links Úteis -->
+        <section data-auto-animate>
+          <h2>Links Úteis</h2>
+          <ul style="font-size: 18pt;">
+            <li style="margin-bottom: 15px;">
+              <a href="https://core.telegram.org/bots/api" style="color: #50fa7b;">Telegram Bot API</a> - Documentação
+              oficial
+            </li>
+            <li style="margin-bottom: 15px;">
+              <a href="https://github.com/cotestatnt/AsyncTelegram2"
+                 style="color: #50fa7b;">AsyncTelegram2</a> - Biblioteca Arduino async
+            </li>
+            <li style="margin-bottom: 15px;">
+              <a href="https://randomnerdtutorials.com/telegram-control-esp32-esp8266/" style="color: #8be9fd;">Random
+                Nerd Tutorials</a> - Tutoriais completos
+            </li>
+          </ul>
+        </section>
+
+        <!-- SLIDE 35: Próximos Passos -->
+        <section data-auto-animate>
+          <h2>Próximos Passos</h2>
+          <ls-u font-size="20pt">
+            <li>Implementar MQTT broker para IoT</li>
+            <li>Adicionar Home Assistant para automação</li>
+            <li>Criar dashboard web com Node-RED</li>
+            <li>Integrar com Google Home ou Alexa</li>
+            <li>Implementar OTA (Over-The-Air) updates</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE 36: Encerramento -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">✅ Resumo da Aula</h2>
+          <div style="background: #44475a; border-radius: 12px; padding: 25px;">
             <ul style="font-size: 18pt;">
-              <li style="margin-bottom: 15px;">
-                <a href="https://core.telegram.org/bots/api" style="color: #50fa7b;">Telegram Bot API</a> - Documentação
-                oficial
-              </li>
-              <li style="margin-bottom: 15px;">
-                <a href="https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot"
-                   style="color: #50fa7b;">Universal
-                  Telegram Bot</a> - Biblioteca Arduino
-              </li>
-              <li style="margin-bottom: 15px;">
-                <a href="https://randomnerdtutorials.com/telegram-control-esp32-esp8266/" style="color: #8be9fd;">Random
-                  Nerd Tutorials</a> - Tutoriais completos
-              </li>
+              <li style="margin-bottom: 10px;">📐 Arquitetura: ESP8266 ↔ Internet ↔ Bots</li>
+              <li style="margin-bottom: 10px;">🔐 Segurança: tokens nunca hardcoded</li>
+              <li style="margin-bottom: 10px;">🤖 Telegram: Bot API + AsyncTelegram2 + InlineKeyboard</li>
+              <li style="margin-bottom: 10px;">📡 ESP8266 ↔ Telegram (async, não bloqueante)</li>
+              <li style="margin-bottom: 10px;">🚀 Prática: LED + DHT22 funcionando</li>
             </ul>
-          </section>
+          </div>
+          <p style="margin-top: 30px; font-size: 24pt; color: #ffb86c;">Dúvidas? 🤔</p>
+        </section>
 
-          <!-- SLIDE 35: Próximos Passos -->
-          <section data-auto-animate>
-            <h2>Próximos Passos</h2>
-            <ls-u font-size="20pt">
-              <li>Implementar MQTT broker para IoT</li>
-              <li>Adicionar Home Assistant para automação</li>
-              <li>Criar dashboard web com Node-RED</li>
-              <li>Integrar com Google Home ou Alexa</li>
-              <li>Implementar OTA (Over-The-Air) updates</li>
-            </ls-u>
-          </section>
-
-          <!-- SLIDE 36: Encerramento -->
-          <section data-auto-animate>
-            <h2 style="color: #50fa7b;">✅ Resumo da Aula</h2>
-            <div style="background: #44475a; border-radius: 12px; padding: 25px;">
-              <ul style="font-size: 18pt;">
-                <li style="margin-bottom: 10px;">📐 Arquitetura: ESP8266 ↔ Internet ↔ Bots</li>
-                <li style="margin-bottom: 10px;">🔐 Segurança: tokens nunca hardcoded</li>
-                <li style="margin-bottom: 10px;">🤖 Telegram: Bot API + comandos</li>
-                <li style="margin-bottom: 10px;">📡 ESP8266 ↔ Telegram (comunicação direta)</li>
-                <li style="margin-bottom: 10px;">🚀 Prática: LED + DHT22 funcionando</li>
-              </ul>
-            </div>
-            <p style="margin-top: 30px; font-size: 24pt; color: #ffb86c;">Dúvidas? 🤔</p>
-          </section>
-
-        </section><!-- fim Referências -->
+      </section><!-- fim Referências -->
 
     </div>
   </div>
