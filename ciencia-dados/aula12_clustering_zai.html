@@ -254,6 +254,7 @@ graph TD
         <section data-auto-animate>
           <h2>K-Means Passo a Passo</h2>
           <plotly-figure :traces="kmTraces" :layout="kmLayout"></plotly-figure>
+          <div class="r-stack">
           <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="0">
             <span style="color:#8be9fd;">Passo 1: Inicializar 2 centroides aleatoriamente</span>
           </div>
@@ -271,6 +272,7 @@ graph TD
           </div>
           <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="5">
             <span style="color:#bd93f9;">Convergido! Centroides estabilizaram</span>
+          </div>
           </div>
         </section>
 
