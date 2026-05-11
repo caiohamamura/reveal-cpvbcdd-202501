@@ -253,15 +253,26 @@ graph TD
 
         <section data-auto-animate>
           <h2>K-Means Passo a Passo</h2>
-          <div id="km-plot" class="plot"></div>
+          <plotly-figure :traces="kmTraces" :layout="kmLayout"></plotly-figure>
           <p style="text-align:center; font-size:18pt; color:#f1fa8c;" id="km-step-text">Dados originais — sem agrupamento</p>
-          <div class="fragment" data-fragment-index="0"></div>
-          <div class="fragment" data-fragment-index="1"></div>
-          <div class="fragment" data-fragment-index="2"></div>
-          <div class="fragment" data-fragment-index="3"></div>
-          <div class="fragment" data-fragment-index="4"></div>
-          <div class="fragment" data-fragment-index="5"></div>
-          <div class="fragment" data-fragment-index="6"></div>
+          <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="0">
+            <span style="color:#8be9fd;">Passo 1: Inicializar 2 centroides aleatoriamente</span>
+          </div>
+          <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="1">
+            <span style="color:#ff5555;">Passo 2: Atribuir cada ponto ao centroide mais próximo</span>
+          </div>
+          <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="2">
+            <span style="color:#f1fa8c;">Passo 3: Recalcular centroides (média dos pontos)</span>
+          </div>
+          <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="3">
+            <span style="color:#ff79c6;">Passo 4: Re-atribuir pontos aos novos centroides</span>
+          </div>
+          <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="4">
+            <span style="color:#50fa7b;">Passo 5: Recalcular centroides novamente</span>
+          </div>
+          <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="5">
+            <span style="color:#bd93f9;">Convergido! Centroides estabilizaram</span>
+          </div>
         </section>
 
         <section data-auto-animate>
@@ -602,135 +613,132 @@ graph TD
       'Convergido! Centroides estabilizaram'
     ];
 
-    function getKmLayout() {
-      return {
-        paper_bgcolor: '#282a36',
-        plot_bgcolor: '#282a36',
-        font: { color: '#f8f8f2', size: 13 },
-        xaxis: { range: [68, 78], gridcolor: '#44475a', title: 'Cintura (cm)', zeroline: false },
-        yaxis: { range: [68, 96], gridcolor: '#44475a', title: 'Perna (cm)', zeroline: false },
-        showlegend: false,
-        height: 480,
-        width: 700,
-        margin: { l: 55, r: 20, t: 20, b: 55 }
-      };
-    }
-
-    function getKmTraces(step) {
-      var grayColors = [];
-      for (var i = 0; i < KM_POINTS_X.length; i++) grayColors.push('#6272a4');
-
-      var colors = grayColors.slice();
-      var centroids = [];
-
-      if (step === 0) {
-        colors = grayColors;
-      } else if (step === 1) {
-        colors = grayColors;
-        centroids = [KM_C1_INIT, KM_C2_INIT];
-      } else if (step === 2) {
-        colors = kmAssign1.colors;
-        centroids = [KM_C1_INIT, KM_C2_INIT];
-      } else if (step === 3) {
-        colors = kmAssign1.colors;
-        centroids = kmMove1;
-      } else if (step === 4) {
-        colors = kmAssign2.colors;
-        centroids = kmMove1;
-      } else if (step === 5) {
-        colors = kmAssign2.colors;
-        centroids = kmMove2;
-      } else if (step === 6) {
-        colors = kmAssign3.colors;
-        centroids = kmMove3;
-      }
-
-      var traces = [{
-        x: KM_POINTS_X,
-        y: KM_POINTS_Y,
-        mode: 'markers',
-        type: 'scatter',
-        marker: { color: colors, size: 12, line: { color: '#282a36', width: 1 } },
-        hovertemplate: 'Cintura: %{x:.1f} cm<br>Perna: %{y:.1f} cm<extra></extra>'
-      }];
-
-      if (centroids.length > 0) {
-        traces.push({
-          x: [centroids[0].x, centroids[1].x],
-          y: [centroids[0].y, centroids[1].y],
-          mode: 'markers',
-          type: 'scatter',
-          marker: { color: ['#ff5555', '#ff5555'], size: 22, symbol: 'x', line: { width: 3 } },
-          hovertemplate: 'Centroide (%{x:.1f}, %{y:.1f})<extra></extra>',
-          showlegend: false
-        });
-      }
-
-      return traces;
-    }
-
-    var kmCurrentStep = 0;
-
-    function updateKmPlot(step) {
-      var el = document.getElementById('km-plot');
-      if (!el || typeof Plotly === 'undefined') return;
-      Plotly.react(el, getKmTraces(step), getKmLayout(), { displayModeBar: false, responsive: true });
-      var labelEl = document.getElementById('km-step-text');
-      if (labelEl) labelEl.textContent = KM_STEP_LABELS[step];
-    }
+    var kmeansState = Vue.reactive({ step: 0 });
 
     var _createApp = Vue.createApp;
     Vue.createApp = function(opts) {
-      var app = _createApp(opts);
-      Object.assign(app.config.globalProperties, {
-        PLOT_RAW_DATA_TRACES: PLOT_RAW_DATA_TRACES,
-        PLOT_RAW_DATA_LAYOUT: PLOT_RAW_DATA_LAYOUT,
-        PLOT_DISTANCE_MATRIX_TRACES: PLOT_DISTANCE_MATRIX_TRACES,
-        PLOT_DISTANCE_MATRIX_LAYOUT: PLOT_DISTANCE_MATRIX_LAYOUT,
-        PLOT_DENDROGRAM_TRACES: PLOT_DENDROGRAM_TRACES,
-        PLOT_DENDROGRAM_LAYOUT: PLOT_DENDROGRAM_LAYOUT,
-        PLOT_HIERARCHICAL_CLUSTERS_TRACES: PLOT_HIERARCHICAL_CLUSTERS_TRACES,
-        PLOT_HIERARCHICAL_CLUSTERS_LAYOUT: PLOT_HIERARCHICAL_CLUSTERS_LAYOUT,
-        PLOT_KMEANS_RESULT_TRACES: PLOT_KMEANS_RESULT_TRACES,
-        PLOT_KMEANS_RESULT_LAYOUT: PLOT_KMEANS_RESULT_LAYOUT,
-        PLOT_ELBOW_TRACES: PLOT_ELBOW_TRACES,
-        PLOT_ELBOW_LAYOUT: PLOT_ELBOW_LAYOUT,
-        PLOT_KMEANS_FAILS_TRACES: PLOT_KMEANS_FAILS_TRACES,
-        PLOT_KMEANS_FAILS_LAYOUT: PLOT_KMEANS_FAILS_LAYOUT,
-        PLOT_DBSCAN_MOONS_TRACES: PLOT_DBSCAN_MOONS_TRACES,
-        PLOT_DBSCAN_MOONS_LAYOUT: PLOT_DBSCAN_MOONS_LAYOUT,
-        PLOT_COMPARISON_TRACES: PLOT_COMPARISON_TRACES,
-        PLOT_COMPARISON_LAYOUT: PLOT_COMPARISON_LAYOUT
+      var app = _createApp({
+        setup: function() {
+          var neutralColors = [];
+          for (var i = 0; i < KM_POINTS_X.length; i++) neutralColors.push('#6272a4');
+
+          var kmTraces = Vue.computed(function() {
+            var step = kmeansState.step;
+            var colors, centroidX, centroidY;
+
+            if (step >= 4) {
+              colors = kmAssign2.colors;
+            } else if (step >= 2) {
+              colors = kmAssign1.colors;
+            } else {
+              colors = neutralColors;
+            }
+
+            if (step >= 5) {
+              centroidX = [kmMove2[0].x, kmMove2[1].x];
+              centroidY = [kmMove2[0].y, kmMove2[1].y];
+            } else if (step >= 3) {
+              centroidX = [kmMove1[0].x, kmMove1[1].x];
+              centroidY = [kmMove1[0].y, kmMove1[1].y];
+            } else if (step >= 1) {
+              centroidX = [KM_C1_INIT.x, KM_C2_INIT.x];
+              centroidY = [KM_C1_INIT.y, KM_C2_INIT.y];
+            } else {
+              centroidX = [];
+              centroidY = [];
+            }
+
+            var centroidSize = step > 0 ? 22 : 10;
+
+            var traces = [{
+              x: KM_POINTS_X,
+              y: KM_POINTS_Y,
+              mode: 'markers',
+              type: 'scatter',
+              marker: { color: colors, size: 12, line: { color: '#282a36', width: 1 } },
+              hovertemplate: 'Cintura: %{x:.1f} cm<br>Perna: %{y:.1f} cm<extra></extra>',
+              name: 'Pontos'
+            }, {
+              x: centroidX,
+              y: centroidY,
+              mode: 'markers',
+              type: 'scatter',
+              marker: { color: ['#ff5555', '#ff5555'], size: centroidSize, symbol: 'x', line: { width: 3 } },
+              hovertemplate: 'Centroide (%{x:.1f}, %{y:.1f})<extra></extra>',
+              showlegend: false,
+              name: 'Centroides'
+            }];
+
+            return traces;
+          });
+
+          var kmLayout = Vue.computed(function() {
+            return {
+              paper_bgcolor: '#282a36',
+              plot_bgcolor: '#282a36',
+              font: { color: '#f8f8f2', size: 13 },
+              xaxis: { range: [68, 78], gridcolor: '#44475a', title: 'Cintura (cm)', zeroline: false },
+              yaxis: { range: [68, 96], gridcolor: '#44475a', title: 'Perna (cm)', zeroline: false },
+              showlegend: false,
+              height: 480,
+              width: 700,
+              margin: { l: 55, r: 20, t: 20, b: 55 }
+            };
+          });
+
+          Vue.onMounted(function() {
+            initializeReveal();
+
+            window.deck.on('fragmentshown', function(event) {
+              if (event.fragment.classList.contains('kmeans-step')) {
+                kmeansState.step = +event.fragment.dataset.fragmentIndex + 1;
+                var labelEl = document.getElementById('km-step-text');
+                if (labelEl) labelEl.textContent = KM_STEP_LABELS[kmeansState.step];
+              }
+            });
+            window.deck.on('fragmenthidden', function(event) {
+              if (event.fragment.classList.contains('kmeans-step')) {
+                kmeansState.step = +event.fragment.dataset.fragmentIndex;
+                var labelEl = document.getElementById('km-step-text');
+                if (labelEl) labelEl.textContent = KM_STEP_LABELS[kmeansState.step];
+              }
+            });
+          });
+
+          return {
+            kmTraces: kmTraces,
+            kmLayout: kmLayout,
+            PLOT_RAW_DATA_TRACES: PLOT_RAW_DATA_TRACES,
+            PLOT_RAW_DATA_LAYOUT: PLOT_RAW_DATA_LAYOUT,
+            PLOT_DISTANCE_MATRIX_TRACES: PLOT_DISTANCE_MATRIX_TRACES,
+            PLOT_DISTANCE_MATRIX_LAYOUT: PLOT_DISTANCE_MATRIX_LAYOUT,
+            PLOT_DENDROGRAM_TRACES: PLOT_DENDROGRAM_TRACES,
+            PLOT_DENDROGRAM_LAYOUT: PLOT_DENDROGRAM_LAYOUT,
+            PLOT_HIERARCHICAL_CLUSTERS_TRACES: PLOT_HIERARCHICAL_CLUSTERS_TRACES,
+            PLOT_HIERARCHICAL_CLUSTERS_LAYOUT: PLOT_HIERARCHICAL_CLUSTERS_LAYOUT,
+            PLOT_KMEANS_RESULT_TRACES: PLOT_KMEANS_RESULT_TRACES,
+            PLOT_KMEANS_RESULT_LAYOUT: PLOT_KMEANS_RESULT_LAYOUT,
+            PLOT_ELBOW_TRACES: PLOT_ELBOW_TRACES,
+            PLOT_ELBOW_LAYOUT: PLOT_ELBOW_LAYOUT,
+            PLOT_KMEANS_FAILS_TRACES: PLOT_KMEANS_FAILS_TRACES,
+            PLOT_KMEANS_FAILS_LAYOUT: PLOT_KMEANS_FAILS_LAYOUT,
+            PLOT_DBSCAN_MOONS_TRACES: PLOT_DBSCAN_MOONS_TRACES,
+            PLOT_DBSCAN_MOONS_LAYOUT: PLOT_DBSCAN_MOONS_LAYOUT,
+            PLOT_COMPARISON_TRACES: PLOT_COMPARISON_TRACES,
+            PLOT_COMPARISON_LAYOUT: PLOT_COMPARISON_LAYOUT
+          };
+        }
       });
       return app;
     };
-    window.app = mountSlideApp();
+
+    injectSeminarPanel();
+    var app = Vue.createApp();
+    initializeComponents(app);
+    initializeHeader(app);
+    app.mount('#app');
+    window.app = app;
     Vue.createApp = _createApp;
-
-    Reveal.on('slidechanged', function(event) {
-      if (event.currentSlide.querySelector('#km-plot')) {
-        kmCurrentStep = 0;
-        updateKmPlot(0);
-      }
-    });
-
-    Reveal.on('fragmentshown', function(event) {
-      var slide = Reveal.getCurrentSlide();
-      if (slide && slide.querySelector('#km-plot')) {
-        kmCurrentStep = Math.min(kmCurrentStep + 1, 6);
-        updateKmPlot(kmCurrentStep);
-      }
-    });
-
-    Reveal.on('fragmenthidden', function(event) {
-      var slide = Reveal.getCurrentSlide();
-      if (slide && slide.querySelector('#km-plot')) {
-        kmCurrentStep = Math.max(kmCurrentStep - 1, 0);
-        updateKmPlot(kmCurrentStep);
-      }
-    });
-
-    setTimeout(function() { updateKmPlot(0); }, 500);
   </script>
 
 </body>
