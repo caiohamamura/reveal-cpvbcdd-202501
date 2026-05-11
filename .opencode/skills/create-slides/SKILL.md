@@ -451,30 +451,48 @@ This is cleaner than creating a separate Vue app, using globalProperties globall
 2. Export as JSON: `json.dump(fig.to_dict(), f)`
 3. Convert to JS constants: `const PLOT_NAME_TRACES = [...]; const PLOT_NAME_LAYOUT = {...};`
 4. Load in slide HTML: `<script src="images/plotly/plot_name.js"></script>`
-5. **CRITICAL:** Vue 3 does NOT resolve bare `window` globals in templates. You MUST inject constants into `globalProperties` before calling `mountSlideApp()`:
-```js
-var _createApp = Vue.createApp;
-Vue.createApp = function(opts) {
-  var app = _createApp(opts);
-  Object.assign(app.config.globalProperties, {
-    PLOT_NAME_TRACES: PLOT_NAME_TRACES,
-    PLOT_NAME_LAYOUT: PLOT_NAME_LAYOUT,
-    // ... all plot constants
-  });
-  return app;
-};
-window.app = mountSlideApp();
-Vue.createApp = _createApp; // restore
-```
+5. **CRITICAL:** Vue 3 does NOT resolve bare `window` globals in templates. You MUST either:
+   - **Option A (simple — static charts only):** Intercept `Vue.createApp` to inject constants as `globalProperties`:
+     ```js
+     var _createApp = Vue.createApp;
+     Vue.createApp = function(opts) {
+       var app = _createApp(opts);
+       Object.assign(app.config.globalProperties, { PLOT_NAME_TRACES, PLOT_NAME_LAYOUT });
+       return app;
+     };
+     window.app = mountSlideApp();
+     Vue.createApp = _createApp;
+     ```
+   - **Option B (required for interactive charts):** Replace `mountSlideApp()` entirely with a custom app that includes both static constants AND reactive state in `setup()`:
+     ```js
+     var kmeansState = Vue.reactive({ step: 0 });
+     injectSeminarPanel();
+     var app = Vue.createApp({
+       setup() {
+         var kmTraces = Vue.computed(() => buildTraces(kmeansState.step));
+         var kmLayout = Vue.computed(() => ({ /* ... */ }));
+         Vue.onMounted(() => {
+           initializeReveal();
+           window.deck.on('fragmentshown', (e) => {
+             if (e.fragment.classList.contains('kmeans-step'))
+               kmeansState.step = +e.fragment.dataset.fragmentIndex + 1;
+           });
+         });
+         return { kmTraces, kmLayout, PLOT_NAME_TRACES, PLOT_NAME_LAYOUT, /* all statics */ };
+       }
+     });
+     initializeComponents(app); initializeHeader(app); app.mount('#app');
+     ```
 6. Reference in `<plotly-figure>`: `:traces="PLOT_NAME_TRACES" :layout="PLOT_NAME_LAYOUT"`
 
-#### Interactive Plotly without Vue reactivity
-When `mountSlideApp()` controls the Vue instance and you can't add reactive computed properties, use raw Plotly calls:
-1. Use a plain `<div id="my-plot" class="plot"></div>` (NOT `<plotly-figure>`)
-2. Use `Plotly.react()` for ALL updates — it handles adding/removing traces (unlike `Plotly.animate()` which only animates existing traces)
-3. Listen to `Reveal.on('fragmentshown'/'fragmenthidden')` and call `Plotly.react()` with updated traces
-4. Scope the listener to `slide.querySelector('#my-plot')` to avoid affecting other slides
-5. **NEVER use `Plotly.animate()`** when the trace count changes between steps — it silently ignores new traces
+#### Interactive Plotly with Vue reactivity
+For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM approaches fail:
+1. Create `Vue.reactive({ step: 0 })` outside the app for shared mutable state
+2. Use `Vue.computed()` to derive traces from reactive state
+3. Use `<plotly-figure :traces="computedTraces" :layout="computedLayout">` component
+4. Use visible fragments with descriptive labels (NOT empty invisible divs): `<div class="fragment fade-in-then-out kmeans-step" data-fragment-index="N">`
+5. Listen to `window.deck.on('fragmentshown'/'fragmenthidden')` scoped by class name
+6. **NEVER use `Plotly.animate()`** — it silently ignores new traces. **NEVER use raw DOM** — empty fragment divs don't fire events reliably.
 
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
