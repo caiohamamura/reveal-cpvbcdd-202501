@@ -451,14 +451,30 @@ This is cleaner than creating a separate Vue app, using globalProperties globall
 2. Export as JSON: `json.dump(fig.to_dict(), f)`
 3. Convert to JS constants: `const PLOT_NAME_TRACES = [...]; const PLOT_NAME_LAYOUT = {...};`
 4. Load in slide HTML: `<script src="images/plotly/plot_name.js"></script>`
-5. Reference in `<plotly-figure>`: `:traces="PLOT_NAME_TRACES" :layout="PLOT_NAME_LAYOUT"`
+5. **CRITICAL:** Vue 3 does NOT resolve bare `window` globals in templates. You MUST inject constants into `globalProperties` before calling `mountSlideApp()`:
+```js
+var _createApp = Vue.createApp;
+Vue.createApp = function(opts) {
+  var app = _createApp(opts);
+  Object.assign(app.config.globalProperties, {
+    PLOT_NAME_TRACES: PLOT_NAME_TRACES,
+    PLOT_NAME_LAYOUT: PLOT_NAME_LAYOUT,
+    // ... all plot constants
+  });
+  return app;
+};
+window.app = mountSlideApp();
+Vue.createApp = _createApp; // restore
+```
+6. Reference in `<plotly-figure>`: `:traces="PLOT_NAME_TRACES" :layout="PLOT_NAME_LAYOUT"`
 
 #### Interactive Plotly without Vue reactivity
 When `mountSlideApp()` controls the Vue instance and you can't add reactive computed properties, use raw Plotly calls:
 1. Use a plain `<div id="my-plot" class="plot"></div>` (NOT `<plotly-figure>`)
-2. Initialize with `Plotly.newPlot()` after Reveal loads
-3. Listen to `Reveal.on('fragmentshown'/'fragmenthidden')` and update with `Plotly.animate()`
+2. Use `Plotly.react()` for ALL updates — it handles adding/removing traces (unlike `Plotly.animate()` which only animates existing traces)
+3. Listen to `Reveal.on('fragmentshown'/'fragmenthidden')` and call `Plotly.react()` with updated traces
 4. Scope the listener to `slide.querySelector('#my-plot')` to avoid affecting other slides
+5. **NEVER use `Plotly.animate()`** when the trace count changes between steps — it silently ignores new traces
 
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
