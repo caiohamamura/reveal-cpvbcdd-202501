@@ -403,6 +403,69 @@ Technical details:
 - Code comments in pt-BR
 
 
+### Gotchas & Tips
+
+#### Mermaid syntax
+- **Edge labels: do NOT use inner quotes.** Use `|text|`, NOT `|"text"|`. Inner quotes break rendering.
+- Mermaid is whitespace-sensitive — graph content inside `<pre>` should have **0 spaces** of indentation.
+- Node labels with emojis and accents (e.g. `["🤖 Bot"]`) are fine.
+
+#### Code blocks with angle brackets
+- **Always** use `<script type="text/plain">` (not `<textarea>`) to wrap code in `<code-block>`.
+- This prevents the HTML parser from interpreting `#include <Arduino.h>` as an HTML tag and mangling it.
+
+#### HTML section nesting (Reveal.js)
+- Reveal.js uses nested `<section>` elements for vertical navigation. A misplaced closing `</section>` can cause slides to be nested incorrectly, making them invisible or out of order.
+- Use comment markers like `<!-- fim Fase N -->` to track section boundaries.
+- Quiz/references sections must be siblings of other super-sections, NOT nested inside them.
+
+#### mountSlideApp() override pattern (per-slide Vue reactive state)
+When a slide needs its own Vue reactive data (e.g. interactive demos, Plotly charts), override `mountSlideApp()` before calling it:
+
+```js
+const _originalMount = mountSlideApp;
+mountSlideApp = function () {
+    const app = _originalMount();
+    // Add reactive state on the app instance
+    app.config.globalProperties.myState = Vue.reactive({ counter: 0 });
+    return app;
+};
+window.app = mountSlideApp();
+```
+
+This is cleaner than creating a separate Vue app, using globalProperties globally, or building a scoped component — the data lives only in the app instance that drives that specific slide deck.
+
+#### PlotlyFigure component
+- A global `plotlyFigureComponent` is available in `components/components.js` for rendering Plotly.js charts inside slides.
+- It includes a Plotly guard (`typeof Plotly === 'undefined'`) so decks without the Plotly CDN don't break.
+- For interactive demos (e.g. K-Means), combine with the `mountSlideApp()` override pattern and `window.deck` (the Reveal instance) for fragment-synced step-by-step visualization.
+- When using fragment sync, scope your check (e.g. `.my-step-class`) to avoid responding to ALL fragments in the deck.
+
+#### Plotly 6.x API changes
+- `colorbar.titlefont` is **removed** — use `colorbar=dict(title=dict(text='...', font=dict(color='...')))` instead
+- `symbol='x'` still works for marker symbols
+- When exporting Plotly JSON from Python (`fig.to_dict()`), clean `None` values before embedding in JS — they cause issues
+
+#### Notebook → Slides Plotly pipeline
+1. Generate Plotly figures in Jupyter notebook
+2. Export as JSON: `json.dump(fig.to_dict(), f)`
+3. Convert to JS constants: `const PLOT_NAME_TRACES = [...]; const PLOT_NAME_LAYOUT = {...};`
+4. Load in slide HTML: `<script src="images/plotly/plot_name.js"></script>`
+5. Reference in `<plotly-figure>`: `:traces="PLOT_NAME_TRACES" :layout="PLOT_NAME_LAYOUT"`
+
+#### Interactive Plotly without Vue reactivity
+When `mountSlideApp()` controls the Vue instance and you can't add reactive computed properties, use raw Plotly calls:
+1. Use a plain `<div id="my-plot" class="plot"></div>` (NOT `<plotly-figure>`)
+2. Initialize with `Plotly.newPlot()` after Reveal loads
+3. Listen to `Reveal.on('fragmentshown'/'fragmenthidden')` and update with `Plotly.animate()`
+4. Scope the listener to `slide.querySelector('#my-plot')` to avoid affecting other slides
+
+#### AsyncTelegram2 (IoT slides reference)
+- Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
+- Use `enableInsecureFallback()` for simpler teaching code (not full BearSSL cert validation)
+- Key API: `bot.getNewMessage(msg)` returns bool, `msg.messageType` is `MessageText` or `MessageQuery`, `msg.callbackQueryData` for button data, `bot.endQuery(msg, text)` required for callbacks
+- `bot.sendTo(chat_id, text)` for proactive messages (takes `int64_t chat_id`)
+
 ---
 # IMPORTANT!!!!!
 ---
