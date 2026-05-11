@@ -254,7 +254,6 @@ graph TD
         <section data-auto-animate>
           <h2>K-Means Passo a Passo</h2>
           <plotly-figure :traces="kmTraces" :layout="kmLayout"></plotly-figure>
-          <p style="text-align:center; font-size:18pt; color:#f1fa8c;" id="km-step-text">Dados originais — sem agrupamento</p>
           <div class="fragment fade-in-then-out kmeans-step" data-fragment-index="0">
             <span style="color:#8be9fd;">Passo 1: Inicializar 2 centroides aleatoriamente</span>
           </div>
@@ -603,16 +602,6 @@ graph TD
     var kmAssign3 = kmAssign(KM_POINTS_X, KM_POINTS_Y, kmMove2[0], kmMove2[1]);
     var kmMove3 = kmRecompute(KM_POINTS_X, KM_POINTS_Y, kmAssign3.assignments);
 
-    var KM_STEP_LABELS = [
-      'Dados originais — sem agrupamento',
-      'Passo 1: Inicializar 2 centroides aleatoriamente',
-      'Passo 2: Atribuir cada ponto ao centroide mais próximo',
-      'Passo 3: Recalcular centroides (média dos pontos)',
-      'Passo 4: Re-atribuir pontos aos novos centroides',
-      'Passo 5: Recalcular centroides novamente',
-      'Convergido! Centroides estabilizaram'
-    ];
-
     var kmeansState = Vue.reactive({ step: 0 });
 
     var _createApp = Vue.createApp;
@@ -649,6 +638,7 @@ graph TD
             }
 
             var centroidSize = step > 0 ? 22 : 10;
+            var centroidColors = step >= 2 ? ['#8be9fd', '#ff79c6'] : ['#ff5555', '#ff5555'];
 
             var traces = [{
               x: KM_POINTS_X,
@@ -663,7 +653,7 @@ graph TD
               y: centroidY,
               mode: 'markers',
               type: 'scatter',
-              marker: { color: ['#ff5555', '#ff5555'], size: centroidSize, symbol: 'x', line: { width: 3 } },
+              marker: { color: centroidColors, size: centroidSize, symbol: 'x', line: { width: 3, color: centroidColors } },
               hovertemplate: 'Centroide (%{x:.1f}, %{y:.1f})<extra></extra>',
               showlegend: false,
               name: 'Centroides'
@@ -692,15 +682,11 @@ graph TD
             window.deck.on('fragmentshown', function(event) {
               if (event.fragment.classList.contains('kmeans-step')) {
                 kmeansState.step = +event.fragment.dataset.fragmentIndex + 1;
-                var labelEl = document.getElementById('km-step-text');
-                if (labelEl) labelEl.textContent = KM_STEP_LABELS[kmeansState.step];
               }
             });
             window.deck.on('fragmenthidden', function(event) {
               if (event.fragment.classList.contains('kmeans-step')) {
                 kmeansState.step = +event.fragment.dataset.fragmentIndex;
-                var labelEl = document.getElementById('km-step-text');
-                if (labelEl) labelEl.textContent = KM_STEP_LABELS[kmeansState.step];
               }
             });
           });
