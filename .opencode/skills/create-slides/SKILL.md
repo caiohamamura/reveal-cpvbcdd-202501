@@ -491,8 +491,10 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 2. Use `Vue.computed()` to derive traces from reactive state
 3. Use `<plotly-figure :traces="computedTraces" :layout="computedLayout">` component
 4. Use visible fragments with descriptive labels (NOT empty invisible divs): `<div class="fragment fade-in-then-out kmeans-step" data-fragment-index="N">`
-5. Listen to `window.deck.on('fragmentshown'/'fragmenthidden')` scoped by class name
-6. **NEVER use `Plotly.animate()`** — it silently ignores new traces. **NEVER use raw DOM** — empty fragment divs don't fire events reliably.
+5. Do NOT add a separate `<p id="step-label">` — the fragment labels already show one at a time via `fade-in-then-out`. A duplicate label creates visual clutter and goes out of sync.
+6. Listen to `window.deck.on('fragmentshown'/'fragmenthidden')` scoped by class name
+7. **NEVER use `Plotly.animate()`** — it silently ignores new traces. **NEVER use raw DOM** — empty fragment divs don't fire events reliably.
+8. Color centroid markers to match their cluster colors (e.g. `['#8be9fd', '#ff79c6']`) so students can visually track which centroid owns which group. Use red `#ff5555` for both before any assignment happens.
 
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
