@@ -674,22 +674,38 @@ graph TD
     function updateKmPlot(step) {
       var el = document.getElementById('km-plot');
       if (!el || typeof Plotly === 'undefined') return;
-      if (step === 0) {
-        Plotly.newPlot(el, getKmTraces(step), getKmLayout(), { displayModeBar: false });
-      } else {
-        Plotly.animate(el, {
-          data: getKmTraces(step),
-          layout: getKmLayout()
-        }, {
-          transition: { duration: 600, easing: 'cubic-in-out' },
-          frame: { duration: 600, redraw: true }
-        });
-      }
+      Plotly.react(el, getKmTraces(step), getKmLayout(), { displayModeBar: false, responsive: true });
       var labelEl = document.getElementById('km-step-text');
       if (labelEl) labelEl.textContent = KM_STEP_LABELS[step];
     }
 
+    var _createApp = Vue.createApp;
+    Vue.createApp = function(opts) {
+      var app = _createApp(opts);
+      Object.assign(app.config.globalProperties, {
+        PLOT_RAW_DATA_TRACES: PLOT_RAW_DATA_TRACES,
+        PLOT_RAW_DATA_LAYOUT: PLOT_RAW_DATA_LAYOUT,
+        PLOT_DISTANCE_MATRIX_TRACES: PLOT_DISTANCE_MATRIX_TRACES,
+        PLOT_DISTANCE_MATRIX_LAYOUT: PLOT_DISTANCE_MATRIX_LAYOUT,
+        PLOT_DENDROGRAM_TRACES: PLOT_DENDROGRAM_TRACES,
+        PLOT_DENDROGRAM_LAYOUT: PLOT_DENDROGRAM_LAYOUT,
+        PLOT_HIERARCHICAL_CLUSTERS_TRACES: PLOT_HIERARCHICAL_CLUSTERS_TRACES,
+        PLOT_HIERARCHICAL_CLUSTERS_LAYOUT: PLOT_HIERARCHICAL_CLUSTERS_LAYOUT,
+        PLOT_KMEANS_RESULT_TRACES: PLOT_KMEANS_RESULT_TRACES,
+        PLOT_KMEANS_RESULT_LAYOUT: PLOT_KMEANS_RESULT_LAYOUT,
+        PLOT_ELBOW_TRACES: PLOT_ELBOW_TRACES,
+        PLOT_ELBOW_LAYOUT: PLOT_ELBOW_LAYOUT,
+        PLOT_KMEANS_FAILS_TRACES: PLOT_KMEANS_FAILS_TRACES,
+        PLOT_KMEANS_FAILS_LAYOUT: PLOT_KMEANS_FAILS_LAYOUT,
+        PLOT_DBSCAN_MOONS_TRACES: PLOT_DBSCAN_MOONS_TRACES,
+        PLOT_DBSCAN_MOONS_LAYOUT: PLOT_DBSCAN_MOONS_LAYOUT,
+        PLOT_COMPARISON_TRACES: PLOT_COMPARISON_TRACES,
+        PLOT_COMPARISON_LAYOUT: PLOT_COMPARISON_LAYOUT
+      });
+      return app;
+    };
     window.app = mountSlideApp();
+    Vue.createApp = _createApp;
 
     Reveal.on('slidechanged', function(event) {
       if (event.currentSlide.querySelector('#km-plot')) {
