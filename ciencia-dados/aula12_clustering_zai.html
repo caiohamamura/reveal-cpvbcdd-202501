@@ -484,7 +484,22 @@ graph TD
         <section>
           <poll-question
             id="q3"
-            title="Questão 3: DBSCAN"
+            title="Questão 3: Elbow Method"
+            question="Para que serve o método do cotovelo (elbow method)?"
+            answer="b"
+            answer-text="O método do cotovelo ajuda a escolher o número ótimo de clusters K analisando a redução marginal da variância interna!"
+            :options="[
+              { value: 'a', label: 'Remover outliers do dataset' },
+              { value: 'b', label: 'Escolher o número ótimo de clusters K' },
+              { value: 'c', label: 'Definir os centróides iniciais do K-Means' },
+              { value: 'd', label: 'Escolher entre K-Means e Hierárquico' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="q4"
+            title="Questão 4: DBSCAN"
             question="Em qual cenário DBSCAN é preferível ao K-Means?"
             answer="c"
             answer-text="DBSCAN brilha quando os clusters têm formas arbitrárias e há ruído nos dados!"

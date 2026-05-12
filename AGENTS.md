@@ -22,8 +22,7 @@ reveal-cpvbcdd-202501/
 ├── slides_template/           # Shared templates (header1.js, init.js)
 ├── img/                       # Shared images (logo, background)
 ├── docs/                      # ECOSSISTEMA.md — full framework documentation
-├── bin/                       # micromamba binary
-├── .opencode/skills/          # opencode skills (create-slides, search-images, export-plots, run-notebook)
+├── .opencode/skills/          # opencode skills (create-slides, search-images, run-notebook)
 └── .github/workflows/         # GitHub Pages static deployment
 ```
 
@@ -41,12 +40,15 @@ reveal-cpvbcdd-202501/
 
 There is no build step. Slides are static HTML files served directly.
 
-**IMPORTANT: Always use micromamba (`./bin/micromamba`) for Python packages — NEVER `pip install` or `python3 -m pip install`.**
+**IMPORTANT: Always use micromamba (`micromamba`) for Python packages — NEVER `pip install` or `python3 -m pip install`.**
+
+If `micromamba` is missing in a checkout, report that notebook execution/package installation is blocked; do not fall back to `pip`.
 
 ```bash
 # Package management (use opencode environment)
-./bin/micromamba install -n opencode -y <package>
-./bin/micromamba run -n opencode python3 script.py
+micromamba create -n opencode -y -c conda-forge python=3.11 jupyter nbconvert numpy pandas plotly scipy scikit-learn  # if env is missing
+micromamba install -n opencode -y <package>
+micromamba run -n opencode python3 script.py
 
 # Serve locally (any static server)
 python3 -m http.server 8000
@@ -61,7 +63,7 @@ for f in glob.glob('**/*.html', recursive=True):
 "
 
 # Run Jupyter notebooks
-jupyter nbconvert --execute --to notebook notebook.ipynb
+micromamba run -n opencode jupyter nbconvert --execute --to notebook notebook.ipynb
 
 # Extract notebook images
 python3 .opencode/skills/run-notebook/extract_notebook_images.py notebook.ipynb --output-dir images/
@@ -132,6 +134,7 @@ All slides must follow the exact boilerplate in `.opencode/skills/create-slides/
 ## Important Rules
 
 - **Language**: All slide content in Brazilian Portuguese. No Chinese characters. English technical terms are fine.
+- **Student-facing instructions**: Do not mention `micromamba`, `opencode`, or internal project environment/setup details in slides, notebooks, exercises, or comments intended for students.
 - **Images**: All `<img>` must have `alt` text. Validate images (status 200, valid binary data, >1KB).
 - **Attribution**: Include source attribution for images (`Fonte: [Site] ([License])`)
 - **Super sections**: Wrap major topics in parent `<section>` elements for vertical navigation
@@ -140,7 +143,7 @@ All slides must follow the exact boilerplate in `.opencode/skills/create-slides/
 
 ## Post-Task Reflection Protocol
 
-After completing any non-trivial task (debugging, new features, migrations, etc.), **automatically** run the `reflect-and-learn` skill protocol:
+After completing any tasks (needed debugging, had new features, migrations, issues were found, user complained about something, etc.), **automatically** run the `reflect-and-learn` skill protocol:
 
 1. **Reflect** — Did you encounter gotchas, discover new patterns, or learn library-specific details?
 2. **Evaluate** — Where does this knowledge belong? (existing skill, AGENTS.md, ECOSSISTEMA.md, or new skill)
@@ -155,9 +158,8 @@ Five opencode skills are available:
 
 1. **create-slides** — Generate new Reveal.js slide files (load for detailed patterns and gotchas)
 2. **search-images** — Find images via web search + deterministic extraction
-3. **export-plots** — Generate Dracula-themed matplotlib/seaborn plots from notebooks
-4. **run-notebook** — Execute Jupyter notebooks and extract images
-5. **reflect-and-learn** — Post-task reflection protocol for capturing and persisting learned patterns
+3. **run-notebook** — Execute Jupyter notebooks and extract images
+4. **reflect-and-learn** — Post-task reflection protocol for capturing and persisting learned patterns
 
 ## Reference Documentation
 

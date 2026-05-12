@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Ciência de Dados - Cluster Analysis</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .plot {
+      width: 780px;
+      height: 480px;
+      margin: auto;
+    }
+
+    .mini-plot .plot {
+      width: 520px;
+      height: 390px;
+    }
+
+    .metric-card {
+      background: #44475a;
+      border-left: 5px solid #8be9fd;
+      padding: 16px;
+      border-radius: 8px;
+      min-height: 120px;
+    }
+
+    .step-pill {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1px solid #6272a4;
+      border-radius: 6px;
+      margin: 6px;
+      font-size: 18pt;
+      background: #282a36;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="12" curso="Ciência de Dados" title-size="24"
+                 title="Cluster Analysis: agrupando dados sem rótulos">
+          <div class="mermaid" data-id="cover-cluster-flow" style="width:520px">
+            <pre>
+graph LR
+  A["Distância"] --> B["Hierarquia"]
+  B --> C["K-Means"]
+  C --> D["DBSCAN"]
+  D --> E["Decisão"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#ff79c6,color:#282a36
+  style D fill:#50fa7b,color:#282a36
+  style E fill:#f1fa8c,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Revisão: o que o KNN já ensinou</h2>
+        <multi-col style="gap: 20px;">
+          <div class="metric-card">
+            <h4 style="color: #8be9fd;">Distância</h4>
+            <p>Dois pontos próximos tendem a representar casos parecidos.</p>
+          </div>
+          <div class="metric-card" style="border-left-color: #ff79c6;">
+            <h4 style="color: #ff79c6;">Vizinhança</h4>
+            <p>A estrutura local do espaço importa tanto quanto cada variável isolada.</p>
+          </div>
+        </multi-col>
+        <p class="fragment" style="font-size: 26pt; color: #50fa7b; margin-top: 30px;">
+          Hoje: e quando não existe rótulo para votar?
+        </p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Objetivos da aula</h2>
+        <ls-u>
+          <li>Entender clustering como aprendizado não supervisionado.</li>
+          <li>Comparar classificação e agrupamento.</li>
+          <li>Interpretar clusters visualmente e criticamente.</li>
+          <li>Aplicar clustering hierárquico, K-Means e DBSCAN.</li>
+          <li>Discutir como escolhas técnicas viram decisões de produto.</li>
+        </ls-u>
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 1: O problema</h2>
+          <p style="font-size: 28pt;">Uma fábrica precisa transformar corpos contínuos em tamanhos discretos.</p>
+          <div style="margin-top: 25px;">
+            <span class="step-pill">36</span>
+            <span class="step-pill">38</span>
+            <span class="step-pill">40</span>
+            <span class="step-pill">42</span>
+            <span class="step-pill">44</span>
+            <span class="step-pill">46</span>
+            <span class="step-pill">48</span>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Por que tamanho de calça é clustering?</h2>
+          <multi-col style="gap: 25px;">
+            <div>
+              <ul>
+                <li>Corpos variam continuamente.</li>
+                <li>Tamanhos são categorias limitadas.</li>
+                <li>Pessoas com mesmo número podem ter proporções diferentes.</li>
+                <li>Marcas fazem escolhas diferentes sobre onde cortar.</li>
+              </ul>
+            </div>
+            <div>
+              <highlight-box instant>
+                <p style="font-size: 26pt;">
+                  Clustering é uma forma de comprimir variação em grupos interpretáveis.
+                </p>
+              </highlight-box>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Nosso dataset didático</h2>
+          <multi-col style="gap: 25px;">
+            <div>
+              <ul>
+                <li><strong>Cintura:</strong> circunferência em cm.</li>
+                <li><strong>Entreperna:</strong> comprimento da perna em cm.</li>
+                <li>Quatro grupos naturais com ruído.</li>
+                <li>Alguns pontos ambíguos e outliers.</li>
+              </ul>
+            </div>
+            <div class="mini-plot">
+              <plotly-figure :traces="AULA12_SCATTER_INITIAL_TRACES" :layout="AULA12_SCATTER_INITIAL_LAYOUT"></plotly-figure>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Perguntas antes do algoritmo</h2>
+          <ls-u>
+            <li>Quantos grupos você vê?</li>
+            <li>As fronteiras são óbvias?</li>
+            <li>Quem fica perto de uma fronteira?</li>
+            <li>Uma única tabela de tamanhos atende todos igualmente?</li>
+          </ls-u>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 2: Clustering hierárquico</h2>
+          <p style="font-size: 28pt;">O caminho mais natural depois de KNN: começar pelas distâncias.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Ideia aglomerativa</h2>
+          <div class="mermaid" data-id="hierarchical-steps">
+            <pre>
+graph LR
+  A["Cada pessoa sozinha"] --> B["Une os mais próximos"]
+  B --> C["Une pequenos grupos"]
+  C --> D["Forma uma hierarquia"]
+  D --> E["Corta a árvore"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#ff79c6,color:#282a36
+  style D fill:#50fa7b,color:#282a36
+  style E fill:#f1fa8c,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Dendrograma</h2>
+          <multi-col style="gap: 20px;">
+            <div>
+              <ul>
+                <li>A altura vertical representa distância de fusão.</li>
+                <li>Saltos grandes indicam separações fortes.</li>
+                <li>O corte define quantos grupos vamos usar.</li>
+              </ul>
+            </div>
+            <div class="mini-plot">
+              <plotly-figure :traces="AULA12_DENDROGRAM_TRACES" :layout="AULA12_DENDROGRAM_LAYOUT"></plotly-figure>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Depois do corte</h2>
+          <plotly-figure :traces="AULA12_HIERARCHICAL_CLUSTERS_TRACES" :layout="AULA12_HIERARCHICAL_CLUSTERS_LAYOUT"></plotly-figure>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Forças e limites</h2>
+          <table>
+            <thead>
+              <tr><th>Vantagem</th><th>Limite</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Visual e interpretável</td><td>Caro em bases grandes</td></tr>
+              <tr><td>Não exige escolher k no início</td><td>Sensível ao linkage</td></tr>
+              <tr><td>Bom para exploração</td><td>Ruído pode distorcer fusões</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 3: K-Means</h2>
+          <p style="font-size: 28pt;">Agora a empresa decide: “vamos criar quatro protótipos de corpo”.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>K-Means em uma frase</h2>
+          <highlight-box instant>
+            <p style="font-size: 30pt;">Cada ponto vai para o centroide mais próximo; cada centroide anda para a média do seu grupo.</p>
+          </highlight-box>
+          <div class="fragment" style="margin-top: 30px;">
+            <span class="step-pill">1. Chutar centroides</span>
+            <span class="step-pill">2. Atribuir pontos</span>
+            <span class="step-pill">3. Recalcular médias</span>
+            <span class="step-pill">4. Repetir</span>
+          </div>
+        </section>
+
+        <section data-auto-animate id="aula12-kmeans-demo">
+          <h2>K-Means passo a passo</h2>
+          <plotly-figure :traces="currentKmeansTraces" :layout="currentKmeansLayout"></plotly-figure>
+          <div class="r-stack" style="margin-top: 10px;">
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #8be9fd;">Passo 1 — escolher quatro centroides iniciais</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #ff79c6;">Passo 2 — atribuir cada pessoa ao centroide mais próximo</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #f1fa8c;">Passo 3 — mover cada centroide para a média do grupo</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #bd93f9;">Passo 4 — reatribuir depois do movimento</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #50fa7b;">Passo 5 — mover novamente: convergência</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #bd93f9;">Passo 6 — reatribuir depois do movimento</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #50fa7b;">Passo 7 — mover novamente: convergência</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #bd93f9;">Passo 8 — reatribuir depois do movimento</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #50fa7b;">Passo 9 — mover novamente: convergência</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #bd93f9;">Passo 10 — reatribuir depois do movimento</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #50fa7b;">Passo 11 — mover novamente: convergência</span>
+            </p>
+            <p class="fragment fade-in-then-out aula12-kmeans-step">
+              <span style="color: #ff5555;">Resultado — centroides viram protótipos de tamanho</span>
+            </p>
+            
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Como escolher k?</h2>
+          <multi-col style="gap: 20px;">
+            <div>
+              <ul>
+                <li>Mais grupos reduzem erro interno.</li>
+                <li>Mais tamanhos aumentam custo industrial.</li>
+                <li>O cotovelo procura ganho marginal pequeno.</li>
+              </ul>
+            </div>
+            <div class="mini-plot">
+              <plotly-figure :traces="AULA12_ELBOW_TRACES" :layout="AULA12_ELBOW_LAYOUT"></plotly-figure>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quando K-Means funciona bem?</h2>
+          <ul>
+            <li>Clusters aproximadamente arredondados.</li>
+            <li>Densidades parecidas entre grupos.</li>
+            <li>Poucos outliers extremos.</li>
+            <li>Necessidade de método rápido e escalável.</li>
+          </ul>
+          <p class="fragment" style="color: #ff5555; font-size: 25pt;">
+            Mas ele força todo mundo a pertencer a algum centroide.
+          </p>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 4: DBSCAN</h2>
+          <p style="font-size: 28pt;">E se a pergunta não for “qual centroide?”, mas “onde existe densidade?”.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>DBSCAN muda a pergunta</h2>
+          <multi-col style="gap: 25px;">
+            <div class="metric-card" style="border-left-color: #ff79c6;">
+              <h4 style="color: #ff79c6;">K-Means</h4>
+              <p>Qual centroide está mais perto?</p>
+            </div>
+            <div class="metric-card" style="border-left-color: #50fa7b;">
+              <h4 style="color: #50fa7b;">DBSCAN</h4>
+              <p>Esta região é densa o suficiente?</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Vocabulário mínimo</h2>
+          <ul>
+            <li><strong>eps:</strong> raio da vizinhança.</li>
+            <li><strong>min_samples:</strong> mínimo de pontos para formar densidade.</li>
+            <li><strong>core point:</strong> ponto com vizinhança densa.</li>
+            <li><strong>border point:</strong> alcançado por um core point.</li>
+            <li><strong>noise:</strong> ponto isolado.</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Onde DBSCAN brilha</h2>
+          <plotly-figure :traces="AULA12_DBSCAN_TRACES" :layout="AULA12_DBSCAN_LAYOUT"></plotly-figure>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comparação rápida</h2>
+          <table>
+            <thead>
+              <tr><th>Método</th><th>Ideia</th><th>Precisa k?</th><th>Ruído?</th><th>Formas irregulares?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Hierárquico</td><td>Fusões progressivas</td><td>Opcional</td><td>Pouco</td><td>Às vezes</td></tr>
+              <tr><td>K-Means</td><td>Centroides</td><td>Sim</td><td>Não</td><td>Não</td></tr>
+              <tr><td>DBSCAN</td><td>Densidade</td><td>Não</td><td>Sim</td><td>Sim</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 5: Hands-on</h2>
+          <p style="font-size: 28pt;">Notebook: gerar dados, aplicar métodos e defender uma decisão.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exercício prático</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+            <p><strong>Objetivo:</strong> comparar três algoritmos e recomendar uma estratégia de agrupamento.</p>
+            <ls-u>
+              <li>Rode o dataset sintético de corpos.</li>
+              <li>Compare linkage no clustering hierárquico.</li>
+              <li>Teste k de 2 a 8 no K-Means.</li>
+              <li>Varie eps e min_samples no DBSCAN.</li>
+              <li>Escreva uma recomendação para a empresa.</li>
+            </ls-u>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Clusters não são verdade absoluta</h2>
+          <highlight-box instant>
+            <p style="font-size: 30pt;">Agrupar é escolher uma forma útil de simplificar a realidade.</p>
+          </highlight-box>
+          <p style="font-size: 24pt; margin-top: 25px;">
+            Duas empresas podem usar os mesmos dados e chegar a tabelas de tamanhos diferentes.
+          </p>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <section>
+        <section data-auto-animate>
+          <h2>Quiz Interativo</h2>
+          <p>Conecte-se à sala e vote.</p>
+        </section>
+
+        <section>
+          <poll-question
+            id="aula12-q1"
+            title="Questão 1: Clustering"
+            question="Qual é a principal diferença entre classificação e clustering?"
+            answer="b"
+            answer-text="No clustering não temos rótulos verdadeiros para treinar."
+            :options="[
+              { value: 'a', label: 'Clustering sempre usa redes neurais' },
+              { value: 'b', label: 'Clustering agrupa dados sem rótulos prévios' },
+              { value: 'c', label: 'Classificação não usa distância' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="aula12-q2"
+            title="Questão 2: K-Means"
+            question="Qual parâmetro o K-Means exige antes de rodar?"
+            answer="c"
+            answer-text="K-Means precisa do número de clusters k."
+            :options="[
+              { value: 'a', label: 'eps' },
+              { value: 'b', label: 'min_samples' },
+              { value: 'c', label: 'k' },
+            ]" />
+        </section>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Hierárquico começa pela distância e mostra uma árvore de fusões.</li>
+          <li>K-Means comprime dados em centroides e exige escolher k.</li>
+          <li>DBSCAN encontra regiões densas e separa ruído.</li>
+          <li>Clusters são modelos úteis, não verdades naturais absolutas.</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Hands-on: <strong>aula12-cluster-analysis-hands-on.ipynb</strong></p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="images/plotly/aula12_cluster_analysis_figures.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    const aula12KmeansState = Vue.reactive({ step: 0 });
+    const aula12KmeansColors = ['#8be9fd', '#ff79c6', '#50fa7b', '#f1fa8c'];
+    const aula12KmeansPoints = {
+      x: [69, 72, 75, 78, 70, 74, 77, 71, 73, 76, 68, 79, 72, 75, 70, 73, 76, 74, 71, 77, 70, 74, 98, 102, 105, 95, 100, 107, 96, 103, 99, 101, 94, 106, 97, 104, 100, 108, 95, 102, 110, 93],
+      y: [70, 73, 71, 76, 69, 74, 77, 72, 75, 70, 74, 76, 91, 94, 89, 96, 92, 95, 93, 98, 90, 97, 72, 75, 78, 70, 74, 79, 73, 76, 71, 77, 69, 75, 92, 95, 90, 98, 94, 96, 99, 91],
+    };
+    const aula12InitialCentroids = [
+      { x: 69, y: 70 },
+      { x: 73, y: 75 },
+      { x: 75, y: 71 },
+      { x: 74, y: 95 },
+    ];
+
+    function assignKmeansClusters(points, centroids) {
+      const assignments = [];
+      const colors = [];
+      for (let i = 0; i < points.x.length; i++) {
+        let bestIndex = 0;
+        let bestDistance = Infinity;
+        for (let c = 0; c < centroids.length; c++) {
+          const dx = points.x[i] - centroids[c].x;
+          const dy = points.y[i] - centroids[c].y;
+          const distance = dx * dx + dy * dy;
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            bestIndex = c;
+          }
+        }
+        assignments.push(bestIndex);
+        colors.push(aula12KmeansColors[bestIndex]);
+      }
+      return { assignments, colors };
+    }
+
+    function recomputeKmeansCentroids(points, assignments, previousCentroids) {
+      return previousCentroids.map((centroid, clusterIndex) => {
+        let sumX = 0;
+        let sumY = 0;
+        let count = 0;
+        for (let i = 0; i < assignments.length; i++) {
+          if (assignments[i] === clusterIndex) {
+            sumX += points.x[i];
+            sumY += points.y[i];
+            count++;
+          }
+        }
+        if (count === 0) return centroid;
+        return { x: sumX / count, y: sumY / count };
+      });
+    }
+
+    const aula12Assign1 = assignKmeansClusters(aula12KmeansPoints, aula12InitialCentroids);
+    const aula12Centroids1 = recomputeKmeansCentroids(aula12KmeansPoints, aula12Assign1.assignments, aula12InitialCentroids);
+    const aula12Assign2 = assignKmeansClusters(aula12KmeansPoints, aula12Centroids1);
+    const aula12Centroids2 = recomputeKmeansCentroids(aula12KmeansPoints, aula12Assign2.assignments, aula12Centroids1);
+    const aula12Assign3 = assignKmeansClusters(aula12KmeansPoints, aula12Centroids2);
+    const aula12Centroids3 = recomputeKmeansCentroids(aula12KmeansPoints, aula12Assign3.assignments, aula12Centroids2);
+    const aula12Assign4 = assignKmeansClusters(aula12KmeansPoints, aula12Centroids3);
+    const aula12Centroids4 = recomputeKmeansCentroids(aula12KmeansPoints, aula12Assign4.assignments, aula12Centroids3);
+    const aula12Assign5 = assignKmeansClusters(aula12KmeansPoints, aula12Centroids4);
+    const aula12Centroids5 = recomputeKmeansCentroids(aula12KmeansPoints, aula12Assign5.assignments, aula12Centroids4);
+
+    mountSlideApp = function() {
+      injectSeminarPanel();
+
+      const app = Vue.createApp({
+        setup() {
+          const currentKmeansTraces = Vue.computed(() => {
+            const step = aula12KmeansState.step;
+            const pointColors = step >= 10
+              ? aula12Assign5.colors
+              : step >= 8
+              ? aula12Assign4.colors
+              : step >= 6 
+              ? aula12Assign3.colors
+              : step >= 4
+              ? aula12Assign2.colors
+              : step >= 2
+                ? aula12Assign1.colors
+                : Array(aula12KmeansPoints.x.length).fill('#6272a4');
+            const centroids = step >= 11
+              ? aula12Centroids5
+              : step >= 9
+              ? aula12Centroids4
+              : step >= 7
+              ? aula12Centroids3
+              :step >= 5
+              ? aula12Centroids2
+              : step >= 3
+                ? aula12Centroids1
+                : aula12InitialCentroids;
+
+            return [
+              {
+                x: aula12KmeansPoints.x,
+                y: aula12KmeansPoints.y,
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Pessoas',
+                marker: {
+                  color: pointColors,
+                  size: 11,
+                  line: { color: '#282a36', width: 1 },
+                },
+                hovertemplate: 'Cintura: %{x} cm<br>Entreperna: %{y} cm<extra></extra>',
+              },
+              {
+                x: centroids.map(c => c.x),
+                y: centroids.map(c => c.y),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Centroides',
+                marker: {
+                  color: aula12KmeansColors,
+                  size: 21,
+                  symbol: 'x',
+                  line: { color: '#f8f8f2', width: 3 },
+                  opacity: step > 0 ? 1 : 0,
+                },
+                hovertemplate: 'Centroide<br>Cintura: %{x:.1f} cm<br>Entreperna: %{y:.1f} cm<extra></extra>',
+              },
+            ];
+          });
+
+          const currentKmeansLayout = Vue.computed(() => ({
+            title: { text: 'K-Means: iteração guiada por distância', font: { color: '#f8f8f2' } },
+            paper_bgcolor: '#282a36',
+            plot_bgcolor: '#282a36',
+            font: { color: '#f8f8f2' },
+            margin: { l: 60, r: 30, t: 60, b: 55 },
+            xaxis: { title: 'Cintura (cm)', range: [60, 116], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
+            yaxis: { title: 'Entreperna (cm)', range: [64, 104], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
+            legend: { orientation: 'h', y: -0.25 },
+            annotations: aula12KmeansState.step >= 6
+              ? [{
+                  x: 101,
+                  y: 103,
+                  text: 'Cada centroide resume um padrão de corpo',
+                  showarrow: true,
+                  arrowcolor: '#ff5555',
+                  font: { color: '#ff5555', size: 15 },
+                }]
+              : [],
+          }));
+
+          Vue.onMounted(() => {
+            initializeReveal();
+
+            window.deck.on('fragmentshown', event => {
+              if (event.fragment.classList.contains('aula12-kmeans-step')) {
+                aula12KmeansState.step = +event.fragment.dataset.fragmentIndex + 1;
+              }
+            });
+            window.deck.on('fragmenthidden', event => {
+              if (event.fragment.classList.contains('aula12-kmeans-step')) {
+                aula12KmeansState.step = +event.fragment.dataset.fragmentIndex;
+              }
+            });
+          });
+
+          return {
+            AULA12_SCATTER_INITIAL_TRACES,
+            AULA12_SCATTER_INITIAL_LAYOUT,
+            AULA12_HIERARCHICAL_CLUSTERS_TRACES,
+            AULA12_HIERARCHICAL_CLUSTERS_LAYOUT,
+            AULA12_DENDROGRAM_TRACES,
+            AULA12_DENDROGRAM_LAYOUT,
+            AULA12_ELBOW_TRACES,
+            AULA12_ELBOW_LAYOUT,
+            AULA12_DBSCAN_TRACES,
+            AULA12_DBSCAN_LAYOUT,
+            currentKmeansTraces,
+            currentKmeansLayout,
+          };
+        },
+      });
+
+      initializeComponents(app);
+      initializeHeader(app);
+      app.mount('#app');
+      return app;
+    };
+
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
