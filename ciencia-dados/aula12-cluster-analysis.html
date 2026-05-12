@@ -100,12 +100,64 @@ graph LR
         </ls-u>
       </section>
 
+      <section data-auto-animate>
+        <h2>Supervisionado vs. não supervisionado</h2>
+        <multi-col style="gap: 22px;">
+          <div class="metric-card" style="border-left-color: #ff5555;">
+            <h4 style="color: #ff5555;">Classificação</h4>
+            <ul>
+              <li>Existe um rótulo correto.</li>
+              <li>O modelo aprende a prever esse rótulo.</li>
+              <li>Avaliação: acurácia, F1, erro.</li>
+            </ul>
+          </div>
+          <div class="metric-card" style="border-left-color: #50fa7b;">
+            <h4 style="color: #50fa7b;">Clustering</h4>
+            <ul>
+              <li>Não existe rótulo de treino.</li>
+              <li>O algoritmo propõe uma estrutura.</li>
+              <li>Avaliação: utilidade, coesão, separação.</li>
+            </ul>
+          </div>
+        </multi-col>
+        <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 24px;">
+          Clusters não são descobertas neutras: são uma forma de organizar o problema.
+        </p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>O que é Cluster Analysis?</h2>
+        <ul>
+          <li>Agrupar objetos parecidos em grupos coesos.</li>
+          <li>Separar objetos diferentes em grupos distintos.</li>
+          <li>Descobrir padrões quando não temos uma resposta pronta.</li>
+          <li>Transformar muitos casos individuais em segmentos acionáveis.</li>
+        </ul>
+        <highlight-box class="fragment" instant>
+          <p style="font-size: 25pt;">A pergunta central é: parecidos segundo qual medida?</p>
+        </highlight-box>
+      </section>
+
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 1: O problema</h2>
-          <p style="font-size: 28pt;">Uma fábrica precisa transformar corpos contínuos em tamanhos discretos.</p>
-          <div style="margin-top: 25px;">
+          <h2 style="color: #8be9fd;">Fase 1: Por que tamanhos existem?</h2>
+          <ls-u>
+            <li>Por que roupas têm numerações padronizadas?</li>
+            <li>Por que duas pessoas usam 42, mas vestem diferente?</li>
+            <li>Por que algumas marcas parecem maiores ou menores?</li>
+            <li>Por que às vezes 42 aperta na cintura e 44 sobra na perna?</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>A resposta</h2>
+          <div style="text-align: center; padding: 35px;">
+            <p style="font-size: 31pt; color: #f1fa8c;">
+              Fabricantes precisam comprimir a variação contínua do corpo humano em poucas categorias discretas.
+            </p>
+          </div>
+          <div style="margin-top: 10px; text-align: center;">
             <span class="step-pill">36</span>
             <span class="step-pill">38</span>
             <span class="step-pill">40</span>
@@ -138,6 +190,33 @@ graph LR
         </section>
 
         <section data-auto-animate>
+          <h2>Variáveis escolhidas</h2>
+          <multi-col style="gap: 32px;">
+            <div>
+              <ul>
+                <li><strong>Cintura:</strong> medida horizontal do corpo.</li>
+                <li><strong>Entreperna:</strong> comprimento útil da perna.</li>
+                <li>Uma pessoa pode ter a mesma cintura e pernas muito diferentes.</li>
+                <li>Uma tabela de tamanhos é uma decisão sobre esses trade-offs.</li>
+              </ul>
+            </div>
+            <div>
+              <table>
+                <thead>
+                  <tr><th>Grupo</th><th>Cintura</th><th>Entreperna</th><th>Leitura</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>A</td><td>menor</td><td>menor</td><td>baixo + estreito</td></tr>
+                  <tr><td>B</td><td>menor</td><td>maior</td><td>alto + estreito</td></tr>
+                  <tr><td>C</td><td>maior</td><td>menor</td><td>baixo + largo</td></tr>
+                  <tr><td>D</td><td>maior</td><td>maior</td><td>alto + largo</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
           <h2>Nosso dataset didático</h2>
           <multi-col style="gap: 25px;">
             <div>
@@ -162,6 +241,25 @@ graph LR
             <li>Quem fica perto de uma fronteira?</li>
             <li>Uma única tabela de tamanhos atende todos igualmente?</li>
           </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Distância e escala</h2>
+          <multi-col style="gap: 24px;">
+            <div>
+              <p>O algoritmo só enxerga números. Se uma variável domina a escala, ela domina a noção de proximidade.</p>
+              <ul>
+                <li>Euclidiana: distância em linha reta.</li>
+                <li>Manhattan: soma das diferenças absolutas.</li>
+                <li>Cosseno: direção mais importante que tamanho.</li>
+              </ul>
+            </div>
+            <div>
+              <highlight-box instant>
+                <p style="font-size: 24pt;">Sempre padronize antes de aplicar clustering quando as escalas forem diferentes.</p>
+              </highlight-box>
+            </div>
+          </multi-col>
         </section>
 
       </section><!-- fim Fase 1 -->
@@ -192,6 +290,32 @@ graph LR
         </section>
 
         <section data-auto-animate>
+          <h2>Passo a passo aglomerativo</h2>
+          <ls-u>
+            <li>Comece com cada pessoa como seu próprio cluster.</li>
+            <li>Calcule a distância entre todos os pares de clusters.</li>
+            <li>Funda os dois clusters mais próximos.</li>
+            <li>Atualize as distâncias usando um critério de linkage.</li>
+            <li>Repita até sobrar uma única árvore.</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Métodos de linkage</h2>
+          <table>
+            <thead>
+              <tr><th>Método</th><th>Distância entre clusters</th><th>Efeito típico</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Single</strong></td><td>menor distância entre pontos</td><td>aceita cadeias alongadas</td></tr>
+              <tr><td><strong>Complete</strong></td><td>maior distância entre pontos</td><td>prefere grupos compactos</td></tr>
+              <tr><td><strong>Average</strong></td><td>média das distâncias entre pares</td><td>meio-termo estável</td></tr>
+              <tr><td><strong>Ward</strong></td><td>aumento da variância interna</td><td>grupos coesos e balanceados</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
           <h2>Dendrograma</h2>
           <multi-col style="gap: 20px;">
             <div>
@@ -208,6 +332,25 @@ graph LR
         </section>
 
         <section data-auto-animate>
+          <h2>Como ler o dendrograma</h2>
+          <multi-col style="gap: 25px;">
+            <div>
+              <ul>
+                <li><strong>Altura:</strong> distância em que dois grupos se fundiram.</li>
+                <li><strong>Fusões baixas:</strong> casos muito parecidos.</li>
+                <li><strong>Fusões altas:</strong> grupos bem diferentes.</li>
+                <li><strong>Saltos grandes:</strong> possíveis separações naturais.</li>
+              </ul>
+            </div>
+            <div>
+              <highlight-box instant>
+                <p style="font-size: 24pt;">Escolher k vira escolher onde cortar a árvore.</p>
+              </highlight-box>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
           <h2>Depois do corte</h2>
           <plotly-figure :traces="AULA12_HIERARCHICAL_CLUSTERS_TRACES" :layout="AULA12_HIERARCHICAL_CLUSTERS_LAYOUT"></plotly-figure>
         </section>
@@ -216,12 +359,13 @@ graph LR
           <h2>Forças e limites</h2>
           <table>
             <thead>
-              <tr><th>Vantagem</th><th>Limite</th></tr>
+              <tr><th>Vantagem</th><th>Limite</th><th>Discussão didática</th></tr>
             </thead>
             <tbody>
-              <tr><td>Visual e interpretável</td><td>Caro em bases grandes</td></tr>
-              <tr><td>Não exige escolher k no início</td><td>Sensível ao linkage</td></tr>
-              <tr><td>Bom para exploração</td><td>Ruído pode distorcer fusões</td></tr>
+              <tr><td>Visual e interpretável</td><td>Caro em bases grandes</td><td>bom primeiro modelo para sala</td></tr>
+              <tr><td>Não exige escolher k no início</td><td>Sensível ao linkage</td><td>linkage muda a história contada</td></tr>
+              <tr><td>Mostra estrutura completa</td><td>Não desfaz fusões ruins</td><td>decisões iniciais propagam</td></tr>
+              <tr><td>Ajuda a justificar cortes</td><td>Ruído pode distorcer a árvore</td><td>outliers podem virar galhos próprios</td></tr>
             </tbody>
           </table>
         </section>
@@ -252,40 +396,40 @@ graph LR
           <h2>K-Means passo a passo</h2>
           <plotly-figure :traces="currentKmeansTraces" :layout="currentKmeansLayout"></plotly-figure>
           <div class="r-stack" style="margin-top: 10px;">
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="0">
               <span style="color: #8be9fd;">Passo 1 — escolher quatro centroides iniciais</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="1">
               <span style="color: #ff79c6;">Passo 2 — atribuir cada pessoa ao centroide mais próximo</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="2">
               <span style="color: #f1fa8c;">Passo 3 — mover cada centroide para a média do grupo</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="3">
               <span style="color: #bd93f9;">Passo 4 — reatribuir depois do movimento</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="4">
               <span style="color: #50fa7b;">Passo 5 — mover novamente: convergência</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="5">
               <span style="color: #bd93f9;">Passo 6 — reatribuir depois do movimento</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="6">
               <span style="color: #50fa7b;">Passo 7 — mover novamente: convergência</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="7">
               <span style="color: #bd93f9;">Passo 8 — reatribuir depois do movimento</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="8">
               <span style="color: #50fa7b;">Passo 9 — mover novamente: convergência</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="9">
               <span style="color: #bd93f9;">Passo 10 — reatribuir depois do movimento</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="10">
               <span style="color: #50fa7b;">Passo 11 — mover novamente: convergência</span>
             </p>
-            <p class="fragment fade-in-then-out aula12-kmeans-step">
+            <p class="fragment fade-in-then-out aula12-kmeans-step" data-fragment-index="11">
               <span style="color: #ff5555;">Resultado — centroides viram protótipos de tamanho</span>
             </p>
             
@@ -379,7 +523,72 @@ graph LR
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #f1fa8c;">Fase 5: Hands-on</h2>
+          <h2 style="color: #bd93f9;">Fase 5: Do exemplo didático ao caso real</h2>
+          <p style="font-size: 28pt;">Em dados reais, clustering é menos sobre apertar um botão e mais sobre preparar, interpretar e defender uma segmentação.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Workflow real de clustering</h2>
+          <div class="mermaid" data-id="real-clustering-workflow">
+            <pre>
+graph LR
+  A["Contexto de negócio"] --> B["Tratamento"]
+  B --> C["Features"]
+  C --> D["Padronização"]
+  D --> E["Algoritmo"]
+  E --> F["Perfis dos clusters"]
+  F --> G["Decisão"]
+  style A fill:#44475a,color:#f8f8f2
+  style B fill:#8be9fd,color:#282a36
+  style C fill:#ff79c6,color:#282a36
+  style D fill:#f1fa8c,color:#282a36
+  style E fill:#50fa7b,color:#282a36
+  style F fill:#bd93f9,color:#282a36
+  style G fill:#ff5555,color:#f8f8f2
+            </pre>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exemplo aplicado: segmentação de clientes</h2>
+          <multi-col style="gap: 24px;">
+            <div>
+              <ul>
+                <li><strong>Tratamento:</strong> nulos, duplicatas, tipos e categorias.</li>
+                <li><strong>Features:</strong> gasto total, frequência, recência, canais.</li>
+                <li><strong>Outliers:</strong> decidir se são erro, ruído ou segmento especial.</li>
+                <li><strong>Padronização:</strong> evitar que renda ou gasto dominem tudo.</li>
+              </ul>
+            </div>
+            <div>
+              <highlight-box instant>
+                <p style="font-size: 24pt;">O cluster só é útil quando vira uma leitura acionável.</p>
+              </highlight-box>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Interpretar perfis, não apenas cores</h2>
+          <table>
+            <thead>
+              <tr><th>Cluster</th><th>Perfil possível</th><th>Ação possível</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>alto gasto, compra frequente</td><td>retenção e benefícios</td></tr>
+              <tr><td>1</td><td>baixo gasto, compra recente</td><td>onboarding e descoberta</td></tr>
+              <tr><td>2</td><td>inativo, histórico relevante</td><td>campanha de reativação</td></tr>
+              <tr><td>3</td><td>comportamento atípico</td><td>investigar outliers</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 6: Hands-on</h2>
           <p style="font-size: 28pt;">Notebook: gerar dados, aplicar métodos e defender uma decisão.</p>
         </section>
 
@@ -407,7 +616,7 @@ graph LR
           </p>
         </section>
 
-      </section><!-- fim Fase 5 -->
+      </section><!-- fim Fase 6 -->
 
       <section>
         <section data-auto-animate>
