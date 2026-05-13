@@ -989,113 +989,12 @@ db.pedidos.aggregate([
 
       </section>
 
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 6: Exercício Prático</h2>
-          <p style="color: #6272a4;">Resolver consultas reais no dataset da aula</p>
-          <div class="section-img">
-            <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/code-braces.svg" alt="Ícone de código representando exercício prático" />
-          </div>
-        </section>
-
-        <section>
-          <h2>Exercício: Catálogo e Pedidos</h2>
-          <div class="green-box">
-            <p><strong>Objetivo:</strong> usar MongoDB para responder perguntas sobre produtos e pedidos.</p>
-            <ls-u>
-              <li>Liste notebooks com pelo menos 16 GB de RAM e preço abaixo de R$ 6.000</li>
-              <li>Mostre apenas <code>nome</code>, <code>preco</code>, <code>specs.ram_gb</code> e <code>estoque</code></li>
-              <li>Reduza o estoque de um produto vendido em 1 unidade</li>
-              <li>Crie um índice que ajude a primeira consulta</li>
-              <li>Calcule a receita total por SKU usando aggregation</li>
-            </ls-u>
-          </div>
-        </section>
-
-        <section>
-          <h2>Template de Consulta</h2>
-          <code-block lang="javascript">
-db.produtos.find(
-  {
-    categoria: "notebook",
-    "specs.ram_gb": { $gte: 16 },
-    preco: { $lt: 6000 }
-  },
-  {
-    _id: 0,
-    nome: 1,
-    preco: 1,
-    "specs.ram_gb": 1,
-    estoque: 1
-  }
-)
-</code-block>
-        </section>
-
-        <section>
-          <h2>Template de Índice</h2>
-          <code-block lang="javascript">
-db.produtos.createIndex({
-  categoria: 1,
-  "specs.ram_gb": 1,
-  preco: 1
-})
-
-db.produtos.find({
-  categoria: "notebook",
-  "specs.ram_gb": { $gte: 16 },
-  preco: { $lt: 6000 }
-}).explain("executionStats")
-</code-block>
-        </section>
-
-        <section>
-          <h2>Template de Agregação</h2>
-          <code-block lang="javascript">
-db.pedidos.aggregate([
-  { $unwind: "$itens" },
-  {
-    $group: {
-      _id: "$itens.sku",
-      unidades: { $sum: "$itens.qtd" },
-      receita: {
-        $sum: { $multiply: ["$itens.qtd", "$itens.preco_unit"] }
-      }
-    }
-  },
-  { $sort: { receita: -1 } }
-])
-</code-block>
-        </section>
-
-        <section>
-          <h2>Desafio final da aula</h2>
-          <div class="prompt-card">
-            <p><strong>Contexto:</strong> o gerente quer uma promoção para produtos caros, com estoque baixo e tags relacionadas a estudo ou trabalho.</p>
-            <p class="question">Monte uma consulta ou pipeline que retorne candidatos à promoção.</p>
-          </div>
-          <code-block lang="javascript">
-db.produtos.find({
-  preco: { $gte: 1000 },
-  estoque: { $lte: 10 },
-  tags: { $in: ["estudo", "trabalho", "programacao"] }
-}, {
-  nome: 1,
-  categoria: 1,
-  preco: 1,
-  estoque: 1,
-  tags: 1
-})
-</code-block>
-        </section>
-
-      </section>
+      
 
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 7: Da Coleção à API</h2>
+          <h2 style="color: #ff79c6;">Parte 6: Da Coleção à API</h2>
           <p style="color: #6272a4;">Expondo documentos MongoDB via HTTP</p>
           <div class="section-img">
             <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/api.svg" alt="Ícone de API representando interface de programação" />
