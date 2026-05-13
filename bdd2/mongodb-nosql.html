@@ -17,24 +17,24 @@
   <style>
     .reveal h2 { text-transform: none; }
     .reveal h3 { text-transform: none; }
-    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 18px; margin: 10px 0; }
-    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .comparison-table { width: 100%; font-size: 0.72em; }
-    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 8px 12px; text-align: left; }
-    .comparison-table td { padding: 8px 12px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
+    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 10px 14px; margin: 6px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.62em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 5px 8px; text-align: left; }
+    .comparison-table td { padding: 5px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
     .comparison-table tr:last-child td { border-bottom: none; }
-    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 10px; font-size: 0.62em; font-weight: bold; margin: 2px 4px 2px 0; }
-    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 2px 6px; word-break: break-all; }
-    .logo-strip { display: flex; justify-content: center; gap: 28px; align-items: center; margin: 12px 0 8px; }
-    .logo-strip img { max-height: 58px; max-width: 180px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 8px; }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 1px 8px; font-size: 0.55em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 1px 5px; word-break: break-all; font-size: 0.85em; }
+    .logo-strip { display: flex; justify-content: center; gap: 20px; align-items: center; margin: 8px 0 4px; }
+    .logo-strip img { max-height: 44px; max-width: 160px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 6px; }
     .logo-side { text-align: center; }
-    .logo-side img { max-height: 86px; max-width: 220px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
-    .section-img { text-align: center; margin: 16px 0 4px; }
-    .section-img img { max-height: 140px; max-width: 340px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 8px; padding: 12px; }
-    .prompt-card { background: rgba(68, 71, 90, 0.72); border-radius: 10px; padding: 16px; margin: 12px 0; }
+    .logo-side img { max-height: 72px; max-width: 200px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 8px; margin-bottom: 6px; }
+    .section-img { text-align: center; margin: 10px 0 2px; }
+    .section-img img { max-height: 120px; max-width: 300px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 8px; padding: 10px; }
+    .prompt-card { background: rgba(68, 71, 90, 0.72); border-radius: 10px; padding: 10px 12px; margin: 6px 0; }
     .question { color: #8be9fd; font-weight: bold; }
   </style>
 </head>
@@ -113,29 +113,26 @@ H --> I["Decisão técnica"]
 
         <section>
           <h2>Instalação: Windows</h2>
-          <multi-col cols="1fr 1fr" style="gap:22px">
+          <multi-col cols="1fr 1fr" style="gap:14px">
             <div class="info-box">
-              <p><strong>1. MongoDB Server</strong></p>
-              <ul style="font-size: 0.66em;">
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>1. MongoDB Server</strong></p>
+              <ul style="font-size: 0.56em; margin:0;">
                 <li>Acesse <span class="mini-code">mongodb.com/try/download/community</span></li>
-                <li>Escolha <strong>Version 8.0</strong></li>
-                <li>Platform: <strong>Windows</strong></li>
-                <li>Package: <strong>msi</strong></li>
+                <li>Escolha <strong>Version 8.0</strong> / Platform: <strong>Windows</strong> / Package: <strong>msi</strong></li>
                 <li>Instale como serviço: <strong>Install MongoD as a Service</strong></li>
               </ul>
             </div>
             <div class="info-box">
-              <p><strong>2. MongoDB Shell</strong></p>
-              <ul style="font-size: 0.66em;">
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>2. MongoDB Shell</strong></p>
+              <ul style="font-size: 0.56em; margin:0;">
                 <li>Acesse <span class="mini-code">mongodb.com/try/download/shell</span></li>
                 <li>Platform: <strong>Windows 64-bit MSI</strong></li>
-                <li>Instale o <code>mongosh</code></li>
-                <li>Marque a opção de adicionar ao <strong>PATH</strong>, se aparecer</li>
+                <li>Instale o <code>mongosh</code> e adicione ao <strong>PATH</strong></li>
                 <li>Abra um novo terminal após instalar</li>
               </ul>
             </div>
           </multi-col>
-          <multi-col cols="1fr 0.22fr" style="gap:20px; align-items:center">
+          <multi-col cols="1fr 0.18fr" style="gap:14px; align-items:center; margin-top:4px;">
             <div class="green-box">
               <code-block lang="powershell">
 mongosh --version
@@ -143,10 +140,10 @@ mongosh
 </code-block>
             </div>
             <div style="text-align: right;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Windows_logo_-_2021.svg" alt="Logotipo do Windows 11" style="height: 90px;" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Windows_logo_-_2021.svg" alt="Logotipo do Windows 11" style="height: 64px;" />
             </div>
           </multi-col>
-          <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Windows e instalação do mongosh.</p>
+          <p style="font-size: 0.48em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Windows e instalação do mongosh.</p>
         </section>
 
         <section>
@@ -163,20 +160,19 @@ winget install -e --id MongoDB.Shell
 
         <section>
           <h2>Instalação: Ubuntu 24.04 Noble</h2>
-          <multi-col cols="0.32fr 0.68fr" style="gap:20px; align-items:center">
+          <multi-col cols="0.26fr 0.74fr" style="gap:14px; align-items:flex-start">
             <div class="logo-side">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Ubuntu-logo-2022.svg" alt="Logotipo do Ubuntu" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" alt="Mascote Tux do Linux" />
-              <p style="font-size: 0.5em; color: #6272a4;">Fonte: Wikimedia Commons — Ubuntu e Tux.</p>
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Ubuntu-logo-2022.svg" alt="Logotipo do Ubuntu" style="max-height:60px;" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" alt="Mascote Tux do Linux" style="max-height:60px;" />
+              <p style="font-size: 0.44em; color: #6272a4;">Fonte: Wikimedia Commons — Ubuntu e Tux.</p>
             </div>
             <div>
-              <p style="font-size: 0.72em;">Use o repositório oficial da MongoDB, não o pacote <code>mongodb</code> do Ubuntu.</p>
+              <p style="font-size: 0.64em; margin:0 0 4px;">Use o repositório oficial da MongoDB, não o pacote <code>mongodb</code> do Ubuntu.</p>
               <code-block lang="bash">
 sudo apt-get install -y gnupg curl
 
 curl -fsSL https://pgp.mongodb.com/server-8.0.asc | \
-  sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
-  --dearmor
+  sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
 
 echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
   sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
@@ -185,11 +181,11 @@ sudo apt-get update
 sudo apt-get install -y mongodb-org
 </code-block>
               <div class="info-box">
-                <p style="font-size: 0.7em;">O pacote <code>mongodb-org</code> é um metapacote que inclui: servidor (<code>mongod</code>), shell (<code>mongosh</code>), ferramentas e utilitários.</p>
+                <p style="font-size: 0.58em; margin:0;">O pacote <code>mongodb-org</code> inclui servidor (<code>mongod</code>), shell (<code>mongosh</code>) e ferramentas.</p>
               </div>
             </div>
           </multi-col>
-          <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Ubuntu 24.04 Noble.</p>
+          <p style="font-size: 0.48em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Ubuntu 24.04 Noble.</p>
         </section>
 
         <section>
@@ -209,32 +205,32 @@ mongosh
 
         <section>
           <h2>Ferramenta Oficial: VS Code + MongoDB</h2>
-          <multi-col cols="1fr 1fr" style="gap:22px">
+          <multi-col cols="1fr 1fr" style="gap:12px; align-items:flex-start">
             <div class="info-box">
-              <p><strong>Extensão oficial</strong></p>
-              <p style="font-size: 0.72em;">Instale <code>mongodb.mongodb-vscode</code> no VS Code.</p>
-              <ul style="font-size: 0.66em;">
-                <li><strong>Playgrounds:</strong> arquivos <code>.mongodb.js</code> com autocomplete e execução com um clique</li>
-                <li><strong>Explorer:</strong> navegue databases, coleções e documentos na sidebar</li>
-                <li><strong>Editor:</strong> visualize e edite documentos diretamente em abas</li>
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Extensão oficial</strong></p>
+              <p style="font-size: 0.64em; margin:0 0 4px;">Instale <code>mongodb.mongodb-vscode</code> no VS Code.</p>
+              <ul style="font-size: 0.56em; margin:0;">
+                <li><strong>Playgrounds:</strong> arquivos <code>.mongodb.js</code> com autocomplete</li>
+                <li><strong>Explorer:</strong> navegue databases, coleções e documentos</li>
+                <li><strong>Editor:</strong> visualize e edite documentos em abas</li>
                 <li><strong>Schema:</strong> inspecione tipos de campos e índices</li>
-                <li><strong>Export:</strong> converta queries para Node.js, Python, Java, etc.</li>
+                <li><strong>Export:</strong> converta queries para Node.js, Python, etc.</li>
               </ul>
             </div>
             <div class="info-box">
-              <p><strong>Na prática da aula</strong></p>
-              <ul style="font-size: 0.66em;">
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Na prática da aula</strong></p>
+              <ul style="font-size: 0.56em; margin:0 0 4px;">
                 <li>Toda query da aula deve ser escrita em um Playground</li>
                 <li>Conecte-se a <code>localhost:27017</code> e explore <code>bdd2_aula12</code></li>
                 <li>Use o botão de play para executar queries selecionadas</li>
                 <li>O autocomplete sugere nomes de coleções e campos automaticamente</li>
               </ul>
               <div class="green-box">
-                <p style="font-size: 0.72em;">O <code>mongosh</code> continua disponível no terminal integrado, mas o Playground é o ambiente principal da aula.</p>
+                <p style="font-size: 0.58em; margin:0;">O <code>mongosh</code> continua disponível no terminal integrado, mas o Playground é o ambiente principal da aula.</p>
               </div>
             </div>
           </multi-col>
-          <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB for VS Code — 3M+ instalações.</p>
+          <p style="font-size: 0.48em; color: #6272a4;">Fonte: MongoDB for VS Code — 3M+ instalações.</p>
         </section>
 
         <section>
@@ -315,18 +311,18 @@ db.produtos.findOne({ sku: "NB-001" })
 
         <section>
           <h2>BSON e <code>_id</code></h2>
-          <multi-col style="gap:34px">
+          <multi-col style="gap:18px; align-items:flex-start">
             <div class="info-box">
-              <p><span class="pill">JSON</span></p>
-              <ul style="font-size: 0.75em;">
+              <p style="margin:0 0 4px;"><span class="pill">JSON</span></p>
+              <ul style="font-size: 0.64em; margin:0;">
                 <li>Formato textual</li>
                 <li>Ótimo para APIs e leitura humana</li>
                 <li>Tipos limitados</li>
               </ul>
             </div>
             <div class="info-box">
-              <p><span class="pill">BSON</span></p>
-              <ul style="font-size: 0.75em;">
+              <p style="margin:0 0 4px;"><span class="pill">BSON</span></p>
+              <ul style="font-size: 0.64em; margin:0;">
                 <li>Formato binário do MongoDB</li>
                 <li>Inclui tipos como <code>ObjectId</code> e datas</li>
                 <li>O campo <code>_id</code> identifica cada documento</li>
@@ -334,7 +330,7 @@ db.produtos.findOne({ sku: "NB-001" })
             </div>
           </multi-col>
           <div class="yellow-box">
-            <p style="font-size: 0.8em;">A estrutura parece JSON, mas o banco armazena e consulta BSON.</p>
+            <p style="font-size: 0.68em; margin:0;">A estrutura parece JSON, mas o banco armazena e consulta BSON.</p>
           </div>
         </section>
 
@@ -393,13 +389,9 @@ db.produtos.find(
         <section>
           <h2>Filtros com Operadores</h2>
           <code-block lang="javascript">
-db.produtos.find({
-  preco: { $gte: 1000, $lte: 6000 }
-})
+db.produtos.find({ preco: { $gte: 1000, $lte: 6000 } })
 
-db.produtos.find({
-  categoria: { $in: ["notebook", "celular"] }
-})
+db.produtos.find({ categoria: { $in: ["notebook", "celular"] } })
 
 db.produtos.find({
   $or: [
@@ -534,15 +526,15 @@ db.produtos.deleteMany({
 
         <section>
           <h2>Problema-guia: marketplace simples</h2>
-          <p style="font-size:0.82em;">Você está construindo o backend de um marketplace com produtos de categorias diferentes.</p>
+          <p style="font-size:0.72em; margin:0 0 4px;">Você está construindo o backend de um marketplace com produtos de categorias diferentes.</p>
           <div class="prompt-card">
-            <p><span class="pill">notebook</span> processador, RAM, SSD, tela, sistema operacional</p>
-            <p><span class="pill">livro</span> autor, ISBN, páginas, editora, idioma</p>
-            <p><span class="pill">celular</span> armazenamento, câmera, bateria, rede, sistema</p>
-            <p><span class="pill">acessório</span> compatibilidade, conexão, cor, material</p>
+            <p style="font-size:0.64em; margin:2px 0;"><span class="pill">notebook</span> processador, RAM, SSD, tela, sistema operacional</p>
+            <p style="font-size:0.64em; margin:2px 0;"><span class="pill">livro</span> autor, ISBN, páginas, editora, idioma</p>
+            <p style="font-size:0.64em; margin:2px 0;"><span class="pill">celular</span> armazenamento, câmera, bateria, rede, sistema</p>
+            <p style="font-size:0.64em; margin:2px 0;"><span class="pill">acessório</span> compatibilidade, conexão, cor, material</p>
           </div>
           <div class="yellow-box">
-            <p style="font-size:0.82em;"><strong>Desafio:</strong> o time de produto muda os atributos a cada sprint. Você quer velocidade sem criar bagunça.</p>
+            <p style="font-size:0.68em; margin:0;"><strong>Desafio:</strong> o time de produto muda os atributos a cada sprint. Você quer velocidade sem criar bagunça.</p>
           </div>
         </section>
 
@@ -660,9 +652,9 @@ db.createCollection("produtos_validados", {
 
         <section>
           <h2>Teste a validação</h2>
-          <multi-col cols="1fr 1fr" style="gap:24px">
+          <multi-col cols="1fr 1fr" style="gap:14px; align-items:flex-start">
             <div class="red-box">
-              <p><strong>Deve falhar</strong></p>
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Deve falhar</strong></p>
               <code-block lang="javascript">
 db.produtos_validados.insertOne({
   sku: "BAD-002",
@@ -674,7 +666,7 @@ db.produtos_validados.insertOne({
 </code-block>
             </div>
             <div class="green-box">
-              <p><strong>Deve passar</strong></p>
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Deve passar</strong></p>
               <code-block lang="javascript">
 db.produtos_validados.insertOne({
   sku: "OK-001",
@@ -697,21 +689,21 @@ db.produtos_validados.insertOne({
             </thead>
             <tbody>
               <tr><td>Frontend</td><td>Experiência e erro amigável</td><td>campo preço aceita apenas número</td></tr>
-              <tr><td>Backend</td><td>Regra de negócio</td><td>preço promocional não pode ser maior que preço original</td></tr>
+              <tr><td>Backend</td><td>Regra de negócio</td><td>preço promocional não pode ser maior que original</td></tr>
               <tr><td>Banco</td><td>Integridade mínima persistente</td><td>sku, categoria e preço devem existir</td></tr>
             </tbody>
           </table>
           <div class="purple-box">
-            <p style="font-size:0.8em;">Flexibilidade boa é flexibilidade com contrato explícito.</p>
+            <p style="font-size:0.66em; margin:0;">Flexibilidade boa é flexibilidade com contrato explícito.</p>
           </div>
         </section>
 
         <section>
           <h2>Modelagem: embed ou referência?</h2>
-          <p style="font-size:0.82em;">Pedido e cliente: como você modelaria?</p>
-          <multi-col cols="1fr 1fr" style="gap:24px">
+          <p style="font-size:0.72em; margin:0 0 4px;">Pedido e cliente: como você modelaria?</p>
+          <multi-col cols="1fr 1fr" style="gap:14px; align-items:flex-start">
             <div class="green-box">
-              <p><strong>Documento com cliente embutido</strong></p>
+              <p style="font-size:0.78em; margin:0 0 4px;"><strong>Documento com cliente embutido</strong></p>
               <code-block lang="javascript">
 {
   numero: "PED-001",
@@ -724,7 +716,7 @@ db.produtos_validados.insertOne({
 </code-block>
             </div>
             <div class="purple-box">
-              <p><strong>Documento com referência</strong></p>
+              <p style="font-size:0.78em; margin:0 0 4px;"><strong>Documento com referência</strong></p>
               <code-block lang="javascript">
 {
   numero: "PED-001",
@@ -828,18 +820,18 @@ db.produtos.find({
 
         <section>
           <h2>Compare antes e depois</h2>
-          <multi-col cols="1fr 1fr" style="gap:24px">
+          <multi-col cols="1fr 1fr" style="gap:14px; align-items:flex-start">
             <div class="red-box">
-              <p><strong>Sem índice</strong></p>
-              <ul style="font-size:0.72em;">
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Sem índice</strong></p>
+              <ul style="font-size:0.62em; margin:0;">
                 <li>procure <code>COLLSCAN</code></li>
                 <li>muitos documentos examinados</li>
                 <li>bom para coleção pequena, ruim em produção</li>
               </ul>
             </div>
             <div class="green-box">
-              <p><strong>Com índice</strong></p>
-              <ul style="font-size:0.72em;">
+              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Com índice</strong></p>
+              <ul style="font-size:0.62em; margin:0;">
                 <li>procure <code>IXSCAN</code></li>
                 <li>menos documentos examinados</li>
                 <li>escritas ficam um pouco mais caras</li>
@@ -982,7 +974,7 @@ db.pedidos.aggregate([
 ])
 </code-block>
           <div class="yellow-box">
-            <p style="font-size: 0.8em;"><code>$unwind</code> transforma cada item do array em uma entrada separada no pipeline.</p>
+            <p style="font-size: 0.66em; margin:0;"><code>$unwind</code> transforma cada item do array em uma entrada separada no pipeline.</p>
           </div>
         </section>
 
@@ -1169,12 +1161,12 @@ curl http://localhost:3000/api/v1/Produtos
             <tbody>
               <tr><td>GraphQL automático</td><td>PostGraphile</td><td>graphql-compose-mongoose</td></tr>
               <tr><td>REST automático</td><td>PostgREST</td><td>express-restify-mongoose</td></tr>
-              <tr><td>CMS headless</td><td>Strapi, Directus</td><td>Express + Mongoose (custom)</td></tr>
-              <tr><td>Ferramenta de query</td><td>pgAdmin / psql</td><td>VS Code Extension / mongosh</td></tr>
+              <tr><td>CMS headless</td><td>Strapi, Directus</td><td>Express + Mongoose</td></tr>
+              <tr><td>Ferramenta de query</td><td>pgAdmin / psql</td><td>VS Code / mongosh</td></tr>
             </tbody>
           </table>
           <div class="purple-box">
-            <p style="font-size: 0.8em;">A filosofia do MongoDB favorece "construa sua própria API"; PostgreSQL tem mais opções de auto-geração.</p>
+            <p style="font-size: 0.66em; margin:0;">A filosofia do MongoDB favorece "construa sua própria API"; PostgreSQL tem mais opções de auto-geração.</p>
           </div>
         </section>
 
@@ -1354,35 +1346,35 @@ E --> F["MongoDB continua em workloads específicos"]
             <tbody>
               <tr>
                 <td><strong>Uber</strong></td>
-                <td>Começou com MongoDB para rastreamento de corridas; migrou dados transacionais para MySQL/PostgreSQL enquanto manteve MongoDB para telemetria e logs</td>
+                <td>Começou com MongoDB para corridas; migrou transações para SQL e manteve MongoDB para telemetria/logs</td>
               </tr>
               <tr>
                 <td><strong>Netflix</strong></td>
-                <td>Usa MongoDB para catálogo e recomendações (schema variável por região), mas transações de pagamento e assinatura ficam em bancos relacionais</td>
+                <td>Usa MongoDB para catálogo e recomendações; pagamentos ficam em bancos relacionais</td>
               </tr>
               <tr>
-                <td><strong>PayPal (Braintree)</strong></td>
-                <td>Iniciou com MongoDB para agilidade; migrou núcleo transacional para PostgreSQL por necessidade de ACID rigoroso em pagamentos</td>
+                <td><strong>PayPal</strong></td>
+                <td>Iniciou com MongoDB; migrou núcleo transacional para PostgreSQL por ACID rigoroso</td>
               </tr>
               <tr>
                 <td><strong>eBay</strong></td>
-                <td>Adota MongoDB para catálogo de produtos e sessões de usuário, mas mantém PostgreSQL para inventário e pedidos</td>
+                <td>MongoDB para catálogo e sessões; PostgreSQL para inventário e pedidos</td>
               </tr>
             </tbody>
           </table>
           <div class="purple-box">
-            <p style="font-size: 0.8em;">O padrão comum: <strong>polyglot persistence</strong> — usar o banco certo para o problema certo.</p>
+            <p style="font-size: 0.66em; margin:0;">O padrão comum: <strong>polyglot persistence</strong> — usar o banco certo para o problema certo.</p>
           </div>
         </section>
 
         <section>
           <h2>Fechamento</h2>
           <div class="green-box">
-            <p style="font-size:0.9em;"><strong>MongoDB não é só sintaxe diferente.</strong></p>
-            <p style="font-size:0.82em;">É uma troca: mais ergonomia para documentos e mudanças rápidas, mais responsabilidade de modelagem para a aplicação e para o time.</p>
+            <p style="font-size:0.78em; margin:0 0 4px;"><strong>MongoDB não é só sintaxe diferente.</strong></p>
+            <p style="font-size:0.68em; margin:0;">É uma troca: mais ergonomia para documentos e mudanças rápidas, mais responsabilidade de modelagem para a aplicação e para o time.</p>
           </div>
           <div class="yellow-box">
-            <p style="font-size:0.82em;">A pergunta final não é "MongoDB é melhor?", mas "este problema parece documental o bastante para justificar essa troca?".</p>
+            <p style="font-size:0.68em; margin:0;">A pergunta final não é "MongoDB é melhor?", mas "este problema parece documental o bastante para justificar essa troca?".</p>
           </div>
         </section>
 
