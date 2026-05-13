@@ -433,6 +433,18 @@ mountSlideApp = function () {
 window.app = mountSlideApp();
 ```
 
+#### npm registry blocks webfetch
+- `npmjs.com` URLs return **403 Forbidden** to `webfetch`. Use GitHub repository pages, `winget.run`, or `github.com/search?q=<package>` instead for package research.
+
+#### Researching tool deprecation status
+- Always check deprecation/EOL status before mentioning tools in slides. MongoDB Atlas Data API was deprecated (End-of-Life) and should not be recommended to students. Verify via official docs release notes.
+
+#### Using MDI icons for section headers
+- `https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/<icon>.svg` is a reliable source for Material Design Icons on jsDelivr CDN. Good for section header illustrations when Wikimedia Commons doesn't have relevant images.
+
+#### Package compatibility in comparisons
+- When comparing ecosystems (e.g., PostgreSQL vs MongoDB), verify that tools actually support the target database in their current version. Strapi v4+ dropped MongoDB support — a fact that invalidates comparisons using older docs.
+
 This is cleaner than creating a separate Vue app, using globalProperties globally, or building a scoped component — the data lives only in the app instance that drives that specific slide deck.
 
 #### PlotlyFigure component
