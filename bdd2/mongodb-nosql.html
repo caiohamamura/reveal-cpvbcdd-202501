@@ -36,6 +36,11 @@
     .section-img img { max-height: 120px; max-width: 300px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 8px; padding: 10px; }
     .prompt-card { background: rgba(68, 71, 90, 0.72); border-radius: 10px; padding: 10px 12px; margin: 6px 0; }
     .question { color: #8be9fd; font-weight: bold; }
+    .reveal .poll-question .poll-title { font-size: 1.1em; margin-bottom: 6px; }
+    .reveal .poll-question .poll-question-text { font-size: 0.85em; margin-bottom: 8px; }
+    .reveal .poll-question .poll-options { font-size: 0.68em; }
+    .reveal .poll-question .poll-options label { padding: 3px 0; }
+    .reveal .poll-question .poll-answer-text { font-size: 0.75em; margin-top: 8px; }
   </style>
 </head>
 
@@ -85,13 +90,12 @@ H --> I["Decisão técnica"]
 
         <section>
           <h2>Objetivo da Aula</h2>
-          <multi-col style="gap:24px; align-items:flex-start">
+          <multi-col style="gap:14px; align-items:flex-start">
             <div class="green-box">
-              <p style="font-size:0.82em;"><strong>Ao final, você deve conseguir:</strong></p>
-              <ul style="font-size: 0.64em; margin:0;">
+              <p style="font-size:0.74em; margin:0 0 4px;"><strong>Ao final, você deve conseguir:</strong></p>
+              <ul style="font-size: 0.56em; margin:0;">
                 <li>Carregar uma base simples no MongoDB</li>
-                <li>Consultar documentos com filtros e projeções</li>
-                <li>Atualizar documentos com operadores</li>
+                <li>Consultar e atualizar documentos</li>
                 <li>Criar índice e observar plano de execução</li>
                 <li>Montar uma agregação básica</li>
                 <li>Decidir entre embed e referência</li>
@@ -99,16 +103,16 @@ H --> I["Decisão técnica"]
               </ul>
             </div>
             <div class="yellow-box">
-              <p style="font-size:0.82em;"><strong>Pergunta guia:</strong></p>
-              <p style="font-size: 0.72em;">Quando MongoDB acelera o desenvolvimento e quando começa a transferir complexidade para a aplicação?</p>
+              <p style="font-size:0.74em; margin:0 0 4px;"><strong>Pergunta guia:</strong></p>
+              <p style="font-size: 0.62em; margin:0;">Quando MongoDB acelera o desenvolvimento e quando começa a transferir complexidade para a aplicação?</p>
             </div>
           </multi-col>
-          <div class="logo-strip" style="margin-top:8px;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" alt="Logotipo do MongoDB" style="max-height:46px;" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Windows_logo_-_2021.svg" alt="Logotipo do Windows 11" style="max-height:46px;" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Ubuntu-logo-2022.svg" alt="Logotipo do Ubuntu" style="max-height:46px;" />
+          <div class="logo-strip" style="margin-top:6px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" alt="Logotipo do MongoDB" style="max-height:38px;" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Windows_logo_-_2021.svg" alt="Logotipo do Windows 11" style="max-height:38px;" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Ubuntu-logo-2022.svg" alt="Logotipo do Ubuntu" style="max-height:38px;" />
           </div>
-          <p style="font-size: 0.46em; color: #6272a4;">Fonte: Wikimedia Commons — MongoDB, Windows Server e Ubuntu.</p>
+          <p style="font-size: 0.42em; color: #6272a4;">Fonte: Wikimedia Commons — MongoDB, Windows Server e Ubuntu.</p>
         </section>
 
         <section>
@@ -205,32 +209,31 @@ mongosh
 
         <section>
           <h2>Ferramenta Oficial: VS Code + MongoDB</h2>
-          <multi-col cols="1fr 1fr" style="gap:12px; align-items:flex-start">
+          <multi-col cols="1fr 1fr" style="gap:10px; align-items:flex-start">
             <div class="info-box">
-              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Extensão oficial</strong></p>
-              <p style="font-size: 0.64em; margin:0 0 4px;">Instale <code>mongodb.mongodb-vscode</code> no VS Code.</p>
-              <ul style="font-size: 0.56em; margin:0;">
+              <p style="font-size:0.72em; margin:0 0 3px;"><strong>Extensão oficial</strong></p>
+              <p style="font-size: 0.56em; margin:0 0 3px;">Instale <code>mongodb.mongodb-vscode</code> no VS Code.</p>
+              <ul style="font-size: 0.5em; margin:0;">
                 <li><strong>Playgrounds:</strong> arquivos <code>.mongodb.js</code> com autocomplete</li>
                 <li><strong>Explorer:</strong> navegue databases, coleções e documentos</li>
                 <li><strong>Editor:</strong> visualize e edite documentos em abas</li>
                 <li><strong>Schema:</strong> inspecione tipos de campos e índices</li>
-                <li><strong>Export:</strong> converta queries para Node.js, Python, etc.</li>
               </ul>
             </div>
             <div class="info-box">
-              <p style="font-size:0.82em; margin:0 0 4px;"><strong>Na prática da aula</strong></p>
-              <ul style="font-size: 0.56em; margin:0 0 4px;">
+              <p style="font-size:0.72em; margin:0 0 3px;"><strong>Na prática da aula</strong></p>
+              <ul style="font-size: 0.5em; margin:0 0 3px;">
                 <li>Toda query da aula deve ser escrita em um Playground</li>
                 <li>Conecte-se a <code>localhost:27017</code> e explore <code>bdd2_aula12</code></li>
                 <li>Use o botão de play para executar queries selecionadas</li>
-                <li>O autocomplete sugere nomes de coleções e campos automaticamente</li>
+                <li>O autocomplete sugere coleções e campos automaticamente</li>
               </ul>
               <div class="green-box">
-                <p style="font-size: 0.58em; margin:0;">O <code>mongosh</code> continua disponível no terminal integrado, mas o Playground é o ambiente principal da aula.</p>
+                <p style="font-size: 0.5em; margin:0;">O <code>mongosh</code> continua no terminal integrado, mas o Playground é o ambiente principal.</p>
               </div>
             </div>
           </multi-col>
-          <p style="font-size: 0.48em; color: #6272a4;">Fonte: MongoDB for VS Code — 3M+ instalações.</p>
+          <p style="font-size: 0.42em; color: #6272a4;">Fonte: MongoDB for VS Code — 3M+ instalações.</p>
         </section>
 
         <section>
@@ -682,7 +685,7 @@ db.produtos_validados.insertOne({
         </section>
 
         <section>
-          <h2>Contrato mínimo para ADS</h2>
+          <h2>Onde Validar? Camadas de Contrato</h2>
           <table class="comparison-table">
             <thead>
               <tr><th>Camada</th><th>Responsabilidade</th><th>Exemplo</th></tr>
@@ -744,17 +747,16 @@ db.produtos_validados.insertOne({
         </section>
 
         <section>
-          <h2>Atividade 3: defenda sua decisão</h2>
+          <h2>Decisão de Modelagem: Embed ou Referência?</h2>
           <div class="prompt-card">
-            <p><strong>Cenário:</strong> uma loja precisa guardar pedidos com cliente, endereço, itens, preço pago e status de entrega.</p>
-            <p class="question">O que você embute no documento do pedido? O que você referencia?</p>
+            <p style="font-size:0.72em; margin:0 0 4px;"><strong>Cenário:</strong> uma loja precisa guardar pedidos com cliente, endereço, itens, preço pago e status de entrega.</p>
+            <p class="question" style="font-size:0.72em; margin:0;">O que você embute no documento do pedido? O que você referencia?</p>
           </div>
-          <ls-u>
-            <li>Forme duplas.</li>
-            <li>Desenhe um documento de pedido.</li>
-            <li>Marque cada campo como <span class="pill">embed</span> ou <span class="pill">referência</span>.</li>
-            <li>Explique qual tela ou relatório motivou a decisão.</li>
-          </ls-u>
+          <ul style="font-size:0.6em; margin:6px 0 0;">
+            <li>Quais dados devem ficar juntos no mesmo documento?</li>
+            <li>Quais campos devem ser apenas uma referência?</li>
+            <li>Qual tela ou relatório motiva cada decisão?</li>
+          </ul>
         </section>
 
       </section>
@@ -1176,16 +1178,20 @@ curl http://localhost:3000/api/v1/Produtos
 
         <section>
           <h2>Resumo da Aula</h2>
-          <ls-u>
-            <li>MongoDB organiza dados em documentos BSON dentro de coleções</li>
-            <li>Consultas usam objetos de filtro, projeções e operadores como <code>$gte</code>, <code>$in</code> e <code>$or</code></li>
-            <li>Campos aninhados e arrays são consultados naturalmente com dot notation</li>
-            <li>Flexibilidade precisa de contrato: JSON Schema, validação no app e regras de negócio</li>
-            <li>Modelagem documental exige decisão entre embed e referência, guiada pelo padrão de acesso</li>
-            <li>Índices continuam essenciais para consultas rápidas</li>
-            <li>Aggregation pipeline permite filtrar, transformar e agrupar documentos</li>
-            <li>Schema flexível ajuda no início, mas precisa de disciplina na aplicação</li>
-          </ls-u>
+          <multi-col style="gap:14px; align-items:flex-start">
+            <ul style="font-size:0.58em; margin:0;">
+              <li>MongoDB organiza dados em documentos BSON dentro de coleções</li>
+              <li>Consultas usam objetos de filtro, projeções e operadores como <code>$gte</code>, <code>$in</code> e <code>$or</code></li>
+              <li>Campos aninhados e arrays são consultados com dot notation</li>
+              <li>Flexibilidade precisa de contrato: JSON Schema, validação no app</li>
+            </ul>
+            <ul style="font-size:0.58em; margin:0;">
+              <li>Modelagem exige decisão entre embed e referência pelo padrão de acesso</li>
+              <li>Índices continuam essenciais para consultas rápidas</li>
+              <li>Aggregation pipeline filtra, transforma e agrupa documentos</li>
+              <li>Schema flexível ajuda no início, mas precisa de disciplina</li>
+            </ul>
+          </multi-col>
         </section>
 
         <section data-auto-animate>
@@ -1212,14 +1218,14 @@ curl http://localhost:3000/api/v1/Produtos
           <poll-question
                          id="mongo-q2"
                          title="Questão 2: Consulta"
-                         question="Qual consulta encontra produtos com pelo menos 16 GB de RAM?"
+                         question="Considerando que produtos têm um campo aninhado specs.ram_gb, qual consulta encontra notebooks com pelo menos 16 GB de RAM?"
                          answer="c"
                          answer-text="Campos aninhados são consultados com dot notation: 'specs.ram_gb'. O operador $gte significa maior ou igual."
                          :options="[
               { value: 'a', label: '{ specs: { ram_gb: 16 } }' },
               { value: 'b', label: '{ ram_gb: { $gte: 16 } }' },
-              { value: 'c', label: 'Campo aninhado specs.ram_gb com $gte 16' },
-              { value: 'd', label: 'Expressão specs.ram_gb maior ou igual a 16' },
+              { value: 'c', label: '{ \"specs.ram_gb\": { $gte: 16 } }' },
+              { value: 'd', label: '{ specs.ram_gb >= 16 }' },
             ]"></poll-question>
         </section>
 
@@ -1242,7 +1248,7 @@ curl http://localhost:3000/api/v1/Produtos
           <poll-question
                          id="mongo-q4"
                          title="Questão 4: Modelagem"
-                         question="Quando embedder um documento dentro de outro é mais indicado?"
+                         question="Quando incorporar (embed) um documento dentro de outro é mais indicado?"
                          answer="b"
                          answer-text="Embed é ideal quando dados são lidos sempre juntos ou quando o histórico precisa congelar valores (ex: endereço no pedido)."
                          :options="[
