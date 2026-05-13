@@ -151,7 +151,7 @@ const codeBlockComponent = {
   <div ref="root" style="display:none" v-bind="attrs"><slot></slot></div>
   <div style="position: relative; margin: 0; padding: 0;display:block; width: min-content;">
   <pre ref="pre" class="code-wrapper" style="min-width: max-content; padding:0; margin: 0;"><code :class="codeClass" data-trim v-bind="attrs" v-html="rawCode"></code></pre>
-  <button class="copy-button" style="position:absolute; top:4px; right:4px; padding: 2px 4px; background: rgba(40,42,54,0.6); border: none; border-radius: 4px; color: #8be9fd; font-size: 12px; line-height: 1; cursor: pointer; opacity: 0.7;" @click=copiar><i v-if="!isCopied" class="fa-regular fa-copy"></i><i v-if="isCopied" class="fa-solid fa-check" style="color:#50fa7b;"></i></button>
+  <button class="copy-button" style="position:absolute; top:4px; right:4px; padding: 4px 8px; background: rgba(40,42,54,0.6); border: none; border-radius: 4px; color: #8be9fd; font-size: 14px; line-height: 1; cursor: pointer;" @click=copiar><i v-if="!isCopied" class="fa-regular fa-copy"></i><i v-if="isCopied" class="fa-solid fa-check" style="color:#50fa7b;"></i></button>
   </div>
   `,
 }
