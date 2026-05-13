@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Banco de Dados 2 - Aula 12 - MongoDB na Prática</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="..                                                                                                                                                                                                                                                                                                                                                                                                                                                       /plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2 { text-transform: none; }
+    .reveal h3 { text-transform: none; }
+    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 18px; margin: 10px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.72em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 8px 12px; text-align: left; }
+    .comparison-table td { padding: 8px 12px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 10px; font-size: 0.62em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 2px 6px; word-break: break-all; }
+    .prompt-card { background: rgba(68, 71, 90, 0.72); border-radius: 10px; padding: 16px; margin: 12px 0; }
+    .question { color: #8be9fd; font-weight: bold; }
+  </style>
+</head>
+
+<body>
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="12" curso="Banco de Dados 2" title-size="22"
+          title="MongoDB: Modelagem e Decisão Técnica">
+          <div class="mermaid" data-id="cover-mongodb-decision" style="width:100%; max-width:none;">
+            <pre style="font-size:22px;">
+graph LR
+A["Problema real"] --> B["Documento"]
+B --> C["CRUD"]
+C --> D["Dados ruins?"]
+D --> E["Validação"]
+E --> F["Embed vs referência"]
+F --> G["Índices"]
+G --> H["Decisão técnica"]
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <section>
+        <h2>Por que esta parte existe?</h2>
+        <multi-col cols="1fr 1fr" style="gap:24px">
+          <div class="green-box">
+            <p><strong>A aula original já mostra:</strong></p>
+            <ul style="font-size:0.72em;">
+              <li><code>find()</code>, projeções e filtros</li>
+              <li>campos aninhados e arrays</li>
+              <li><code>insertOne</code>, <code>updateOne</code>, <code>deleteOne</code></li>
+              <li>índices e <code>explain()</code></li>
+              <li>pipeline de agregação</li>
+            </ul>
+          </div>
+          <div class="yellow-box">
+            <p><strong>Agora a pergunta muda:</strong></p>
+            <p style="font-size:0.85em;">Como um desenvolvedor de ADS decide se o modelo documental ficou bom?</p>
+          </div>
+        </multi-col>
+      </section>
+
+      <section>
+        <h2>Problema-guia: marketplace simples</h2>
+        <p style="font-size:0.82em;">Você está construindo o backend de um marketplace com produtos de categorias diferentes.</p>
+        <div class="prompt-card">
+          <p><span class="pill">notebook</span> processador, RAM, SSD, tela, sistema operacional</p>
+          <p><span class="pill">livro</span> autor, ISBN, páginas, editora, idioma</p>
+          <p><span class="pill">celular</span> armazenamento, câmera, bateria, rede, sistema</p>
+          <p><span class="pill">acessório</span> compatibilidade, conexão, cor, material</p>
+        </div>
+        <div class="yellow-box">
+          <p style="font-size:0.82em;"><strong>Desafio:</strong> o time de produto muda os atributos a cada sprint. Você quer velocidade sem criar bagunça.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Atividade 1: inserir documentos diferentes</h2>
+        <code-block lang="javascript">
+use bdd2_aula12
+
+db.produtos.insertMany([
+  {
+    sku: "NB-ADS-01",
+    nome: "Notebook ADS 14",
+    categoria: "notebook",
+    preco: 4200,
+    specs: { ram_gb: 16, ssd_gb: 512, tela_polegadas: 14 },
+    tags: ["estudo", "programacao"]
+  },
+  {
+    sku: "LV-ADS-01",
+    nome: "Livro Banco de Dados",
+    categoria: "livro",
+    preco: 180,
+    specs: { autor: "Silberschatz", paginas: 1376, idioma: "pt-BR" },
+    tags: ["teoria", "sql"]
+  }
+])
+</code-block>
+        <div class="green-box">
+          <p style="font-size:0.78em;">A vantagem aparece imediatamente: a coleção aceita formatos diferentes sem migration.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Mas flexibilidade não é ausência de projeto</h2>
+        <multi-col cols="1fr 1fr" style="gap:24px">
+          <div class="green-box">
+            <p><strong>Bom uso</strong></p>
+            <ul style="font-size:0.72em;">
+              <li>campos variáveis por categoria</li>
+              <li>documentos parecidos, mas não idênticos</li>
+              <li>consultas frequentes conhecidas</li>
+              <li>validação mínima combinada entre app e banco</li>
+            </ul>
+          </div>
+          <div class="red-box">
+            <p><strong>Uso perigoso</strong></p>
+            <ul style="font-size:0.72em;">
+              <li>cada documento tem um formato imprevisível</li>
+              <li>tipos mudam: número vira texto</li>
+              <li>a aplicação precisa adivinhar o schema</li>
+              <li>relatórios passam a quebrar silenciosamente</li>
+            </ul>
+          </div>
+        </multi-col>
+      </section>
+
+      <section>
+        <h2>Atividade 2: quebre o banco de propósito</h2>
+        <p style="font-size:0.82em;">Insira um produto com tipos e estrutura ruins:</p>
+        <code-block lang="javascript">
+db.produtos.insertOne({
+  sku: "BAD-001",
+  nome: "Produto Bagunçado",
+  categoria: "notebook",
+  preco: "barato",
+  specs: "depende do fornecedor",
+  tags: "promocao"
+})
+</code-block>
+        <div class="fragment fade-in">
+          <code-block lang="javascript">
+db.produtos.find({ preco: { $gte: 1000 } })
+
+db.produtos.aggregate([
+  { $group: { _id: "$categoria", precoMedio: { $avg: "$preco" } } }
+])
+</code-block>
+        </div>
+      </section>
+
+      <section>
+        <h2>Discussão rápida</h2>
+        <div class="yellow-box">
+          <p class="question">O MongoDB errou ao aceitar esse documento?</p>
+        </div>
+        <ls-u>
+          <li class="fragment fade-in">Não necessariamente: flexibilidade é parte da proposta.</li>
+          <li class="fragment fade-in">O erro foi não definir um contrato mínimo para a coleção.</li>
+          <li class="fragment fade-in">Em sistemas reais, a validação pode estar no frontend, backend, banco ou nos três.</li>
+        </ls-u>
+      </section>
+
+      <section>
+        <h2>Validação com JSON Schema</h2>
+        <p style="font-size:0.82em;">MongoDB também permite impor regras na coleção.</p>
+        <code-block lang="javascript">
+db.createCollection("produtos_validados", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["sku", "nome", "categoria", "preco"],
+      properties: {
+        sku: { bsonType: "string" },
+        nome: { bsonType: "string" },
+        categoria: { enum: ["notebook", "livro", "celular", "acessorio"] },
+        preco: { bsonType: ["double", "int", "long", "decimal"], minimum: 0 },
+        specs: { bsonType: "object" },
+        tags: { bsonType: "array" }
+      }
+    }
+  }
+})
+</code-block>
+      </section>
+
+      <section>
+        <h2>Teste a validação</h2>
+        <multi-col cols="1fr 1fr" style="gap:24px">
+          <div class="red-box">
+            <p><strong>Deve falhar</strong></p>
+            <code-block lang="javascript">
+db.produtos_validados.insertOne({
+  sku: "BAD-002",
+  nome: "Produto Inválido",
+  categoria: "notebook",
+  preco: "barato",
+  specs: "texto"
+})
+</code-block>
+          </div>
+          <div class="green-box">
+            <p><strong>Deve passar</strong></p>
+            <code-block lang="javascript">
+db.produtos_validados.insertOne({
+  sku: "OK-001",
+  nome: "Notebook Validado",
+  categoria: "notebook",
+  preco: 3999.9,
+  specs: { ram_gb: 16 },
+  tags: ["ads"]
+})
+</code-block>
+          </div>
+        </multi-col>
+      </section>
+
+      <section>
+        <h2>Contrato mínimo para ADS</h2>
+        <table class="comparison-table">
+          <thead>
+            <tr><th>Camada</th><th>Responsabilidade</th><th>Exemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Frontend</td><td>Experiência e erro amigável</td><td>campo preço aceita apenas número</td></tr>
+            <tr><td>Backend</td><td>Regra de negócio</td><td>preço promocional não pode ser maior que preço original</td></tr>
+            <tr><td>Banco</td><td>Integridade mínima persistente</td><td>sku, categoria e preço devem existir</td></tr>
+          </tbody>
+        </table>
+        <div class="purple-box">
+          <p style="font-size:0.8em;">Flexibilidade boa é flexibilidade com contrato explícito.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Modelagem: embed ou referência?</h2>
+        <p style="font-size:0.82em;">Pedido e cliente: como você modelaria?</p>
+        <multi-col cols="1fr 1fr" style="gap:24px">
+          <div class="green-box">
+            <p><strong>Documento com cliente embutido</strong></p>
+            <code-block lang="javascript">
+{
+  numero: "PED-001",
+  cliente: {
+    nome: "Ana",
+    email: "ana@email.com"
+  },
+  itens: [...]
+}
+</code-block>
+          </div>
+          <div class="purple-box">
+            <p><strong>Documento com referência</strong></p>
+            <code-block lang="javascript">
+{
+  numero: "PED-001",
+  cliente_id: ObjectId("..."),
+  itens: [...]
+}
+</code-block>
+          </div>
+        </multi-col>
+      </section>
+
+      <section>
+        <h2>Regra prática: modele pelo acesso</h2>
+        <table class="comparison-table">
+          <thead>
+            <tr><th>Situação</th><th>Tende a favorecer</th><th>Por quê?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Dados são lidos sempre juntos</td><td>Embed</td><td>uma consulta resolve a tela</td></tr>
+            <tr><td>Histórico deve congelar o valor</td><td>Embed</td><td>pedido guarda nome/endereço da época</td></tr>
+            <tr><td>Dado muda e deve refletir em todos os lugares</td><td>Referência</td><td>evita duplicação inconsistente</td></tr>
+            <tr><td>Relação muitos-para-muitos cresce muito</td><td>Referência</td><td>evita documentos enormes</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Atividade 3: defenda sua decisão</h2>
+        <div class="prompt-card">
+          <p><strong>Cenário:</strong> uma loja precisa guardar pedidos com cliente, endereço, itens, preço pago e status de entrega.</p>
+          <p class="question">O que você embute no documento do pedido? O que você referencia?</p>
+        </div>
+        <ls-u>
+          <li>Forme duplas.</li>
+          <li>Desenhe um documento de pedido.</li>
+          <li>Marque cada campo como <span class="pill">embed</span> ou <span class="pill">referência</span>.</li>
+          <li>Explique qual tela ou relatório motivou a decisão.</li>
+        </ls-u>
+      </section>
+
+      <section>
+        <h2>Índice como hipótese de uso</h2>
+        <p style="font-size:0.82em;">Antes de criar índice, escreva a consulta-alvo:</p>
+        <code-block lang="javascript">
+db.produtos.find({
+  categoria: "notebook",
+  preco: { $lte: 6000 }
+}).sort({ preco: 1 })
+</code-block>
+        <div class="yellow-box">
+          <p class="question">Qual índice você criaria para essa consulta?</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Índice proposto</h2>
+        <code-block lang="javascript">
+db.produtos.createIndex({
+  categoria: 1,
+  preco: 1
+})
+
+db.produtos.find({
+  categoria: "notebook",
+  preco: { $lte: 6000 }
+}).sort({ preco: 1 }).explain("executionStats")
+</code-block>
+        <div class="green-box">
+          <p style="font-size:0.8em;">A ideia é alinhar o índice ao padrão de acesso: filtro por categoria e faixa/ordenação por preço.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Compare antes e depois</h2>
+        <multi-col cols="1fr 1fr" style="gap:24px">
+          <div class="red-box">
+            <p><strong>Sem índice</strong></p>
+            <ul style="font-size:0.72em;">
+              <li>procure <code>COLLSCAN</code></li>
+              <li>muitos documentos examinados</li>
+              <li>bom para coleção pequena, ruim em produção</li>
+            </ul>
+          </div>
+          <div class="green-box">
+            <p><strong>Com índice</strong></p>
+            <ul style="font-size:0.72em;">
+              <li>procure <code>IXSCAN</code></li>
+              <li>menos documentos examinados</li>
+              <li>escritas ficam um pouco mais caras</li>
+            </ul>
+          </div>
+        </multi-col>
+      </section>
+
+      <section>
+        <h2>Aggregation: comece pela pergunta de negócio</h2>
+        <p style="font-size:0.82em;">Evite “usar aggregate porque sim”. Primeiro formule a pergunta:</p>
+        <div class="prompt-card">
+          <p class="question">Quais categorias têm maior preço médio entre produtos disponíveis em estoque?</p>
+        </div>
+        <code-block lang="javascript">
+db.produtos.aggregate([
+  { $match: { estoque: { $gt: 0 } } },
+  {
+    $group: {
+      _id: "$categoria",
+      totalProdutos: { $sum: 1 },
+      precoMedio: { $avg: "$preco" }
+    }
+  },
+  { $sort: { precoMedio: -1 } }
+])
+</code-block>
+      </section>
+
+      <section>
+        <h2>Desafio final da aula</h2>
+        <div class="prompt-card">
+          <p><strong>Contexto:</strong> o gerente quer uma promoção para produtos caros, com estoque baixo e tags relacionadas a estudo ou trabalho.</p>
+          <p class="question">Monte uma consulta ou pipeline que retorne candidatos à promoção.</p>
+        </div>
+        <code-block lang="javascript">
+db.produtos.find({
+  preco: { $gte: 1000 },
+  estoque: { $lte: 10 },
+  tags: { $in: ["estudo", "trabalho", "programacao"] }
+}, {
+  nome: 1,
+  categoria: 1,
+  preco: 1,
+  estoque: 1,
+  tags: 1
+})
+</code-block>
+      </section>
+
+      <section>
+        <h2>Quando MongoDB faz sentido?</h2>
+        <table class="comparison-table">
+          <thead>
+            <tr><th>Bom sinal</th><th>Por quê?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Dados naturalmente documentais</td><td>a aplicação carrega o agregado inteiro</td></tr>
+            <tr><td>Schema muda com frequência</td><td>menos migrations no início do produto</td></tr>
+            <tr><td>Atributos variam por tipo</td><td>evita dezenas de colunas nulas</td></tr>
+            <tr><td>Time aceita modelar no app</td><td>parte da complexidade sai do banco relacional</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Quando tomar cuidado?</h2>
+        <table class="comparison-table">
+          <thead>
+            <tr><th>Sinal de alerta</th><th>Risco</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Muitos relacionamentos complexos</td><td>o modelo vira pseudo-relacional sem SQL</td></tr>
+            <tr><td>Relatórios ad hoc frequentes</td><td>SQL/BI pode ser mais produtivo</td></tr>
+            <tr><td>Integridade forte é central</td><td>duplicação e referência precisam de disciplina</td></tr>
+            <tr><td>Equipe acha que “sem schema” é sem regra</td><td>dívida técnica aparece rápido</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Fechamento</h2>
+        <div class="green-box">
+          <p style="font-size:0.9em;"><strong>MongoDB não é só sintaxe diferente.</strong></p>
+          <p style="font-size:0.82em;">É uma troca: mais ergonomia para documentos e mudanças rápidas, mais responsabilidade de modelagem para a aplicação e para o time.</p>
+        </div>
+        <div class="yellow-box">
+          <p style="font-size:0.82em;">A pergunta final não é “MongoDB é melhor?”, mas “este problema parece documental o bastante para justificar essa troca?”.</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+
+</html>

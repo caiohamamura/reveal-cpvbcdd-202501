@@ -1,6 +1,6 @@
 # AGENTS.md — Reveal.js Slide Framework
 
-This repository contains Reveal.js-based slide decks for IFSP Campus Caraguatatuba technical courses.
+This repository contains Reveal.js-based slide decks for IFSP Campus Capivari technical courses.
 
 ## Cold Start (No Context)
 
