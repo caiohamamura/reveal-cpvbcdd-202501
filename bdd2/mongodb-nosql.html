@@ -68,18 +68,9 @@
       <section data-auto-animate>
         <header1 aula="12" curso="Banco de Dados 2" title-size="24"
           title="MongoDB na Prática: Modelagem e Decisão Técnica">
-          <div class="mermaid" data-id="cover-mongodb" style="width:100%; max-width:none;">
-            <pre style="font-size:22px;">
-graph LR
-A["Objeto no código"] --> B["Documento BSON"]
-B --> C["Coleção"]
-C --> D["CRUD"]
-D --> E["Validação"]
-E --> F["Embed vs referência"]
-F --> G["Índices"]
-G --> H["Aggregation Pipeline"]
-H --> I["Decisão técnica"]
-            </pre>
+          <div></div>
+          <div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" alt="Logotipo do MongoDB" width="400"/>
           </div>
         </header1>
       </section>
@@ -188,7 +179,7 @@ winget install -e --id MongoDB.Shell
             </div>
             <div>
               <p style="font-size: 0.64em; margin:0 0 4px;">Use o repositório oficial da MongoDB, não o pacote <code>mongodb</code> do Ubuntu.</p>
-              <code-block lang="bash">
+              <code-block style="font-size:0.6em;max-width:650px;overflow-x:scroll" lang="bash">
 sudo apt-get install -y gnupg curl
 
 curl -fsSL https://pgp.mongodb.com/server-8.0.asc | \
