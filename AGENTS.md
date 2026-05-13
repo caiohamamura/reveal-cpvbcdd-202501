@@ -119,6 +119,11 @@ After completing any tasks (needed debugging, had new features, migrations, issu
 3. **Act** — Update the relevant file(s) with concise, actionable entries
 4. **Notify** — Briefly tell the user what you learned and where you stored it
 
+**Mandatory triggers** — run this protocol immediately after ANY of the following:
+- You learned something new about the codebase, framework, or tools
+- The user complained about something you did or corrected your approach
+- You struggled and had to try multiple different ways before getting it right
+
 Do NOT wait for the user to ask. Be proactive. Load the `reflect-and-learn` skill if you need the full checklist.
 
 ## Skills

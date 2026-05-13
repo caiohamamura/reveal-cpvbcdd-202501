@@ -524,6 +524,19 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 #### Diagnosing layout overflow
 - Text descriptions of layout issues are often insufficient. **Ask the user for a screenshot** when a slide column or element is reported as overflowing or misaligned. Screenshots reveal exact overflow boundaries that descriptions miss.
 
+#### Long command lines in code blocks overflow slide width
+- Shell commands with long URLs or paths (e.g., `echo "deb [ arch=... ] https://..."`) can exceed the code block width, hiding the copy button and cutting off content.
+- **Fix**: Break long commands using `\` line continuation so no single line exceeds ~80 characters. Example:
+  ```bash
+  echo "deb [ arch=amd64 signed-by=/path/to/key.gpg ] \
+    https://repo.example.com/apt/ubuntu noble/main multiverse" | \
+    sudo tee /etc/apt/sources.list.d/example.list
+  ```
+
+#### `ul > li` font-size inheritance causes compounding overflow
+- The global CSS rule `.reveal .slides section ul li, .reveal .slides section ol li` sets a fixed `font-size` (e.g. `0.52em`). When inline `style="font-size: X.em"` is added on a `<ul>` element, the nested `<li>` elements inherit from that scaled value, causing text to become too small or overflow unpredictably.
+- **Fix**: Adjust the global `ul li / ol li` font-size in the `<style>` block to a reasonable baseline (e.g. `0.82em`) rather than shrinking individual `<ul>` elements further. Typical working values: `ul li` at `0.82em`, `code-block` at `0.88em`, colored box `p` at `0.88em`, colored box `ul li` at `0.82em`.
+
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
 - Use `enableInsecureFallback()` for simpler teaching code (not full BearSSL cert validation)
