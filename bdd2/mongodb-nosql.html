@@ -202,6 +202,36 @@ mongosh
         </section>
 
         <section>
+          <h2>Ferramenta Oficial: VS Code + MongoDB</h2>
+          <multi-col cols="1fr 1fr" style="gap:22px">
+            <div class="info-box">
+              <p><strong>Extensão oficial</strong></p>
+              <p style="font-size: 0.72em;">Instale <code>mongodb.mongodb-vscode</code> no VS Code.</p>
+              <ul style="font-size: 0.66em;">
+                <li><strong>Playgrounds:</strong> arquivos <code>.mongodb.js</code> com autocomplete e execução com um clique</li>
+                <li><strong>Explorer:</strong> navegue databases, coleções e documentos na sidebar</li>
+                <li><strong>Editor:</strong> visualize e edite documentos diretamente em abas</li>
+                <li><strong>Schema:</strong> inspecione tipos de campos e índices</li>
+                <li><strong>Export:</strong> converta queries para Node.js, Python, Java, etc.</li>
+              </ul>
+            </div>
+            <div class="info-box">
+              <p><strong>Na prática da aula</strong></p>
+              <ul style="font-size: 0.66em;">
+                <li>Toda query da aula deve ser escrita em um Playground</li>
+                <li>Conecte-se a <code>localhost:27017</code> e explore <code>bdd2_aula12</code></li>
+                <li>Use o botão de play para executar queries selecionadas</li>
+                <li>O autocomplete sugere nomes de coleções e campos automaticamente</li>
+              </ul>
+              <div class="green-box">
+                <p style="font-size: 0.72em;">O <code>mongosh</code> continua disponível no terminal integrado, mas o Playground é o ambiente principal da aula.</p>
+              </div>
+            </div>
+          </multi-col>
+          <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB for VS Code — 3M+ instalações.</p>
+        </section>
+
+        <section>
           <h2>Antes de Começar</h2>
           <p style="font-size: 0.85em;">Com MongoDB Community Server e <code>mongosh</code> instalados:</p>
           <p style="font-size: 0.85em;"><code>mongosh</code></p>
@@ -714,6 +744,95 @@ db.pedidos.aggregate([
 
       <section>
 
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 6: Da Coleção à API</h2>
+          <p style="color: #6272a4;">Expondo documentos MongoDB via HTTP</p>
+          <div class="section-img">
+            <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/api.svg" alt="Ícone de API representando interface de programação" />
+          </div>
+        </section>
+
+        <section>
+          <h2>API REST Minimalista</h2>
+          <p style="font-size: 0.85em;">Com Express e o driver nativo, uma coleção inteira em 10 linhas:</p>
+          <code-block lang="javascript">
+const express = require('express');
+const { MongoClient } = require('mongodb');
+const app = express();
+
+app.get('/produtos', async (req, res) => {
+  const client = await MongoClient.connect('mongodb://localhost:27017');
+  const docs = await client.db('bdd2_aula12')
+    .collection('produtos').find().toArray();
+  res.json(docs);
+});
+
+app.listen(3000);
+</code-block>
+          <div class="green-box">
+            <p style="font-size: 0.8em;">Você já sabe a query. Express apenas a embrulha em um endpoint HTTP.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>API REST Auto-gerada</h2>
+          <p style="font-size: 0.85em;">O pacote <code>express-restify-mongoose</code> gera CRUD completo a partir de um modelo:</p>
+          <code-block lang="javascript">
+const express = require('express');
+const mongoose = require('mongoose');
+const restify = require('express-restify-mongoose');
+const app = express();
+
+const ProdutoSchema = new mongoose.Schema({
+  sku: String, nome: String, preco: Number,
+  categoria: String, estoque: Number
+});
+const Produto = mongoose.model('Produto', ProdutoSchema);
+
+restify.serve(app, Produto);
+// Gera: GET /Produtos, POST /Produtos,
+//        PUT /Produtos/:id, DELETE /Produtos/:id
+
+app.listen(3000);
+</code-block>
+        </section>
+
+        <section>
+          <h2>Testando a API no Navegador</h2>
+          <p style="font-size: 0.85em;">Com o servidor rodando em <code>http://localhost:3000</code>:</p>
+          <code-block lang="bash">
+curl http://localhost:3000/api/v1/Produtos
+
+# Ou abra no navegador:
+# http://localhost:3000/api/v1/Produtos?categoria=notebook
+</code-block>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">O pacote suporta filtros, paginação, ordenação e projeção via query string — tudo mapeado para queries MongoDB.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>PostgreSQL vs MongoDB: Ecosistema de API</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Funcionalidade</th><th>PostgreSQL</th><th>MongoDB</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>GraphQL automático</td><td>PostGraphile</td><td>graphql-compose-mongoose</td></tr>
+              <tr><td>REST automático</td><td>PostgREST</td><td>express-restify-mongoose</td></tr>
+              <tr><td>CMS headless</td><td>Strapi, Directus</td><td>Express + Mongoose (custom)</td></tr>
+              <tr><td>Ferramenta de query</td><td>pgAdmin / psql</td><td>VS Code Extension / mongosh</td></tr>
+            </tbody>
+          </table>
+          <div class="purple-box">
+            <p style="font-size: 0.8em;">A filosofia do MongoDB favorece "construa sua própria API"; PostgreSQL tem mais opções de auto-geração.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <section>
+
         <section>
           <h2>Resumo da Aula</h2>
           <ls-u>
@@ -774,6 +893,103 @@ db.pedidos.aggregate([
               { value: 'c', label: '$match' },
               { value: 'd', label: 'ObjectId' },
             ]"></poll-question>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">MongoDB no Mundo Real</h2>
+          <p style="color: #6272a4;">Quando usar, quando migrar, e o que empresas reais fizeram</p>
+        </section>
+
+        <section>
+          <h2>Onde MongoDB Brilha</h2>
+          <ls-u>
+            <li>Prototipagem rápida com schema em evolução</li>
+            <li>Dados que mapeiam 1:1 com objetos da aplicação</li>
+            <li>Escalabilidade horizontal (sharding) é obrigatória</li>
+            <li>Geolocalização, busca textual, time-series</li>
+            <li>Catálogos, feeds, logs, sessões, caches</li>
+          </ls-u>
+          <div class="green-box">
+            <p style="font-size: 0.8em;">MongoDB elimina o <em>impedance mismatch</em> entre código e banco quando os dados são naturalmente documentais.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Onde Fica Mais Difícil</h2>
+          <ls-u>
+            <li>Transações ACID entre múltiplos documentos (possível, mas complexo)</li>
+            <li>Joins e relacionamentos complexos</li>
+            <li>Enforcement de schema estrito no banco</li>
+            <li>Relatórios e analytics com SQL-style aggregations</li>
+            <li>Consistência forte em sistemas financeiros</li>
+          </ls-u>
+          <div class="red-box">
+            <p style="font-size: 0.8em;">Schema flexível acelera o início, mas transferência de complexidade para a aplicação cobra o preço depois.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>O Padrão de Migração</h2>
+          <div class="mermaid" data-id="migration-flow">
+            <pre>
+graph LR
+A["Startup com MongoDB"] --> B["Produto amadurece"]
+B --> C["Relacionamentos complexos"]
+C --> D["Transações necessárias"]
+D --> E["Migra dados críticos para PostgreSQL"]
+E --> F["MongoDB continua em workloads específicos"]
+            </pre>
+          </div>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">MongoDB não desaparece — fica <strong>escopado</strong> aos casos onde documentos ainda vencem.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Casos Reais de Migração</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Empresa</th><th>O que aconteceu</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Uber</strong></td>
+                <td>Começou com MongoDB para rastreamento de corridas; migrou dados transacionais para MySQL/PostgreSQL enquanto manteve MongoDB para telemetria e logs</td>
+              </tr>
+              <tr>
+                <td><strong>Netflix</strong></td>
+                <td>Usa MongoDB para catálogo e recomendações (schema variável por região), mas transações de pagamento e assinatura ficam em bancos relacionais</td>
+              </tr>
+              <tr>
+                <td><strong>PayPal (Braintree)</strong></td>
+                <td>Iniciou com MongoDB para agilidade; migrou núcleo transacional para PostgreSQL por necessidade de ACID rigoroso em pagamentos</td>
+              </tr>
+              <tr>
+                <td><strong>eBay</strong></td>
+                <td>Adota MongoDB para catálogo de produtos e sessões de usuário, mas mantém PostgreSQL para inventário e pedidos</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="purple-box">
+            <p style="font-size: 0.8em;">O padrão comum: <strong>polyglot persistence</strong> — usar o banco certo para o problema certo.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Lição da Aula</h2>
+          <ls-u>
+            <li>MongoDB acelera o desenvolvimento inicial com schema flexível</li>
+            <li>Índices e aggregation pipeline mantêm performance em escala</li>
+            <li>Para APIs, Express + Mongoose é o caminho padrão da indústria</li>
+            <li>Bancos não são religião: a escolha técnica deve evoluir com o produto</li>
+          </ls-u>
+          <div class="green-box">
+            <p style="font-size: 0.8em;">A pergunta não é "PostgreSQL <em>ou</em> MongoDB?" — é "<em>onde</em> cada um se encaixa no meu sistema?"</p>
+          </div>
         </section>
 
       </section>
