@@ -54,7 +54,8 @@
     .reveal .slides section .red-box ul li,
     .reveal .slides section .yellow-box ul li,
     .reveal .slides section .purple-box ul li { font-size: 0.82em; }
-    .reveal .slides section code-block { font-size: 0.88em; }
+    .reveal .slides section code-block { font-size: 0.88em; overflow-x: auto; max-width: 100%; }
+    .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
     .reveal .slides section .prompt-card p { font-size: 0.84em; margin: 2px 0; }
   </style>
 </head>
@@ -193,8 +194,7 @@ sudo apt-get install -y gnupg curl
 curl -fsSL https://pgp.mongodb.com/server-8.0.asc | \
   sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
 
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] \
-  https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
   sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 
 sudo apt-get update

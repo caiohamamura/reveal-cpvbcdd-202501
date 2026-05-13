@@ -525,12 +525,11 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - Text descriptions of layout issues are often insufficient. **Ask the user for a screenshot** when a slide column or element is reported as overflowing or misaligned. Screenshots reveal exact overflow boundaries that descriptions miss.
 
 #### Long command lines in code blocks overflow slide width
-- Shell commands with long URLs or paths (e.g., `echo "deb [ arch=... ] https://..."`) can exceed the code block width, hiding the copy button and cutting off content.
-- **Fix**: Break long commands using `\` line continuation so no single line exceeds ~80 characters. Example:
-  ```bash
-  echo "deb [ arch=amd64 signed-by=/path/to/key.gpg ] \
-    https://repo.example.com/apt/ubuntu noble/main multiverse" | \
-    sudo tee /etc/apt/sources.list.d/example.list
+- Shell commands with long URLs or paths can exceed the code block width, hiding the copy button and cutting off content.
+- **Fix**: Add `overflow-x: auto; max-width: 100%` to `code-block` and `code-block pre` in the deck's `<style>` block. This enables horizontal scrolling instead of breaking lines or clipping content.
+  ```css
+  .reveal .slides section code-block { overflow-x: auto; max-width: 100%; }
+  .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
   ```
 
 #### `ul > li` font-size inheritance causes compounding overflow

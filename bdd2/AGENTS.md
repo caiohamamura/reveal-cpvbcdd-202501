@@ -44,4 +44,6 @@ Pull requests should include a brief description, changed deck paths, manual ver
 
 Follow the root `AGENTS.md` and `docs/ECOSSISTEMA.md` for framework conventions. Use `micromamba` for Python package work if notebooks or data scripts are involved; do not install packages with `pip`.
 
+**Always commit and push after making changes.** Do not wait for the user to ask.
+
 **Post-task reflection**: After learning something new, receiving user correction/complaint, or struggling through multiple attempts, immediately run the `reflect-and-learn` skill protocol from the root `AGENTS.md`. Do not wait to be asked.
