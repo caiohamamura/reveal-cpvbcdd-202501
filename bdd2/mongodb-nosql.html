@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Banco de Dados 2 - Aula 12 - MongoDB na Prática</title>
+  <title>Banco de Dados 2 - Aula 12 - MongoDB na Prática: Modelagem e Decisão Técnica</title>
 
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
@@ -34,6 +34,8 @@
     .logo-side img { max-height: 86px; max-width: 220px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
     .section-img { text-align: center; margin: 16px 0 4px; }
     .section-img img { max-height: 140px; max-width: 340px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 8px; padding: 12px; }
+    .prompt-card { background: rgba(68, 71, 90, 0.72); border-radius: 10px; padding: 16px; margin: 12px 0; }
+    .question { color: #8be9fd; font-weight: bold; }
   </style>
 </head>
 
@@ -44,16 +46,18 @@
 
       <section data-auto-animate>
         <header1 aula="12" curso="Banco de Dados 2" title-size="24"
-          title="MongoDB na Prática">
+          title="MongoDB na Prática: Modelagem e Decisão Técnica">
           <div class="mermaid" data-id="cover-mongodb" style="width:100%; max-width:none;">
             <pre style="font-size:22px;">
 graph LR
 A["Objeto no código"] --> B["Documento BSON"]
 B --> C["Coleção"]
 C --> D["CRUD"]
-D --> E["Índices"]
-E --> F["Aggregation Pipeline"]
-F --> G["Decisão técnica"]
+D --> E["Validação"]
+E --> F["Embed vs referência"]
+F --> G["Índices"]
+G --> H["Aggregation Pipeline"]
+H --> I["Decisão técnica"]
             </pre>
           </div>
         </header1>
@@ -65,7 +69,7 @@ F --> G["Decisão técnica"]
           <li>NoSQL surgiu para flexibilidade, escala horizontal e iteração rápida</li>
           <li>JSONB permite documentos dentro do PostgreSQL com SQL, ACID e índices</li>
           <li>Flexibilidade não elimina schema: ela muda onde o schema é controlado</li>
-          <li>Hoje: experimentar a ergonomia de um banco orientado a documentos</li>
+          <li>Hoje: experimentar a ergonomia de um banco orientado a documentos e decidir quando ele faz sentido</li>
         </ls-u>
       </section>
 
@@ -90,6 +94,8 @@ F --> G["Decisão técnica"]
                 <li>Atualizar documentos com operadores</li>
                 <li>Criar índice e observar plano de execução</li>
                 <li>Montar uma agregação básica</li>
+                <li>Decidir entre embed e referência</li>
+                <li>Justificar quando MongoDB é a escolha certa</li>
               </ul>
             </div>
             <div class="yellow-box">
@@ -499,10 +505,289 @@ db.produtos.deleteMany({
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 3: Índices e Plano de Execução</h2>
+          <h2 style="color: #ff79c6;">Parte 3: Validação e Decisão de Modelagem</h2>
+          <p style="color: #6272a4;">Flexibilidade não é ausência de projeto</p>
+          <div class="section-img">
+            <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/shield-check.svg" alt="Ícone de escudo representando validação e contrato" />
+          </div>
+        </section>
+
+        <section>
+          <h2>Por que esta parte existe?</h2>
+          <multi-col cols="1fr 1fr" style="gap:24px">
+            <div class="green-box">
+              <p><strong>A aula original já mostra:</strong></p>
+              <ul style="font-size:0.72em;">
+                <li><code>find()</code>, projeções e filtros</li>
+                <li>campos aninhados e arrays</li>
+                <li><code>insertOne</code>, <code>updateOne</code>, <code>deleteOne</code></li>
+                <li>índices e <code>explain()</code></li>
+                <li>pipeline de agregação</li>
+              </ul>
+            </div>
+            <div class="yellow-box">
+              <p><strong>Agora a pergunta muda:</strong></p>
+              <p style="font-size:0.85em;">Como um desenvolvedor de ADS decide se o modelo documental ficou bom?</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section>
+          <h2>Problema-guia: marketplace simples</h2>
+          <p style="font-size:0.82em;">Você está construindo o backend de um marketplace com produtos de categorias diferentes.</p>
+          <div class="prompt-card">
+            <p><span class="pill">notebook</span> processador, RAM, SSD, tela, sistema operacional</p>
+            <p><span class="pill">livro</span> autor, ISBN, páginas, editora, idioma</p>
+            <p><span class="pill">celular</span> armazenamento, câmera, bateria, rede, sistema</p>
+            <p><span class="pill">acessório</span> compatibilidade, conexão, cor, material</p>
+          </div>
+          <div class="yellow-box">
+            <p style="font-size:0.82em;"><strong>Desafio:</strong> o time de produto muda os atributos a cada sprint. Você quer velocidade sem criar bagunça.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Atividade 1: inserir documentos diferentes</h2>
+          <code-block lang="javascript">
+use bdd2_aula12
+
+db.produtos.insertMany([
+  {
+    sku: "NB-ADS-01",
+    nome: "Notebook ADS 14",
+    categoria: "notebook",
+    preco: 4200,
+    specs: { ram_gb: 16, ssd_gb: 512, tela_polegadas: 14 },
+    tags: ["estudo", "programacao"]
+  },
+  {
+    sku: "LV-ADS-01",
+    nome: "Livro Banco de Dados",
+    categoria: "livro",
+    preco: 180,
+    specs: { autor: "Silberschatz", paginas: 1376, idioma: "pt-BR" },
+    tags: ["teoria", "sql"]
+  }
+])
+</code-block>
+          <div class="green-box">
+            <p style="font-size:0.78em;">A vantagem aparece imediatamente: a coleção aceita formatos diferentes sem migration.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Mas flexibilidade não é ausência de projeto</h2>
+          <multi-col cols="1fr 1fr" style="gap:24px">
+            <div class="green-box">
+              <p><strong>Bom uso</strong></p>
+              <ul style="font-size:0.72em;">
+                <li>campos variáveis por categoria</li>
+                <li>documentos parecidos, mas não idênticos</li>
+                <li>consultas frequentes conhecidas</li>
+                <li>validação mínima combinada entre app e banco</li>
+              </ul>
+            </div>
+            <div class="red-box">
+              <p><strong>Uso perigoso</strong></p>
+              <ul style="font-size:0.72em;">
+                <li>cada documento tem um formato imprevisível</li>
+                <li>tipos mudam: número vira texto</li>
+                <li>a aplicação precisa adivinhar o schema</li>
+                <li>relatórios passam a quebrar silenciosamente</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <section>
+          <h2>Atividade 2: quebre o banco de propósito</h2>
+          <p style="font-size:0.82em;">Insira um produto com tipos e estrutura ruins:</p>
+          <code-block lang="javascript">
+db.produtos.insertOne({
+  sku: "BAD-001",
+  nome: "Produto Bagunçado",
+  categoria: "notebook",
+  preco: "barato",
+  specs: "depende do fornecedor",
+  tags: "promocao"
+})
+</code-block>
+          <div class="fragment fade-in">
+            <code-block lang="javascript">
+db.produtos.find({ preco: { $gte: 1000 } })
+
+db.produtos.aggregate([
+  { $group: { _id: "$categoria", precoMedio: { $avg: "$preco" } } }
+])
+</code-block>
+          </div>
+        </section>
+
+        <section>
+          <h2>Discussão rápida</h2>
+          <div class="yellow-box">
+            <p class="question">O MongoDB errou ao aceitar esse documento?</p>
+          </div>
+          <ls-u>
+            <li class="fragment fade-in">Não necessariamente: flexibilidade é parte da proposta.</li>
+            <li class="fragment fade-in">O erro foi não definir um contrato mínimo para a coleção.</li>
+            <li class="fragment fade-in">Em sistemas reais, a validação pode estar no frontend, backend, banco ou nos três.</li>
+          </ls-u>
+        </section>
+
+        <section>
+          <h2>Validação com JSON Schema</h2>
+          <p style="font-size:0.82em;">MongoDB também permite impor regras na coleção.</p>
+          <code-block lang="javascript">
+db.createCollection("produtos_validados", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["sku", "nome", "categoria", "preco"],
+      properties: {
+        sku: { bsonType: "string" },
+        nome: { bsonType: "string" },
+        categoria: { enum: ["notebook", "livro", "celular", "acessorio"] },
+        preco: { bsonType: ["double", "int", "long", "decimal"], minimum: 0 },
+        specs: { bsonType: "object" },
+        tags: { bsonType: "array" }
+      }
+    }
+  }
+})
+</code-block>
+        </section>
+
+        <section>
+          <h2>Teste a validação</h2>
+          <multi-col cols="1fr 1fr" style="gap:24px">
+            <div class="red-box">
+              <p><strong>Deve falhar</strong></p>
+              <code-block lang="javascript">
+db.produtos_validados.insertOne({
+  sku: "BAD-002",
+  nome: "Produto Inválido",
+  categoria: "notebook",
+  preco: "barato",
+  specs: "texto"
+})
+</code-block>
+            </div>
+            <div class="green-box">
+              <p><strong>Deve passar</strong></p>
+              <code-block lang="javascript">
+db.produtos_validados.insertOne({
+  sku: "OK-001",
+  nome: "Notebook Validado",
+  categoria: "notebook",
+  preco: 3999.9,
+  specs: { ram_gb: 16 },
+  tags: ["ads"]
+})
+</code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <section>
+          <h2>Contrato mínimo para ADS</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Camada</th><th>Responsabilidade</th><th>Exemplo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Frontend</td><td>Experiência e erro amigável</td><td>campo preço aceita apenas número</td></tr>
+              <tr><td>Backend</td><td>Regra de negócio</td><td>preço promocional não pode ser maior que preço original</td></tr>
+              <tr><td>Banco</td><td>Integridade mínima persistente</td><td>sku, categoria e preço devem existir</td></tr>
+            </tbody>
+          </table>
+          <div class="purple-box">
+            <p style="font-size:0.8em;">Flexibilidade boa é flexibilidade com contrato explícito.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Modelagem: embed ou referência?</h2>
+          <p style="font-size:0.82em;">Pedido e cliente: como você modelaria?</p>
+          <multi-col cols="1fr 1fr" style="gap:24px">
+            <div class="green-box">
+              <p><strong>Documento com cliente embutido</strong></p>
+              <code-block lang="javascript">
+{
+  numero: "PED-001",
+  cliente: {
+    nome: "Ana",
+    email: "ana@email.com"
+  },
+  itens: [...]
+}
+</code-block>
+            </div>
+            <div class="purple-box">
+              <p><strong>Documento com referência</strong></p>
+              <code-block lang="javascript">
+{
+  numero: "PED-001",
+  cliente_id: ObjectId("..."),
+  itens: [...]
+}
+</code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <section>
+          <h2>Regra prática: modele pelo acesso</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Situação</th><th>Tende a favorecer</th><th>Por quê?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Dados são lidos sempre juntos</td><td>Embed</td><td>uma consulta resolve a tela</td></tr>
+              <tr><td>Histórico deve congelar o valor</td><td>Embed</td><td>pedido guarda nome/endereço da época</td></tr>
+              <tr><td>Dado muda e deve refletir em todos os lugares</td><td>Referência</td><td>evita duplicação inconsistente</td></tr>
+              <tr><td>Relação muitos-para-muitos cresce muito</td><td>Referência</td><td>evita documentos enormes</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Atividade 3: defenda sua decisão</h2>
+          <div class="prompt-card">
+            <p><strong>Cenário:</strong> uma loja precisa guardar pedidos com cliente, endereço, itens, preço pago e status de entrega.</p>
+            <p class="question">O que você embute no documento do pedido? O que você referencia?</p>
+          </div>
+          <ls-u>
+            <li>Forme duplas.</li>
+            <li>Desenhe um documento de pedido.</li>
+            <li>Marque cada campo como <span class="pill">embed</span> ou <span class="pill">referência</span>.</li>
+            <li>Explique qual tela ou relatório motivou a decisão.</li>
+          </ls-u>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 4: Índices e Plano de Execução</h2>
           <p style="color: #6272a4;">Consultas flexíveis também precisam de estrutura</p>
           <div class="section-img">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/65/B-tree.svg" alt="Diagrama de árvore B representando estrutura de índice" />
+          </div>
+        </section>
+
+        <section>
+          <h2>Índice como hipótese de uso</h2>
+          <p style="font-size:0.82em;">Antes de criar índice, escreva a consulta-alvo:</p>
+          <code-block lang="javascript">
+db.produtos.find({
+  categoria: "notebook",
+  preco: { $lte: 6000 }
+}).sort({ preco: 1 })
+</code-block>
+          <div class="yellow-box">
+            <p class="question">Qual índice você criaria para essa consulta?</p>
           </div>
         </section>
 
@@ -542,6 +827,28 @@ db.produtos.find({
         </section>
 
         <section>
+          <h2>Compare antes e depois</h2>
+          <multi-col cols="1fr 1fr" style="gap:24px">
+            <div class="red-box">
+              <p><strong>Sem índice</strong></p>
+              <ul style="font-size:0.72em;">
+                <li>procure <code>COLLSCAN</code></li>
+                <li>muitos documentos examinados</li>
+                <li>bom para coleção pequena, ruim em produção</li>
+              </ul>
+            </div>
+            <div class="green-box">
+              <p><strong>Com índice</strong></p>
+              <ul style="font-size:0.72em;">
+                <li>procure <code>IXSCAN</code></li>
+                <li>menos documentos examinados</li>
+                <li>escritas ficam um pouco mais caras</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <section>
           <h2>Índice em Campo Aninhado</h2>
           <code-block lang="javascript">
 db.produtos.createIndex({
@@ -577,7 +884,7 @@ db.produtos.find({
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 4: Aggregation Pipeline</h2>
+          <h2 style="color: #ff79c6;">Parte 5: Aggregation Pipeline</h2>
           <p style="color: #6272a4;">O equivalente documental de filtrar, transformar e agrupar</p>
           <div class="section-img">
             <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/pipe.svg" alt="Ícone de pipeline representando fluxo de agregação" />
@@ -600,6 +907,27 @@ style D fill:#f1fa8c,color:#282a36
 style E fill:#ff79c6,color:#282a36
             </pre>
           </div>
+        </section>
+
+        <section>
+          <h2>Aggregation: comece pela pergunta de negócio</h2>
+          <p style="font-size:0.82em;">Evite "usar aggregate porque sim". Primeiro formule a pergunta:</p>
+          <div class="prompt-card">
+            <p class="question">Quais categorias têm maior preço médio entre produtos disponíveis em estoque?</p>
+          </div>
+          <code-block lang="javascript">
+db.produtos.aggregate([
+  { $match: { estoque: { $gt: 0 } } },
+  {
+    $group: {
+      _id: "$categoria",
+      totalProdutos: { $sum: 1 },
+      precoMedio: { $avg: "$preco" }
+    }
+  },
+  { $sort: { precoMedio: -1 } }
+])
+</code-block>
         </section>
 
         <section>
@@ -663,7 +991,7 @@ db.pedidos.aggregate([
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 5: Exercício Prático</h2>
+          <h2 style="color: #ff79c6;">Parte 6: Exercício Prático</h2>
           <p style="color: #6272a4;">Resolver consultas reais no dataset da aula</p>
           <div class="section-img">
             <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/code-braces.svg" alt="Ícone de código representando exercício prático" />
@@ -740,12 +1068,33 @@ db.pedidos.aggregate([
 </code-block>
         </section>
 
+        <section>
+          <h2>Desafio final da aula</h2>
+          <div class="prompt-card">
+            <p><strong>Contexto:</strong> o gerente quer uma promoção para produtos caros, com estoque baixo e tags relacionadas a estudo ou trabalho.</p>
+            <p class="question">Monte uma consulta ou pipeline que retorne candidatos à promoção.</p>
+          </div>
+          <code-block lang="javascript">
+db.produtos.find({
+  preco: { $gte: 1000 },
+  estoque: { $lte: 10 },
+  tags: { $in: ["estudo", "trabalho", "programacao"] }
+}, {
+  nome: 1,
+  categoria: 1,
+  preco: 1,
+  estoque: 1,
+  tags: 1
+})
+</code-block>
+        </section>
+
       </section>
 
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 6: Da Coleção à API</h2>
+          <h2 style="color: #ff79c6;">Parte 7: Da Coleção à API</h2>
           <p style="color: #6272a4;">Expondo documentos MongoDB via HTTP</p>
           <div class="section-img">
             <img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/api.svg" alt="Ícone de API representando interface de programação" />
@@ -839,6 +1188,8 @@ curl http://localhost:3000/api/v1/Produtos
             <li>MongoDB organiza dados em documentos BSON dentro de coleções</li>
             <li>Consultas usam objetos de filtro, projeções e operadores como <code>$gte</code>, <code>$in</code> e <code>$or</code></li>
             <li>Campos aninhados e arrays são consultados naturalmente com dot notation</li>
+            <li>Flexibilidade precisa de contrato: JSON Schema, validação no app e regras de negócio</li>
+            <li>Modelagem documental exige decisão entre embed e referência, guiada pelo padrão de acesso</li>
             <li>Índices continuam essenciais para consultas rápidas</li>
             <li>Aggregation pipeline permite filtrar, transformar e agrupar documentos</li>
             <li>Schema flexível ajuda no início, mas precisa de disciplina na aplicação</li>
@@ -895,6 +1246,21 @@ curl http://localhost:3000/api/v1/Produtos
             ]"></poll-question>
         </section>
 
+        <section>
+          <poll-question
+                         id="mongo-q4"
+                         title="Questão 4: Modelagem"
+                         question="Quando embedder um documento dentro de outro é mais indicado?"
+                         answer="b"
+                         answer-text="Embed é ideal quando dados são lidos sempre juntos ou quando o histórico precisa congelar valores (ex: endereço no pedido)."
+                         :options="[
+              { value: 'a', label: 'Quando o dado muda e deve refletir em todos os lugares' },
+              { value: 'b', label: 'Quando dados são lidos sempre juntos' },
+              { value: 'c', label: 'Quando a relação é muitos-para-muitos e cresce muito' },
+              { value: 'd', label: 'Quando queremos evitar duplicação a todo custo' },
+            ]"></poll-question>
+        </section>
+
       </section>
 
       <section>
@@ -930,6 +1296,36 @@ curl http://localhost:3000/api/v1/Produtos
           <div class="red-box">
             <p style="font-size: 0.8em;">Schema flexível acelera o início, mas transferência de complexidade para a aplicação cobra o preço depois.</p>
           </div>
+        </section>
+
+        <section>
+          <h2>Quando MongoDB faz sentido?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Bom sinal</th><th>Por quê?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Dados naturalmente documentais</td><td>a aplicação carrega o agregado inteiro</td></tr>
+              <tr><td>Schema muda com frequência</td><td>menos migrations no início do produto</td></tr>
+              <tr><td>Atributos variam por tipo</td><td>evita dezenas de colunas nulas</td></tr>
+              <tr><td>Time aceita modelar no app</td><td>parte da complexidade sai do banco relacional</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Quando tomar cuidado?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Sinal de alerta</th><th>Risco</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Muitos relacionamentos complexos</td><td>o modelo vira pseudo-relacional sem SQL</td></tr>
+              <tr><td>Relatórios ad hoc frequentes</td><td>SQL/BI pode ser mais produtivo</td></tr>
+              <tr><td>Integridade forte é central</td><td>duplicação e referência precisam de disciplina</td></tr>
+              <tr><td>Equipe acha que "sem schema" é sem regra</td><td>dívida técnica aparece rápido</td></tr>
+            </tbody>
+          </table>
         </section>
 
         <section>
@@ -976,6 +1372,17 @@ E --> F["MongoDB continua em workloads específicos"]
           </table>
           <div class="purple-box">
             <p style="font-size: 0.8em;">O padrão comum: <strong>polyglot persistence</strong> — usar o banco certo para o problema certo.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Fechamento</h2>
+          <div class="green-box">
+            <p style="font-size:0.9em;"><strong>MongoDB não é só sintaxe diferente.</strong></p>
+            <p style="font-size:0.82em;">É uma troca: mais ergonomia para documentos e mudanças rápidas, mais responsabilidade de modelagem para a aplicação e para o time.</p>
+          </div>
+          <div class="yellow-box">
+            <p style="font-size:0.82em;">A pergunta final não é "MongoDB é melhor?", mas "este problema parece documental o bastante para justificar essa troca?".</p>
           </div>
         </section>
 
