@@ -1,16 +1,12 @@
-# Ductor Home
+# AGENTS.md — Reveal.js Slide Framework
 
-This is the top-level `~/.ductor` directory.
-The main Telegram assistant usually runs with cwd `workspace/`.
+This repository contains Reveal.js-based slide decks for IFSP Campus Caraguatatuba technical courses.
 
 ## Cold Start (No Context)
 
-Read in this order:
-
-1. `workspace/CLAUDE.md` (main behavior + Telegram rules)
-2. `workspace/tools/CLAUDE.md` (tool routing)
-3. `workspace/memory_system/MAINMEMORY.md` (long-term context)
-4. `config/CLAUDE.md` (only for config changes)
+1. Read `AGENTS.md` (this file)
+2. Read `docs/ECOSSISTEMA.md` for full framework documentation
+3. Read `.opencode/skills/create-slides/SKILL.md` for slide creation patterns
 
 ## Repository Layout
 
@@ -18,6 +14,7 @@ Read in this order:
 reveal-cpvbcdd-202501/
 ├── AGENTS.md                  # This file — AI agent instructions
 ├── opencode.json              # opencode CLI configuration
+├── package.json               # Node dependencies
 ├── iot/                       # IoT course slides (.html)
 ├── bdd1/                      # Banco de Dados I slides (.html)
 ├── bdd2/                      # Banco de Dados II slides (.html)
@@ -28,50 +25,15 @@ reveal-cpvbcdd-202501/
 ├── slides_template/           # Shared templates (header1.js, init.js)
 ├── img/                       # Shared images (logo, background)
 ├── docs/                      # ECOSSISTEMA.md — full framework documentation
-├── .opencode/skills/          # opencode skills (create-slides, search-images, run-notebook)
+├── .opencode/skills/          # opencode skills (create-slides, search-images, run-notebook, reflect-and-learn)
 └── .github/workflows/         # GitHub Pages static deployment
 ```
 
-## Top-Level Layout
-
-- `workspace/` - agent working area (tools, memory, cron tasks, skills, files)
-- `config/config.json` - runtime configuration
-- `sessions.json` - per-chat session state
-- `cron_jobs.json` - cron registry
-- `webhooks.json` - webhook registry
-- `logs/` - runtime logs
-
-## Multi-Agent System
-
-You are one agent in a multi-agent system managed by a central Supervisor.
-
-### Token Management
-
-**IMPORTANT: Always use micromamba (`micromamba`) for Python packages — NEVER `pip install` or `python3 -m pip install`.**
-
-If `micromamba` is missing in a checkout, report that notebook execution/package installation is blocked; do not fall back to `pip`.
-
-- `~/.ductor/agents.json` is the single source of truth for all sub-agent
-  bot tokens, allowed users, and model settings.
-- The Supervisor reads `agents.json` at startup and merges each agent's
-  token into its runtime config. **Your Telegram bot token comes from
-  `agents.json`, not from `config/config.json`.**
-- Never hardcode or copy bot tokens from other agents. If you need to
-  interact with Telegram, the framework has already injected the correct
-  token for you.
-
-### Inter-Agent Communication
-
-**Synchronous** (blocks until response):
-```bash
-python3 workspace/tools/agent_tools/ask_agent.py TARGET_AGENT "Your message"
-```
-
-**Course Development Commands**
+## Course Development Commands
 
 ```bash
 # Package management (use opencode environment)
-micromamba create -n opencode -y -c conda-forge python=3.11 jupyter nbconvert numpy pandas plotly scipy scikit-learn  # if env is missing
+micromamba create -n opencode -y -c conda-forge python=3.11 jupyter nbconvert numpy pandas plotly scipy scikit-learn
 micromamba install -n opencode -y <package>
 micromamba run -n opencode python3 script.py
 
@@ -99,35 +61,6 @@ python3 .opencode/skills/search-images/extract_images.py URL1 URL2
 # Generate Dracula-themed plots
 python3 .opencode/skills/export-plots/export_plots.py notebook.ipynb --output-dir ciencia-dados/images/
 ```
-
-**Asynchronous** (returns immediately, response delivered via Telegram):
-```bash
-python3 workspace/tools/agent_tools/ask_agent_async.py TARGET_AGENT "Your message"
-```
-
-Use async for tasks that may take longer. Use sync for quick lookups.
-See `workspace/tools/agent_tools/CLAUDE.md` for all agent management tools.
-
-### Shared Knowledge
-
-`~/.ductor/SHAREDMEMORY.md` contains facts shared across all agents
-(server info, user preferences, infrastructure). Changes are automatically
-synced into every agent's `MAINMEMORY.md` by the Supervisor.
-
-- For agent-specific knowledge: use your own `memory_system/MAINMEMORY.md`.
-- For cross-agent knowledge: use `SHAREDMEMORY.md` (via
-  `workspace/tools/agent_tools/edit_shared_knowledge.py`).
-
-## Operating Rules
-
-- Use tool scripts in `workspace/tools/` for cron/webhook lifecycle changes.
-Do not manually edit `cron_jobs.json` or `webhooks.json` for normal operations.
-- When config changes are requested, edit only requested keys in `config/config.json`.
-Then tell the user to run `/restart`.
-- Save user-facing generated files in `workspace/output_to_user/` and send with
-`<file:/absolute/path/to/output_to_user/...>`.
-- Update `workspace/memory_system/MAINMEMORY.md` silently when durable user facts
-or preferences are learned.
 
 ## Slide Development Rules
 
@@ -190,7 +123,7 @@ Do NOT wait for the user to ask. Be proactive. Load the `reflect-and-learn` skil
 
 ## Skills
 
-Five opencode skills are available:
+Four opencode skills are available:
 
 1. **create-slides** — Generate new Reveal.js slide files (load for detailed patterns and gotchas)
 2. **search-images** — Find images via web search + deterministic extraction
