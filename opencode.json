@@ -12,7 +12,10 @@
     }
   },
   "permission": {
-    "websearch": "allow"
+    "websearch": "allow",
+    "external_directory": {
+      "/tmp/**": "allow"
+    }
   },
   "mcp": {
     "ollama_web": {
