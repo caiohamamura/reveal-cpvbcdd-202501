@@ -1225,7 +1225,7 @@ curl http://localhost:3000/api/v1/Produtos
               { value: 'a', label: '{ specs: { ram_gb: 16 } }' },
               { value: 'b', label: '{ ram_gb: { $gte: 16 } }' },
               { value: 'c', label: '{ \"specs.ram_gb\": { $gte: 16 } }' },
-              { value: 'd', label: '{ specs.ram_gb >= 16 }' },
+              { value: 'd', label: '{ specs.ram_gb &gt;= 16 }' },
             ]"></poll-question>
         </section>
 
@@ -1248,7 +1248,7 @@ curl http://localhost:3000/api/v1/Produtos
           <poll-question
                          id="mongo-q4"
                          title="Questão 4: Modelagem"
-                         question="Quando incorporar (embed) um documento dentro de outro é mais indicado?"
+                         question="Quando embedder um documento dentro de outro é mais indicado?"
                          answer="b"
                          answer-text="Embed é ideal quando dados são lidos sempre juntos ou quando o histórico precisa congelar valores (ex: endereço no pedido)."
                          :options="[
