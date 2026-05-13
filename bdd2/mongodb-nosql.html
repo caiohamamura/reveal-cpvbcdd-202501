@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Banco de Dados 2 - Aula 12 - MongoDB na Prática</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2 { text-transform: none; }
+    .reveal h3 { text-transform: none; }
+    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 18px; margin: 10px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.72em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 8px 12px; text-align: left; }
+    .comparison-table td { padding: 8px 12px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 10px; font-size: 0.62em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 2px 6px; }
+    .logo-strip { display: flex; justify-content: center; gap: 28px; align-items: center; margin: 12px 0 8px; }
+    .logo-strip img { max-height: 58px; max-width: 180px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 8px; }
+    .logo-side { text-align: center; }
+    .logo-side img { max-height: 86px; max-width: 220px; object-fit: contain; background: rgba(248, 248, 242, 0.92); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="12" curso="Banco de Dados 2" title-size="24"
+          title="MongoDB na Prática">
+          <div class="mermaid" data-id="cover-mongodb" style="width:100%; max-width:none;">
+            <pre style="font-size:22px;">
+graph LR
+A["Objeto no código"] --> B["Documento BSON"]
+B --> C["Coleção"]
+C --> D["CRUD"]
+D --> E["Índices"]
+E --> F["Aggregation Pipeline"]
+F --> G["Decisão técnica"]
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Revisão: Aula Passada</h2>
+        <ls-u>
+          <li>NoSQL surgiu para flexibilidade, escala horizontal e iteração rápida</li>
+          <li>JSONB permite documentos dentro do PostgreSQL com SQL, ACID e índices</li>
+          <li>Flexibilidade não elimina schema: ela muda onde o schema é controlado</li>
+          <li>Hoje: experimentar a ergonomia de um banco orientado a documentos</li>
+        </ls-u>
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 1: Entrando no MongoDB</h2>
+          <p style="color: #6272a4;">Banco, coleção, documento e BSON</p>
+        </section>
+
+        <section>
+          <h2>Objetivo da Aula</h2>
+          <multi-col style="gap:34px">
+            <div class="green-box">
+              <p><strong>Ao final, você deve conseguir:</strong></p>
+              <ul style="font-size: 0.76em;">
+                <li>Carregar uma base simples no MongoDB</li>
+                <li>Consultar documentos com filtros e projeções</li>
+                <li>Atualizar documentos com operadores</li>
+                <li>Criar índice e observar plano de execução</li>
+                <li>Montar uma agregação básica</li>
+              </ul>
+            </div>
+            <div class="yellow-box">
+              <p><strong>Pergunta guia:</strong></p>
+              <p style="font-size: 0.85em;">Quando MongoDB acelera o desenvolvimento e quando começa a transferir complexidade para a aplicação?</p>
+            </div>
+          </multi-col>
+          <div class="logo-strip">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/MongoDB_Logo.svg" alt="Logotipo do MongoDB" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Windows_Server_logo.svg" alt="Logotipo do Windows Server" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Ubuntu-logo-2022.svg" alt="Logotipo do Ubuntu" />
+          </div>
+          <p style="font-size: 0.48em; color: #6272a4;">Fonte: Wikimedia Commons — MongoDB, Windows Server e Ubuntu.</p>
+        </section>
+
+        <section>
+          <h2>Instalação: Windows</h2>
+          <div class="logo-side">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Windows_Server_logo.svg" alt="Logotipo do Windows Server" />
+          </div>
+          <multi-col style="gap:20px">
+            <div class="info-box">
+              <p><strong>1. MongoDB Server</strong></p>
+              <ul style="font-size: 0.66em;">
+                <li>Acesse <span class="mini-code">mongodb.com/try/download/community</span></li>
+                <li>Escolha <strong>Version 8.0</strong></li>
+                <li>Platform: <strong>Windows</strong></li>
+                <li>Package: <strong>msi</strong></li>
+                <li>Instale como serviço: <strong>Install MongoD as a Service</strong></li>
+              </ul>
+            </div>
+            <div class="info-box">
+              <p><strong>2. MongoDB Shell</strong></p>
+              <ul style="font-size: 0.66em;">
+                <li>Acesse <span class="mini-code">mongodb.com/try/download/shell</span></li>
+                <li>Platform: <strong>Windows 64-bit MSI</strong></li>
+                <li>Instale o <code>mongosh</code></li>
+                <li>Marque a opção de adicionar ao <strong>PATH</strong>, se aparecer</li>
+                <li>Abra um novo terminal após instalar</li>
+              </ul>
+            </div>
+          </multi-col>
+          <div class="green-box">
+            <code-block lang="powershell">
+mongosh --version
+mongosh
+</code-block>
+          </div>
+          <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Windows e instalação do mongosh.</p>
+        </section>
+
+        <section>
+          <h2>Instalação: Ubuntu 24.04 Noble</h2>
+          <multi-col cols="0.32fr 0.68fr" style="gap:20px; align-items:center">
+            <div class="logo-side">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/76/Ubuntu-logo-2022.svg" alt="Logotipo do Ubuntu" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/NewTux.svg" alt="Mascote Tux do Linux" />
+              <p style="font-size: 0.5em; color: #6272a4;">Fonte: Wikimedia Commons — Ubuntu e Tux.</p>
+            </div>
+            <div>
+              <p style="font-size: 0.72em;">Use o repositório oficial da MongoDB, não o pacote <code>mongodb</code> do Ubuntu.</p>
+              <code-block lang="bash">
+sudo apt-get install -y gnupg curl
+
+curl -fsSL https://pgp.mongodb.com/server-8.0.asc | \
+  sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
+  --dearmor
+
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
+  sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
+sudo apt-get update
+sudo apt-get install -y mongodb-org mongodb-mongosh
+</code-block>
+            </div>
+          </multi-col>
+          <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Ubuntu 24.04 Noble.</p>
+        </section>
+
+        <section>
+          <h2>Iniciar e Testar no Ubuntu</h2>
+          <code-block lang="bash">
+sudo systemctl start mongod
+sudo systemctl status mongod
+sudo systemctl enable mongod
+
+mongosh --version
+mongosh
+</code-block>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">Se o serviço não existir ainda, rode <code>sudo systemctl daemon-reload</code> e tente iniciar novamente.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Antes de Começar</h2>
+          <p style="font-size: 0.85em;">Com MongoDB Community Server e <code>mongosh</code> instalados:</p>
+          <code-block lang="bash">
+mongosh
+</code-block>
+          <div class="fragment fade-in">
+            <p style="font-size: 0.85em;">Dentro do shell:</p>
+            <code-block lang="javascript">
+db.runCommand({ ping: 1 })
+</code-block>
+          </div>
+          <div class="fragment fade-in">
+            <div class="green-box">
+              <p style="font-size: 0.8em;">Se retornar <code>{ ok: 1 }</code>, o servidor está respondendo.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Carregando os Dados da Aula</h2>
+          <p style="font-size: 0.85em;">A partir da pasta <code>bdd2</code>:</p>
+          <code-block lang="bash">
+mongosh --file planos/aula12_nosql_II/seed.mongodb.js
+</code-block>
+          <div class="fragment fade-in">
+            <p style="font-size: 0.85em;">Depois, abra o shell:</p>
+            <code-block lang="bash">
+mongosh bdd2_aula12
+</code-block>
+          </div>
+          <div class="fragment fade-in">
+            <code-block lang="javascript">
+show collections
+db.produtos.countDocuments()
+db.clientes.countDocuments()
+</code-block>
+          </div>
+        </section>
+
+        <section>
+          <h2>Modelo Mental</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Relacional</th><th>MongoDB</th><th>Ideia</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Database</td><td>Database</td><td>Conjunto lógico de dados</td></tr>
+              <tr><td>Tabela</td><td>Coleção</td><td>Grupo de registros parecidos</td></tr>
+              <tr><td>Linha</td><td>Documento</td><td>Registro individual</td></tr>
+              <tr><td>Coluna</td><td>Campo</td><td>Atributo do registro</td></tr>
+              <tr><td>JOIN</td><td>Embed ou referência</td><td>Decisão de modelagem</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2>Documento, Não Linha</h2>
+          <code-block lang="javascript">
+db.produtos.findOne({ sku: "NB-001" })
+</code-block>
+          <div class="fragment fade-in">
+            <code-block lang="json">
+{
+  _id: ObjectId("..."),
+  sku: "NB-001",
+  nome: "Notebook Aurora 14",
+  categoria: "notebook",
+  preco: 5299.9,
+  estoque: 18,
+  specs: {
+    processador: "Ryzen 7",
+    ram_gb: 16,
+    ssd_gb: 512,
+    tela_polegadas: 14
+  },
+  tags: ["trabalho", "portatil"]
+}
+</code-block>
+          </div>
+        </section>
+
+        <section>
+          <h2>BSON e <code>_id</code></h2>
+          <multi-col style="gap:34px">
+            <div class="info-box">
+              <p><span class="pill">JSON</span></p>
+              <ul style="font-size: 0.75em;">
+                <li>Formato textual</li>
+                <li>Ótimo para APIs e leitura humana</li>
+                <li>Tipos limitados</li>
+              </ul>
+            </div>
+            <div class="info-box">
+              <p><span class="pill">BSON</span></p>
+              <ul style="font-size: 0.75em;">
+                <li>Formato binário do MongoDB</li>
+                <li>Inclui tipos como <code>ObjectId</code> e datas</li>
+                <li>O campo <code>_id</code> identifica cada documento</li>
+              </ul>
+            </div>
+          </multi-col>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">A estrutura parece JSON, mas o banco armazena e consulta BSON.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 2: CRUD e Consultas</h2>
+          <p style="color: #6272a4;">Inserir, buscar, projetar, atualizar e remover documentos</p>
+        </section>
+
+        <section>
+          <h2>Inserindo Documentos</h2>
+          <code-block lang="javascript">
+db.produtos.insertOne({
+  sku: "AC-100",
+  nome: "Mouse Vertical",
+  categoria: "acessorio",
+  preco: 189.9,
+  estoque: 45,
+  specs: {
+    conexao: "Bluetooth",
+    dpi: 3200
+  },
+  tags: ["ergonomia", "escritorio"]
+})
+</code-block>
+          <div class="fragment fade-in">
+            <div class="yellow-box">
+              <p style="font-size: 0.8em;">A coleção não exigiu <code>CREATE TABLE</code>. Isso é produtivo, mas também permite inconsistência se a aplicação não controlar o formato.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Primeiras Consultas</h2>
+          <code-block lang="javascript">
+db.produtos.find()
+
+db.produtos.find({ categoria: "notebook" })
+
+db.produtos.find(
+  { categoria: "notebook" },
+  { nome: 1, preco: 1, estoque: 1 }
+)
+</code-block>
+          <div class="green-box">
+            <p style="font-size: 0.8em;">O segundo argumento é a projeção: quais campos aparecem no resultado.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Filtros com Operadores</h2>
+          <code-block lang="javascript">
+db.produtos.find({
+  preco: { $gte: 1000, $lte: 6000 }
+})
+
+db.produtos.find({
+  categoria: { $in: ["notebook", "celular"] }
+})
+
+db.produtos.find({
+  $or: [
+    { estoque: { $lt: 10 } },
+    { tags: "promocao" }
+  ]
+})
+</code-block>
+        </section>
+
+        <section>
+          <h2>Campos Aninhados</h2>
+          <p style="font-size: 0.85em;">A dot notation consulta campos dentro de objetos:</p>
+          <code-block lang="javascript">
+db.produtos.find({
+  "specs.ram_gb": { $gte: 16 }
+})
+
+db.produtos.find({
+  "specs.camera_mp": { $gte: 48 }
+})
+</code-block>
+          <div class="fragment fade-in">
+            <div class="purple-box">
+              <p style="font-size: 0.8em;">Esse é um dos motivos de MongoDB parecer natural para objetos da aplicação.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Arrays</h2>
+          <code-block lang="javascript">
+db.produtos.find({ tags: "promocao" })
+
+db.produtos.find({
+  tags: { $all: ["trabalho", "portatil"] }
+})
+
+db.produtos.find({
+  tags: { $size: 2 }
+})
+</code-block>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">Se um campo é array, uma busca por valor simples encontra documentos onde o array contém aquele valor.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Atualizações</h2>
+          <code-block lang="javascript">
+db.produtos.updateOne(
+  { sku: "NB-001" },
+  { $set: { preco: 4999.9 } }
+)
+
+db.produtos.updateOne(
+  { sku: "NB-001" },
+  { $inc: { estoque: -1 } }
+)
+
+db.produtos.updateOne(
+  { sku: "NB-001" },
+  { $push: { tags: "oferta-relampago" } }
+)
+</code-block>
+        </section>
+
+        <section>
+          <h2>Cuidado com Updates Amplos</h2>
+          <div class="red-box">
+            <p><strong>Filtro vazio altera muitos documentos:</strong></p>
+            <code-block lang="javascript">
+db.produtos.updateMany(
+  {},
+  { $set: { revisado: true } }
+)
+</code-block>
+          </div>
+          <div class="fragment fade-in">
+            <div class="green-box">
+              <p style="font-size: 0.8em;">Antes de atualizar ou remover, execute o filtro com <code>find()</code> e confirme o conjunto afetado.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Remoção</h2>
+          <code-block lang="javascript">
+db.produtos.deleteOne({ sku: "AC-100" })
+
+db.produtos.deleteMany({
+  categoria: "acessorio",
+  estoque: 0
+})
+</code-block>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">A regra prática é a mesma do SQL: remova com filtros específicos e verificáveis.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 3: Índices e Plano de Execução</h2>
+          <p style="color: #6272a4;">Consultas flexíveis também precisam de estrutura</p>
+        </section>
+
+        <section>
+          <h2>Consulta Sem Índice</h2>
+          <code-block lang="javascript">
+db.produtos.find({
+  categoria: "notebook",
+  preco: { $lte: 6000 }
+}).explain("executionStats")
+</code-block>
+          <div class="fragment fade-in">
+            <div class="red-box">
+              <p style="font-size: 0.8em;">Procure por <code>COLLSCAN</code>: o banco examinou a coleção sequencialmente.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Criando Índice</h2>
+          <code-block lang="javascript">
+db.produtos.createIndex({
+  categoria: 1,
+  preco: 1
+})
+
+db.produtos.find({
+  categoria: "notebook",
+  preco: { $lte: 6000 }
+}).explain("executionStats")
+</code-block>
+          <div class="fragment fade-in">
+            <div class="green-box">
+              <p style="font-size: 0.8em;">Agora procure por <code>IXSCAN</code>: a busca usou índice.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Índice em Campo Aninhado</h2>
+          <code-block lang="javascript">
+db.produtos.createIndex({
+  "specs.ram_gb": 1
+})
+
+db.produtos.find({
+  "specs.ram_gb": { $gte: 16 }
+})
+</code-block>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;">MongoDB indexa campos aninhados, mas o índice só ajuda se a consulta combina com o padrão de acesso.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Índice Não É Decoração</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Decisão</th><th>Benefício</th><th>Custo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Índice simples</td><td>Acelera filtro comum</td><td>Ocupa espaço e pesa escrita</td></tr>
+              <tr><td>Índice composto</td><td>Ajuda filtros combinados</td><td>Ordem dos campos importa</td></tr>
+              <tr><td>Índice em campo aninhado</td><td>Acelera dot notation</td><td>Depende da estabilidade do formato</td></tr>
+              <tr><td>Muitos índices</td><td>Mais caminhos de busca</td><td>Inserções e updates ficam mais caros</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 4: Aggregation Pipeline</h2>
+          <p style="color: #6272a4;">O equivalente documental de filtrar, transformar e agrupar</p>
+        </section>
+
+        <section>
+          <h2>Pipeline: Uma Etapa Após a Outra</h2>
+          <div class="mermaid" data-id="pipeline-flow">
+            <pre>
+graph LR
+A["Documentos"] --> B["$match"]
+B --> C["$group"]
+C --> D["$project"]
+D --> E["$sort"]
+style A fill:#44475a,color:#f8f8f2
+style B fill:#8be9fd,color:#282a36
+style C fill:#50fa7b,color:#282a36
+style D fill:#f1fa8c,color:#282a36
+style E fill:#ff79c6,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>Preço Médio por Categoria</h2>
+          <code-block lang="javascript">
+db.produtos.aggregate([
+  { $match: { estoque: { $gt: 0 } } },
+  {
+    $group: {
+      _id: "$categoria",
+      total: { $sum: 1 },
+      precoMedio: { $avg: "$preco" }
+    }
+  },
+  { $sort: { precoMedio: -1 } }
+])
+</code-block>
+        </section>
+
+        <section>
+          <h2>Projetando o Resultado</h2>
+          <code-block lang="javascript">
+db.produtos.aggregate([
+  { $match: { categoria: "notebook" } },
+  {
+    $project: {
+      _id: 0,
+      nome: 1,
+      preco: 1,
+      ram: "$specs.ram_gb",
+      ssd: "$specs.ssd_gb"
+    }
+  },
+  { $sort: { ram: -1, preco: 1 } }
+])
+</code-block>
+        </section>
+
+        <section>
+          <h2>Agrupando Pedidos</h2>
+          <code-block lang="javascript">
+db.pedidos.aggregate([
+  { $unwind: "$itens" },
+  {
+    $group: {
+      _id: "$itens.sku",
+      unidades: { $sum: "$itens.qtd" },
+      receita: { $sum: { $multiply: ["$itens.qtd", "$itens.preco_unit"] } }
+    }
+  },
+  { $sort: { receita: -1 } }
+])
+</code-block>
+          <div class="yellow-box">
+            <p style="font-size: 0.8em;"><code>$unwind</code> transforma cada item do array em uma entrada separada no pipeline.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Parte 5: Exercício Prático</h2>
+          <p style="color: #6272a4;">Resolver consultas reais no dataset da aula</p>
+        </section>
+
+        <section>
+          <h2>Exercício: Catálogo e Pedidos</h2>
+          <div class="green-box">
+            <p><strong>Objetivo:</strong> usar MongoDB para responder perguntas sobre produtos e pedidos.</p>
+            <ls-u>
+              <li>Liste notebooks com pelo menos 16 GB de RAM e preço abaixo de R$ 6.000</li>
+              <li>Mostre apenas <code>nome</code>, <code>preco</code>, <code>specs.ram_gb</code> e <code>estoque</code></li>
+              <li>Reduza o estoque de um produto vendido em 1 unidade</li>
+              <li>Crie um índice que ajude a primeira consulta</li>
+              <li>Calcule a receita total por SKU usando aggregation</li>
+            </ls-u>
+          </div>
+        </section>
+
+        <section>
+          <h2>Template de Consulta</h2>
+          <code-block lang="javascript">
+db.produtos.find(
+  {
+    categoria: "notebook",
+    "specs.ram_gb": { $gte: 16 },
+    preco: { $lt: 6000 }
+  },
+  {
+    _id: 0,
+    nome: 1,
+    preco: 1,
+    "specs.ram_gb": 1,
+    estoque: 1
+  }
+)
+</code-block>
+        </section>
+
+        <section>
+          <h2>Template de Índice</h2>
+          <code-block lang="javascript">
+db.produtos.createIndex({
+  categoria: 1,
+  "specs.ram_gb": 1,
+  preco: 1
+})
+
+db.produtos.find({
+  categoria: "notebook",
+  "specs.ram_gb": { $gte: 16 },
+  preco: { $lt: 6000 }
+}).explain("executionStats")
+</code-block>
+        </section>
+
+        <section>
+          <h2>Template de Agregação</h2>
+          <code-block lang="javascript">
+db.pedidos.aggregate([
+  { $unwind: "$itens" },
+  {
+    $group: {
+      _id: "$itens.sku",
+      unidades: { $sum: "$itens.qtd" },
+      receita: {
+        $sum: { $multiply: ["$itens.qtd", "$itens.preco_unit"] }
+      }
+    }
+  },
+  { $sort: { receita: -1 } }
+])
+</code-block>
+        </section>
+
+      </section>
+
+      <section>
+
+        <section>
+          <h2>Resumo da Aula</h2>
+          <ls-u>
+            <li>MongoDB organiza dados em documentos BSON dentro de coleções</li>
+            <li>Consultas usam objetos de filtro, projeções e operadores como <code>$gte</code>, <code>$in</code> e <code>$or</code></li>
+            <li>Campos aninhados e arrays são consultados naturalmente com dot notation</li>
+            <li>Índices continuam essenciais para consultas rápidas</li>
+            <li>Aggregation pipeline permite filtrar, transformar e agrupar documentos</li>
+            <li>Schema flexível ajuda no início, mas precisa de disciplina na aplicação</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Quiz Interativo</h2>
+          <p style="color: #6272a4;">Conecte-se à sala e vote.</p>
+        </section>
+
+        <section>
+          <poll-question
+                         id="mongo-q1"
+                         title="Questão 1: Modelo"
+                         question="No MongoDB, qual estrutura corresponde mais diretamente a uma linha de tabela?"
+                         answer="b"
+                         answer-text="Uma linha relacional corresponde mais diretamente a um documento MongoDB. Coleções agrupam documentos."
+                         :options="[
+              { value: 'a', label: 'Database' },
+              { value: 'b', label: 'Documento' },
+              { value: 'c', label: 'Coleção' },
+              { value: 'd', label: 'Índice' },
+            ]"></poll-question>
+        </section>
+
+        <section>
+          <poll-question
+                         id="mongo-q2"
+                         title="Questão 2: Consulta"
+                         question="Qual consulta encontra produtos com pelo menos 16 GB de RAM?"
+                         answer="c"
+                         answer-text="Campos aninhados são consultados com dot notation: 'specs.ram_gb'. O operador $gte significa maior ou igual."
+                         :options="[
+              { value: 'a', label: '{ specs: { ram_gb: 16 } }' },
+              { value: 'b', label: '{ ram_gb: { $gte: 16 } }' },
+              { value: 'c', label: 'Campo aninhado specs.ram_gb com $gte 16' },
+              { value: 'd', label: 'Expressão specs.ram_gb maior ou igual a 16' },
+            ]"></poll-question>
+        </section>
+
+        <section>
+          <poll-question
+                         id="mongo-q3"
+                         title="Questão 3: Índices"
+                         question="Em um explain, qual sinal indica uma varredura sequencial da coleção?"
+                         answer="a"
+                         answer-text="COLLSCAN indica varredura da coleção. IXSCAN indica uso de índice."
+                         :options="[
+              { value: 'a', label: 'COLLSCAN' },
+              { value: 'b', label: 'IXSCAN' },
+              { value: 'c', label: '$match' },
+              { value: 'd', label: 'ObjectId' },
+            ]"></poll-question>
+        </section>
+
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+
+</html>
