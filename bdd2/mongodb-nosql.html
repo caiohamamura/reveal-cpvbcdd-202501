@@ -176,8 +176,11 @@ echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gp
   sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 
 sudo apt-get update
-sudo apt-get install -y mongodb-org mongodb-mongosh
+sudo apt-get install -y mongodb-org
 </code-block>
+              <div class="info-box">
+                <p style="font-size: 0.7em;">O pacote <code>mongodb-org</code> é um metapacote que inclui: servidor (<code>mongod</code>), shell (<code>mongosh</code>), ferramentas e utilitários.</p>
+              </div>
             </div>
           </multi-col>
           <p style="font-size: 0.58em; color: #6272a4;">Fonte: MongoDB Docs — instalação no Ubuntu 24.04 Noble.</p>
