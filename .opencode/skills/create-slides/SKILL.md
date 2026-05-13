@@ -496,6 +496,22 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 7. **NEVER use `Plotly.animate()`** — it silently ignores new traces. **NEVER use raw DOM** — empty fragment divs don't fire events reliably.
 8. Color centroid markers to match their cluster colors (e.g. `['#8be9fd', '#ff79c6']`) so students can visually track which centroid owns which group. Use red `#ff5555` for both before any assignment happens.
 
+#### `multi-col` grid overflow with long inline content
+- `<multi-col>` uses CSS `gridTemplateColumns`. Even with `cols="1fr 1fr"`, columns can expand past slide boundaries if child elements contain unbreakable inline text (e.g., long URLs in `<span class="mini-code">` or `<code>`).
+- **Fix**: Add `word-break: break-all` or `overflow-wrap: break-word` to the inline element's CSS class. Without this, the grid cell grows to fit the unbreakable text and pushes the other column off-screen.
+
+#### Background-image opacity on dark themes
+- For `data-background-image` logos on Dracula dark backgrounds (`#282a36`), start opacity at **0.20–0.25**, not below 0.10. Blue logos especially (#0078d4) need higher opacity to contrast against dark backgrounds.
+- Position via `data-background-position="top 160px right 70px"` to place it below the title but out of the way of content.
+
+#### Wikimedia Commons SVG reliability
+- Use direct SVG URLs: `https://upload.wikimedia.org/wikipedia/commons/X/XX/Filename.svg`
+- The `/thumb/.../Filename.svg.png` conversion often returns **400/404** for SVGs. Don't rely on it.
+- **Alternative CDN**: `https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/<icon>.svg` (Material Design Icons on jsDelivr) is a reliable fallback for simple SVG icons.
+
+#### Diagnosing layout overflow
+- Text descriptions of layout issues are often insufficient. **Ask the user for a screenshot** when a slide column or element is reported as overflowing or misaligned. Screenshots reveal exact overflow boundaries that descriptions miss.
+
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
 - Use `enableInsecureFallback()` for simpler teaching code (not full BearSSL cert validation)
