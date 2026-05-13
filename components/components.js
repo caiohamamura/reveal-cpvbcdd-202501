@@ -121,7 +121,7 @@ const codeBlockComponent = {
     lang: { type: String, default: '' },
   },
   setup(props, { attrs }) {
-    const btnMsg = Vue.ref('Copiar');
+    const isCopied = Vue.ref(false);
     const pre = Vue.useTemplateRef('pre');
     const root = Vue.useTemplateRef('root');
     const rawCode = Vue.ref('');
@@ -138,20 +138,20 @@ const codeBlockComponent = {
 
       navigator.clipboard.writeText(conteudo || '')
         .then(() => {
-          btnMsg.value = 'Copiado!';
-          setTimeout(() => { btnMsg.value = 'Copiar'; }, 2000);
+          isCopied.value = true;
+          setTimeout(() => { isCopied.value = false; }, 2000);
         })
         .catch(err => console.error('Erro ao copiar:', err));
     }
     const codeClass = props.lang ? `lang-${props.lang} code-wrapper` : 'code-wrapper';
-    return { copiar, btnMsg, codeClass, attrs, rawCode };
+    return { copiar, isCopied, codeClass, attrs, rawCode };
   },
   /*html*/
   template: `
   <div ref="root" style="display:none" v-bind="attrs"><slot></slot></div>
   <div style="position: relative; margin: 0; padding: 0;display:block; width: min-content;">
   <pre ref="pre" class="code-wrapper" style="min-width: max-content; padding:0; margin: 0;"><code :class="codeClass" data-trim v-bind="attrs" v-html="rawCode"></code></pre>
-  <button class="copy-button" style="position:absolute; top:5px; right:5px;" @click=copiar>{{btnMsg}}</button>
+  <button class="copy-button" style="position:absolute; top:5px; right:5px; padding: 4px 8px;" @click=copiar><i v-if="!isCopied" class="fa-regular fa-copy"></i><i v-if="isCopied" class="fa-solid fa-check" style="color:#50fa7b;"></i></button>
   </div>
   `,
 }
