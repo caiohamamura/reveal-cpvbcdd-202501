@@ -1224,7 +1224,7 @@ curl http://localhost:3000/api/v1/Produtos
                          :options="[
               { value: 'a', label: '{ specs: { ram_gb: 16 } }' },
               { value: 'b', label: '{ ram_gb: { $gte: 16 } }' },
-              { value: 'c', label: '{ \"specs.ram_gb\": { $gte: 16 } }' },
+               { value: 'c', label: 'Dot notation: specs.ram_gb com $gte 16' },
               { value: 'd', label: '{ specs.ram_gb &gt;= 16 }' },
             ]"></poll-question>
         </section>
