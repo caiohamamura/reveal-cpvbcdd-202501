@@ -1027,10 +1027,13 @@ app.listen(3000);
           <h2>API REST Auto-gerada</h2>
           <p style="font-size: 0.85em;">O pacote <code>express-restify-mongoose</code> gera CRUD completo a partir de um modelo:</p>
           <code-block lang="javascript">
-const express = require('express');
-const mongoose = require('mongoose');
-const restify = require('express-restify-mongoose');
-const app = express();
+var express = require('express')
+var mongoose = require('mongoose')
+var restify = require('express-restify-mongoose')
+var app = express()
+var router = express.Router()
+
+mongoose.connect("mongodb://127.0.0.1:27017/bdd2_aula12");
 
 const ProdutoSchema = new mongoose.Schema({
   sku: String, nome: String, preco: Number,
@@ -1039,8 +1042,9 @@ const ProdutoSchema = new mongoose.Schema({
 const Produto = mongoose.model('Produto', ProdutoSchema);
 
 restify.serve(app, Produto);
-// Gera: GET /Produtos, POST /Produtos,
-//        PUT /Produtos/:id, DELETE /Produtos/:id
+
+// Gera: GET /api/v1/Produtos, POST /api/v1/Produtos,
+//        PUT /api/v1/Produtos/:id, DELETE /api/v1/Produtos/:id
 
 app.listen(3000);
 </code-block>
