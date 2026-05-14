@@ -536,6 +536,16 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - The global CSS rule `.reveal .slides section ul li, .reveal .slides section ol li` sets a fixed `font-size` (e.g. `0.52em`). When inline `style="font-size: X.em"` is added on a `<ul>` element, the nested `<li>` elements inherit from that scaled value, causing text to become too small or overflow unpredictably.
 - **Fix**: Adjust the global `ul li / ol li` font-size in the `<style>` block to a reasonable baseline (e.g. `0.82em`) rather than shrinking individual `<ul>` elements further. Typical working values: `ul li` at `0.82em`, `code-block` at `0.88em`, colored box `p` at `0.88em`, colored box `ul li` at `0.82em`.
 
+#### `r-stack` fragment synchronization
+- When using `div.r-stack` with paired fragments (image + overlay div), **both elements MUST share the same `data-fragment-index`** so they trigger simultaneously.
+- Without matching indices, Reveal.js advances them on separate steps — image fades first, then text appears on the next click — creating a jarring two-step transition.
+- Pattern: `<img class="fragment semi-fade-out" data-fragment-index="N" src="..." /><div class="fragment" data-fragment-index="N">...</div>`
+- Each r-stack pair in the same deck should use a **unique index** (0, 1, 2, ...) to avoid cross-pair conflicts.
+
+#### `semi-fade-out` vs `fade-in-then-semi-out`
+- Both classes exist in `reveal.css` but differ in final opacity: `semi-fade-out` drops to ~30%, `fade-in-then-semi-out` drops to ~50%.
+- Prefer `semi-fade-out` for r-stack overlays — makes the background image more subdued so overlay text is more readable.
+
 #### `init.js` hardcodes `RevealMermaid`
 - `slides_template/init.js` line 79 hardcodes `RevealMermaid` in the plugins array: `const plugins = [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid];`
 - **Every slide deck MUST load the mermaid script** (`https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js`) even if it doesn't use mermaid diagrams.
@@ -543,7 +553,8 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 
 #### `r-stack` for project showcase slides
 - Use `div.r-stack` to layer content: first child appears, then fades to semi-transparent watermark while next child overlays on top.
-- Pattern: `<div class="r-stack"><img class="fragment fade-in-then-semi-out" src="..." width="600" /><div class="fragment"><p>explanation text</p></div></div>`
+- Pattern: `<div class="r-stack"><img class="fragment semi-fade-out" data-fragment-index="N" src="..." /><div class="fragment" data-fragment-index="N"><p>explanation text</p></div></div>`
+- **CRITICAL**: Both the image and overlay div MUST share the same `data-fragment-index` (see `r-stack fragment synchronization` gotcha above).
 - Image appears solo after title, then fades semi-transparent, explanation text appears over it.
 - Works great for project showcase slides where you want to highlight the finished project photo.
 
@@ -560,11 +571,68 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - Best sources: Instructables project pages, Hackster.io project pages, personal tech blogs with build photos.
 - Use `site:` search queries on educational/DIY sites, then run `extract_images.py` on the most promising URLs.
 
-#### AsyncTelegram2 (IoT slides reference)
-- Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
-- Use `enableInsecureFallback()` for simpler teaching code (not full BearSSL cert validation)
-- Key API: `bot.getNewMessage(msg)` returns bool, `msg.messageType` is `MessageText` or `MessageQuery`, `msg.callbackQueryData` for button data, `bot.endQuery(msg, text)` required for callbacks
-- `bot.sendTo(chat_id, text)` for proactive messages (takes `int64_t chat_id`)
+#### Checklist verification script for slide creation
+After generating slides, run a quick script to verify all requirements from the instructions document are met:
+```python
+checks = {
+    'Aula N title': 'aula="N"' in html,
+    'DBSCAN connection': 'DBSCAN' in html,
+    'Code blocks': 'code-block' in html,
+    'Poll questions': 'poll-question' in html,
+    # ... add checks specific to the lesson
+}
+for check, result in checks.items():
+    status = 'PASS' if result else 'FAIL'
+    print(f'[{status}] {check}')
+```
+
+#### `metric-card` reusable CSS pattern
+For side-by-side comparison blocks with colored left borders, use this inline style pattern:
+```html
+<div class="metric-card" style="border-left-color: #8be9fd;">
+  <h4 style="color: #8be9fd;">Title</h4>
+  <p>Description content.</p>
+</div>
+```
+Combine with `<multi-col>` for comparison layouts. Dracula colors: `#8be9fd` (cyan), `#ff79c6` (pink), `#50fa7b` (green), `#ff5555` (red), `#f1fa8c` (yellow), `#bd93f9` (purple).
+
+#### `step-pill` for inline sequential steps
+Show sequential steps as inline badges:
+```html
+<span class="step-pill">Step 1</span>
+<span class="step-pill">Step 2</span>
+<span class="step-pill">Step 3</span>
+```
+Useful for algorithm walkthroughs, pipeline stages, or process flows. Pairs well with `data-auto-animate` for progressive reveal.
+
+#### Concept-heavy data science slides don't need Plotly
+For topics focused on algorithms, comparisons, and code walkthroughs (e.g., anomaly detection, feature engineering), skip Plotly figures entirely. Use:
+- `<code-block>` for code examples
+- `<table>` for method comparisons
+- `<multi-col>` + `metric-card` for side-by-side concepts
+- Mermaid diagrams for process flows
+Only use Plotly when the topic requires visualizing data distributions, model outputs, or interactive step-by-step demos.
+
+#### Notebook structure for data science hands-on
+Consistent notebook pattern for practical exercises:
+1. Imports + Dracula theme helper
+2. Dataset generation (synthetic or loaded)
+3. Initial visualization
+4. Method 1 (code + visualization)
+5. Method 2 (code + visualization)
+6. Method N (code + visualization)
+7. Comparison table + bar chart
+8. Discussion questions
+Each method section follows: explanation → code → result visualization.
+
+#### `code-block` without `<script type="text/plain">` for safe languages
+For Python, R, SQL code that doesn't contain `<` or `>` characters, raw text inside `<code-block>` works fine:
+```html
+<code-block lang="python">
+z = (x - x.mean()) / x.std()
+</code-block>
+```
+For C/C++/Arduino code with `#include <Arduino.h>`, **always** use `<script type="text/plain">` to prevent HTML parser mangling.
 
 ---
 # IMPORTANT!!!!!
