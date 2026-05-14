@@ -1054,10 +1054,10 @@ app.listen(3000);
           <h2>Testando a API no Navegador</h2>
           <p style="font-size: 0.85em;">Com o servidor rodando em <code>http://localhost:3000</code>:</p>
           <code-block lang="bash">
-curl http://localhost:3000/api/v1/Produtos
+curl http://localhost:3000/api/v1/Produto
 
 # Ou abra no navegador:
-# http://localhost:3000/api/v1/Produtos?categoria=notebook
+# http://localhost:3000/api/v1/Produto?query={%22categoria%22:%22celular%22}
 </code-block>
           <div class="yellow-box">
             <p style="font-size: 0.8em;">O pacote suporta filtros, paginação, ordenação e projeção via query string — tudo mapeado para queries MongoDB.</p>
