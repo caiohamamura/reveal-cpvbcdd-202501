@@ -536,6 +536,30 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - The global CSS rule `.reveal .slides section ul li, .reveal .slides section ol li` sets a fixed `font-size` (e.g. `0.52em`). When inline `style="font-size: X.em"` is added on a `<ul>` element, the nested `<li>` elements inherit from that scaled value, causing text to become too small or overflow unpredictably.
 - **Fix**: Adjust the global `ul li / ol li` font-size in the `<style>` block to a reasonable baseline (e.g. `0.82em`) rather than shrinking individual `<ul>` elements further. Typical working values: `ul li` at `0.82em`, `code-block` at `0.88em`, colored box `p` at `0.88em`, colored box `ul li` at `0.82em`.
 
+#### `init.js` hardcodes `RevealMermaid`
+- `slides_template/init.js` line 79 hardcodes `RevealMermaid` in the plugins array: `const plugins = [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid];`
+- **Every slide deck MUST load the mermaid script** (`https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js`) even if it doesn't use mermaid diagrams.
+- Omitting it causes `ReferenceError: RevealMermaid is not defined` at runtime.
+
+#### `r-stack` for project showcase slides
+- Use `div.r-stack` to layer content: first child appears, then fades to semi-transparent watermark while next child overlays on top.
+- Pattern: `<div class="r-stack"><img class="fragment fade-in-then-semi-out" src="..." width="600" /><div class="fragment"><p>explanation text</p></div></div>`
+- Image appears solo after title, then fades semi-transparent, explanation text appears over it.
+- Works great for project showcase slides where you want to highlight the finished project photo.
+
+#### Image validation — always test URLs
+- Many Random Nerd Tutorials URLs return **404** — the site has restructured/renamed files over time.
+- Wikimedia Commons returns **403 Forbidden** to HEAD requests from scripts.
+- Instructables cover images are often tiny placeholder thumbnails (~8KB) — not useful for slides.
+- **Always validate** with HEAD/GET: status 200, Content-Type starts with `image/`, size > 1KB.
+- Use the `extract_images.py` script for deterministic extraction and validation from tutorial pages.
+
+#### Image selection for project slides
+- **Prefer photos of complete DIY projects** (assembled devices, installed setups, real-world usage).
+- **Avoid**: single component photos, breadboard circuits, Fritzing wiring diagrams, stock photos, product catalog images.
+- Best sources: Instructables project pages, Hackster.io project pages, personal tech blogs with build photos.
+- Use `site:` search queries on educational/DIY sites, then run `extract_images.py` on the most promising URLs.
+
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
 - Use `enableInsecureFallback()` for simpler teaching code (not full BearSSL cert validation)
