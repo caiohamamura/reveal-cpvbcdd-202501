@@ -105,23 +105,14 @@ graph LR
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff5555;">Motivação: quando o estranho importa</h2>
-          <ls-u>
-            <li>Compra muito fora do padrão no cartão de crédito.</li>
-            <li>Temperatura absurda em sensor industrial.</li>
-            <li>Login em horário e local incomum.</li>
-            <li>Paciente com exame muito diferente da população.</li>
-            <li>Máquina com vibração anormal antes de uma falha.</li>
-          </ls-u>
+          <h2 style="color: #ff5555;">Motivação: transações suspeitas</h2>
+          <p style="font-size: 24pt;">Transações de alto valor fora do horário comercial — são fraude ou comportamento legítimo?</p>
         </section>
 
         <section data-auto-animate>
-          <h2>O que é uma anomalia?</h2>
-          <highlight-box instant>
-            <p style="font-size: 28pt;">Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou evento raro.</p>
-          </highlight-box>
-          <p style="font-size: 24pt; margin-top: 25px;">
-            O algoritmo encontra candidatos; a interpretação depende do contexto.
+          <plotly-figure :traces="AULA13_MOTIVACAO_TRACES" :layout="AULA13_MOTIVACAO_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c; text-align: center;">
+            Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou evento raro.
           </p>
         </section>
 
@@ -206,40 +197,21 @@ graph LR
         </section>
 
         <section data-auto-animate>
-          <h2>Z-score</h2>
-          <p style="font-size: 24pt;">Quantos desvios-padrão um valor está distante da média?</p>
-          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 28pt; font-family: monospace; color: #8be9fd;">z = (x - média) / desvio_padrão</p>
-          </div>
-          <code-block lang="python">
-z = (x - x.mean()) / x.std()
-anomalias = abs(z) > 3
-          </code-block>
+          <h2>Z-score: histograma com limites</h2>
+          <plotly-figure :traces="AULA13_ZSCORE_TRACES" :layout="AULA13_ZSCORE_LAYOUT"></plotly-figure>
           <p class="fragment" style="font-size: 22pt; color: #ff5555;">
-            Limitações: sensível a distribuição assimétrica e outliers extremos. Melhor para dados aproximadamente normais.
+            Limitações: sensível a distribuição assimétrica e outliers extremos.
           </p>
         </section>
 
         <section data-auto-animate>
-          <h2>IQR e boxplot</h2>
-          <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
-            <p style="font-size: 22pt; font-family: monospace; color: #8be9fd;">IQR = Q3 - Q1</p>
-            <p style="font-size: 22pt; font-family: monospace; color: #ff79c6;">limite_inferior = Q1 - 1.5 × IQR</p>
-            <p style="font-size: 22pt; font-family: monospace; color: #50fa7b;">limite_superior = Q3 + 1.5 × IQR</p>
-          </div>
-          <code-block lang="python">
-q1 = dados["gasto_mensal"].quantile(0.25)
-q3 = dados["gasto_mensal"].quantile(0.75)
-iqr = q3 - q1
+          <h2>IQR: boxplot com outliers visíveis</h2>
+          <plotly-figure :traces="AULA13_BOXPLOT_TRACES" :layout="AULA13_BOXPLOT_LAYOUT"></plotly-figure>
+        </section>
 
-lim_inf = q1 - 1.5 * iqr
-lim_sup = q3 + 1.5 * iqr
-
-anomalias = dados[
-    (dados["gasto_mensal"] < lim_inf) |
-    (dados["gasto_mensal"] > lim_sup)
-]
-          </code-block>
+        <section data-auto-animate>
+          <h2>IQR: resultado no scatter plot</h2>
+          <plotly-figure :traces="AULA13_IQR_SCATTER_TRACES" :layout="AULA13_IQR_SCATTER_LAYOUT"></plotly-figure>
         </section>
 
       </section><!-- fim Métodos univariados -->
@@ -252,15 +224,10 @@ anomalias = dados[
         </section>
 
         <section data-auto-animate>
-          <h2>Exemplos de anomalias multivariadas</h2>
-          <ls-u>
-            <li>Cliente com gasto baixo, mas número enorme de compras.</li>
-            <li>Cliente com gasto alto, mas pouquíssimas compras.</li>
-            <li>Sensor com temperatura aceitável, mas pressão incompatível.</li>
-          </ls-u>
-          <highlight-box class="fragment" instant>
-            <p style="font-size: 26pt;">Algumas anomalias só aparecem quando olhamos várias variáveis ao mesmo tempo.</p>
-          </highlight-box>
+          <plotly-figure :traces="AULA13_MULTIVARIADO_TRACES" :layout="AULA13_MULTIVARIADO_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 24pt; color: #f1fa8c;">
+            O ponto amarelo tem gasto e compras dentro da faixa normal individualmente, mas a combinação é incomum.
+          </p>
         </section>
 
       </section><!-- fim Limitação univariados -->
@@ -269,43 +236,16 @@ anomalias = dados[
 
         <section data-auto-animate>
           <h2 style="color: #50fa7b;">DBSCAN como detector de anomalias</h2>
-          <p style="font-size: 26pt;">Continuação natural da aula anterior.</p>
-          <code-block lang="python">
-from sklearn.cluster import DBSCAN
-
-modelo = DBSCAN(eps=0.5, min_samples=5)
-labels = modelo.fit_predict(X)
-
-anomalias = labels == -1
-          </code-block>
-          <ls-u>
-            <li><code>-1</code> indica ruído.</li>
-            <li>Ruído pode ser interpretado como candidato a anomalia.</li>
-            <li>Depende muito de <code>eps</code> e <code>min_samples</code>.</li>
-          </ls-u>
+          <p style="font-size: 26pt;">Pontos em regiões de baixa densidade são marcados como ruído.</p>
         </section>
 
         <section data-auto-animate>
-          <h2>DBSCAN: vantagens e limitações</h2>
-          <multi-col style="gap: 25px;">
-            <div class="metric-card" style="border-left-color: #50fa7b;">
-              <h4 style="color: #50fa7b;">Vantagens</h4>
-              <ul>
-                <li>Detecta pontos fora de regiões densas.</li>
-                <li>Não exige número de clusters.</li>
-                <li>Detecta formas arbitrárias.</li>
-              </ul>
-            </div>
-            <div class="metric-card" style="border-left-color: #ff5555;">
-              <h4 style="color: #ff5555;">Limitações</h4>
-              <ul>
-                <li>Sensível a parâmetros.</li>
-                <li>Ruim com densidades muito diferentes.</li>
-                <li>Difícil em alta dimensionalidade.</li>
-                <li>Pode marcar minorias legítimas como ruído.</li>
-              </ul>
-            </div>
-          </multi-col>
+          <plotly-figure :traces="AULA13_DBSCAN_TRACES" :layout="AULA13_DBSCAN_LAYOUT"></plotly-figure>
+          <ls-u>
+            <li><code>-1</code> indica ruído — candidato a anomalia.</li>
+            <li>Depende de <code>eps</code> e <code>min_samples</code>.</li>
+            <li>Clusters coloridos + ruído em vermelho.</li>
+          </ls-u>
         </section>
 
       </section><!-- fim DBSCAN -->
@@ -317,27 +257,12 @@ anomalias = labels == -1
           <highlight-box instant>
             <p style="font-size: 28pt;">Pontos anômalos são mais fáceis de isolar com cortes aleatórios.</p>
           </highlight-box>
-          <div class="fragment" style="margin-top: 20px;">
-            <span class="step-pill">Ponto isolado → poucos cortes</span>
-            <span class="step-pill">Ponto normal → muitos cortes</span>
-          </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Isolation Forest: código</h2>
-          <code-block lang="python">
-from sklearn.ensemble import IsolationForest
-
-modelo = IsolationForest(
-    contamination=0.05,
-    random_state=42
-)
-
-pred = modelo.fit_predict(X)
-anomalias = pred == -1
-          </code-block>
+          <plotly-figure :traces="AULA13_ISOLATION_TRACES" :layout="AULA13_ISOLATION_LAYOUT"></plotly-figure>
           <p style="font-size: 22pt; color: #f1fa8c;">
-            <code>contamination</code> = proporção esperada de anomalias nos dados.
+            <code>contamination=0.05</code> → espera 5% de anomalias nos dados.
           </p>
         </section>
 
@@ -353,20 +278,9 @@ anomalias = pred == -1
         </section>
 
         <section data-auto-animate>
-          <h2>LOF: código</h2>
-          <code-block lang="python">
-from sklearn.neighbors import LocalOutlierFactor
-
-modelo = LocalOutlierFactor(
-    n_neighbors=20,
-    contamination=0.05
-)
-
-pred = modelo.fit_predict(X)
-anomalias = pred == -1
-          </code-block>
+          <plotly-figure :traces="AULA13_LOF_TRACES" :layout="AULA13_LOF_LAYOUT"></plotly-figure>
           <p class="fragment" style="font-size: 22pt; color: #8be9fd;">
-            DBSCAN cria clusters e marca ruído. LOF compara densidade local.
+            LOF compara densidade local; DBSCAN cria clusters e marca ruído.
           </p>
         </section>
 
@@ -375,19 +289,21 @@ anomalias = pred == -1
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Comparação dos métodos</h2>
-          <table>
-            <thead>
-              <tr><th>Método</th><th>Tipo</th><th>Ponto forte</th><th>Limitação</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Z-score</strong></td><td>univariado</td><td>simples</td><td>assume distribuição aproximadamente normal</td></tr>
-              <tr><td><strong>IQR</strong></td><td>univariado</td><td>robusto e visual</td><td>não captura relações entre variáveis</td></tr>
-              <tr><td><strong>DBSCAN</strong></td><td>densidade</td><td>detecta ruído e clusters arbitrários</td><td>sensível a parâmetros</td></tr>
-              <tr><td><strong>Isolation Forest</strong></td><td>isolamento</td><td>bom em dados multivariados</td><td>exige estimar contaminação</td></tr>
-              <tr><td><strong>LOF</strong></td><td>densidade local</td><td>detecta anomalias locais</td><td>sensível ao número de vizinhos</td></tr>
-            </tbody>
-          </table>
+          <h2 style="color: #8be9fd;">Comparação: quantas anomalias cada método encontrou?</h2>
+          <plotly-figure :traces="AULA13_COMPARACAO_TRACES" :layout="AULA13_COMPARACAO_LAYOUT"></plotly-figure>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comparação: recall — quantas anomalias reais foram capturadas?</h2>
+          <plotly-figure :traces="AULA13_RECALL_TRACES" :layout="AULA13_RECALL_LAYOUT"></plotly-figure>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Matriz de confusão: Isolation Forest</h2>
+          <plotly-figure :traces="AULA13_CONFUSION_TRACES" :layout="AULA13_CONFUSION_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            Falso positivo = marcou como anomalia, mas era normal. Falso negativo = deixou passar uma anomalia real.
+          </p>
         </section>
 
       </section><!-- fim Comparação -->
@@ -395,15 +311,7 @@ anomalias = pred == -1
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff5555;">Falso positivo e falso negativo</h2>
-          <ls-u>
-            <li><strong>Falso positivo:</strong> marcou como anomalia, mas era normal.</li>
-            <li><strong>Falso negativo:</strong> deixou passar uma anomalia real.</li>
-          </ls-u>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Custos diferentes por contexto</h2>
+          <h2 style="color: #ff5555;">Custos diferentes por contexto</h2>
           <table>
             <thead>
               <tr><th>Contexto</th><th>Falso positivo</th><th>Falso negativo</th></tr>
@@ -429,14 +337,8 @@ anomalias = pred == -1
         </section>
 
         <section data-auto-animate>
-          <h2>Dataset sintético</h2>
-          <ls-u>
-            <li><code>gasto_mensal</code>: valor médio gasto por mês.</li>
-            <li><code>numero_compras</code>: quantidade de compras no período.</li>
-          </ls-u>
-          <highlight-box instant>
-            <p style="font-size: 24pt;">Gerar dados normais, inserir pontos anômalos e aplicar múltiplos métodos.</p>
-          </highlight-box>
+          <h2>Dataset: visão geral</h2>
+          <plotly-figure :traces="AULA13_SCATTER_INITIAL_TRACES" :layout="AULA13_SCATTER_INITIAL_LAYOUT"></plotly-figure>
         </section>
 
         <section data-auto-animate>
@@ -460,12 +362,6 @@ anomalias = pd.DataFrame({
 })
 
 dados = pd.concat([normais, anomalias], ignore_index=True)
-
-plt.scatter(dados["gasto_mensal"], dados["numero_compras"])
-plt.xlabel("Gasto mensal")
-plt.ylabel("Número de compras")
-plt.title("Clientes: comportamento normal e anômalo")
-plt.show()
           </code-block>
         </section>
 
@@ -599,6 +495,8 @@ plt.show()
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="images/plotly/aula13_anomaly_detection_figures.js"></script>
   <script src="../dist/reveal.js"></script>
   <script src="../plugin/notes/notes.js"></script>
   <script src="../plugin/math/math.js"></script>
@@ -618,7 +516,39 @@ plt.show()
   <script src="../plugin/seminar/plugin.js"></script>
 
   <script>
+    var _createApp = Vue.createApp;
+    Vue.createApp = function(opts) {
+      var app = _createApp(opts);
+      Object.assign(app.config.globalProperties, {
+        AULA13_MOTIVACAO_TRACES: AULA13_MOTIVACAO_TRACES,
+        AULA13_MOTIVACAO_LAYOUT: AULA13_MOTIVACAO_LAYOUT,
+        AULA13_SCATTER_INITIAL_TRACES: AULA13_SCATTER_INITIAL_TRACES,
+        AULA13_SCATTER_INITIAL_LAYOUT: AULA13_SCATTER_INITIAL_LAYOUT,
+        AULA13_ZSCORE_TRACES: AULA13_ZSCORE_TRACES,
+        AULA13_ZSCORE_LAYOUT: AULA13_ZSCORE_LAYOUT,
+        AULA13_BOXPLOT_TRACES: AULA13_BOXPLOT_TRACES,
+        AULA13_BOXPLOT_LAYOUT: AULA13_BOXPLOT_LAYOUT,
+        AULA13_IQR_SCATTER_TRACES: AULA13_IQR_SCATTER_TRACES,
+        AULA13_IQR_SCATTER_LAYOUT: AULA13_IQR_SCATTER_LAYOUT,
+        AULA13_MULTIVARIADO_TRACES: AULA13_MULTIVARIADO_TRACES,
+        AULA13_MULTIVARIADO_LAYOUT: AULA13_MULTIVARIADO_LAYOUT,
+        AULA13_DBSCAN_TRACES: AULA13_DBSCAN_TRACES,
+        AULA13_DBSCAN_LAYOUT: AULA13_DBSCAN_LAYOUT,
+        AULA13_ISOLATION_TRACES: AULA13_ISOLATION_TRACES,
+        AULA13_ISOLATION_LAYOUT: AULA13_ISOLATION_LAYOUT,
+        AULA13_LOF_TRACES: AULA13_LOF_TRACES,
+        AULA13_LOF_LAYOUT: AULA13_LOF_LAYOUT,
+        AULA13_COMPARACAO_TRACES: AULA13_COMPARACAO_TRACES,
+        AULA13_COMPARACAO_LAYOUT: AULA13_COMPARACAO_LAYOUT,
+        AULA13_RECALL_TRACES: AULA13_RECALL_TRACES,
+        AULA13_RECALL_LAYOUT: AULA13_RECALL_LAYOUT,
+        AULA13_CONFUSION_TRACES: AULA13_CONFUSION_TRACES,
+        AULA13_CONFUSION_LAYOUT: AULA13_CONFUSION_LAYOUT,
+      });
+      return app;
+    };
     window.app = mountSlideApp();
+    Vue.createApp = _createApp;
   </script>
 
 </body>
