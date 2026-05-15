@@ -160,8 +160,13 @@ graph LR
 z = (x - x.mean()) / x.std()
 anomalias = abs(z) > 3
         </code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Z-score: visualizando a distribuição</h2>
+        <plotly-figure :traces="AULA13_ZSCORE_DIST_TRACES" :layout="AULA13_ZSCORE_DIST_LAYOUT"></plotly-figure>
         <p class="fragment" style="font-size: 22pt; color: #ff5555;">
-          Limitações: sensível a distribuição assimétrica, sensível a outliers extremos. Melhor para dados aproximadamente normais.
+          Regiões vermelhas: \(|z| > 3\) — menos de 0,3% dos dados em distribuição normal.
         </p>
       </section>
 
@@ -186,6 +191,14 @@ anomalias = dados[
     (dados["gasto_mensal"] > lim_sup)
 ]
         </code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>IQR: quartis e limites visualizados</h2>
+        <plotly-figure :traces="AULA13_IQR_VIZ_TRACES" :layout="AULA13_IQR_VIZ_LAYOUT"></plotly-figure>
+        <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+          Roxo = IQR, vermelho = limites de detecção, X = outliers.
+        </p>
       </section>
 
       <!-- SLIDE 9: Limitação dos métodos univariados -->
@@ -259,13 +272,19 @@ anomalias = labels == -1
         </section>
 
         <section data-auto-animate>
-          <h2>Isolation Tree (iTree)</h2>
-          <ls-u>
-            <li>Cada árvore usa uma <strong>subamostra aleatória</strong> dos dados.</li>
-            <li>Em cada nó: escolhe variável aleatória \(X_j\) e ponto de corte \(p\) entre \(\min(X_j)\) e \(\max(X_j)\).</li>
-            <li>Se \(x_j < p\) → subárvore esquerda; senão → direita.</li>
-            <li>Repete até o ponto ficar isolado (folha) ou atingir altura máxima.</li>
-          </ls-u>
+          <h2>Isolation Forest: cortes aleatórios na prática</h2>
+          <plotly-figure :traces="AULA13_ISO_CUTS_TRACES" :layout="AULA13_ISO_CUTS_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            O ponto vermelho no canto é isolado em apenas 2 cortes. Os pontos azuis no centro precisam de muito mais.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Isolation Tree: estrutura da árvore</h2>
+          <plotly-figure :traces="AULA13_ISO_TREE_TRACES" :layout="AULA13_ISO_TREE_LAYOUT"></plotly-figure>
+          <p style="font-size: 22pt; color: #8be9fd;">
+            Folha rasa (h=2) = ponto isolado rápido = anômalo. Folha profunda (h=3+) = ponto normal.
+          </p>
         </section>
 
         <section data-auto-animate>
@@ -275,7 +294,7 @@ anomalias = labels == -1
             <p style="font-size: 26pt; color: #f1fa8c;">\(E(h(x)) = \frac{1}{t} \sum_{i=1}^{t} h_i(x)\)</p>
           </div>
           <p style="font-size: 22pt; color: #8be9fd;">
-            O fator de normalização \(c(n) = 2H(n-1) - \frac{2(n-1)}{n}\) ajusta pelo tamanho da subamostra, onde \(H(i) \approx \ln(i) + \gamma\).
+            O fator de normalização \(c(n) = 2H(n-1) - \frac{2(n-1)}{n}\) ajusta pelo tamanho da subamostra.
           </p>
         </section>
 
@@ -297,6 +316,14 @@ anomalias = labels == -1
         </section>
 
         <section data-auto-animate>
+          <h2>Isolation Forest: distribuição dos scores</h2>
+          <plotly-figure :traces="AULA13_ISO_SCORES_TRACES" :layout="AULA13_ISO_SCORES_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            Anomalias reais (vermelho) concentram nos scores mais altos. A linha amarela é o threshold.
+          </p>
+        </section>
+
+        <section data-auto-animate>
           <h2>Passo a passo do Isolation Forest</h2>
           <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
             <ls-u>
@@ -304,7 +331,7 @@ anomalias = labels == -1
               <li><strong>2.</strong> Construir \(t\) iTrees com subamostras aleatórias.</li>
               <li><strong>3.</strong> Para cada ponto \(x\): calcular \(h_i(x)\) em cada árvore.</li>
               <li><strong>4.</strong> Calcular \(E(h(x))\) e depois \(s(x, n) = 2^{-E(h(x))/c(n)}\).</li>
-              <li><strong>5.</strong> Classificar como anomalia se \(s(x, n) > \tau\) (típico: \(\tau = 0{,}5\)).</li>
+              <li><strong>5.</strong> Classificar como anomalia se \(s(x, n) > \tau\).</li>
             </ls-u>
           </div>
         </section>
@@ -340,6 +367,22 @@ anomalias = pred == -1
         </section>
 
         <section data-auto-animate>
+          <h2>LOF: k-vizinhos mais próximos</h2>
+          <plotly-figure :traces="AULA13_LOF_NEIGHBORS_TRACES" :layout="AULA13_LOF_NEIGHBORS_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            O ponto vermelho (p) está na região esparsa. Seus k=5 vizinhos estão todos longe → k-distância grande.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: comparando densidade local</h2>
+          <plotly-figure :traces="AULA13_LOF_DENSITY_TRACES" :layout="AULA13_LOF_DENSITY_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            O ponto vermelho está entre duas regiões: menos denso que os vizinhos da região densa → LOF alto.
+          </p>
+        </section>
+
+        <section data-auto-animate>
           <h2>LOF: densidade local</h2>
           <p style="font-size: 24pt;">Para cada ponto \(p\), encontra-se os \(k\) vizinhos mais próximos \(N_k(p)\):</p>
           <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
@@ -348,9 +391,6 @@ anomalias = pred == -1
           <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
             <p style="font-size: 22pt; color: #bd93f9;">\(\text{LRD}_k(p) = \frac{|N_k(p)|}{\sum_{o \in N_k(p)} \text{reach-dist}_k(p, o)}\)</p>
           </div>
-          <p style="font-size: 22pt; color: #8be9fd;">
-            LRD alto → região densa. LRD baixo → região esparsa.
-          </p>
         </section>
 
         <section data-auto-animate>
@@ -368,6 +408,14 @@ anomalias = pred == -1
               <tr><td>\(\text{LOF} < 1\)</td><td>região mais densa → ponto interno ao cluster</td></tr>
             </tbody>
           </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: distribuição dos scores</h2>
+          <plotly-figure :traces="AULA13_LOF_SCORES_TRACES" :layout="AULA13_LOF_SCORES_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            LOF ≈ 1 = normal. LOF > 1 = anômalo. A linha amarela marca LOF = 1.
+          </p>
         </section>
 
         <section data-auto-animate>
@@ -555,6 +603,7 @@ plt.show()
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
   <script src="images/plotly/aula13_anomaly_detection_figures.js"></script>
+  <script src="images/plotly/aula13_algo_illustrations.js"></script>
   <script src="../dist/reveal.js"></script>
   <script src="../plugin/notes/notes.js"></script>
   <script src="../plugin/math/math.js"></script>
@@ -584,18 +633,34 @@ plt.show()
         AULA13_SCATTER_INITIAL_LAYOUT: AULA13_SCATTER_INITIAL_LAYOUT,
         AULA13_ZSCORE_TRACES: AULA13_ZSCORE_TRACES,
         AULA13_ZSCORE_LAYOUT: AULA13_ZSCORE_LAYOUT,
+        AULA13_ZSCORE_DIST_TRACES: AULA13_ZSCORE_DIST_TRACES,
+        AULA13_ZSCORE_DIST_LAYOUT: AULA13_ZSCORE_DIST_LAYOUT,
         AULA13_BOXPLOT_TRACES: AULA13_BOXPLOT_TRACES,
         AULA13_BOXPLOT_LAYOUT: AULA13_BOXPLOT_LAYOUT,
         AULA13_IQR_SCATTER_TRACES: AULA13_IQR_SCATTER_TRACES,
         AULA13_IQR_SCATTER_LAYOUT: AULA13_IQR_SCATTER_LAYOUT,
+        AULA13_IQR_VIZ_TRACES: AULA13_IQR_VIZ_TRACES,
+        AULA13_IQR_VIZ_LAYOUT: AULA13_IQR_VIZ_LAYOUT,
         AULA13_MULTIVARIADO_TRACES: AULA13_MULTIVARIADO_TRACES,
         AULA13_MULTIVARIADO_LAYOUT: AULA13_MULTIVARIADO_LAYOUT,
         AULA13_DBSCAN_TRACES: AULA13_DBSCAN_TRACES,
         AULA13_DBSCAN_LAYOUT: AULA13_DBSCAN_LAYOUT,
         AULA13_ISOLATION_TRACES: AULA13_ISOLATION_TRACES,
         AULA13_ISOLATION_LAYOUT: AULA13_ISOLATION_LAYOUT,
+        AULA13_ISO_CUTS_TRACES: AULA13_ISO_CUTS_TRACES,
+        AULA13_ISO_CUTS_LAYOUT: AULA13_ISO_CUTS_LAYOUT,
+        AULA13_ISO_TREE_TRACES: AULA13_ISO_TREE_TRACES,
+        AULA13_ISO_TREE_LAYOUT: AULA13_ISO_TREE_LAYOUT,
+        AULA13_ISO_SCORES_TRACES: AULA13_ISO_SCORES_TRACES,
+        AULA13_ISO_SCORES_LAYOUT: AULA13_ISO_SCORES_LAYOUT,
         AULA13_LOF_TRACES: AULA13_LOF_TRACES,
         AULA13_LOF_LAYOUT: AULA13_LOF_LAYOUT,
+        AULA13_LOF_NEIGHBORS_TRACES: AULA13_LOF_NEIGHBORS_TRACES,
+        AULA13_LOF_NEIGHBORS_LAYOUT: AULA13_LOF_NEIGHBORS_LAYOUT,
+        AULA13_LOF_DENSITY_TRACES: AULA13_LOF_DENSITY_TRACES,
+        AULA13_LOF_DENSITY_LAYOUT: AULA13_LOF_DENSITY_LAYOUT,
+        AULA13_LOF_SCORES_TRACES: AULA13_LOF_SCORES_TRACES,
+        AULA13_LOF_SCORES_LAYOUT: AULA13_LOF_SCORES_LAYOUT,
         AULA13_COMPARACAO_TRACES: AULA13_COMPARACAO_TRACES,
         AULA13_COMPARACAO_LAYOUT: AULA13_COMPARACAO_LAYOUT,
         AULA13_RECALL_TRACES: AULA13_RECALL_TRACES,
