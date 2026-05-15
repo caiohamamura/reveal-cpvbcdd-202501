@@ -70,4 +70,38 @@ python3 .opencode/skills/run-notebook/run_notebook.py \
 
 # 2. Check for errors
 # The script exits non-zero if any cell fails, outputs error report
+
+## Gotchas & Tips
+
+### sklearn dataset conventions
+- `load_breast_cancer()`: `target=0` = malignant, `target=1` = benign (counterintuitive — 0 is the "abnormal" class). Always verify with `data.target_names`.
+- When mapping to anomaly detection where `anomalia_real=1` means anomaly, use `1 - y` to flip.
+
+### Replacing synthetic 2D data with real high-dimensional data
+- Use PCA (`sklearn.decomposition.PCA(n_components=2)`) to reduce real datasets to 2D for visualization.
+- Standardize with `StandardScaler` **before** PCA (PCA is sensitive to scale).
+- Store explained variance ratio to inform students: `pca.explained_variance_ratio_.sum()`.
+
+### Before re-executing a notebook
+- Clear old outputs and execution counts via Python script (JSON manipulation) to avoid stale image data confusing students.
+- Verify required packages are installed (plotly, scikit-learn, numpy, pandas).
+
+### Editing .ipynb JSON with the edit tool
+- **WARNING**: The `edit` tool can consume adjacent cells when oldString spans `"source"` through `"outputs"` blocks. The truncated base64 display (`"... (line truncated ...)"`) in `read` output does NOT match the actual file. Always re-read the JSON after editing to verify cell boundaries.
+- Each string in a `"source"` array must end with `\n",` (including the last element — no trailing comma on the final `]`).
+- When in doubt, rewrite the entire notebook via Python script instead of using multiple `edit` calls.
+
+### Plotly in notebooks (replacing matplotlib)
+- Use `plotly.express` for simple scatter plots, `plotly.graph_objects` for complex multi-panel layouts.
+- Dracula theme: `template='plotly_dark'` + override `paper_bgcolor`, `plot_bgcolor`, `font`, `gridcolor`.
+- `make_subplots(rows, cols, vertical_spacing=N)` controls gap between rows — prevents title/x-label overlap.
+- Plotly outputs are JSON blobs that inflate file size; clear them between runs.
+- `go.Box`: requires `fillcolor` for box fill, `line_color` for border, `marker_color` for outliers.
+- `LocalOutlierFactor` with `novelty=True` enables separate `fit()`/`predict()` for training on normal data only.
+- `cohen_kappa_score` from sklearn: Kappa=0 means chance-level agreement (useful to expose useless classifiers).
+
+### Anomaly detection pedagogy patterns
+- Fit `StandardScaler` and `PCA` **only on benign/normal data** for realistic anomaly detection.
+- Train `IsolationForest` and `LOF(novelty=True)` on benign-only; predict on all data.
+- Compare TP/FP/FN/TN + F1 + Kappa — never rely on recall alone (DBSCAN marking all as anomaly gives 100% recall but Kappa=0).
 ```

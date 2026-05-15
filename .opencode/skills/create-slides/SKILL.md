@@ -571,6 +571,9 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - Best sources: Instructables project pages, Hackster.io project pages, personal tech blogs with build photos.
 - Use `site:` search queries on educational/DIY sites, then run `extract_images.py` on the most promising URLs.
 
+#### Follow instruction documents exactly
+When the user provides a detailed slide-by-slide instructions document (e.g., `instrucoes-codex-aula-XX.md`), **follow the proposed structure exactly** — do not improvise, add extra slides, remove proposed slides, or change the content flow. Treat the document as a specification, not a suggestion. Verify each slide against the proposed structure as you build.
+
 #### Checklist verification script for slide creation
 After generating slides, run a quick script to verify all requirements from the instructions document are met:
 ```python
@@ -633,6 +636,42 @@ z = (x - x.mean()) / x.std()
 </code-block>
 ```
 For C/C++/Arduino code with `#include <Arduino.h>`, **always** use `<script type="text/plain">` to prevent HTML parser mangling.
+
+#### Two-notebook pattern for data science slides
+Separate figure generation from student exercises:
+- **Figure gen notebook** (`aula13-gerar-figuras.ipynb`): generates all Plotly figures, exports to JS. Not for students.
+- **Hands-on notebook** (`aula13-deteccao-anomalias.ipynb`): student-facing, with exercises, discussion, and code to fill in.
+This keeps the slide figures stable while allowing the hands-on notebook to evolve independently.
+
+#### Plotly CDN required for `<plotly-figure>` component
+When using `<plotly-figure>` in slides, you **must** include the Plotly CDN script before `reveal.js`:
+```html
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+```
+The `plotlyFigureComponent` has a guard (`typeof Plotly === 'undefined'`) so the deck won't crash without it, but charts won't render.
+
+#### Figure naming convention for exports
+Use `AULA{N}_{DESCRIPTIVE_NAME}` for exported figure constants:
+```python
+figures = {
+    'AULA13_MOTIVACAO': fig_motivacao,
+    'AULA13_DBSCAN': fig_dbscan,
+    'AULA13_COMPARACAO': fig_comparacao,
+}
+```
+This avoids collisions when multiple decks share the same `images/plotly/` directory.
+
+#### `clean_none` is mandatory for Plotly 6.x exports
+Plotly 6.x `fig.to_dict()` includes `None` values that break JavaScript when embedded. Always apply a recursive `clean_none` before `json.dumps`:
+```python
+def clean_none(obj):
+    if isinstance(obj, dict):
+        return {k: clean_none(v) for k, v in obj.items() if v is not None}
+    if isinstance(obj, list):
+        return [clean_none(v) for v in obj]
+    return obj
+```
+Without this, the JS file will contain `null` values that cause `ReferenceError` or silent render failures.
 
 ---
 # IMPORTANT!!!!!

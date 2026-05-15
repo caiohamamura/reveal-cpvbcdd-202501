@@ -5,11 +5,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <title>Ciência de Dados - Detecção de Anomalias</title>
+  <title>Ciência de Dados - Detecção de Anomalias (Novelty Detection)</title>
 
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
-  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />''
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
   <link rel="stylesheet" href="../plugin/poll/style.css" />
@@ -54,13 +54,17 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="13" curso="Ciência de Dados" title-size="24"
-                 title="Detecção de Anomalias: quando o ponto estranho é o mais importante">
-          <div class="mermaid" data-id="cover-anomaly-flow" style="width:520px">
+        <header1 aula="13" curso="Ciência de Dados" title-size="30"
+                 title="Detecção de Anomalias (<span style='font-style: italic;'>Novelty Detection</span>): quando o ponto estranho é o mais importante">
+          <div class="mermaid" data-id="cover-anomaly-flow" style="width:420px;transform:scale(1.85); transform-origin:left;">
             <pre>
+---
+config:
+  theme: dark
+---
 graph LR
-  A["Dados"] --> B["Padrão normal"]
-  B --> C["Pontos estranhos"]
+  A["Dados"] --> B["Padrão&lt;br&gt;normal"]
+  B --> C["Pontos&lt;br&gt;estranhos"]
   C --> D["Investigação"]
   style A fill:#44475a,color:#f8f8f2
   style B fill:#8be9fd,color:#282a36
@@ -90,10 +94,9 @@ graph LR
         <h2>Motivação: quando o estranho importa</h2>
         <ls-u>
           <li>Compra muito fora do padrão no cartão de crédito.</li>
-          <li>Temperatura absurda em sensor industrial.</li>
           <li>Login em horário e local incomum.</li>
           <li>Paciente com exame muito diferente da população.</li>
-          <li>Máquina com vibração anormal antes de uma falha.</li>
+          <li>Máquina com comportamento anormal antes de uma falha.</li>
         </ls-u>
         <highlight-box class="fragment" instant>
           <p style="font-size: 26pt;">Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou evento raro.</p>
