@@ -253,10 +253,89 @@ graph LR
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #bd93f9;">Isolation Forest</h2>
+          <h2 style="color: #bd93f9;">Isolation Forest — intuição</h2>
           <highlight-box instant>
             <p style="font-size: 28pt;">Pontos anômalos são mais fáceis de isolar com cortes aleatórios.</p>
           </highlight-box>
+          <div class="fragment" style="margin-top: 20px;">
+            <span class="step-pill">Ponto isolado → poucos cortes</span>
+            <span class="step-pill">Ponto normal → muitos cortes</span>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Isolation Tree (iTree)</h2>
+          <ls-u>
+            <li>Cada árvore é construída com uma <strong>amostra aleatória</strong> dos dados (subamostragem).</li>
+            <li>Em cada nó, escolhe-se uma <strong>variável aleatória</strong> \(X_j\) e um <strong>ponto de corte aleatório</strong> \(p\) entre \(\min(X_j)\) e \(\max(X_j)\).</li>
+            <li>Se \(x_{j} < p\) → vai para a subárvore esquerda; senão → direita.</li>
+            <li>O processo repete até o ponto ficar isolado (folha) ou atingir a altura máxima.</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comprimento do caminho \(h(x)\)</h2>
+          <p style="font-size: 24pt;">Para cada ponto \(x\), medimos quantos cortes foram necessários para isolá-lo em uma árvore:</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 26pt; color: #8be9fd;">\(h(x)\) = número de arestas da raiz até a folha que contém \(x\)</p>
+          </div>
+          <ls-u>
+            <li>Anomalias → \(h(x)\) <strong>pequeno</strong> (poucos cortes).</li>
+            <li>Pontos normais → \(h(x)\) <strong>grande</strong> (muitos cortes).</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Esperança do caminho \(E(h(x))\)</h2>
+          <p style="font-size: 24pt;">Como uma única árvore é ruidosa, usamos a média sobre \(t\) árvores:</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 26pt; color: #f1fa8c;">\(E(h(x)) = \frac{1}{t} \sum_{i=1}^{t} h_i(x)\)</p>
+          </div>
+          <p style="font-size: 22pt; color: #8be9fd;">
+            onde \(h_i(x)\) é o comprimento do caminho de \(x\) na árvore \(i\).
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Fator de normalização \(c(n)\)</h2>
+          <p style="font-size: 24pt;">O caminho esperado depende do tamanho da subamostra \(n\). Para busca binária aleatória:</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 24pt; color: #ff79c6;">\(c(n) = 2H(n-1) - \frac{2(n-1)}{n}\)</p>
+          </div>
+          <p style="font-size: 22pt; color: #8be9fd;">
+            onde \(H(i) \approx \ln(i) + \gamma\) é o \(i\)-ésimo número harmônico e \(\gamma \approx 0,57721\) é a constante de Euler-Mascheroni.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Score de anomalia \(s(x, n)\)</h2>
+          <div style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
+            <p style="font-size: 28pt; color: #ff5555;">\(s(x, n) = 2^{\large -\frac{E(h(x))}{c(n)}}\)</p>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Condição</th><th>Interpretação</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>\(s(x, n) \to 1\)</td><td>ponto é <strong>anômalo</strong> (\(E(h(x)) \ll c(n)\))</td></tr>
+              <tr><td>\(s(x, n) \approx 0,5\)</td><td>ponto é <strong>normal</strong> (\(E(h(x)) \approx c(n)\))</td></tr>
+              <tr><td>\(s(x, n) \to 0\)</td><td>ponto é <strong>muito normal</strong> (\(E(h(x)) \gg c(n)\))</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Passo a passo do algoritmo</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+            <ls-u>
+              <li><strong>1.</strong> Subamostrar: escolher \(\psi\) pontos aleatórios (típico: \(\psi = 256\)).</li>
+              <li><strong>2.</strong> Para cada árvore \(i = 1 \ldots t\): construir iTree com a subamostra.</li>
+              <li><strong>3.</strong> Para cada ponto \(x\): calcular \(h_i(x)\) em cada árvore.</li>
+              <li><strong>4.</strong> Calcular \(E(h(x)) = \frac{1}{t}\sum h_i(x)\).</li>
+              <li><strong>5.</strong> Calcular \(s(x, n) = 2^{-E(h(x))/c(n)}\).</li>
+              <li><strong>6.</strong> Classificar como anomalia se \(s(x, n) > \tau\) (típico: \(\tau = 0,5\)).</li>
+            </ls-u>
+          </div>
         </section>
 
         <section data-auto-animate>
@@ -271,10 +350,100 @@ graph LR
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #f1fa8c;">Local Outlier Factor (LOF)</h2>
+          <h2 style="color: #f1fa8c;">Local Outlier Factor (LOF) — intuição</h2>
           <highlight-box instant>
             <p style="font-size: 28pt;">Um ponto é suspeito se está em uma região muito menos densa que seus vizinhos.</p>
           </highlight-box>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: \(k\)-distância e vizinhança</h2>
+          <p style="font-size: 24pt;">Para cada ponto \(p\), definimos:</p>
+          <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
+            <p style="font-size: 24pt; color: #8be9fd;">\(k\text{-distância}(p)\) = distância ao \(k\)-ésimo vizinho mais próximo</p>
+          </div>
+          <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
+            <p style="font-size: 24pt; color: #ff79c6;">\(N_k(p)\) = conjunto dos \(k\) vizinhos mais próximos de \(p\)</p>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">
+            Todos os pontos \(o\) com \(d(p, o) \leq k\text{-distância}(p)\) pertencem a \(N_k(p)\).
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: distância de reachabilidade</h2>
+          <p style="font-size: 24pt;">A reachability distance de \(p\) em relação a \(o\) é:</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 26pt; color: #50fa7b;">\(\text{reach-dist}_k(p, o) = \max\bigl\{k\text{-distância}(o),\; d(p, o)\bigr\}\)</p>
+          </div>
+          <p style="font-size: 22pt; color: #8be9fd;">
+            Isso suaviza as distâncias: pontos muito próximos de \(o\) herdam a \(k\)-distância de \(o\), evitando variações extremas.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: densidade de reachabilidade local</h2>
+          <p style="font-size: 24pt;">A densidade local de \(p\) é o inverso da média das reachability distances:</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 26pt; color: #bd93f9;">\(\text{LRD}_k(p) = \frac{|N_k(p)|}{\sum_{o \in N_k(p)} \text{reach-dist}_k(p, o)}\)</p>
+          </div>
+          <ls-u>
+            <li><strong>LRD alto</strong> → \(p\) está em região densa.</li>
+            <li><strong>LRD baixo</strong> → \(p\) está em região esparsa.</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: fator de outlier local</h2>
+          <div style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
+            <p style="font-size: 26pt; color: #ff5555;">\(\text{LOF}_k(p) = \frac{\sum_{o \in N_k(p)} \text{LRD}_k(o)}{|N_k(p)| \cdot \text{LRD}_k(p)}\)</p>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Valor de LOF</th><th>Interpretação</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>\(\text{LOF}_k(p) \approx 1\)</td><td>\(p\) tem densidade similar aos vizinhos → <strong>normal</strong></td></tr>
+              <tr><td>\(\text{LOF}_k(p) > 1\)</td><td>\(p\) está em região <strong>menos densa</strong> → <strong>candidato a outlier</strong></td></tr>
+              <tr><td>\(\text{LOF}_k(p) < 1\)</td><td>\(p\) está em região <strong>mais densa</strong> → ponto interno ao cluster</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF: passo a passo do algoritmo</h2>
+          <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
+            <ls-u>
+              <li><strong>1.</strong> Para cada ponto \(p\): encontrar \(N_k(p)\) (k vizinhos mais próximos).</li>
+              <li><strong>2.</strong> Calcular \(k\text{-distância}(p)\) para todo \(p\).</li>
+              <li><strong>3.</strong> Calcular \(\text{reach-dist}_k(p, o)\) para todo par \((p, o)\) onde \(o \in N_k(p)\).</li>
+              <li><strong>4.</strong> Calcular \(\text{LRD}_k(p)\) para todo \(p\).</li>
+              <li><strong>5.</strong> Calcular \(\text{LOF}_k(p)\) para todo \(p\).</li>
+              <li><strong>6.</strong> Classificar como anomalia se \(\text{LOF}_k(p) > \tau\) (típico: \(\tau \approx 1,5\) a \(2\)).</li>
+            </ls-u>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>LOF vs DBSCAN</h2>
+          <multi-col style="gap: 25px;">
+            <div class="metric-card" style="border-left-color: #8be9fd;">
+              <h4 style="color: #8be9fd;">DBSCAN</h4>
+              <ul>
+                <li>Cria clusters por densidade.</li>
+                <li>Ruído = pontos fora de regiões densas.</li>
+                <li>Binário: pertence ou não a um cluster.</li>
+              </ul>
+            </div>
+            <div class="metric-card" style="border-left-color: #f1fa8c;">
+              <h4 style="color: #f1fa8c;">LOF</h4>
+              <ul>
+                <li>Compara densidade local entre vizinhos.</li>
+                <li>Score contínuo: quanto maior, mais anômalo.</li>
+                <li>Detecta anomalias <em>dentro</em> de clusters.</li>
+              </ul>
+            </div>
+          </multi-col>
         </section>
 
         <section data-auto-animate>
