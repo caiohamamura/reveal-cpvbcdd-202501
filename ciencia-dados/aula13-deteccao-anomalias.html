@@ -52,6 +52,7 @@
   <div id="app" class="reveal">
     <div class="slides">
 
+      <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
         <header1 aula="13" curso="Ciência de Dados" title-size="24"
                  title="Detecção de Anomalias: quando o ponto estranho é o mais importante">
@@ -70,186 +71,180 @@ graph LR
         </header1>
       </section>
 
+      <!-- SLIDE 2: Revisão -->
       <section data-auto-animate>
-        <h2>Revisão: o que o DBSCAN já ensinou</h2>
-        <multi-col style="gap: 20px;">
-          <div class="metric-card" style="border-left-color: #ff79c6;">
-            <h4 style="color: #ff79c6;">K-Means</h4>
-            <p>Agrupa por centroides — todo ponto pertence a algum grupo.</p>
-          </div>
-          <div class="metric-card" style="border-left-color: #bd93f9;">
-            <h4 style="color: #bd93f9;">Hierárquico</h4>
-            <p>Mostra estrutura por dendrograma — cortes definem grupos.</p>
-          </div>
-          <div class="metric-card" style="border-left-color: #50fa7b;">
-            <h4 style="color: #50fa7b;">DBSCAN</h4>
-            <p>Agrupa por densidade — e marca alguns pontos como ruído (label = -1).</p>
-          </div>
-        </multi-col>
+        <h2>Revisão: o que a aula anterior ensinou</h2>
+        <ls-u>
+          <li>K-Means agrupa por centroides.</li>
+          <li>Clustering hierárquico mostra estrutura por dendrograma.</li>
+          <li>DBSCAN agrupa por densidade.</li>
+          <li>DBSCAN marca alguns pontos como ruído (<code>label = -1</code>).</li>
+        </ls-u>
         <p class="fragment" style="font-size: 26pt; color: #f1fa8c; margin-top: 30px;">
           Esses pontos de ruído são lixo... ou podem ser os casos mais importantes?
         </p>
       </section>
 
+      <!-- SLIDE 3: Motivação -->
       <section data-auto-animate>
-        <h2>Objetivos da aula</h2>
+        <h2>Motivação: quando o estranho importa</h2>
         <ls-u>
-          <li>Diferenciar outlier, ruído, anomalia e erro.</li>
-          <li>Aplicar métodos univariados: Z-score e IQR.</li>
-          <li>Entender métodos multivariados: DBSCAN, Isolation Forest e LOF.</li>
-          <li>Comparar resultados e discutir falsos positivos e falsos negativos.</li>
-          <li>Praticar com dados sintéticos e interpretar os candidatos a anomalia.</li>
+          <li>Compra muito fora do padrão no cartão de crédito.</li>
+          <li>Temperatura absurda em sensor industrial.</li>
+          <li>Login em horário e local incomum.</li>
+          <li>Paciente com exame muito diferente da população.</li>
+          <li>Máquina com vibração anormal antes de uma falha.</li>
+        </ls-u>
+        <highlight-box class="fragment" instant>
+          <p style="font-size: 26pt;">Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou evento raro.</p>
+        </highlight-box>
+      </section>
+
+      <!-- SLIDE 4: Outlier, ruído e anomalia -->
+      <section data-auto-animate>
+        <h2>Outlier, ruído, anomalia e erro</h2>
+        <table>
+          <thead>
+            <tr><th>Conceito</th><th>Definição</th><th>Exemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Outlier</strong></td><td>Ponto estatisticamente distante</td><td>renda muito alta</td></tr>
+            <tr><td><strong>Ruído</strong></td><td>Ponto que não se encaixa no padrão do algoritmo</td><td><code>label = -1</code> no DBSCAN</td></tr>
+            <tr><td><strong>Anomalia</strong></td><td>Ponto incomum com significado prático</td><td>transação suspeita</td></tr>
+            <tr><td><strong>Erro</strong></td><td>Valor inválido ou falha de registro</td><td>idade = 300</td></tr>
+          </tbody>
+        </table>
+        <highlight-box class="fragment" instant>
+          <p style="font-size: 26pt;">Todo erro pode parecer anomalia, mas nem toda anomalia é erro.</p>
+        </highlight-box>
+      </section>
+
+      <!-- SLIDE 5: Problema central -->
+      <section data-auto-animate>
+        <h2>Problema central</h2>
+        <p style="font-size: 32pt; color: #ff5555; text-align: center;">Como saber se um ponto é estranho?</p>
+        <p style="font-size: 24pt; margin-top: 20px;">Depende de:</p>
+        <ls-u>
+          <li><strong>Contexto</strong> — o que é "normal" neste domínio?</li>
+          <li><strong>Distribuição dos dados</strong> — simétrica, assimétrica, multimodal?</li>
+          <li><strong>Relação entre variáveis</strong> — combinações inesperadas.</li>
+          <li><strong>Custo do erro</strong> — falso positivo ou falso negativo?</li>
+          <li><strong>Objetivo</strong> — detecção, investigação ou limpeza?</li>
+        </ls-u>
+        <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 15px;">
+          Gastar R$ 2.000 pode ser normal para um cliente e anômalo para outro.
+        </p>
+      </section>
+
+      <!-- SLIDE 6: Métodos univariados -->
+      <section data-auto-animate>
+        <h2>Métodos univariados</h2>
+        <ls-u>
+          <li><strong>Z-score:</strong> quantos desvios-padrão um valor está da média?</li>
+          <li><strong>IQR:</strong> intervalo interquartil — base do boxplot.</li>
+          <li><strong>Boxplot:</strong> visualização com limites estatísticos.</li>
+        </ls-u>
+        <highlight-box class="fragment" instant>
+          <p style="font-size: 24pt;">Métodos univariados são simples e úteis, mas não capturam relações entre variáveis.</p>
+        </highlight-box>
+      </section>
+
+      <!-- SLIDE 7: Z-score -->
+      <section data-auto-animate>
+        <h2>Z-score</h2>
+        <p style="font-size: 24pt;">Quantos desvios-padrão um valor está distante da média?</p>
+        <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+          <p style="font-size: 28pt; color: #8be9fd;">\(z = \frac{x - \bar{x}}{s}\)</p>
+        </div>
+        <code-block lang="python">
+z = (x - x.mean()) / x.std()
+anomalias = abs(z) > 3
+        </code-block>
+        <p class="fragment" style="font-size: 22pt; color: #ff5555;">
+          Limitações: sensível a distribuição assimétrica, sensível a outliers extremos. Melhor para dados aproximadamente normais.
+        </p>
+      </section>
+
+      <!-- SLIDE 8: IQR e boxplot -->
+      <section data-auto-animate>
+        <h2>IQR e boxplot</h2>
+        <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
+          <p style="font-size: 22pt; color: #8be9fd;">\(IQR = Q_3 - Q_1\)</p>
+          <p style="font-size: 22pt; color: #ff79c6;">\(\text{limite}_{\text{inf}} = Q_1 - 1{,}5 \times IQR\)</p>
+          <p style="font-size: 22pt; color: #50fa7b;">\(\text{limite}_{\text{sup}} = Q_3 + 1{,}5 \times IQR\)</p>
+        </div>
+        <code-block lang="python">
+q1 = dados["gasto_mensal"].quantile(0.25)
+q3 = dados["gasto_mensal"].quantile(0.75)
+iqr = q3 - q1
+
+lim_inf = q1 - 1.5 * iqr
+lim_sup = q3 + 1.5 * iqr
+
+anomalias = dados[
+    (dados["gasto_mensal"] < lim_inf) |
+    (dados["gasto_mensal"] > lim_sup)
+]
+        </code-block>
+      </section>
+
+      <!-- SLIDE 9: Limitação dos métodos univariados -->
+      <section data-auto-animate>
+        <h2>Limitação dos métodos univariados</h2>
+        <p style="font-size: 24pt;">Nenhuma variável isolada parece absurda, mas a combinação é estranha:</p>
+        <ls-u>
+          <li>Cliente com gasto baixo, mas número enorme de compras.</li>
+          <li>Cliente com gasto alto, mas pouquíssimas compras.</li>
+          <li>Sensor com temperatura aceitável, mas pressão incompatível.</li>
+        </ls-u>
+        <highlight-box class="fragment" instant>
+          <p style="font-size: 26pt;">Algumas anomalias só aparecem quando olhamos várias variáveis ao mesmo tempo.</p>
+        </highlight-box>
+      </section>
+
+      <!-- SLIDE 10: DBSCAN como detector -->
+      <section data-auto-animate>
+        <h2>DBSCAN como detector de anomalias</h2>
+        <code-block lang="python">
+from sklearn.cluster import DBSCAN
+
+modelo = DBSCAN(eps=0.5, min_samples=5)
+labels = modelo.fit_predict(X)
+
+anomalias = labels == -1
+        </code-block>
+        <ls-u>
+          <li><code>-1</code> indica ruído.</li>
+          <li>Ruído pode ser interpretado como candidato a anomalia.</li>
+          <li>Depende muito de <code>eps</code> e <code>min_samples</code>.</li>
         </ls-u>
       </section>
 
-      <section>
+      <!-- SLIDE 11: DBSCAN vantagens e limitações -->
+      <section data-auto-animate>
+        <h2>DBSCAN: vantagens e limitações</h2>
+        <multi-col style="gap: 25px;">
+          <div class="metric-card" style="border-left-color: #50fa7b;">
+            <h4 style="color: #50fa7b;">Vantagens</h4>
+            <ul>
+              <li>Detecta pontos fora de regiões densas.</li>
+              <li>Não exige número de clusters.</li>
+              <li>Detecta formas arbitrárias.</li>
+            </ul>
+          </div>
+          <div class="metric-card" style="border-left-color: #ff5555;">
+            <h4 style="color: #ff5555;">Limitações</h4>
+            <ul>
+              <li>Sensível a parâmetros.</li>
+              <li>Ruim quando existem densidades muito diferentes.</li>
+              <li>Difícil em alta dimensionalidade.</li>
+              <li>Pode marcar minorias legítimas como ruído.</li>
+            </ul>
+          </div>
+        </multi-col>
+      </section>
 
-        <section data-auto-animate>
-          <h2 style="color: #ff5555;">Motivação: transações suspeitas</h2>
-          <p style="font-size: 24pt;">Transações de alto valor fora do horário comercial — são fraude ou comportamento legítimo?</p>
-        </section>
-
-        <section data-auto-animate>
-          <plotly-figure :traces="AULA13_MOTIVACAO_TRACES" :layout="AULA13_MOTIVACAO_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 22pt; color: #f1fa8c; text-align: center;">
-            Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou evento raro.
-          </p>
-        </section>
-
-      </section><!-- fim Motivação -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Outlier, ruído, anomalia e erro</h2>
-          <table>
-            <thead>
-              <tr><th>Conceito</th><th>Definição</th><th>Exemplo</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Outlier</strong></td><td>Ponto estatisticamente distante</td><td>renda muito alta na amostra</td></tr>
-              <tr><td><strong>Ruído</strong></td><td>Ponto que não se encaixa no padrão do algoritmo</td><td>label = -1 no DBSCAN</td></tr>
-              <tr><td><strong>Anomalia</strong></td><td>Ponto incomum com significado prático</td><td>transação suspeita de fraude</td></tr>
-              <tr><td><strong>Erro</strong></td><td>Valor inválido ou falha de registro</td><td>idade = 300</td></tr>
-            </tbody>
-          </table>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Todo erro parece anomalia...</h2>
-          <highlight-box instant>
-            <p style="font-size: 30pt;">Todo erro pode parecer anomalia, mas nem toda anomalia é erro.</p>
-          </highlight-box>
-          <p style="font-size: 24pt; margin-top: 25px;">
-            Remover outliers sem investigar pode eliminar informação importante.
-          </p>
-        </section>
-
-      </section><!-- fim Conceitos -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #f1fa8c;">Problema central</h2>
-          <p style="font-size: 32pt; color: #ff5555; text-align: center;">Como saber se um ponto é estranho?</p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Depende de...</h2>
-          <ls-u>
-            <li><strong>Contexto:</strong> o que é "normal" neste domínio?</li>
-            <li><strong>Distribuição dos dados:</strong> simétrica, assimétrica, multimodal?</li>
-            <li><strong>Relação entre variáveis:</strong> combinações inesperadas.</li>
-            <li><strong>Custo do erro:</strong> o que dói mais — falso positivo ou falso negativo?</li>
-            <li><strong>Objetivo do problema:</strong> detecção, investigação ou limpeza?</li>
-          </ls-u>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Exemplo: gasto de R$ 2.000</h2>
-          <multi-col style="gap: 25px;">
-            <div class="metric-card" style="border-left-color: #50fa7b;">
-              <h4 style="color: #50fa7b;">Cliente A</h4>
-              <p>Gasta em média R$ 3.000/mês. R$ 2.000 é <strong>normal</strong>.</p>
-            </div>
-            <div class="metric-card" style="border-left-color: #ff5555;">
-              <h4 style="color: #ff5555;">Cliente B</h4>
-              <p>Gasta em média R$ 200/mês. R$ 2.000 é <strong>anômalo</strong>.</p>
-            </div>
-          </multi-col>
-          <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 20px;">
-            O mesmo valor pode ser normal ou anômalo dependendo do contexto.
-          </p>
-        </section>
-
-      </section><!-- fim Problema central -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Métodos univariados</h2>
-          <p style="font-size: 26pt;">Analisam uma variável por vez — simples e úteis, mas limitados.</p>
-          <ls-u>
-            <li><strong>Z-score:</strong> quantos desvios-padrão da média?</li>
-            <li><strong>IQR:</strong> intervalo interquartil — base do boxplot.</li>
-            <li><strong>Boxplot:</strong> visualização com limites estatísticos.</li>
-          </ls-u>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Z-score: histograma com limites</h2>
-          <plotly-figure :traces="AULA13_ZSCORE_TRACES" :layout="AULA13_ZSCORE_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 22pt; color: #ff5555;">
-            Limitações: sensível a distribuição assimétrica e outliers extremos.
-          </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>IQR: boxplot com outliers visíveis</h2>
-          <plotly-figure :traces="AULA13_BOXPLOT_TRACES" :layout="AULA13_BOXPLOT_LAYOUT"></plotly-figure>
-        </section>
-
-        <section data-auto-animate>
-          <h2>IQR: resultado no scatter plot</h2>
-          <plotly-figure :traces="AULA13_IQR_SCATTER_TRACES" :layout="AULA13_IQR_SCATTER_LAYOUT"></plotly-figure>
-        </section>
-
-      </section><!-- fim Métodos univariados -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #ff5555;">Limitação dos métodos univariados</h2>
-          <p style="font-size: 26pt;">Nenhuma variável isolada parece absurda, mas a combinação é estranha.</p>
-        </section>
-
-        <section data-auto-animate>
-          <plotly-figure :traces="AULA13_MULTIVARIADO_TRACES" :layout="AULA13_MULTIVARIADO_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 24pt; color: #f1fa8c;">
-            O ponto amarelo tem gasto e compras dentro da faixa normal individualmente, mas a combinação é incomum.
-          </p>
-        </section>
-
-      </section><!-- fim Limitação univariados -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #50fa7b;">DBSCAN como detector de anomalias</h2>
-          <p style="font-size: 26pt;">Pontos em regiões de baixa densidade são marcados como ruído.</p>
-        </section>
-
-        <section data-auto-animate>
-          <plotly-figure :traces="AULA13_DBSCAN_TRACES" :layout="AULA13_DBSCAN_LAYOUT"></plotly-figure>
-          <ls-u>
-            <li><code>-1</code> indica ruído — candidato a anomalia.</li>
-            <li>Depende de <code>eps</code> e <code>min_samples</code>.</li>
-            <li>Clusters coloridos + ruído em vermelho.</li>
-          </ls-u>
-        </section>
-
-      </section><!-- fim DBSCAN -->
-
+      <!-- SLIDE 12: Isolation Forest -->
       <section>
 
         <section data-auto-animate>
@@ -266,87 +261,75 @@ graph LR
         <section data-auto-animate>
           <h2>Isolation Tree (iTree)</h2>
           <ls-u>
-            <li>Cada árvore é construída com uma <strong>amostra aleatória</strong> dos dados (subamostragem).</li>
-            <li>Em cada nó, escolhe-se uma <strong>variável aleatória</strong> \(X_j\) e um <strong>ponto de corte aleatório</strong> \(p\) entre \(\min(X_j)\) e \(\max(X_j)\).</li>
-            <li>Se \(x_{j} < p\) → vai para a subárvore esquerda; senão → direita.</li>
-            <li>O processo repete até o ponto ficar isolado (folha) ou atingir a altura máxima.</li>
+            <li>Cada árvore usa uma <strong>subamostra aleatória</strong> dos dados.</li>
+            <li>Em cada nó: escolhe variável aleatória \(X_j\) e ponto de corte \(p\) entre \(\min(X_j)\) e \(\max(X_j)\).</li>
+            <li>Se \(x_j < p\) → subárvore esquerda; senão → direita.</li>
+            <li>Repete até o ponto ficar isolado (folha) ou atingir altura máxima.</li>
           </ls-u>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Comprimento do caminho \(h(x)\)</h2>
-          <p style="font-size: 24pt;">Para cada ponto \(x\), medimos quantos cortes foram necessários para isolá-lo em uma árvore:</p>
-          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 26pt; color: #8be9fd;">\(h(x)\) = número de arestas da raiz até a folha que contém \(x\)</p>
-          </div>
-          <ls-u>
-            <li>Anomalias → \(h(x)\) <strong>pequeno</strong> (poucos cortes).</li>
-            <li>Pontos normais → \(h(x)\) <strong>grande</strong> (muitos cortes).</li>
-          </ls-u>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Esperança do caminho \(E(h(x))\)</h2>
-          <p style="font-size: 24pt;">Como uma única árvore é ruidosa, usamos a média sobre \(t\) árvores:</p>
-          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 26pt; color: #f1fa8c;">\(E(h(x)) = \frac{1}{t} \sum_{i=1}^{t} h_i(x)\)</p>
-          </div>
-          <p style="font-size: 22pt; color: #8be9fd;">
-            onde \(h_i(x)\) é o comprimento do caminho de \(x\) na árvore \(i\).
-          </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Fator de normalização \(c(n)\)</h2>
-          <p style="font-size: 24pt;">O caminho esperado depende do tamanho da subamostra \(n\). Para busca binária aleatória:</p>
-          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 24pt; color: #ff79c6;">\(c(n) = 2H(n-1) - \frac{2(n-1)}{n}\)</p>
-          </div>
-          <p style="font-size: 22pt; color: #8be9fd;">
-            onde \(H(i) \approx \ln(i) + \gamma\) é o \(i\)-ésimo número harmônico e \(\gamma \approx 0,57721\) é a constante de Euler-Mascheroni.
-          </p>
         </section>
 
         <section data-auto-animate>
           <h2>Score de anomalia \(s(x, n)\)</h2>
+          <p style="font-size: 24pt;">Para cada ponto \(x\), mede-se o caminho \(h(x)\) até ser isolado. A média sobre \(t\) árvores é \(E(h(x))\).</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 26pt; color: #f1fa8c;">\(E(h(x)) = \frac{1}{t} \sum_{i=1}^{t} h_i(x)\)</p>
+          </div>
+          <p style="font-size: 22pt; color: #8be9fd;">
+            O fator de normalização \(c(n) = 2H(n-1) - \frac{2(n-1)}{n}\) ajusta pelo tamanho da subamostra, onde \(H(i) \approx \ln(i) + \gamma\).
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Fórmula final do score</h2>
           <div style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
             <p style="font-size: 28pt; color: #ff5555;">\(s(x, n) = 2^{\large -\frac{E(h(x))}{c(n)}}\)</p>
           </div>
           <table>
             <thead>
-              <tr><th>Condição</th><th>Interpretação</th></tr>
+              <tr><th>Valor</th><th>Interpretação</th></tr>
             </thead>
             <tbody>
-              <tr><td>\(s(x, n) \to 1\)</td><td>ponto é <strong>anômalo</strong> (\(E(h(x)) \ll c(n)\))</td></tr>
-              <tr><td>\(s(x, n) \approx 0,5\)</td><td>ponto é <strong>normal</strong> (\(E(h(x)) \approx c(n)\))</td></tr>
-              <tr><td>\(s(x, n) \to 0\)</td><td>ponto é <strong>muito normal</strong> (\(E(h(x)) \gg c(n)\))</td></tr>
+              <tr><td>\(s \to 1\)</td><td><strong>anômalo</strong> — \(E(h(x)) \ll c(n)\)</td></tr>
+              <tr><td>\(s \approx 0{,}5\)</td><td><strong>normal</strong> — \(E(h(x)) \approx c(n)\)</td></tr>
+              <tr><td>\(s \to 0\)</td><td><strong>muito normal</strong> — \(E(h(x)) \gg c(n)\)</td></tr>
             </tbody>
           </table>
         </section>
 
         <section data-auto-animate>
-          <h2>Passo a passo do algoritmo</h2>
+          <h2>Passo a passo do Isolation Forest</h2>
           <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
             <ls-u>
-              <li><strong>1.</strong> Subamostrar: escolher \(\psi\) pontos aleatórios (típico: \(\psi = 256\)).</li>
-              <li><strong>2.</strong> Para cada árvore \(i = 1 \ldots t\): construir iTree com a subamostra.</li>
+              <li><strong>1.</strong> Subamostrar \(\psi\) pontos (típico: \(\psi = 256\)).</li>
+              <li><strong>2.</strong> Construir \(t\) iTrees com subamostras aleatórias.</li>
               <li><strong>3.</strong> Para cada ponto \(x\): calcular \(h_i(x)\) em cada árvore.</li>
-              <li><strong>4.</strong> Calcular \(E(h(x)) = \frac{1}{t}\sum h_i(x)\).</li>
-              <li><strong>5.</strong> Calcular \(s(x, n) = 2^{-E(h(x))/c(n)}\).</li>
-              <li><strong>6.</strong> Classificar como anomalia se \(s(x, n) > \tau\) (típico: \(\tau = 0,5\)).</li>
+              <li><strong>4.</strong> Calcular \(E(h(x))\) e depois \(s(x, n) = 2^{-E(h(x))/c(n)}\).</li>
+              <li><strong>5.</strong> Classificar como anomalia se \(s(x, n) > \tau\) (típico: \(\tau = 0{,}5\)).</li>
             </ls-u>
           </div>
         </section>
 
         <section data-auto-animate>
-          <plotly-figure :traces="AULA13_ISOLATION_TRACES" :layout="AULA13_ISOLATION_LAYOUT"></plotly-figure>
+          <h2>Isolation Forest — código</h2>
+          <code-block lang="python">
+from sklearn.ensemble import IsolationForest
+
+modelo = IsolationForest(
+    contamination=0.05,
+    random_state=42
+)
+
+pred = modelo.fit_predict(X)
+anomalias = pred == -1
+          </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">
-            <code>contamination=0.05</code> → espera 5% de anomalias nos dados.
+            <code>contamination</code> = proporção esperada de anomalias nos dados.
           </p>
         </section>
 
       </section><!-- fim Isolation Forest -->
 
+      <!-- SLIDE 13: Local Outlier Factor -->
       <section>
 
         <section data-auto-animate>
@@ -357,40 +340,17 @@ graph LR
         </section>
 
         <section data-auto-animate>
-          <h2>LOF: \(k\)-distância e vizinhança</h2>
-          <p style="font-size: 24pt;">Para cada ponto \(p\), definimos:</p>
+          <h2>LOF: densidade local</h2>
+          <p style="font-size: 24pt;">Para cada ponto \(p\), encontra-se os \(k\) vizinhos mais próximos \(N_k(p)\):</p>
           <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
-            <p style="font-size: 24pt; color: #8be9fd;">\(k\text{-distância}(p)\) = distância ao \(k\)-ésimo vizinho mais próximo</p>
+            <p style="font-size: 22pt; color: #50fa7b;">\(\text{reach-dist}_k(p, o) = \max\bigl\{k\text{-dist}(o),\; d(p, o)\bigr\}\)</p>
           </div>
           <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
-            <p style="font-size: 24pt; color: #ff79c6;">\(N_k(p)\) = conjunto dos \(k\) vizinhos mais próximos de \(p\)</p>
-          </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">
-            Todos os pontos \(o\) com \(d(p, o) \leq k\text{-distância}(p)\) pertencem a \(N_k(p)\).
-          </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>LOF: distância de reachabilidade</h2>
-          <p style="font-size: 24pt;">A reachability distance de \(p\) em relação a \(o\) é:</p>
-          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 26pt; color: #50fa7b;">\(\text{reach-dist}_k(p, o) = \max\bigl\{k\text{-distância}(o),\; d(p, o)\bigr\}\)</p>
+            <p style="font-size: 22pt; color: #bd93f9;">\(\text{LRD}_k(p) = \frac{|N_k(p)|}{\sum_{o \in N_k(p)} \text{reach-dist}_k(p, o)}\)</p>
           </div>
           <p style="font-size: 22pt; color: #8be9fd;">
-            Isso suaviza as distâncias: pontos muito próximos de \(o\) herdam a \(k\)-distância de \(o\), evitando variações extremas.
+            LRD alto → região densa. LRD baixo → região esparsa.
           </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>LOF: densidade de reachabilidade local</h2>
-          <p style="font-size: 24pt;">A densidade local de \(p\) é o inverso da média das reachability distances:</p>
-          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 26pt; color: #bd93f9;">\(\text{LRD}_k(p) = \frac{|N_k(p)|}{\sum_{o \in N_k(p)} \text{reach-dist}_k(p, o)}\)</p>
-          </div>
-          <ls-u>
-            <li><strong>LRD alto</strong> → \(p\) está em região densa.</li>
-            <li><strong>LRD baixo</strong> → \(p\) está em região esparsa.</li>
-          </ls-u>
         </section>
 
         <section data-auto-animate>
@@ -400,124 +360,111 @@ graph LR
           </div>
           <table>
             <thead>
-              <tr><th>Valor de LOF</th><th>Interpretação</th></tr>
+              <tr><th>Valor</th><th>Interpretação</th></tr>
             </thead>
             <tbody>
-              <tr><td>\(\text{LOF}_k(p) \approx 1\)</td><td>\(p\) tem densidade similar aos vizinhos → <strong>normal</strong></td></tr>
-              <tr><td>\(\text{LOF}_k(p) > 1\)</td><td>\(p\) está em região <strong>menos densa</strong> → <strong>candidato a outlier</strong></td></tr>
-              <tr><td>\(\text{LOF}_k(p) < 1\)</td><td>\(p\) está em região <strong>mais densa</strong> → ponto interno ao cluster</td></tr>
+              <tr><td>\(\text{LOF} \approx 1\)</td><td>densidade similar aos vizinhos → <strong>normal</strong></td></tr>
+              <tr><td>\(\text{LOF} > 1\)</td><td>região menos densa → <strong>candidato a outlier</strong></td></tr>
+              <tr><td>\(\text{LOF} < 1\)</td><td>região mais densa → ponto interno ao cluster</td></tr>
             </tbody>
           </table>
         </section>
 
         <section data-auto-animate>
-          <h2>LOF: passo a passo do algoritmo</h2>
+          <h2>LOF: passo a passo</h2>
           <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
             <ls-u>
-              <li><strong>1.</strong> Para cada ponto \(p\): encontrar \(N_k(p)\) (k vizinhos mais próximos).</li>
-              <li><strong>2.</strong> Calcular \(k\text{-distância}(p)\) para todo \(p\).</li>
-              <li><strong>3.</strong> Calcular \(\text{reach-dist}_k(p, o)\) para todo par \((p, o)\) onde \(o \in N_k(p)\).</li>
+              <li><strong>1.</strong> Para cada \(p\): encontrar \(N_k(p)\).</li>
+              <li><strong>2.</strong> Calcular \(k\text{-dist}(p)\) para todo \(p\).</li>
+              <li><strong>3.</strong> Calcular \(\text{reach-dist}_k(p, o)\) para pares vizinhos.</li>
               <li><strong>4.</strong> Calcular \(\text{LRD}_k(p)\) para todo \(p\).</li>
-              <li><strong>5.</strong> Calcular \(\text{LOF}_k(p)\) para todo \(p\).</li>
-              <li><strong>6.</strong> Classificar como anomalia se \(\text{LOF}_k(p) > \tau\) (típico: \(\tau \approx 1,5\) a \(2\)).</li>
+              <li><strong>5.</strong> Calcular \(\text{LOF}_k(p)\) e classificar se \(\text{LOF} > \tau\).</li>
             </ls-u>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>LOF vs DBSCAN</h2>
-          <multi-col style="gap: 25px;">
-            <div class="metric-card" style="border-left-color: #8be9fd;">
-              <h4 style="color: #8be9fd;">DBSCAN</h4>
-              <ul>
-                <li>Cria clusters por densidade.</li>
-                <li>Ruído = pontos fora de regiões densas.</li>
-                <li>Binário: pertence ou não a um cluster.</li>
-              </ul>
-            </div>
-            <div class="metric-card" style="border-left-color: #f1fa8c;">
-              <h4 style="color: #f1fa8c;">LOF</h4>
-              <ul>
-                <li>Compara densidade local entre vizinhos.</li>
-                <li>Score contínuo: quanto maior, mais anômalo.</li>
-                <li>Detecta anomalias <em>dentro</em> de clusters.</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
+          <h2>LOF: código e comparação</h2>
+          <code-block lang="python">
+from sklearn.neighbors import LocalOutlierFactor
 
-        <section data-auto-animate>
-          <plotly-figure :traces="AULA13_LOF_TRACES" :layout="AULA13_LOF_LAYOUT"></plotly-figure>
+modelo = LocalOutlierFactor(
+    n_neighbors=20,
+    contamination=0.05
+)
+
+pred = modelo.fit_predict(X)
+anomalias = pred == -1
+          </code-block>
           <p class="fragment" style="font-size: 22pt; color: #8be9fd;">
-            LOF compara densidade local; DBSCAN cria clusters e marca ruído.
+            DBSCAN cria clusters e marca ruído. LOF compara densidade local — não cria clusters.
           </p>
         </section>
 
       </section><!-- fim LOF -->
 
-      <section>
+      <!-- SLIDE 14: Comparação dos métodos -->
+      <section data-auto-animate>
+        <h2>Comparação dos métodos</h2>
+        <table>
+          <thead>
+            <tr><th>Método</th><th>Tipo</th><th>Ponto forte</th><th>Limitação</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Z-score</strong></td><td>univariado</td><td>simples</td><td>assume distribuição aproximadamente normal</td></tr>
+            <tr><td><strong>IQR</strong></td><td>univariado</td><td>robusto e visual</td><td>não captura relações entre variáveis</td></tr>
+            <tr><td><strong>DBSCAN</strong></td><td>densidade</td><td>detecta ruído e clusters arbitrários</td><td>sensível a parâmetros</td></tr>
+            <tr><td><strong>Isolation Forest</strong></td><td>isolamento</td><td>bom em dados multivariados</td><td>exige estimar contaminação</td></tr>
+            <tr><td><strong>LOF</strong></td><td>densidade local</td><td>detecta anomalias locais</td><td>sensível ao número de vizinhos</td></tr>
+          </tbody>
+        </table>
+      </section>
 
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Comparação: quantas anomalias cada método encontrou?</h2>
-          <plotly-figure :traces="AULA13_COMPARACAO_TRACES" :layout="AULA13_COMPARACAO_LAYOUT"></plotly-figure>
-        </section>
+      <!-- SLIDE 15: Falso positivo e falso negativo -->
+      <section data-auto-animate>
+        <h2>Falso positivo e falso negativo</h2>
+        <ls-u>
+          <li><strong>Falso positivo:</strong> marcou como anomalia, mas era normal.</li>
+          <li><strong>Falso negativo:</strong> deixou passar uma anomalia real.</li>
+        </ls-u>
+        <table style="margin-top: 20px;">
+          <thead>
+            <tr><th>Contexto</th><th>Falso positivo</th><th>Falso negativo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Fraude</strong></td><td>bloquear compra legítima</td><td>liberar fraude</td></tr>
+            <tr><td><strong>Sensor</strong></td><td>parar máquina sem necessidade</td><td>ignorar falha real</td></tr>
+            <tr><td><strong>Saúde</strong></td><td>pedir exame extra desnecessário</td><td>ignorar caso grave</td></tr>
+          </tbody>
+        </table>
+        <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 20px;">
+          Em qual caso o falso positivo é pior? Em qual o falso negativo é pior?
+        </p>
+      </section>
 
-        <section data-auto-animate>
-          <h2>Comparação: recall — quantas anomalias reais foram capturadas?</h2>
-          <plotly-figure :traces="AULA13_RECALL_TRACES" :layout="AULA13_RECALL_LAYOUT"></plotly-figure>
-        </section>
+      <!-- SLIDE 16: Atividade prática -->
+      <section data-auto-animate>
+        <h2>Atividade: Detectando clientes anômalos</h2>
+        <p style="font-size: 24pt;">Dataset sintético com duas variáveis:</p>
+        <ls-u>
+          <li><code>gasto_mensal</code> — valor médio gasto por mês.</li>
+          <li><code>numero_compras</code> — quantidade de compras no período.</li>
+        </ls-u>
+        <highlight-box class="fragment" instant>
+          <p style="font-size: 24pt;">Gerar dados normais, inserir pontos anômalos, aplicar IQR, DBSCAN, Isolation Forest e LOF, e comparar resultados.</p>
+        </highlight-box>
+      </section>
 
-        <section data-auto-animate>
-          <h2>Matriz de confusão: Isolation Forest</h2>
-          <plotly-figure :traces="AULA13_CONFUSION_TRACES" :layout="AULA13_CONFUSION_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
-            Falso positivo = marcou como anomalia, mas era normal. Falso negativo = deixou passar uma anomalia real.
-          </p>
-        </section>
-
-      </section><!-- fim Comparação -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #ff5555;">Custos diferentes por contexto</h2>
-          <table>
-            <thead>
-              <tr><th>Contexto</th><th>Falso positivo</th><th>Falso negativo</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Fraude</strong></td><td>bloquear compra legítima</td><td>liberar fraude</td></tr>
-              <tr><td><strong>Sensor</strong></td><td>parar máquina sem necessidade</td><td>ignorar falha real</td></tr>
-              <tr><td><strong>Saúde</strong></td><td>pedir exame extra desnecessário</td><td>ignorar caso grave</td></tr>
-            </tbody>
-          </table>
-          <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 20px;">
-            Em qual caso o falso positivo é pior? Em qual o falso negativo é pior?
-          </p>
-        </section>
-
-      </section><!-- fim Falsos -->
-
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Atividade prática</h2>
-          <p style="font-size: 30pt; color: #8be9fd;">Detectando clientes anômalos</p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Dataset: visão geral</h2>
-          <plotly-figure :traces="AULA13_SCATTER_INITIAL_TRACES" :layout="AULA13_SCATTER_INITIAL_LAYOUT"></plotly-figure>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Gerando os dados</h2>
-          <code-block lang="python">
+      <!-- SLIDE 17: Código para gerar dataset -->
+      <section data-auto-animate>
+        <h2>Gerando o dataset</h2>
+        <code-block lang="python">
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 np.random.seed(42)
+
 n_normal = 300
 
 normais = pd.DataFrame({
@@ -531,12 +478,19 @@ anomalias = pd.DataFrame({
 })
 
 dados = pd.concat([normais, anomalias], ignore_index=True)
-          </code-block>
-        </section>
 
-        <section data-auto-animate>
-          <h2>Visualizando as anomalias</h2>
-          <code-block lang="python">
+plt.scatter(dados["gasto_mensal"], dados["numero_compras"])
+plt.xlabel("Gasto mensal")
+plt.ylabel("Número de compras")
+plt.title("Clientes: comportamento normal e anômalo")
+plt.show()
+        </code-block>
+      </section>
+
+      <!-- SLIDE 18: Visualização das anomalias -->
+      <section data-auto-animate>
+        <h2>Visualizando as anomalias detectadas</h2>
+        <code-block lang="python">
 plt.scatter(
     dados["gasto_mensal"],
     dados["numero_compras"],
@@ -555,109 +509,44 @@ plt.xlabel("Gasto mensal")
 plt.ylabel("Número de compras")
 plt.legend()
 plt.show()
-          </code-block>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Entrega</h2>
-          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
-            <ls-u>
-              <li>Aplicar pelo menos <strong>dois métodos</strong> de detecção de anomalias.</li>
-              <li>Gerar gráfico destacando os pontos anômalos.</li>
-              <li>Comparar quantas anomalias cada método detectou.</li>
-              <li>Escrever uma interpretação curta:<br>
-                <em>"Os pontos detectados parecem erro, evento raro ou caso importante?"</em>
-              </li>
-            </ls-u>
-          </div>
-        </section>
-
-      </section><!-- fim Atividade -->
-
-      <section>
-        <section data-auto-animate>
-          <h2>Quiz Interativo</h2>
-          <p>Conecte-se à sala e vote.</p>
-        </section>
-
-        <section>
-          <poll-question
-            id="aula13-q1"
-            title="Questão 1: Conceitos"
-            question="Qual a diferença entre outlier e anomalia?"
-            answer="c"
-            answer-text="Outlier é estatístico; anomalia tem significado prático no domínio."
-            :options="[
-              { value: 'a', label: 'São exatamente a mesma coisa' },
-              { value: 'b', label: 'Outlier sempre é erro de medição' },
-              { value: 'c', label: 'Outlier é distância estatística; anomalia é relevância prática' },
-            ]" />
-        </section>
-
-        <section>
-          <poll-question
-            id="aula13-q2"
-            title="Questão 2: Isolation Forest"
-            question="Por que o Isolation Forest isola anomalias com menos cortes?"
-            answer="b"
-            answer-text="Pontos anômalos estão em regiões esparsas, separando-se mais rápido."
-            :options="[
-              { value: 'a', label: 'Porque usam menos memória' },
-              { value: 'b', label: 'Porque estão em regiões esparsas e se separam mais rápido' },
-              { value: 'c', label: 'Porque o algoritmo ignora outliers' },
-            ]" />
-        </section>
-
-        <section>
-          <poll-question
-            id="aula13-q3"
-            title="Questão 3: Falso positivo vs falso negativo"
-            question="Em detecção de falhas em equipamentos, qual erro é geralmente pior?"
-            answer="b"
-            answer-text="Falso negativo — ignorar uma falha real pode causar danos graves."
-            :options="[
-              { value: 'a', label: 'Falso positivo — parar máquina sem necessidade' },
-              { value: 'b', label: 'Falso negativo — ignorar falha real' },
-              { value: 'c', label: 'São igualmente ruins sempre' },
-            ]" />
-        </section>
+        </code-block>
       </section>
 
+      <!-- SLIDE 19: Entrega -->
       <section data-auto-animate>
-        <h2>Resumo da Aula</h2>
-        <ls-u>
-          <li>Outlier é estatístico; anomalia tem significado prático; erro é dado inválido.</li>
-          <li>Métodos univariados (Z-score, IQR) são simples mas não capturam relações entre variáveis.</li>
-          <li>DBSCAN, Isolation Forest e LOF detectam anomalias multivariadas com abordagens diferentes.</li>
-          <li>Falsos positivos e falsos negativos têm custos diferentes — o contexto define a prioridade.</li>
-        </ls-u>
-        <div class="fragment" style="text-align: center; margin-top: 20px;">
-          <p style="font-size: 22pt;">Hands-on: <strong>aula13-deteccao-anomalias.ipynb</strong></p>
+        <h2>Entrega</h2>
+        <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+          <ls-u>
+            <li>Aplicar pelo menos <strong>dois métodos</strong> de detecção de anomalias.</li>
+            <li>Gerar gráfico destacando os pontos anômalos.</li>
+            <li>Comparar quantas anomalias cada método detectou.</li>
+            <li>Escrever uma interpretação curta:<br>
+              <em>"Os pontos detectados parecem erro, evento raro ou caso importante?"</em>
+            </li>
+          </ls-u>
         </div>
       </section>
 
+      <!-- SLIDE 20: Fechamento -->
       <section data-auto-animate>
         <h2>Fechamento</h2>
         <highlight-box instant>
-          <p style="font-size: 28pt;">Em Ciência de Dados, o ponto estranho pode ser ruído, erro ou descoberta.</p>
+          <p style="font-size: 28pt;">Em Ciência de Dados, o ponto estranho pode ser ruído, erro ou descoberta. O algoritmo encontra candidatos; a interpretação depende do contexto.</p>
         </highlight-box>
         <multi-col style="gap: 20px; margin-top: 25px;">
           <div class="metric-card" style="border-left-color: #ff79c6;">
             <h4 style="color: #ff79c6;">Classificação</h4>
-            <p>Prevê classes conhecidas.</p>
+            <p>Prevê classes.</p>
           </div>
           <div class="metric-card" style="border-left-color: #8be9fd;">
             <h4 style="color: #8be9fd;">Clustering</h4>
-            <p>Descobre grupos nos dados.</p>
+            <p>Descobre grupos.</p>
           </div>
           <div class="metric-card" style="border-left-color: #ff5555;">
             <h4 style="color: #ff5555;">Anomaly Detection</h4>
             <p>Encontra casos incomuns.</p>
           </div>
         </multi-col>
-        <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 20px;">
-          O algoritmo encontra candidatos; a interpretação depende do contexto.
-        </p>
       </section>
 
     </div>
