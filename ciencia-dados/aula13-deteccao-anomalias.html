@@ -303,11 +303,12 @@ graph LR
         </section>
 
         <section data-auto-animate>
-          <h2>Isolation Forest: cortes aleatórios na prática</h2>
+          <h2 style="font-size:0.95em">Isolation Forest: cortes aleatórios na prática</h2>
           <plotly-figure :traces="AULA13_ISO_CUTS_TRACES" :layout="AULA13_ISO_CUTS_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+          <highlight-box  style="font-size:0.4em">
             O ponto vermelho no canto é isolado em apenas 2 cortes. Os pontos azuis no centro precisam de muito mais.
-          </p>
+          </highlight-box>
+        
         </section>
 
         <section data-auto-animate>
@@ -361,15 +362,15 @@ graph LR
         </section>
 
         <section data-auto-animate>
-          <h2>Isolation Forest: distribuição dos scores</h2>
+          <h2 style="font-size:0.95em">Isolation Forest: distribuição dos scores</h2>
           <plotly-figure :traces="AULA13_ISO_SCORES_TRACES" :layout="AULA13_ISO_SCORES_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+          <p class="fragment" style="font-size: 20pt; color: #f1fa8c;">
             Anomalias reais (vermelho) concentram nos scores mais altos. A linha amarela é o threshold.
           </p>
         </section>
         <section data-auto-animate>
           <h2>Passo a passo do Isolation Forest</h2>
-          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;" class="r-stack">
             <ls-u>
               <li><strong>1.</strong> Para cada árvore, sorteie uma subamostra pequena dos dados: $ \psi \approx 256 $.
               </li>
@@ -379,6 +380,7 @@ graph LR
               <li><strong>5.</strong> Caminho curto \(\Rightarrow\) fácil de isolar \(\Rightarrow\) maior chance de
                 anomalia.</li>
             </ls-u>
+            <plotly-figure class="" :traces="AULA13_ISO_CUTS_TRACES" :layout=""></plotly-figure>
           </div>
         </section>
 

@@ -55,11 +55,11 @@ const headerComponent = {
               style="
                 margin: 0 30px 60px 30px;
                 align-self: end;
+                color: #ffffff;
               "
               :style="{fontSize: (titleSize || 40) +  'pt'}"
-            >
-              {{title}}
-            </h2>
+              v-html="title"
+            ></h2>
           </div>
       
           <!-- r2: Bottom info bar -->
