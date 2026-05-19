@@ -290,7 +290,65 @@ fig_front.update_layout(width=680, height=580)
 fig_front = apply_dracula(fig_front, 'Classificação: similaridade com SVs menos o limiar ρ')
 
 # ============================================================
-# 7. Exportar
+# 7. Figura combinada: Classificação com SVs destacados
+# ============================================================
+fig_class = go.Figure()
+
+# Fronteira de decisão
+fig_class.add_trace(circle_trace(0, 0, 3.0))
+
+# Pontos normais
+fig_class.add_trace(go.Scatter(
+    x=X_normal[:, 0], y=X_normal[:, 1],
+    mode='markers', name='Normal',
+    marker=dict(color=DRACULA['cyan'], size=8, opacity=0.8),
+))
+
+# Anomalias
+fig_class.add_trace(go.Scatter(
+    x=X_anom[:, 0], y=X_anom[:, 1],
+    mode='markers', name='Anomalia',
+    marker=dict(color=DRACULA['red'], size=10, symbol='x', line=dict(width=2, color=DRACULA['red'])),
+))
+
+# Support vectors destacados
+fig_class.add_trace(go.Scatter(
+    x=X_normal[sv_indices, 0], y=X_normal[sv_indices, 1],
+    mode='markers', name='Support Vector (α > 0)',
+    marker=dict(
+        color=DRACULA['yellow'],
+        size=10,
+        line=dict(color=DRACULA['fg'], width=1.5)
+    ),
+))
+
+# Novo ponto normal
+fig_class.add_trace(go.Scatter(
+    x=[1.5], y=[1.0], mode='markers+text',
+    name='Novo ponto → Normal', text=['Novo ponto → Normal'],
+    textposition='top center',
+    marker=dict(color=DRACULA['green'], size=14, symbol='diamond',
+                line=dict(color=DRACULA['fg'], width=1.5)),
+    textfont=dict(color=DRACULA['green'], size=12),
+))
+
+# Novo ponto anômalo
+fig_class.add_trace(go.Scatter(
+    x=[4.0], y=[3.0], mode='markers+text',
+    name='Novo ponto → Anomalia', text=['Novo ponto → Anomalia'],
+    textposition='top center',
+    marker=dict(color=DRACULA['red'], size=14, symbol='diamond',
+                line=dict(color=DRACULA['fg'], width=1.5)),
+    textfont=dict(color=DRACULA['red'], size=12),
+))
+
+fig_class.update_xaxes(title='x₁', range=[-6.5, 6.5])
+fig_class.update_yaxes(title='x₂', range=[-6.5, 6.5])
+fig_class.update_layout(width=680, height=580)
+fig_class = apply_dracula(fig_class, 'Classificação com Support Vectors')
+
+# ============================================================
+# 8. Exportar
 # ============================================================
 figures = {
     'AULA13_SVM_ORIGINAL': fig_original,
@@ -298,6 +356,7 @@ figures = {
     'AULA13_SVM_KERNEL_TRICK': fig_kernel,
     'AULA13_SVM_SUPPORT_VECTORS': fig_svs,
     'AULA13_SVM_FRONTEIRA': fig_front,
+    'AULA13_SVM_CLASSIFICACAO': fig_class,
 }
 
 write_plotly_js(figures, slide_export_path())
