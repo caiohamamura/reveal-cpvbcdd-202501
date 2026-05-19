@@ -380,7 +380,7 @@ graph LR
               <li><strong>5.</strong> Caminho curto \(\Rightarrow\) fácil de isolar \(\Rightarrow\) maior chance de
                 anomalia.</li>
             </ls-u>
-            <plotly-figure class="" :traces="AULA13_ISO_CUTS_TRACES" :layout=""></plotly-figure>
+            <plotly-figure class="fragment" :traces="AULA13_ISO_CUTS_TRACES" :layout=""></plotly-figure>
           </div>
         </section>
 
@@ -500,8 +500,26 @@ graph LR
 
       </section><!-- fim LOF -->
 
-      <!-- SLIDE: One-Class SVM -->
+      <!-- ============================================================
+         One-Class SVM: passo a passo com kernel polinomial
+         ============================================================ -->
       <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;font-size:0.95em">One-Class SVM — roteiro</h2>
+          <p style="font-size: 24pt;">Para entender o SVM, precisamos dominar <strong>4 ideias</strong> que veremos agora:</p>
+          <div style="background: #282a36; border-left: 4px solid #bd93f9; padding: 20px; margin-top: 20px;">
+            <ls-u>
+              <li><strong>1.</strong> Dados não-lineares e a <strong>transformação de kernel</strong> — como tornar o problema separável.</li>
+              <li><strong>2.</strong> O <strong>truque do kernel</strong> — calcular similaridade sem transformar os dados explicitamente.</li>
+              <li><strong>3.</strong> <strong>Support vectors</strong> e otimização — quais pontos definem a fronteira e como distribuir pesos entre eles.</li>
+              <li><strong>4.</strong> <strong>Classificação</strong> de novos pontos — similaridade com os support vectors menos um limiar.</li>
+            </ls-u>
+          </div>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c; margin-top: 15px;">
+            Cada passo usa o anterior. Vamos por partes.
+          </p>
+        </section>
 
         <section data-auto-animate>
           <h2 style="color: #ff79c6;">One-Class SVM — intuição</h2>
@@ -509,39 +527,87 @@ graph LR
             <p style="font-size: 28pt;">O One-Class SVM aprende uma fronteira ao redor dos dados normais — pontos fora são anomalias.</p>
           </highlight-box>
           <div class="fragment" style="margin-top: 20px;">
-            <span class="step-pill">Kernel RBF → fronteira não-linear</span>
+            <span class="step-pill">Kernel polinomial → fronteira não-linear</span>
             <span class="step-pill">Support vectors → borda da região normal</span>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>One-Class SVM: fronteira de decisão</h2>
-          <p style="font-size: 24pt;">O kernel RBF mapeia os dados para um espaço de alta dimensão onde uma hiperesfera separa dados normais de anomalias.</p>
+          <h2 style="font-size:0.95em">O problema: dados não lineares</h2>
+          <p style="font-size: 18pt;">Dois anéis concêntricos: o círculo interno é <strong>normal</strong>; o externo é <strong>anomalia</strong>.</p>
+          <plotly-figure :traces="AULA13_SVM_ORIGINAL_TRACES" :layout="AULA13_SVM_ORIGINAL_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
+            Nenhuma reta consegue separar os dois grupos no espaço original.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="font-size:0.9em">Transformação para um espaço separável</h2>
+          <p style="font-size: 14pt;">Se usarmos <strong>r² = x₁² + x₂²</strong> (distância ao centro), os anéis viram faixas horizontais — agora separáveis por uma reta.</p>
+          <plotly-figure :traces="AULA13_SVM_TRANSFORMADO_TRACES" :layout="AULA13_SVM_TRANSFORMADO_LAYOUT"></plotly-figure>
+          <highlight-box class="fragment" instant style="opacity:1;z-index:2;background-color: #44475a;">
+            <p style="font-size: 16pt">O kernel polinomial de grau 2 faz isso implicitamente: mapeia (x₁, x₂) para um espaço onde a distância ao centro é uma coordenada.</p>
+          </highlight-box>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="font-size:0.9em">O truque do kernel (kernel trick)</h2>
+          <p style="font-size: 16pt;">Não precisamos calcular φ(x) explicitamente. Basta calcular a <strong>similaridade</strong> diretamente:</p>
           <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
-            <p style="font-size: 26pt; color: #ff79c6;">\(f(x) = \text{sign}\!\left(\sum_{i=1}^{n} \alpha_i \, K(x_i, x) - \rho\right)\)</p>
+            <p style="font-size: 16pt; color: #8be9fd;">\(K(a, b) = (a \cdot b)^2 = \varphi(a) \cdot \varphi(b)\)</p>
           </div>
-          <table>
+          <div class="r-stack">
+          <plotly-figure :traces="AULA13_SVM_KERNEL_TRICK_TRACES" :layout="AULA13_SVM_KERNEL_TRICK_LAYOUT"></plotly-figure>
+          <highlight-box style="background-color: #6272a4;">
+            Mesmo resultado, mas muito menos operações — e funciona para qualquer dimensão.
+          </highlight-box>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Support Vectors: a otimização dos pesos</h2>
+          <p style="font-size: 24pt;">O modelo distribui pesos α para encontrar a fronteira mais justa:</p>
+          <div style="background: #282a36; border-left: 4px solid #bd93f9; padding: 20px;">
+            <ls-u>
+              <li><strong>a)</strong> Cada ponto recebe um peso αᵢ ≥ 0.</li>
+              <li><strong>b)</strong> A soma dos pesos deve ser 1: Σ αᵢ = 1.</li>
+              <li><strong>c)</strong> Nenhum peso individual pode passar de um limiar (threshold).</li>
+              <li><strong>d)</strong> Pontos próximos ajudam uns aos outros: o produto αᵢ αⱼ K(xᵢ, xⱼ) sinergiza.</li>
+            </ls-u>
+          </div>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c; margin-top: 15px;">
+            O objetivo: minimizar o tamanho da região normal. Quem ficar na fronteira recebe α > 0 — são os <strong>Support Vectors</strong>.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Support Vectors na prática</h2>
+          <plotly-figure :traces="AULA13_SVM_SUPPORT_VECTORS_TRACES" :layout="AULA13_SVM_SUPPORT_VECTORS_LAYOUT"></plotly-figure>
+          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;background-color: #6272a4;">
+            Os pontos amarelos são os mais próximos da borda (linha tracejada) — eles definem a fronteira. O restante tem peso zero.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2 style="font-size:0.9em">Classificando um novo ponto</h2>
+          <p style="font-size: 18pt;">Para cada novo ponto x, calculamos sua similaridade com os Support Vectors:</p>
+          <div style="display: flex; align-items: start;">
+            <plotly-figure :traces="AULA13_SVM_FRONTEIRA_TRACES" :layout="AULA13_SVM_FRONTEIRA_LAYOUT"></plotly-figure>
+            <div style="height:500px;display:flex;flex-flow:column;justify-content:space-evenly;">
+              <div style="min-width:300px;text-align: center; padding: 5px; background: #44475a; border-radius: 8px; margin: 5px 0;">
+                <p style="font-size: 16pt; color: #ff79c6;">\(f(x) = \sum_{i} \alpha_i \, K(x_i, x) - \rho\)</p>
+              </div>
+              <div>
+                <table style="font-size:0.4em">
             <thead>
               <tr>
-                <th>Componente</th>
-                <th>Significado</th>
+                <th>Condição</th>
+                <th>Resultado</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>\(K(x_i, x)\)</td>
-                <td>similaridade via kernel RBF entre \(x\) e suporte \(x_i\)</td>
-              </tr>
-              <tr>
-                <td>\(\alpha_i\)</td>
-                <td>peso de cada suporte (maioridade = 0)</td>
-              </tr>
-              <tr>
-                <td>\(\rho\)</td>
-                <td>limiar de decisão (offset)</td>
-              </tr>
-              <tr>
-                <td>\(f(x) > 0\)</td>
+                <td style="min-width:80px;">\(f(x) \geq 0\)</td>
                 <td><strong>normal</strong> — dentro da fronteira</td>
               </tr>
               <tr>
@@ -550,20 +616,12 @@ graph LR
               </tr>
             </tbody>
           </table>
-        </section>
+              </div>
+            </div>
+          </div>
+          </section>
 
-        <section data-auto-animate>
-          <h2>One-Class SVM: passo a passo</h2>
-<div style="background: #282a36; border-left: 4px solid #bd93f9; padding: 20px;">
-  <ls-u>
-    <li><strong>1.</strong> Use dados majoritariamente normais para treinar o modelo.</li>
-    <li><strong>2.</strong> Aplique um kernel, como RBF, para permitir uma fronteira não linear.</li>
-    <li><strong>3.</strong> Encontre os pontos que definem a borda da região normal: os support vectors.</li>
-    <li><strong>4.</strong> Calcule, para cada novo ponto \(x\), sua similaridade ponderada com os support vectors.</li>
-    <li><strong>5.</strong> Se o score ficar abaixo do limiar, \(x\) é marcado como anomalia.</li>
-  </ls-u>
-</div>
-        </section>
+          
 
         <section data-auto-animate>
           <h2>One-Class SVM — código</h2>
@@ -571,8 +629,9 @@ graph LR
             from sklearn.svm import OneClassSVM
 
             modelo = OneClassSVM(
-            kernel='rbf',
-            gamma='auto',
+            kernel='poly',
+            degree=2,
+            gamma=1,
             nu=0.05
             )
 
@@ -582,10 +641,10 @@ graph LR
             anomalias = pred == -1
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">
-            <code>nu</code> = proporção máxima de outliers aceita.
+            <code>kernel='poly'</code> + <code>degree=2</code> usam o truque do kernel polinomial.
           </p>
           <p style="font-size: 22pt; color: #8be9fd; margin-top: 10px;">
-            Treinamos com dados normais (benigno) e detectamos malignos como anomalias.
+            Treinamos apenas com dados normais. Tudo muito diferente é anomalia.
           </p>
         </section>
 
@@ -593,8 +652,8 @@ graph LR
 
       <!-- SLIDE 14: Comparação dos métodos -->
       <section data-auto-animate>
-        <h2>Comparação dos métodos</h2>
-        <table>
+        <h2 style="font-size:0.95em">Comparação dos métodos</h2>
+        <table style="font-size:0.5em">
           <thead>
             <tr>
               <th>Método</th>
@@ -682,91 +741,7 @@ graph LR
         </p>
       </section>
 
-      <!-- SLIDE 16: Atividade prática -->
-      <section data-auto-animate>
-        <h2>Atividade: Detectando clientes anômalos</h2>
-        <p style="font-size: 24pt;">Dataset sintético com duas variáveis:</p>
-        <ls-u>
-          <li><code>gasto_mensal</code> — valor médio gasto por mês.</li>
-          <li><code>numero_compras</code> — quantidade de compras no período.</li>
-        </ls-u>
-        <highlight-box class="fragment" instant>
-          <p style="font-size: 24pt;">Gerar dados normais, inserir pontos anômalos, aplicar IQR, DBSCAN, Isolation
-            Forest e LOF, e comparar resultados.</p>
-        </highlight-box>
-      </section>
-
-      <!-- SLIDE 17: Código para gerar dataset -->
-      <section data-auto-animate>
-        <h2>Gerando o dataset</h2>
-        <code-block lang="python">
-          import numpy as np
-          import pandas as pd
-          import matplotlib.pyplot as plt
-
-          np.random.seed(42)
-
-          n_normal = 300
-
-          normais = pd.DataFrame({
-          "gasto_mensal": np.random.normal(500, 120, n_normal),
-          "numero_compras": np.random.normal(12, 3, n_normal)
-          })
-
-          anomalias = pd.DataFrame({
-          "gasto_mensal": [1200, 1400, 100, 1600, 80],
-          "numero_compras": [2, 3, 40, 1, 45]
-          })
-
-          dados = pd.concat([normais, anomalias], ignore_index=True)
-
-          plt.scatter(dados["gasto_mensal"], dados["numero_compras"])
-          plt.xlabel("Gasto mensal")
-          plt.ylabel("Número de compras")
-          plt.title("Clientes: comportamento normal e anômalo")
-          plt.show()
-        </code-block>
-      </section>
-
-      <!-- SLIDE 18: Visualização das anomalias -->
-      <section data-auto-animate>
-        <h2>Visualizando as anomalias detectadas</h2>
-        <code-block lang="python">
-          plt.scatter(
-          dados["gasto_mensal"],
-          dados["numero_compras"],
-          label="Normal"
-          )
-
-          plt.scatter(
-          dados.loc[anomalias_detectadas, "gasto_mensal"],
-          dados.loc[anomalias_detectadas, "numero_compras"],
-          label="Anomalia",
-          marker="x",
-          s=100
-          )
-
-          plt.xlabel("Gasto mensal")
-          plt.ylabel("Número de compras")
-          plt.legend()
-          plt.show()
-        </code-block>
-      </section>
-
-      <!-- SLIDE 19: Entrega -->
-      <section data-auto-animate>
-        <h2>Entrega</h2>
-        <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
-          <ls-u>
-            <li>Aplicar pelo menos <strong>dois métodos</strong> de detecção de anomalias.</li>
-            <li>Gerar gráfico destacando os pontos anômalos.</li>
-            <li>Comparar quantas anomalias cada método detectou.</li>
-            <li>Escrever uma interpretação curta:<br>
-              <em>"Os pontos detectados parecem erro, evento raro ou caso importante?"</em>
-            </li>
-          </ls-u>
-        </div>
-      </section>
+      
 
       <!-- SLIDE 20: Fechamento -->
       <section data-auto-animate>
@@ -798,6 +773,7 @@ graph LR
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
   <script src="images/plotly/aula13_anomaly_detection_figures.js"></script>
   <script src="images/plotly/aula13_algo_illustrations.js"></script>
+  <script src="images/plotly/aula13_oneclass_svm_figures.js"></script>
   <script src="../dist/reveal.js"></script>
   <script src="../plugin/notes/notes.js"></script>
   <script src="../plugin/math/math.js"></script>
@@ -861,6 +837,16 @@ graph LR
         AULA13_RECALL_LAYOUT: AULA13_RECALL_LAYOUT,
         AULA13_CONFUSION_TRACES: AULA13_CONFUSION_TRACES,
         AULA13_CONFUSION_LAYOUT: AULA13_CONFUSION_LAYOUT,
+        AULA13_SVM_ORIGINAL_TRACES: AULA13_SVM_ORIGINAL_TRACES,
+        AULA13_SVM_ORIGINAL_LAYOUT: AULA13_SVM_ORIGINAL_LAYOUT,
+        AULA13_SVM_TRANSFORMADO_TRACES: AULA13_SVM_TRANSFORMADO_TRACES,
+        AULA13_SVM_TRANSFORMADO_LAYOUT: AULA13_SVM_TRANSFORMADO_LAYOUT,
+        AULA13_SVM_KERNEL_TRICK_TRACES: AULA13_SVM_KERNEL_TRICK_TRACES,
+        AULA13_SVM_KERNEL_TRICK_LAYOUT: AULA13_SVM_KERNEL_TRICK_LAYOUT,
+        AULA13_SVM_SUPPORT_VECTORS_TRACES: AULA13_SVM_SUPPORT_VECTORS_TRACES,
+        AULA13_SVM_SUPPORT_VECTORS_LAYOUT: AULA13_SVM_SUPPORT_VECTORS_LAYOUT,
+        AULA13_SVM_FRONTEIRA_TRACES: AULA13_SVM_FRONTEIRA_TRACES,
+        AULA13_SVM_FRONTEIRA_LAYOUT: AULA13_SVM_FRONTEIRA_LAYOUT,
       });
       return app;
     };
