@@ -542,6 +542,16 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - Key API: `bot.getNewMessage(msg)` returns bool, `msg.messageType` is `MessageText` or `MessageQuery`, `msg.callbackQueryData` for button data, `bot.endQuery(msg, text)` required for callbacks
 - `bot.sendTo(chat_id, text)` for proactive messages (takes `int64_t chat_id`)
 
+#### express-restify-mongoose URL pattern
+- Routes are registered at `/api/v1/<modelName>` (singular), e.g. `Produto` → `/api/v1/Produto`
+- The library uses `model.modelName` directly — it does NOT pluralize automatically
+- Default prefix: `/api`, default version: `/v1`
+- Slide comments saying `GET /Produtos` (plural) are incorrect — the actual route is singular
+
+#### MongoDB conda-forge limitations
+- `mongodb` from conda-forge provides `mongod` but NOT `mongosh`
+- Install `mongosh` separately via `npm install -g mongosh` for a complete test environment
+
 ---
 # IMPORTANT!!!!!
 ---

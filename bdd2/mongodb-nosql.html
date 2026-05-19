@@ -1140,8 +1140,8 @@ const ProdutoSchema = new mongoose.Schema({
 const Produto = mongoose.model('Produto', ProdutoSchema);
 
 restify.serve(app, Produto);
-// Gera: GET /Produtos, POST /Produtos,
-//        PUT /Produtos/:id, DELETE /Produtos/:id
+// Gera: GET /api/v1/Produto, POST /api/v1/Produto,
+//        PUT /api/v1/Produto/:id, DELETE /api/v1/Produto/:id
 
 app.listen(3000);
 </code-block>
@@ -1151,10 +1151,10 @@ app.listen(3000);
           <h2>Testando a API no Navegador</h2>
           <p style="font-size: 0.85em;">Com o servidor rodando em <code>http://localhost:3000</code>:</p>
           <code-block lang="bash">
-curl http://localhost:3000/api/v1/Produtos
+curl http://localhost:3000/api/v1/Produto
 
 # Ou abra no navegador:
-# http://localhost:3000/api/v1/Produtos?categoria=notebook
+# http://localhost:3000/api/v1/Produto?categoria=notebook
 </code-block>
           <div class="yellow-box">
             <p style="font-size: 0.8em;">O pacote suporta filtros, paginação, ordenação e projeção via query string — tudo mapeado para queries MongoDB.</p>
