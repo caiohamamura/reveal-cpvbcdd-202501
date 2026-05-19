@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
-  <link rel="stylesheet" href="../dist/theme/dracula.css" />''
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
   <link rel="stylesheet" href="../dist/custom.css" />
   <link rel="stylesheet" href="../dist/highlight/dracula.css" />
   <link rel="stylesheet" href="../plugin/poll/style.css" />
@@ -55,8 +55,9 @@
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
         <header1 aula="13" curso="Ciência de Dados" title-size="30"
-                 title="Detecção de Anomalias (<span style='font-style: italic;'>Novelty Detection</span>): quando o ponto estranho é o mais importante">
-          <div class="mermaid" data-id="cover-anomaly-flow" style="width:420px;transform:scale(1.85); transform-origin:left;">
+          title="Detecção de Anomalias (<span style='font-style: italic;'>Novelty Detection</span>): quando o ponto estranho é o mais importante">
+          <div class="mermaid" data-id="cover-anomaly-flow"
+            style="width:420px;transform:scale(1.85); transform-origin:left;">
             <pre>
 ---
 config:
@@ -99,7 +100,8 @@ graph LR
           <li>Máquina com comportamento anormal antes de uma falha.</li>
         </ls-u>
         <highlight-box class="fragment" instant>
-          <p style="font-size: 26pt;">Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou evento raro.</p>
+          <p style="font-size: 26pt;">Uma anomalia não é necessariamente erro. Pode ser fraude, falha, descoberta ou
+            evento raro.</p>
         </highlight-box>
       </section>
 
@@ -108,13 +110,33 @@ graph LR
         <h2>Outlier, ruído, anomalia e erro</h2>
         <table>
           <thead>
-            <tr><th>Conceito</th><th>Definição</th><th>Exemplo</th></tr>
+            <tr>
+              <th>Conceito</th>
+              <th>Definição</th>
+              <th>Exemplo</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Outlier</strong></td><td>Ponto estatisticamente distante</td><td>renda muito alta</td></tr>
-            <tr><td><strong>Ruído</strong></td><td>Ponto que não se encaixa no padrão do algoritmo</td><td><code>label = -1</code> no DBSCAN</td></tr>
-            <tr><td><strong>Anomalia</strong></td><td>Ponto incomum com significado prático</td><td>transação suspeita</td></tr>
-            <tr><td><strong>Erro</strong></td><td>Valor inválido ou falha de registro</td><td>idade = 300</td></tr>
+            <tr>
+              <td><strong>Outlier</strong></td>
+              <td>Ponto estatisticamente distante</td>
+              <td>renda muito alta</td>
+            </tr>
+            <tr>
+              <td><strong>Ruído</strong></td>
+              <td>Ponto que não se encaixa no padrão do algoritmo</td>
+              <td><code>label = -1</code> no DBSCAN</td>
+            </tr>
+            <tr>
+              <td><strong>Anomalia</strong></td>
+              <td>Ponto incomum com significado prático</td>
+              <td>transação suspeita</td>
+            </tr>
+            <tr>
+              <td><strong>Erro</strong></td>
+              <td>Valor inválido ou falha de registro</td>
+              <td>idade = 300</td>
+            </tr>
           </tbody>
         </table>
         <highlight-box class="fragment" instant>
@@ -127,13 +149,18 @@ graph LR
         <h2>Problema central</h2>
         <p style="font-size: 32pt; color: #ff5555; text-align: center;">Como saber se um ponto é estranho?</p>
         <p style="font-size: 24pt; margin-top: 20px;">Depende de:</p>
-        <ls-u>
-          <li><strong>Contexto</strong> — o que é "normal" neste domínio?</li>
-          <li><strong>Distribuição dos dados</strong> — simétrica, assimétrica, multimodal?</li>
-          <li><strong>Relação entre variáveis</strong> — combinações inesperadas.</li>
-          <li><strong>Custo do erro</strong> — falso positivo ou falso negativo?</li>
-          <li><strong>Objetivo</strong> — detecção, investigação ou limpeza?</li>
-        </ls-u>
+        <div class="r-stack">
+          <img src="images/histogramas.png" alt="" style="z-index:1" class="fragment fade-in-then-out"
+            data-fragment-index="3">
+          <ls-u>
+            <li data-fragment-index="1"><strong>Contexto</strong> — o que é "normal" neste domínio?</li>
+            <li data-fragment-index="2"><strong>Distribuição dos dados</strong> — simétrica, assimétrica, multimodal?
+            </li>
+            <li data-fragment-index="4"><strong>Relação entre variáveis</strong> — combinações inesperadas.</li>
+            <li data-fragment-index="5"><strong>Custo do erro</strong> — falso positivo ou falso negativo?</li>
+            <li data-fragment-index="6"><strong>Objetivo</strong> — detecção, investigação ou limpeza?</li>
+          </ls-u>
+        </div>
         <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 15px;">
           Gastar R$ 2.000 pode ser normal para um cliente e anômalo para outro.
         </p>
@@ -148,7 +175,8 @@ graph LR
           <li><strong>Boxplot:</strong> visualização com limites estatísticos.</li>
         </ls-u>
         <highlight-box class="fragment" instant>
-          <p style="font-size: 24pt;">Métodos univariados são simples e úteis, mas não capturam relações entre variáveis.</p>
+          <p style="font-size: 24pt;">Métodos univariados são simples e úteis, mas não capturam relações entre
+            variáveis.</p>
         </highlight-box>
       </section>
 
@@ -160,8 +188,8 @@ graph LR
           <p style="font-size: 28pt; color: #8be9fd;">\(z = \frac{x - \bar{x}}{s}\)</p>
         </div>
         <code-block lang="python">
-z = (x - x.mean()) / x.std()
-anomalias = abs(z) > 3
+          z = (x - x.mean()) / x.std()
+          anomalias = abs(z) > 3
         </code-block>
       </section>
 
@@ -182,17 +210,16 @@ anomalias = abs(z) > 3
           <p style="font-size: 22pt; color: #50fa7b;">\(\text{limite}_{\text{sup}} = Q_3 + 1{,}5 \times IQR\)</p>
         </div>
         <code-block lang="python">
-q1 = dados["gasto_mensal"].quantile(0.25)
-q3 = dados["gasto_mensal"].quantile(0.75)
-iqr = q3 - q1
+          q1 = dados["gasto_mensal"].quantile(0.25)
+          q3 = dados["gasto_mensal"].quantile(0.75)
+          iqr = q3 - q1
 
-lim_inf = q1 - 1.5 * iqr
-lim_sup = q3 + 1.5 * iqr
+          lim_inf = q1 - 1.5 * iqr
+          lim_sup = q3 + 1.5 * iqr
 
-anomalias = dados[
-    (dados["gasto_mensal"] < lim_inf) |
-    (dados["gasto_mensal"] > lim_sup)
-]
+          anomalias = dados[
+          (dados["gasto_mensal"] < lim_inf) | (dados["gasto_mensal"]> lim_sup)
+            ]
         </code-block>
       </section>
 
@@ -222,12 +249,12 @@ anomalias = dados[
       <section data-auto-animate>
         <h2>DBSCAN como detector de anomalias</h2>
         <code-block lang="python">
-from sklearn.cluster import DBSCAN
+          from sklearn.cluster import DBSCAN
 
-modelo = DBSCAN(eps=0.5, min_samples=5)
-labels = modelo.fit_predict(X)
+          modelo = DBSCAN(eps=0.5, min_samples=5)
+          labels = modelo.fit_predict(X)
 
-anomalias = labels == -1
+          anomalias = labels == -1
         </code-block>
         <ls-u>
           <li><code>-1</code> indica ruído.</li>
@@ -292,7 +319,8 @@ anomalias = labels == -1
 
         <section data-auto-animate>
           <h2>Score de anomalia \(s(x, n)\)</h2>
-          <p style="font-size: 24pt;">Para cada ponto \(x\), mede-se o caminho \(h(x)\) até ser isolado. A média sobre \(t\) árvores é \(E(h(x))\).</p>
+          <p style="font-size: 24pt;">Para cada ponto \(x\), mede-se o caminho \(h(x)\) até ser isolado. A média sobre
+            \(t\) árvores é \(E(h(x))\).</p>
           <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
             <p style="font-size: 26pt; color: #f1fa8c;">\(E(h(x)) = \frac{1}{t} \sum_{i=1}^{t} h_i(x)\)</p>
           </div>
@@ -303,17 +331,30 @@ anomalias = labels == -1
 
         <section data-auto-animate>
           <h2>Fórmula final do score</h2>
-          <div style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
+          <div
+            style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
             <p style="font-size: 28pt; color: #ff5555;">\(s(x, n) = 2^{\large -\frac{E(h(x))}{c(n)}}\)</p>
           </div>
           <table>
             <thead>
-              <tr><th>Valor</th><th>Interpretação</th></tr>
+              <tr>
+                <th>Valor</th>
+                <th>Interpretação</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>\(s \to 1\)</td><td><strong>anômalo</strong> — \(E(h(x)) \ll c(n)\)</td></tr>
-              <tr><td>\(s \approx 0{,}5\)</td><td><strong>normal</strong> — \(E(h(x)) \approx c(n)\)</td></tr>
-              <tr><td>\(s \to 0\)</td><td><strong>muito normal</strong> — \(E(h(x)) \gg c(n)\)</td></tr>
+              <tr>
+                <td>\(s \to 1\)</td>
+                <td><strong>anômalo</strong> — \(E(h(x)) \ll c(n)\)</td>
+              </tr>
+              <tr>
+                <td>\(s \approx 0{,}5\)</td>
+                <td><strong>normal</strong> — \(E(h(x)) \approx c(n)\)</td>
+              </tr>
+              <tr>
+                <td>\(s \to 0\)</td>
+                <td><strong>muito normal</strong> — \(E(h(x)) \gg c(n)\)</td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -325,16 +366,17 @@ anomalias = labels == -1
             Anomalias reais (vermelho) concentram nos scores mais altos. A linha amarela é o threshold.
           </p>
         </section>
-
         <section data-auto-animate>
           <h2>Passo a passo do Isolation Forest</h2>
           <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
             <ls-u>
-              <li><strong>1.</strong> Subamostrar \(\psi\) pontos (típico: \(\psi = 256\)).</li>
-              <li><strong>2.</strong> Construir \(t\) iTrees com subamostras aleatórias.</li>
-              <li><strong>3.</strong> Para cada ponto \(x\): calcular \(h_i(x)\) em cada árvore.</li>
-              <li><strong>4.</strong> Calcular \(E(h(x))\) e depois \(s(x, n) = 2^{-E(h(x))/c(n)}\).</li>
-              <li><strong>5.</strong> Classificar como anomalia se \(s(x, n) > \tau\).</li>
+              <li><strong>1.</strong> Para cada árvore, sorteie uma subamostra pequena dos dados: $ \psi \approx 256 $.
+              </li>
+              <li><strong>2.</strong> Em cada nó, escolha aleatoriamente uma variável e um ponto de corte (mínimo, máximo).</li>
+              <li><strong>3.</strong> Repita os cortes até isolar pontos ou atingir a profundidade máxima.</li>
+              <li><strong>4.</strong> Para cada ponto \(x\), calcule o caminho médio até uma folha: \(E(h(x))\).</li>
+              <li><strong>5.</strong> Caminho curto \(\Rightarrow\) fácil de isolar \(\Rightarrow\) maior chance de
+                anomalia.</li>
             </ls-u>
           </div>
         </section>
@@ -342,15 +384,15 @@ anomalias = labels == -1
         <section data-auto-animate>
           <h2>Isolation Forest — código</h2>
           <code-block lang="python">
-from sklearn.ensemble import IsolationForest
+            from sklearn.ensemble import IsolationForest
 
-modelo = IsolationForest(
-    contamination=0.05,
-    random_state=42
-)
+            modelo = IsolationForest(
+            contamination=0.05,
+            random_state=42
+            )
 
-pred = modelo.fit_predict(X)
-anomalias = pred == -1
+            pred = modelo.fit_predict(X)
+            anomalias = pred == -1
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">
             <code>contamination</code> = proporção esperada de anomalias nos dados.
@@ -365,7 +407,8 @@ anomalias = pred == -1
         <section data-auto-animate>
           <h2 style="color: #f1fa8c;">Local Outlier Factor (LOF) — intuição</h2>
           <highlight-box instant>
-            <p style="font-size: 28pt;">Um ponto é suspeito se está em uma região muito menos densa que seus vizinhos.</p>
+            <p style="font-size: 28pt;">Um ponto é suspeito se está em uma região muito menos densa que seus vizinhos.
+            </p>
           </highlight-box>
         </section>
 
@@ -385,67 +428,67 @@ anomalias = pred == -1
           </p>
         </section>
 
+        
+        
+        
         <section data-auto-animate>
-          <h2>LOF: densidade local</h2>
-          <p style="font-size: 24pt;">Para cada ponto \(p\), encontra-se os \(k\) vizinhos mais próximos \(N_k(p)\):</p>
-          <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
-            <p style="font-size: 22pt; color: #50fa7b;">\(\text{reach-dist}_k(p, o) = \max\bigl\{k\text{-dist}(o),\; d(p, o)\bigr\}\)</p>
-          </div>
-          <div style="text-align: center; padding: 15px; background: #44475a; border-radius: 8px; margin: 10px 0;">
-            <p style="font-size: 22pt; color: #bd93f9;">\(\text{LRD}_k(p) = \frac{|N_k(p)|}{\sum_{o \in N_k(p)} \text{reach-dist}_k(p, o)}\)</p>
-          </div>
+          <h2>LOF: passo a passo</h2>
+<div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
+  <ls-u>
+    <li><strong>1.</strong> Para cada ponto \(p\), encontre seus \(k\) vizinhos mais próximos: \(N_k(p)\).</li>
+    <li><strong>2.</strong> Meça a “densidade local” de \(p\): vizinhos próximos</li>
+    <li><strong>3.</strong> Compare essa densidade com a densidade dos vizinhos de \(p\).</li>
+    <li><strong>4.</strong> Se \(p\) for muito menos denso que seus vizinhos, seu \(\text{LOF}_k(p)\) será alto.</li>
+    <li><strong>5.</strong> \(\text{LOF} \approx 1\): normal. \(\text{LOF} \gg 1\): possível anomalia.</li>
+  </ls-u>
+</div>
         </section>
 
         <section data-auto-animate>
           <h2>LOF: fator de outlier local</h2>
-          <div style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
-            <p style="font-size: 26pt; color: #ff5555;">\(\text{LOF}_k(p) = \frac{\sum_{o \in N_k(p)} \text{LRD}_k(o)}{|N_k(p)| \cdot \text{LRD}_k(p)}\)</p>
+          <div
+            style="text-align: center; padding: 25px; background: #44475a; border-radius: 8px; margin: 15px 0; border: 2px solid #ff5555;">
+            <p style="font-size: 26pt; color: #ff5555;">\(\text{LOF}_k(p) = \frac{\sum_{o \in N_k(p)}
+              \text{LRD}_k(o)}{|N_k(p)| \cdot \text{LRD}_k(p)}\)</p>
           </div>
           <table>
             <thead>
-              <tr><th>Valor</th><th>Interpretação</th></tr>
+              <tr>
+                <th>Valor</th>
+                <th>Interpretação</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>\(\text{LOF} \approx 1\)</td><td>densidade similar aos vizinhos → <strong>normal</strong></td></tr>
-              <tr><td>\(\text{LOF} > 1\)</td><td>região menos densa → <strong>candidato a outlier</strong></td></tr>
-              <tr><td>\(\text{LOF} < 1\)</td><td>região mais densa → ponto interno ao cluster</td></tr>
+              <tr>
+                <td>\(\text{LOF} \approx 1\)</td>
+                <td>densidade similar aos vizinhos → <strong>normal</strong></td>
+              </tr>
+              <tr>
+                <td>\(\text{LOF} > 1\)</td>
+                <td>região menos densa → <strong>candidato a outlier</strong></td>
+              </tr>
+              <tr>
+                <td>\(\text{LOF} < 1\)</td>
+                <td>região mais densa → ponto interno ao cluster</td>
+              </tr>
             </tbody>
           </table>
-        </section>
-
-        <section data-auto-animate>
-          <h2>LOF: distribuição dos scores</h2>
-          <plotly-figure :traces="AULA13_LOF_SCORES_TRACES" :layout="AULA13_LOF_SCORES_LAYOUT"></plotly-figure>
-          <p class="fragment" style="font-size: 22pt; color: #f1fa8c;">
-            LOF ≈ 1 = normal. LOF > 1 = anômalo. A linha amarela marca LOF = 1.
-          </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>LOF: passo a passo</h2>
-          <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px;">
-            <ls-u>
-              <li><strong>1.</strong> Para cada \(p\): encontrar \(N_k(p)\).</li>
-              <li><strong>2.</strong> Calcular \(k\text{-dist}(p)\) para todo \(p\).</li>
-              <li><strong>3.</strong> Calcular \(\text{reach-dist}_k(p, o)\) para pares vizinhos.</li>
-              <li><strong>4.</strong> Calcular \(\text{LRD}_k(p)\) para todo \(p\).</li>
-              <li><strong>5.</strong> Calcular \(\text{LOF}_k(p)\) e classificar se \(\text{LOF} > \tau\).</li>
-            </ls-u>
-          </div>
+          <highlight-box instant style="font-size:0.7em">
+            Na prática $ LOF_k(p) $ é o quão menos denso $ p $ é comparado aos seus vizinhos. Quanto mais alto, mais suspeito.
         </section>
 
         <section data-auto-animate>
           <h2>LOF: código e comparação</h2>
           <code-block lang="python">
-from sklearn.neighbors import LocalOutlierFactor
+            from sklearn.neighbors import LocalOutlierFactor
 
-modelo = LocalOutlierFactor(
-    n_neighbors=20,
-    contamination=0.05
-)
+            modelo = LocalOutlierFactor(
+            n_neighbors=20,
+            contamination=0.05
+            )
 
-pred = modelo.fit_predict(X)
-anomalias = pred == -1
+            pred = modelo.fit_predict(X)
+            anomalias = pred == -1
           </code-block>
           <p class="fragment" style="font-size: 22pt; color: #8be9fd;">
             DBSCAN cria clusters e marca ruído. LOF compara densidade local — não cria clusters.
@@ -459,14 +502,44 @@ anomalias = pred == -1
         <h2>Comparação dos métodos</h2>
         <table>
           <thead>
-            <tr><th>Método</th><th>Tipo</th><th>Ponto forte</th><th>Limitação</th></tr>
+            <tr>
+              <th>Método</th>
+              <th>Tipo</th>
+              <th>Ponto forte</th>
+              <th>Limitação</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Z-score</strong></td><td>univariado</td><td>simples</td><td>assume distribuição aproximadamente normal</td></tr>
-            <tr><td><strong>IQR</strong></td><td>univariado</td><td>robusto e visual</td><td>não captura relações entre variáveis</td></tr>
-            <tr><td><strong>DBSCAN</strong></td><td>densidade</td><td>detecta ruído e clusters arbitrários</td><td>sensível a parâmetros</td></tr>
-            <tr><td><strong>Isolation Forest</strong></td><td>isolamento</td><td>bom em dados multivariados</td><td>exige estimar contaminação</td></tr>
-            <tr><td><strong>LOF</strong></td><td>densidade local</td><td>detecta anomalias locais</td><td>sensível ao número de vizinhos</td></tr>
+            <tr>
+              <td><strong>Z-score</strong></td>
+              <td>univariado</td>
+              <td>simples</td>
+              <td>assume distribuição aproximadamente normal</td>
+            </tr>
+            <tr>
+              <td><strong>IQR</strong></td>
+              <td>univariado</td>
+              <td>robusto e visual</td>
+              <td>não captura relações entre variáveis</td>
+            </tr>
+            <tr>
+              <td><strong>DBSCAN</strong></td>
+              <td>densidade</td>
+              <td>detecta ruído e clusters arbitrários</td>
+              <td>sensível a parâmetros</td>
+            </tr>
+            <tr>
+              <td><strong>Isolation Forest</strong></td>
+              <td>isolamento</td>
+              <td>bom em dados multivariados</td>
+              <td>exige estimar contaminação</td>
+            </tr>
+            <tr>
+              <td><strong>LOF</strong></td>
+              <td>densidade local</td>
+              <td>detecta anomalias locais</td>
+              <td>sensível ao número de vizinhos</td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -480,12 +553,28 @@ anomalias = pred == -1
         </ls-u>
         <table style="margin-top: 20px;">
           <thead>
-            <tr><th>Contexto</th><th>Falso positivo</th><th>Falso negativo</th></tr>
+            <tr>
+              <th>Contexto</th>
+              <th>Falso positivo</th>
+              <th>Falso negativo</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Fraude</strong></td><td>bloquear compra legítima</td><td>liberar fraude</td></tr>
-            <tr><td><strong>Sensor</strong></td><td>parar máquina sem necessidade</td><td>ignorar falha real</td></tr>
-            <tr><td><strong>Saúde</strong></td><td>pedir exame extra desnecessário</td><td>ignorar caso grave</td></tr>
+            <tr>
+              <td><strong>Fraude</strong></td>
+              <td>bloquear compra legítima</td>
+              <td>liberar fraude</td>
+            </tr>
+            <tr>
+              <td><strong>Sensor</strong></td>
+              <td>parar máquina sem necessidade</td>
+              <td>ignorar falha real</td>
+            </tr>
+            <tr>
+              <td><strong>Saúde</strong></td>
+              <td>pedir exame extra desnecessário</td>
+              <td>ignorar caso grave</td>
+            </tr>
           </tbody>
         </table>
         <p class="fragment" style="font-size: 24pt; color: #f1fa8c; margin-top: 20px;">
@@ -502,7 +591,8 @@ anomalias = pred == -1
           <li><code>numero_compras</code> — quantidade de compras no período.</li>
         </ls-u>
         <highlight-box class="fragment" instant>
-          <p style="font-size: 24pt;">Gerar dados normais, inserir pontos anômalos, aplicar IQR, DBSCAN, Isolation Forest e LOF, e comparar resultados.</p>
+          <p style="font-size: 24pt;">Gerar dados normais, inserir pontos anômalos, aplicar IQR, DBSCAN, Isolation
+            Forest e LOF, e comparar resultados.</p>
         </highlight-box>
       </section>
 
@@ -510,31 +600,31 @@ anomalias = pred == -1
       <section data-auto-animate>
         <h2>Gerando o dataset</h2>
         <code-block lang="python">
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+          import numpy as np
+          import pandas as pd
+          import matplotlib.pyplot as plt
 
-np.random.seed(42)
+          np.random.seed(42)
 
-n_normal = 300
+          n_normal = 300
 
-normais = pd.DataFrame({
-    "gasto_mensal": np.random.normal(500, 120, n_normal),
-    "numero_compras": np.random.normal(12, 3, n_normal)
-})
+          normais = pd.DataFrame({
+          "gasto_mensal": np.random.normal(500, 120, n_normal),
+          "numero_compras": np.random.normal(12, 3, n_normal)
+          })
 
-anomalias = pd.DataFrame({
-    "gasto_mensal": [1200, 1400, 100, 1600, 80],
-    "numero_compras": [2, 3, 40, 1, 45]
-})
+          anomalias = pd.DataFrame({
+          "gasto_mensal": [1200, 1400, 100, 1600, 80],
+          "numero_compras": [2, 3, 40, 1, 45]
+          })
 
-dados = pd.concat([normais, anomalias], ignore_index=True)
+          dados = pd.concat([normais, anomalias], ignore_index=True)
 
-plt.scatter(dados["gasto_mensal"], dados["numero_compras"])
-plt.xlabel("Gasto mensal")
-plt.ylabel("Número de compras")
-plt.title("Clientes: comportamento normal e anômalo")
-plt.show()
+          plt.scatter(dados["gasto_mensal"], dados["numero_compras"])
+          plt.xlabel("Gasto mensal")
+          plt.ylabel("Número de compras")
+          plt.title("Clientes: comportamento normal e anômalo")
+          plt.show()
         </code-block>
       </section>
 
@@ -542,24 +632,24 @@ plt.show()
       <section data-auto-animate>
         <h2>Visualizando as anomalias detectadas</h2>
         <code-block lang="python">
-plt.scatter(
-    dados["gasto_mensal"],
-    dados["numero_compras"],
-    label="Normal"
-)
+          plt.scatter(
+          dados["gasto_mensal"],
+          dados["numero_compras"],
+          label="Normal"
+          )
 
-plt.scatter(
-    dados.loc[anomalias_detectadas, "gasto_mensal"],
-    dados.loc[anomalias_detectadas, "numero_compras"],
-    label="Anomalia",
-    marker="x",
-    s=100
-)
+          plt.scatter(
+          dados.loc[anomalias_detectadas, "gasto_mensal"],
+          dados.loc[anomalias_detectadas, "numero_compras"],
+          label="Anomalia",
+          marker="x",
+          s=100
+          )
 
-plt.xlabel("Gasto mensal")
-plt.ylabel("Número de compras")
-plt.legend()
-plt.show()
+          plt.xlabel("Gasto mensal")
+          plt.ylabel("Número de compras")
+          plt.legend()
+          plt.show()
         </code-block>
       </section>
 
@@ -582,7 +672,8 @@ plt.show()
       <section data-auto-animate>
         <h2>Fechamento</h2>
         <highlight-box instant>
-          <p style="font-size: 28pt;">Em Ciência de Dados, o ponto estranho pode ser ruído, erro ou descoberta. O algoritmo encontra candidatos; a interpretação depende do contexto.</p>
+          <p style="font-size: 28pt;">Em Ciência de Dados, o ponto estranho pode ser ruído, erro ou descoberta. O
+            algoritmo encontra candidatos; a interpretação depende do contexto.</p>
         </highlight-box>
         <multi-col style="gap: 20px; margin-top: 25px;">
           <div class="metric-card" style="border-left-color: #ff79c6;">
@@ -627,7 +718,7 @@ plt.show()
 
   <script>
     var _createApp = Vue.createApp;
-    Vue.createApp = function(opts) {
+    Vue.createApp = function (opts) {
       var app = _createApp(opts);
       Object.assign(app.config.globalProperties, {
         AULA13_MOTIVACAO_TRACES: AULA13_MOTIVACAO_TRACES,
@@ -678,4 +769,5 @@ plt.show()
   </script>
 
 </body>
+
 </html>

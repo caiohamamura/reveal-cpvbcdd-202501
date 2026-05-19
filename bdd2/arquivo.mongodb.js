@@ -1,0 +1,2 @@
+db.clientes.countDocuments()
+

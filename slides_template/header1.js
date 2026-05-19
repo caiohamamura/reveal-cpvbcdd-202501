@@ -55,13 +55,10 @@ const headerComponent = {
               style="
                 margin: 0 30px 60px 30px;
                 align-self: end;
-                color: white;
-                font-weight: bold;
               "
               :style="{fontSize: (titleSize || 40) +  'pt'}"
-              v-html="title"
             >
-              
+              {{title}}
             </h2>
           </div>
       
