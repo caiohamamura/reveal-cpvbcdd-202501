@@ -260,6 +260,7 @@ graph LR
           <li><code>-1</code> indica ruído.</li>
           <li>Ruído pode ser interpretado como candidato a anomalia.</li>
           <li>Depende muito de <code>eps</code> e <code>min_samples</code>.</li>
+          <li>Não funcion</li>
         </ls-u>
       </section>
 
@@ -497,6 +498,97 @@ graph LR
 
       </section><!-- fim LOF -->
 
+      <!-- SLIDE: One-Class SVM -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">One-Class SVM — intuição</h2>
+          <highlight-box instant>
+            <p style="font-size: 28pt;">O One-Class SVM aprende uma fronteira ao redor dos dados normais — pontos fora são anomalias.</p>
+          </highlight-box>
+          <div class="fragment" style="margin-top: 20px;">
+            <span class="step-pill">Kernel RBF → fronteira não-linear</span>
+            <span class="step-pill">Support vectors → borda da região normal</span>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>One-Class SVM: fronteira de decisão</h2>
+          <p style="font-size: 24pt;">O kernel RBF mapeia os dados para um espaço de alta dimensão onde uma hiperesfera separa dados normais de anomalias.</p>
+          <div style="text-align: center; padding: 20px; background: #44475a; border-radius: 8px; margin: 15px 0;">
+            <p style="font-size: 26pt; color: #ff79c6;">\(f(x) = \text{sign}\!\left(\sum_{i=1}^{n} \alpha_i \, K(x_i, x) - \rho\right)\)</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Componente</th>
+                <th>Significado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>\(K(x_i, x)\)</td>
+                <td>similaridade via kernel RBF entre \(x\) e suporte \(x_i\)</td>
+              </tr>
+              <tr>
+                <td>\(\alpha_i\)</td>
+                <td>peso de cada suporte (maioridade = 0)</td>
+              </tr>
+              <tr>
+                <td>\(\rho\)</td>
+                <td>limiar de decisão (offset)</td>
+              </tr>
+              <tr>
+                <td>\(f(x) > 0\)</td>
+                <td><strong>normal</strong> — dentro da fronteira</td>
+              </tr>
+              <tr>
+                <td>\(f(x) < 0\)</td>
+                <td><strong>anomalia</strong> — fora da fronteira</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>One-Class SVM: passo a passo</h2>
+<div style="background: #282a36; border-left: 4px solid #bd93f9; padding: 20px;">
+  <ls-u>
+    <li><strong>1.</strong> Use dados majoritariamente normais para treinar o modelo.</li>
+    <li><strong>2.</strong> Aplique um kernel, como RBF, para permitir uma fronteira não linear.</li>
+    <li><strong>3.</strong> Encontre os pontos que definem a borda da região normal: os support vectors.</li>
+    <li><strong>4.</strong> Calcule, para cada novo ponto \(x\), sua similaridade ponderada com os support vectors.</li>
+    <li><strong>5.</strong> Se o score ficar abaixo do limiar, \(x\) é marcado como anomalia.</li>
+  </ls-u>
+</div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>One-Class SVM — código</h2>
+          <code-block lang="python">
+            from sklearn.svm import OneClassSVM
+
+            modelo = OneClassSVM(
+            kernel='rbf',
+            gamma='auto',
+            nu=0.05
+            )
+
+            modelo.fit(X_train_normal)
+
+            pred = modelo.predict(X_test)
+            anomalias = pred == -1
+          </code-block>
+          <p style="font-size: 22pt; color: #f1fa8c;">
+            <code>nu</code> = proporção máxima de outliers aceita.
+          </p>
+          <p style="font-size: 22pt; color: #8be9fd; margin-top: 10px;">
+            Treinamos com dados normais (benigno) e detectamos malignos como anomalias.
+          </p>
+        </section>
+
+      </section><!-- fim One-Class SVM -->
+
       <!-- SLIDE 14: Comparação dos métodos -->
       <section data-auto-animate>
         <h2>Comparação dos métodos</h2>
@@ -539,6 +631,12 @@ graph LR
               <td>densidade local</td>
               <td>detecta anomalias locais</td>
               <td>sensível ao número de vizinhos</td>
+            </tr>
+            <tr>
+              <td><strong>One-Class SVM</strong></td>
+              <td>fronteira</td>
+              <td>fronteira não-linear via kernel</td>
+              <td>sensível a parâmetros kernel/nu</td>
             </tr>
           </tbody>
         </table>

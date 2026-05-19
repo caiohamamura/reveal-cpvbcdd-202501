@@ -71,3 +71,9 @@ python3 .opencode/skills/run-notebook/run_notebook.py \
 # 2. Check for errors
 # The script exits non-zero if any cell fails, outputs error report
 ```
+
+## Gotchas & Tips
+
+- **Git stash + notebook = data loss risk**: If a user stashes changes to a notebook and then commits other work, the stash can contain only the *previous* state — not the latest edits. Always commit notebooks before major refactors, or warn the user.
+- **Notebook size after execution**: `jupyter nbconvert --execute --to notebook` replaces the file in-place with the executed version (including embedded images). Use `--output executed.ipynb` to preserve the original.
+- **Wisconsin Cancer dataset**: `load_breast_cancer()` uses 0=malignant, 1=benign. For novelty detection, **malignant IS the anomaly** (the rare/important case). Train with benign (y=1), test against malignant (y=0). Always document class semantics explicitly in notebook headers.
