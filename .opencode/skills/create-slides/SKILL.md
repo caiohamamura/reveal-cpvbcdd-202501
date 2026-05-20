@@ -561,6 +561,7 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - For Python/IPython Redis examples, create the client with `redis.Redis(host="localhost", port=6379, decode_responses=True)` so string outputs are readable.
 - On Ubuntu 24.04+, avoid teaching `pip install --user redis` for the system Python; PEP 668 blocks it. Use `sudo apt install redis-server python3-redis ipython3` for a simple classroom setup.
 - `redis-py` may display membership checks like `r.sismember(...)` as `1` instead of `True`; both indicate membership.
+- The archived Windows `Redis.Redis` package is Redis 3.0 and does not support multi-field `HSET`; use repeated `r.hset(key, field, value)` calls instead of `r.hset(key, mapping={...})`.
 
 ---
 # IMPORTANT!!!!!
