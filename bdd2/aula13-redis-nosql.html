@@ -593,6 +593,26 @@ r.config_get("save")
         </section>
 
         <section data-auto-animate>
+          <h2>Como ler <span class="mini-code">900 1 300 10 60 10000</span>?</h2>
+          <div class="info-box">
+            <p>O Redis lê essa configuração em pares: <span class="mini-code">segundos mudanças</span>.</p>
+          </div>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Par</th><th>Significado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="mini-code">900 1</span></td><td>se pelo menos 1 chave mudou em 900 segundos, salve um snapshot RDB</td></tr>
+              <tr><td><span class="mini-code">300 10</span></td><td>se pelo menos 10 chaves mudaram em 300 segundos, salve um snapshot RDB</td></tr>
+              <tr><td><span class="mini-code">60 10000</span></td><td>se pelo menos 10000 chaves mudaram em 60 segundos, salve um snapshot RDB</td></tr>
+            </tbody>
+          </table>
+          <div class="yellow-box">
+            <p>Ideia central: quanto mais mudanças acontecem, menor pode ser o intervalo até o próximo snapshot.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
           <h2>Testar persistência na prática</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
