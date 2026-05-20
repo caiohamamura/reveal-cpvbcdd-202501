@@ -302,15 +302,45 @@ r.ttl("sessao:usuario:1")
           <p style="font-size: 0.56em; color: #6272a4;">Depois das quatro primeiras chamadas, aguarde mais de 20 segundos e rode as duas últimas.</p>
         </section>
 
-        <section data-auto-animate>
-          <h2>Cache não é o dado principal</h2>
-          <div class="mermaid" data-id="cache-flow">
-            <pre>
+<section data-auto-animate>
+  <h2>Cache não é o dado principal</h2>
+  <div class="mermaid" data-id="cache-flow">
+    <pre>
+---
+config:
+  theme: base
+  themeVariables:
+    background: '#282a36'
+    primaryColor: '#44475a'
+    primaryTextColor: '#f8f8f2'
+    primaryBorderColor: '#bd93f9'
+    lineColor: '#f8b229'
+    secondaryColor: '#6272a4'
+    tertiaryColor: '#44475a'
+    actorBkg: '#44475a'
+    actorTextColor: '#f8f8f2'
+    actorBorder: '#bd93f9'
+    actorLineColor: '#f8b229'
+    signalColor: '#f8f8f2'
+    signalTextColor: '#f8f8f2'
+    labelBoxBkgColor: '#44475a'
+    labelBoxBorderColor: '#bd93f9'
+    labelTextColor: '#f8f8f2'
+    loopTextColor: '#f8f8f2'
+    activationBkgColor: '#6272a4'
+    activationBorderColor: '#f8b229'
+    noteBkgColor: '#44475a'
+    noteTextColor: '#f8f8f2'
+    noteBorderColor: '#f8b229'
+    fontSize: '28px'
+---
 sequenceDiagram
   participant App as Aplicação
   participant R as Redis
   participant DB as PostgreSQL
+
   App->>R: GET produto:10
+
   alt cache hit
     R-->>App: JSON do produto
   else cache miss
@@ -318,12 +348,12 @@ sequenceDiagram
     DB-->>App: registro
     App->>R: SET produto:10 EX 300
   end
-            </pre>
-          </div>
-          <p style="font-size: 0.58em; color: #6272a4;">Redis acelera a leitura, mas a fonte de verdade pode continuar sendo PostgreSQL.</p>
-        </section>
-
-      </section><!-- fim Fase 4 -->
+    </pre>
+  </div>
+  <p style="font-size: 0.58em; color: #6272a4;">
+    Redis acelera a leitura, mas a fonte de verdade pode continuar sendo PostgreSQL.
+  </p>
+</section>
 
       <!-- ============================================================
          FASE 5: ESTRUTURAS DE DADOS
@@ -347,14 +377,9 @@ sequenceDiagram
           <multi-col style="gap:15px">
             <div style="flex: 1.2;">
               <code-block lang="python" data-trim><script type="text/plain">
-r.hset(
-    "aluno:1",
-    mapping={
-        "nome": "Ana",
-        "curso": "Informática",
-        "idade": 17,
-    },
-)
+r.hset("aluno:1", "nome", "Ana")
+r.hset("aluno:1", "curso", "Informática")
+r.hset("aluno:1", "idade", 17)
 r.hget("aluno:1", "nome")
 r.hgetall("aluno:1")
 r.hincrby("aluno:1", "idade", 1)
@@ -385,15 +410,10 @@ r.hgetall("aluno:1")
             <p><strong>Objetivo:</strong> representar um produto com nome, categoria, preço e estoque. Depois, reduzir o estoque.</p>
           </div>
           <code-block lang="python" data-trim><script type="text/plain">
-r.hset(
-    "produto:1",
-    mapping={
-        "nome": "Mouse",
-        "categoria": "Periféricos",
-        "preco": "59.90",
-        "estoque": 20,
-    },
-)
+r.hset("produto:1", "nome", "Mouse")
+r.hset("produto:1", "categoria", "Periféricos")
+r.hset("produto:1", "preco", "59.90")
+r.hset("produto:1", "estoque", 20)
 r.hgetall("produto:1")
 r.hincrby("produto:1", "estoque", -1)
 r.hgetall("produto:1")
