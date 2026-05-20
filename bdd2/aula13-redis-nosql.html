@@ -559,6 +559,67 @@ r.zrevrange("jogo:ranking", 0, 2, withscores=True)
         </section>
 
         <section data-auto-animate>
+          <h2>Ativar AOF e RDB pelo IPython</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1.1;font-size:0.78em;">
+              <code-block lang="python" data-trim>
+r.config_set("appendonly", "yes")
+r.config_set("appendfsync", "everysec")
+r.config_set("save", "900 1 300 10 60 10000")
+r.config_rewrite()
+              </code-block>
+            </div>
+            <div style="flex: 0.9;">
+              <div class="info-box">
+                <p><span class="mini-code">appendonly yes</span>: liga o AOF.</p>
+                <p><span class="mini-code">appendfsync everysec</span>: grava o log a cada segundo.</p>
+                <p><span class="mini-code">save</span>: liga snapshots RDB automáticos.</p>
+                <p><span class="mini-code">config_rewrite</span>: salva a configuração no arquivo do Redis.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Verificar a configuração</h2>
+          <code-block lang="python" data-trim>
+r.config_get("appendonly")
+r.config_get("appendfsync")
+r.config_get("save")
+          </code-block>
+          <div class="green-box">
+            <p>Se aparecer <span class="mini-code">yes</span>, <span class="mini-code">everysec</span> e a regra <span class="mini-code">900 1 300 10 60 10000</span>, AOF e RDB estão ativos.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Testar persistência na prática</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <p style="font-size:0.7em;color:#8be9fd;">No IPython:</p>
+              <code-block lang="python" data-trim>
+r.set("persistencia:teste", "sobreviveu")
+r.save()
+r.get("persistencia:teste")
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <p style="font-size:0.7em;color:#8be9fd;">Reinicie o serviço:</p>
+              <p style="font-size:0.52em;color:#6272a4;">No Windows, use PowerShell como administrador.</p>
+              <code-block lang="powershell" data-trim>
+Restart-Service Redis
+              </code-block>
+              <code-block lang="bash" data-trim>
+sudo systemctl restart redis-server
+              </code-block>
+            </div>
+          </multi-col>
+          <div class="yellow-box">
+            <p>Depois do reinício, rode <span class="mini-code">r.get("persistencia:teste")</span> de novo. O valor deve continuar existindo.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
           <h2>O que deve persistir?</h2>
           <table class="comparison-table">
             <thead>
