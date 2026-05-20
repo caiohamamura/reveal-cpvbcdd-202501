@@ -98,8 +98,8 @@ function escapeHtml(text) {
 (function captureCodeBlocks() {
   document.querySelectorAll('code-block').forEach(el => {
     const id = '__cb_' + (window.__codeBlockCounter++);
-    // Prefer <script type="text/plain"> child to avoid HTML parser mangling
-    // (e.g. #include <Arduino.h> becomes <arduino.h>)
+    // Use raw text for ordinary code; use <textarea> only when angle brackets
+    // would otherwise be parsed as HTML (e.g. #include <Arduino.h>).
     const raw = el.textContent;
     window.__codeBlockRaw[id] = escapeHtml(stripIndentation(raw));
     el.setAttribute('data-cb-id', id);
@@ -490,7 +490,7 @@ const pollQuestionComponent = {
       <p v-if="question">{{ question }}</p>
       <multi-col>
       <div class="poll" :data-poll="id">
-        <button v-for="opt in options" :data-value="opt.value">
+        <button v-for="opt in options" :data-value="opt.value" style="font-size:0.5em">
           {{ String(opt.value).toUpperCase() }}) {{ opt.label }}
         </button>
       </div>

@@ -15,6 +15,12 @@ from urllib.parse import urlparse
 
 CHINESE_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
 LOCAL_REF_RE = re.compile(r"""(?:href|src)\s*=\s*["']([^"':#][^"']*)["']""", re.IGNORECASE)
+CODE_BLOCK_SCRIPT_RE = re.compile(
+    r"<code-block\b[^>]*>(?:(?!</code-block>).)*<script\b",
+    re.IGNORECASE | re.DOTALL,
+)
+PHASE_START_RE = re.compile(r"FASE\s+(\d+)\s*:", re.IGNORECASE)
+PHASE_END_RE = re.compile(r"fim\s+Fase\s+(\d+)", re.IGNORECASE)
 REMOTE_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
 
@@ -123,6 +129,58 @@ def validate_file(path: Path) -> list[Finding]:
                 path,
                 f"caractere chinês detectado em {line}:{col}: {match.group(0)!r}",
             )
+        )
+
+    for match in CODE_BLOCK_SCRIPT_RE.finditer(text):
+        line, col = line_col(text, match.start())
+        findings.append(
+            Finding(
+                "ERROR",
+                path,
+                f"<script> dentro de <code-block> em {line}:{col}; use texto direto ou <textarea> quando houver < >",
+            )
+        )
+
+    open_phase: tuple[str, int, int] | None = None
+    for match in re.finditer(r"<!--(?P<comment>.*?)-->", text, re.DOTALL):
+        comment = match.group("comment")
+        start_match = PHASE_START_RE.search(comment)
+        end_match = PHASE_END_RE.search(comment)
+        if start_match:
+            phase = start_match.group(1)
+            line, col = line_col(text, match.start())
+            if open_phase is not None:
+                previous_phase, previous_line, previous_col = open_phase
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        path,
+                        f"FASE {phase} começou em {line}:{col} antes do fim Fase {previous_phase} aberto em {previous_line}:{previous_col}",
+                    )
+                )
+            open_phase = (phase, line, col)
+        if end_match:
+            phase = end_match.group(1)
+            line, col = line_col(text, match.start())
+            if open_phase is None:
+                findings.append(
+                    Finding("ERROR", path, f"fim Fase {phase} sem FASE correspondente em {line}:{col}")
+                )
+            elif open_phase[0] != phase:
+                findings.append(
+                    Finding(
+                        "ERROR",
+                        path,
+                        f"fim Fase {phase} em {line}:{col} não corresponde à FASE {open_phase[0]} aberta em {open_phase[1]}:{open_phase[2]}",
+                    )
+                )
+                open_phase = None
+            else:
+                open_phase = None
+    if open_phase is not None:
+        phase, line, col = open_phase
+        findings.append(
+            Finding("ERROR", path, f"FASE {phase} aberta em {line}:{col} sem comentário fim Fase {phase}")
         )
 
     img_parser = ImgAltParser(path)

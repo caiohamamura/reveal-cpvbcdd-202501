@@ -23,6 +23,8 @@ python .opencode/skills/validate-slides/scripts/validate_slide_deck.py bdd2/*.ht
 
 - HTML parses with Python `HTMLParser`
 - No Chinese characters in student-facing HTML
+- No `<script>` tags inside `<code-block>`
+- `FASE N` comment blocks are closed with matching `fim Fase N` before the next phase starts
 - Local `href` and `src` references exist on disk
 - Every `<img>` tag has non-empty `alt`
 - Local images are valid binary files larger than 1KB when Pillow is available

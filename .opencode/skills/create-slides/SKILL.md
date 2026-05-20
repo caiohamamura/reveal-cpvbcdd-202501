@@ -175,14 +175,14 @@ Rules:
 ```html
       <section data-auto-animate>
         <h2>{TITULO}</h2>
-        <code-block lang="{lang}" data-trim><script type="text/plain">
-{CODE HERE - raw code, angle brackets preserved}
-</script></code-block>
+        <code-block lang="{lang}" data-trim>
+{CODE HERE}
+</code-block>
       </section>
 ```
 - Use `lang="sql"` for SQL, `lang="cpp"` or `lang="c"` for Arduino/C++, `lang="python"` for Python, `lang="r"` for R
-- **ALWAYS** wrap code content in `<script type="text/plain">` — this prevents the browser's HTML parser from mangling angle brackets (e.g. `#include <Arduino.h>` would become `#include <arduino.h>` without it)
-- The `<script type="text/plain">` is invisible to the browser and acts as a raw text container
+- Do not use `<script>` tags inside `<code-block>`; Vue treats them as side-effect tags and logs template compilation warnings.
+- Use raw text directly for ordinary code. Use `<textarea>` only when the code actually contains `<` or `>` that the browser would parse as HTML.
 
 #### Challenge / "Desafio" slide
 ```html
@@ -217,7 +217,7 @@ Rules:
           </ls-u>
         </div>
         <div>
-          <code-block lang="sql"><script type="text/plain">
+          <code-block lang="sql">
 CREATE OR REPLACE FUNCTION nome_funcao(
     -- parâmetros
 ) RETURNS tipo AS $$
@@ -225,7 +225,7 @@ BEGIN
     -- sua lógica aqui
 END;
 $$ LANGUAGE plpgsql;
-</script></code-block>
+</code-block>
         </div>
       </section>
 ```
@@ -411,12 +411,15 @@ Technical details:
 - Node labels with emojis and accents (e.g. `["🤖 Bot"]`) are fine.
 
 #### Code blocks with angle brackets
-- **Always** use `<script type="text/plain">` (not `<textarea>`) to wrap code in `<code-block>`.
-- This prevents the HTML parser from interpreting `#include <Arduino.h>` as an HTML tag and mangling it.
+- Never use `<script>` tags inside `<code-block>`; Vue ignores side-effect tags and emits warnings.
+- Use direct text inside `<code-block>` for ordinary code.
+- Use `<textarea>` inside `<code-block>` only when the code actually contains `<` or `>` that would be parsed as HTML, such as `#include <Arduino.h>`.
 
 #### HTML section nesting (Reveal.js)
 - Reveal.js uses nested `<section>` elements for vertical navigation. A misplaced closing `</section>` can cause slides to be nested incorrectly, making them invisible or out of order.
 - Use comment markers like `<!-- fim Fase N -->` to track section boundaries.
+- If `FASE N` starts before `fim Fase N-1`, Reveal can mix the first slides of the next phase and render following slides blank.
+- Run `python .opencode/skills/validate-slides/scripts/validate_slide_deck.py <slide-file.html>` after edits to catch unclosed phase comments.
 - Quiz/references sections must be siblings of other super-sections, NOT nested inside them.
 
 #### mountSlideApp() override pattern (per-slide Vue reactive state)
