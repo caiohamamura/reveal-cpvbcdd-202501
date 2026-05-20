@@ -161,7 +161,7 @@ mongosh
           <h2>Instalação Rápida: Windows (winget)</h2>
           <p style="font-size: 0.85em;">Se o <a href="https://learn.microsoft.com/windows/package-manager/winget/" target="_blank" style="color: #8be9fd;">winget</a> estiver disponível no seu Windows:</p>
           <code-block lang="powershell">
-winget install -e --id MongoDB.Server
+winget install -e --id MongoDB.Server --version 6.0.27
 winget install -e --id MongoDB.Shell
 </code-block>
           <div class="yellow-box">
@@ -239,41 +239,83 @@ mongosh
                 <p style="font-size: 0.5em; margin:0;">O <code>mongosh</code> continua no terminal integrado, mas o Playground é o ambiente principal.</p>
               </div>
             </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <img src="planos/mongodb-vscode-setup.svg" alt="Ilustração do MongoDB for VS Code" style="width:100%; max-height:140px; object-fit:contain; background:#08131f; border-radius:12px; padding:10px;" />
+              <img src="planos/mongodb-vscode-create-playground.webp" alt="Tela do MongoDB for VS Code com o botão Create New Playground" style="width:100%; border-radius:12px; border:1px solid rgba(255,255,255,0.16);" />
+              <img src="planos/mongodb-vscode-add-connection.webp" alt="Tela do MongoDB for VS Code com a opção de adicionar conexão ao Playground" style="width:100%; border-radius:12px; border:1px solid rgba(255,255,255,0.16);" />
+            </div>
           </multi-col>
           <p style="font-size: 0.42em; color: #6272a4;">Fonte: MongoDB for VS Code — 3M+ instalações.</p>
         </section>
 
         <section>
           <h2>Antes de Começar</h2>
-          <p style="font-size: 0.85em;">Com MongoDB Community Server e <code>mongosh</code> instalados:</p>
-          <p style="font-size: 0.85em;"><code>mongosh</code></p>
-          <div class="fragment fade-in">
-            <p style="font-size: 0.85em;">Dentro do shell:</p>
-            <p style="font-size: 0.85em;"><code>db.runCommand({ ping: 1 })</code></p>
+          <p style="font-size: 0.85em;">Nesta aula, os comandos devem ser executados no <strong>Playground</strong> do VS Code, não no terminal com <code>mongosh --file</code>.</p>
+          <div class="yellow-box">
+            <p style="font-size: 0.74em; margin:0;">Comandos como <code>mongosh --file</code> e <code>show collections</code> são do shell. No Playground, use <code>use("bdd2_aula12")</code> e <code>db.getCollectionNames()</code>.</p>
           </div>
+          <code-block lang="javascript">
+use("bdd2_aula12");
+db.runCommand({ ping: 1 });
+          </code-block>
           <div class="fragment fade-in">
-            <div class="green-box">
-              <p style="font-size: 0.8em;">Se retornar <code>{ ok: 1 }</code>, o servidor está respondendo.</p>
-            </div>
+            <p style="font-size: 0.85em;">Resultado esperado no Playground:</p>
+            <code-block lang="json">
+{ ok: 1 }
+            </code-block>
           </div>
         </section>
 
         <section>
           <h2>Carregando os Dados da Aula</h2>
-          <p style="font-size: 0.85em;">A partir da pasta <code>bdd2</code>:</p>
-          <code-block lang="bash">
-mongosh --file seed.mongodb.js
+          <p style="font-size: 0.85em;">Abra <code>seed.mongodb.js</code> como Playground no VS Code e execute com o botão de play.</p>
+          <div class="yellow-box">
+            <p style="font-size: 0.74em; margin:0;">O seed já está escrito no formato aceito pelo Playground. Não use <code>mongosh --file</code> aqui.</p>
+          </div>
+          <code-block lang="javascript">
+use("bdd2_aula12");
+// depois de executar o seed.mongodb.js
+print("Base bdd2_aula12 carregada.");
+print("produtos: 10");
+print("clientes: 3");
+print("pedidos: 4");
 </code-block>
           <div class="fragment fade-in">
-            <p style="font-size: 0.85em;">Depois, abra o shell:</p>
-            <p style="font-size: 0.85em;"><code>mongosh bdd2_aula12</code></p>
-          </div>
-          <div class="fragment fade-in">
+            <p style="font-size: 0.85em;">Verificação no Playground:</p>
             <code-block lang="javascript">
-show collections
+db.getCollectionNames()
 db.produtos.countDocuments()
 db.clientes.countDocuments()
-</code-block>
+db.pedidos.countDocuments()
+            </code-block>
+          </div>
+          <div class="fragment fade-in">
+            <table class="tg" style="font-size:18px; width: 100%; max-width: 520px; margin: 0 auto;">
+              <thead>
+                <tr>
+                  <th class="tg-bf9e">collection</th>
+                  <th class="tg-bf9e">resultado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="tg-0lax">getCollectionNames()</td>
+                  <td class="tg-0lax">clientes, pedidos, produtos</td>
+                </tr>
+                <tr>
+                  <td class="tg-0lax">countDocuments() em produtos</td>
+                  <td class="tg-0lax">10</td>
+                </tr>
+                <tr>
+                  <td class="tg-0lax">countDocuments() em clientes</td>
+                  <td class="tg-0lax">3</td>
+                </tr>
+                <tr>
+                  <td class="tg-0lax">countDocuments() em pedidos</td>
+                  <td class="tg-0lax">4</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
@@ -1031,6 +1073,35 @@ db.produtos.find(
   }
 )
 </code-block>
+        </section>
+
+        <section>
+          <h2>Resultado no Playground</h2>
+          <p style="font-size: 0.8em;">Executando a consulta anterior, o Playground retorna estes documentos:</p>
+          <table class="tg" style="font-size:18px; width: 100%; max-width: 900px; margin: 0 auto;">
+            <thead>
+              <tr>
+                <th class="tg-bf9e">nome</th>
+                <th class="tg-bf9e">preco</th>
+                <th class="tg-bf9e">specs.ram_gb</th>
+                <th class="tg-bf9e">estoque</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tg-0lax">Notebook Aurora 14</td>
+                <td class="tg-0lax">5299.9</td>
+                <td class="tg-0lax">16</td>
+                <td class="tg-0lax">18</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Notebook Studio 14</td>
+                <td class="tg-0lax">5899.9</td>
+                <td class="tg-0lax">16</td>
+                <td class="tg-0lax">12</td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
         <section>
