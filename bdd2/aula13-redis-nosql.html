@@ -626,7 +626,7 @@ await r.sendCommand(["CONFIG", "GET", "save"]);
               <p style="font-size:0.7em;color:#8be9fd;">No Node:</p>
               <code-block lang="javascript" data-trim>
 await r.set("persistencia:teste", "sobreviveu");
-await r.save();
+await r.sendCommand(["SAVE"]);
 await r.get("persistencia:teste");
               </code-block>
             </div>
