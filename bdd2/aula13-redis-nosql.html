@@ -50,8 +50,17 @@
                  title="Redis: Chaves, Cache e Estruturas de Dados">
           <div class="mermaid" data-id="cover-redis" style="width:520px">
             <pre>
+---
+displayMode: compact
+config:
+  theme: dracula
+  themeVariables:
+    primary: '#ff5555'
+    lineColor: '#F8B229'
+    fontSize: 50px
+---
 graph LR
-  A["Aplicação"] --> B["Redis"]
+  A["Aplicação"] ---> B["Redis"]
   B --> C["Cache"]
   B --> D["Sessões"]
   B --> E["Filas"]
@@ -96,10 +105,10 @@ graph LR
             </thead>
             <tbody>
               <tr><td>Lembrar sessão de login por 30 minutos</td><td>Chave com TTL</td></tr>
-              <tr><td>Contar visualizações rapidamente</td><td>Contador atômico</td></tr>
-              <tr><td>Guardar carrinho temporário</td><td>Hash com expiração</td></tr>
+              <tr><td>Contar visualizações em tempo real</td><td>Contador atômico</td></tr>
+              <tr><td>Guardar carrinho temporário</td><td>Hash + TTL na chave</td></tr>
               <tr><td>Processar tarefas em segundo plano</td><td>Lista como fila</td></tr>
-              <tr><td>Manter usuários online sem duplicar</td><td>Set</td></tr>
+              <tr><td>Registrar usuários online sem repetição</td><td>Set</td></tr>
               <tr><td>Ranking de jogo</td><td>Sorted set</td></tr>
             </tbody>
           </table>
@@ -124,24 +133,84 @@ graph LR
       </section><!-- fim Fase 1 -->
 
       <!-- ============================================================
-         FASE 2: PRIMEIROS COMANDOS
+         FASE 2: INSTALAÇÃO LOCAL
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 2: Redis CLI e chave-valor</h2>
+          <h2 style="color: #8be9fd;">Fase 2: Instalação local</h2>
+          <p style="color: #6272a4;">Vamos manter um <span class="mini-code">ipython</span> aberto e executar os comandos pelo cliente Python do Redis.</p>
+          <div class="yellow-box">
+            <p>Isso fica mais próximo de um backend real: a aplicação Python conversa com um servidor Redis.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Windows: preparar ambiente</h2>
+          <code-block lang="powershell" data-trim><script type="text/plain">
+winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
+winget install Docker.DockerDesktop --accept-source-agreements --accept-package-agreements
+py -m pip install redis ipython
+          </script></code-block>
+          <div class="info-box">
+            <p>No Windows, o Redis Server roda em um contêiner Docker. O Python roda no Windows e acessa <span class="mini-code">localhost:6379</span>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Windows: subir Redis e abrir IPython</h2>
+          <code-block lang="powershell" data-trim><script type="text/plain">
+docker run --name redis-aula -p 6379:6379 -d redis
+ipython
+          </script></code-block>
+          <div class="green-box">
+            <p>Deixe o <span class="mini-code">ipython</span> aberto. Os próximos slides serão executados dentro dele.</p>
+          </div>
+          <div class="yellow-box">
+            <p>Se o contêiner já existir, use <span class="mini-code">docker start redis-aula</span>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Linux: instalar com apt</h2>
+          <code-block lang="bash" data-trim><script type="text/plain">
+sudo apt update
+sudo apt install redis-server python3-redis ipython3
+sudo systemctl enable --now redis-server
+ipython3
+          </script></code-block>
+          <div class="green-box">
+            <p>No Linux, o Redis Server roda como serviço local e o IPython conversa com ele pela porta <span class="mini-code">6379</span>.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: PYTHON E CHAVE-VALOR
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 3: Python e chave-valor</h2>
           <p style="color: #6272a4;">Antes de estruturas avançadas, vamos tratar Redis como um mapa: chave → valor.</p>
         </section>
 
         <section data-auto-animate>
-          <h2>Subindo Redis com Docker</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-docker run --name redis-aula -p 6379:6379 -d redis
-docker exec -it redis-aula redis-cli
-PING
+          <h2>Conectar Python ao Redis</h2>
+          <code-block lang="python" data-trim><script type="text/plain">
+import redis
+
+r = redis.Redis(
+    host="localhost",
+    port=6379,
+    decode_responses=True,
+)
+
+r.ping()
           </script></code-block>
           <div class="green-box">
-            <p>Resposta esperada: <span class="mini-code">PONG</span></p>
+            <p>Resposta esperada: <span class="mini-code">True</span></p>
           </div>
         </section>
 
@@ -149,20 +218,20 @@ PING
           <h2>Comandos básicos</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
-              <code-block lang="bash" data-trim><script type="text/plain">
-SET nome "Ana"
-GET nome
-EXISTS nome
-DEL nome
-GET nome
+              <code-block lang="python" data-trim><script type="text/plain">
+r.set("nome", "Ana")
+r.get("nome")
+r.exists("nome")
+r.delete("nome")
+r.get("nome")
               </script></code-block>
             </div>
             <div style="flex: 1;">
               <div class="info-box">
-                <p><span class="pill">SET</span> grava um valor</p>
-                <p><span class="pill">GET</span> lê um valor</p>
-                <p><span class="pill">EXISTS</span> verifica existência</p>
-                <p><span class="pill">DEL</span> remove a chave</p>
+                <p><span class="pill">set</span> grava um valor</p>
+                <p><span class="pill">get</span> lê um valor</p>
+                <p><span class="pill">exists</span> verifica existência</p>
+                <p><span class="pill">delete</span> remove a chave</p>
               </div>
             </div>
           </multi-col>
@@ -170,39 +239,39 @@ GET nome
 
         <section data-auto-animate>
           <h2>Contadores atômicos</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-SET visitas 0
-INCR visitas
-INCR visitas
-GET visitas
+          <code-block lang="python" data-trim><script type="text/plain">
+r.set("visitas", 0)
+r.incr("visitas")
+r.incr("visitas")
+r.get("visitas")
           </script></code-block>
           <div class="yellow-box">
-            <p><strong>Pergunta:</strong> por que <span class="mini-code">INCR</span> é melhor que ler, somar na aplicação e gravar de novo?</p>
+            <p><strong>Pergunta:</strong> por que <span class="mini-code">incr</span> é melhor que ler, somar na aplicação e gravar de novo?</p>
           </div>
           <div class="green-box fragment">
             <p><strong>Resposta esperada:</strong> porque a operação é atômica. Vários processos podem incrementar sem sobrescrever uns aos outros.</p>
           </div>
         </section>
 
-      </section><!-- fim Fase 2 -->
+      </section><!-- fim Fase 3 -->
 
       <!-- ============================================================
-         FASE 3: EXPIRAÇÃO E CACHE
+         FASE 4: EXPIRAÇÃO E CACHE
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Fase 3: Expiração e cache</h2>
+          <h2 style="color: #50fa7b;">Fase 4: Expiração e cache</h2>
           <p style="color: #6272a4;">Uma chave que desaparece sozinha é uma ferramenta poderosa para sistemas web.</p>
         </section>
 
         <section data-auto-animate>
           <h2>TTL: tempo de vida da chave</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-SET codigo:1234 "839201"
-EXPIRE codigo:1234 30
-TTL codigo:1234
-GET codigo:1234
+          <code-block lang="python" data-trim><script type="text/plain">
+r.set("codigo:1234", "839201")
+r.expire("codigo:1234", 30)
+r.ttl("codigo:1234")
+r.get("codigo:1234")
           </script></code-block>
           <table class="comparison-table">
             <thead>
@@ -221,16 +290,16 @@ GET codigo:1234
           <div class="green-box">
             <p><strong>Objetivo:</strong> criar uma sessão temporária que expira em 20 segundos.</p>
           </div>
-          <code-block lang="bash" data-trim><script type="text/plain">
-SET sessao:usuario:1 "logado"
-EXPIRE sessao:usuario:1 20
-TTL sessao:usuario:1
-GET sessao:usuario:1
+          <code-block lang="python" data-trim><script type="text/plain">
+r.set("sessao:usuario:1", "logado")
+r.expire("sessao:usuario:1", 20)
+r.ttl("sessao:usuario:1")
+r.get("sessao:usuario:1")
 
-# espere mais de 20 segundos
-GET sessao:usuario:1
-TTL sessao:usuario:1
+r.get("sessao:usuario:1")
+r.ttl("sessao:usuario:1")
           </script></code-block>
+          <p style="font-size: 0.56em; color: #6272a4;">Depois das quatro primeiras chamadas, aguarde mais de 20 segundos e rode as duas últimas.</p>
         </section>
 
         <section data-auto-animate>
@@ -254,15 +323,15 @@ sequenceDiagram
           <p style="font-size: 0.58em; color: #6272a4;">Redis acelera a leitura, mas a fonte de verdade pode continuar sendo PostgreSQL.</p>
         </section>
 
-      </section><!-- fim Fase 3 -->
+      </section><!-- fim Fase 4 -->
 
       <!-- ============================================================
-         FASE 4: ESTRUTURAS DE DADOS
+         FASE 5: ESTRUTURAS DE DADOS
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #f1fa8c;">Fase 4: Estruturas de dados</h2>
+          <h2 style="color: #f1fa8c;">Fase 5: Estruturas de dados</h2>
           <p style="color: #6272a4;">Redis não guarda só strings. A força dele está nas estruturas prontas.</p>
           <div>
             <span class="pill">String</span>
@@ -277,12 +346,19 @@ sequenceDiagram
           <h2>Hashes: objetos pequenos</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1.2;">
-              <code-block lang="bash" data-trim><script type="text/plain">
-HSET aluno:1 nome "Ana" curso "Informática" idade 17
-HGET aluno:1 nome
-HGETALL aluno:1
-HINCRBY aluno:1 idade 1
-HGETALL aluno:1
+              <code-block lang="python" data-trim><script type="text/plain">
+r.hset(
+    "aluno:1",
+    mapping={
+        "nome": "Ana",
+        "curso": "Informática",
+        "idade": 17,
+    },
+)
+r.hget("aluno:1", "nome")
+r.hgetall("aluno:1")
+r.hincrby("aluno:1", "idade", 1)
+r.hgetall("aluno:1")
               </script></code-block>
             </div>
             <div style="flex: 0.8;">
@@ -308,11 +384,19 @@ HGETALL aluno:1
           <div class="green-box">
             <p><strong>Objetivo:</strong> representar um produto com nome, categoria, preço e estoque. Depois, reduzir o estoque.</p>
           </div>
-          <code-block lang="bash" data-trim><script type="text/plain">
-HSET produto:1 nome "Mouse" categoria "Periféricos" preco 59.90 estoque 20
-HGETALL produto:1
-HINCRBY produto:1 estoque -1
-HGETALL produto:1
+          <code-block lang="python" data-trim><script type="text/plain">
+r.hset(
+    "produto:1",
+    mapping={
+        "nome": "Mouse",
+        "categoria": "Periféricos",
+        "preco": "59.90",
+        "estoque": 20,
+    },
+)
+r.hgetall("produto:1")
+r.hincrby("produto:1", "estoque", -1)
+r.hgetall("produto:1")
           </script></code-block>
         </section>
 
@@ -320,21 +404,21 @@ HGETALL produto:1
           <h2>Lists: filas e pilhas</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
-              <code-block lang="bash" data-trim><script type="text/plain">
-LPUSH fila:emails "email1"
-LPUSH fila:emails "email2"
-LPUSH fila:emails "email3"
+              <code-block lang="python" data-trim><script type="text/plain">
+r.lpush("fila:emails", "email1")
+r.lpush("fila:emails", "email2")
+r.lpush("fila:emails", "email3")
 
-RPOP fila:emails
-RPOP fila:emails
-RPOP fila:emails
+r.rpop("fila:emails")
+r.rpop("fila:emails")
+r.rpop("fila:emails")
               </script></code-block>
             </div>
             <div style="flex: 1;">
               <div class="info-box">
-                <p><span class="mini-code">LPUSH</span> insere à esquerda</p>
-                <p><span class="mini-code">RPOP</span> remove da direita</p>
-                <p><span class="mini-code">LPUSH + RPOP</span> cria comportamento de fila</p>
+                <p><span class="mini-code">lpush</span> insere à esquerda</p>
+                <p><span class="mini-code">rpop</span> remove da direita</p>
+                <p><span class="mini-code">lpush + rpop</span> cria comportamento de fila</p>
               </div>
               <div class="yellow-box">
                 <p>Uso real: pedidos de envio de e-mail, geração de relatórios, processamento assíncrono.</p>
@@ -345,14 +429,14 @@ RPOP fila:emails
 
         <section data-auto-animate>
           <h2>Sets: valores únicos</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-SADD usuarios:online ana
-SADD usuarios:online bruno
-SADD usuarios:online ana
-SMEMBERS usuarios:online
-SCARD usuarios:online
-SISMEMBER usuarios:online ana
-SREM usuarios:online ana
+          <code-block lang="python" data-trim><script type="text/plain">
+r.sadd("usuarios:online", "ana")
+r.sadd("usuarios:online", "bruno")
+r.sadd("usuarios:online", "ana")
+r.smembers("usuarios:online")
+r.scard("usuarios:online")
+r.sismember("usuarios:online", "ana")
+r.srem("usuarios:online", "ana")
           </script></code-block>
           <div class="green-box">
             <p>Sets são úteis quando repetição não faz sentido: usuários online, alunos que entregaram uma tarefa, tags únicas.</p>
@@ -361,28 +445,32 @@ SREM usuarios:online ana
 
         <section data-auto-animate>
           <h2>Sorted sets: ranking com pontuação</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-ZADD jogo:ranking 500 ana
-ZADD jogo:ranking 700 bruno
-ZADD jogo:ranking 650 carla
-ZADD jogo:ranking 300 diego
-ZADD jogo:ranking 900 elisa
-
-ZREVRANGE jogo:ranking 0 -1 WITHSCORES
-ZINCRBY jogo:ranking 100 ana
-ZREVRANGE jogo:ranking 0 2 WITHSCORES
+          <code-block lang="python" data-trim><script type="text/plain">
+r.zadd(
+    "jogo:ranking",
+    {
+        "ana": 500,
+        "bruno": 700,
+        "carla": 650,
+        "diego": 300,
+        "elisa": 900,
+    },
+)
+r.zrevrange("jogo:ranking", 0, -1, withscores=True)
+r.zincrby("jogo:ranking", 100, "ana")
+r.zrevrange("jogo:ranking", 0, 2, withscores=True)
           </script></code-block>
         </section>
 
-      </section><!-- fim Fase 4 -->
+      </section><!-- fim Fase 5 -->
 
       <!-- ============================================================
-         FASE 5: PERSISTÊNCIA E DECISÃO TÉCNICA
+         FASE 6: PERSISTÊNCIA E DECISÃO TÉCNICA
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #bd93f9;">Fase 5: Persistência e decisão técnica</h2>
+          <h2 style="color: #bd93f9;">Fase 6: Persistência e decisão técnica</h2>
           <p style="color: #6272a4;">Redis é em memória, mas isso não significa “sempre temporário”.</p>
         </section>
 
@@ -431,25 +519,25 @@ ZREVRANGE jogo:ranking 0 2 WITHSCORES
           </table>
         </section>
 
-      </section><!-- fim Fase 5 -->
+      </section><!-- fim Fase 6 -->
 
       <!-- ============================================================
-         FASE 6: MINI-PROJETO
+         FASE 7: MINI-PROJETO
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Fase 6: Mini-projeto prático</h2>
+          <h2 style="color: #ff79c6;">Fase 7: Mini-projeto prático</h2>
           <p style="color: #6272a4;">Escolha um sistema e modele com as estruturas do Redis.</p>
         </section>
 
         <section data-auto-animate>
           <h2>Opção A: sessões de login</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-SET session:abc123 "usuario:1"
-EXPIRE session:abc123 60
-GET session:abc123
-TTL session:abc123
+          <code-block lang="python" data-trim><script type="text/plain">
+r.set("session:abc123", "usuario:1")
+r.expire("session:abc123", 60)
+r.get("session:abc123")
+r.ttl("session:abc123")
           </script></code-block>
           <div class="yellow-box">
             <p>Explique o que acontece após 60 segundos e por que PostgreSQL seria menos conveniente para esta tarefa específica.</p>
@@ -458,13 +546,13 @@ TTL session:abc123
 
         <section data-auto-animate>
           <h2>Opção B: carrinho de compras</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-HSET carrinho:usuario:1 produto:10 2
-HSET carrinho:usuario:1 produto:15 1
-HGETALL carrinho:usuario:1
-HINCRBY carrinho:usuario:1 produto:10 1
-EXPIRE carrinho:usuario:1 1800
-TTL carrinho:usuario:1
+          <code-block lang="python" data-trim><script type="text/plain">
+r.hset("carrinho:usuario:1", "produto:10", 2)
+r.hset("carrinho:usuario:1", "produto:15", 1)
+r.hgetall("carrinho:usuario:1")
+r.hincrby("carrinho:usuario:1", "produto:10", 1)
+r.expire("carrinho:usuario:1", 1800)
+r.ttl("carrinho:usuario:1")
           </script></code-block>
           <div class="yellow-box">
             <p>Explique o que deve ir para Redis e o que deve ir para PostgreSQL quando a compra for finalizada.</p>
@@ -473,24 +561,25 @@ TTL carrinho:usuario:1
 
         <section data-auto-animate>
           <h2>Opção C: ranking de jogo</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-ZADD jogo:ranking 500 ana
-ZADD jogo:ranking 700 bruno
-ZADD jogo:ranking 650 carla
-ZREVRANGE jogo:ranking 0 2 WITHSCORES
-ZINCRBY jogo:ranking 100 ana
-ZREVRANGE jogo:ranking 0 2 WITHSCORES
+          <code-block lang="python" data-trim><script type="text/plain">
+r.zadd(
+    "jogo:ranking",
+    {"ana": 500, "bruno": 700, "carla": 650},
+)
+r.zrevrange("jogo:ranking", 0, 2, withscores=True)
+r.zincrby("jogo:ranking", 100, "ana")
+r.zrevrange("jogo:ranking", 0, 2, withscores=True)
           </script></code-block>
         </section>
 
         <section data-auto-animate>
           <h2>Opção D: fila de relatórios</h2>
-          <code-block lang="bash" data-trim><script type="text/plain">
-LPUSH fila:relatorios "relatorio:1"
-LPUSH fila:relatorios "relatorio:2"
-LPUSH fila:relatorios "relatorio:3"
+          <code-block lang="python" data-trim><script type="text/plain">
+r.lpush("fila:relatorios", "relatorio:1")
+r.lpush("fila:relatorios", "relatorio:2")
+r.lpush("fila:relatorios", "relatorio:3")
 
-RPOP fila:relatorios
+r.rpop("fila:relatorios")
           </script></code-block>
           <div class="yellow-box">
             <p>Explique por que tarefas longas não deveriam bloquear uma requisição web.</p>
@@ -512,7 +601,7 @@ RPOP fila:relatorios
           </ls-u>
         </section>
 
-      </section><!-- fim Fase 6 -->
+      </section><!-- fim Fase 7 -->
 
       <!-- ============================================================
          QUIZ
