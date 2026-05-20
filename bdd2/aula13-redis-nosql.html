@@ -149,25 +149,25 @@ graph LR
           <h2>Windows: preparar ambiente</h2>
           <code-block lang="powershell" data-trim><script type="text/plain">
 winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
-winget install Docker.DockerDesktop --accept-source-agreements --accept-package-agreements
+winget install Memurai.MemuraiDeveloper --accept-source-agreements --accept-package-agreements
 py -m pip install redis ipython
           </script></code-block>
           <div class="info-box">
-            <p>No Windows, o Redis Server roda em um contêiner Docker. O Python roda no Windows e acessa <span class="mini-code">localhost:6379</span>.</p>
+            <p>No Windows, vamos usar o Memurai Developer como servidor compatível com Redis. O Python acessa <span class="mini-code">localhost:6379</span>.</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Windows: subir Redis e abrir IPython</h2>
+          <h2>Windows: testar servidor e abrir IPython</h2>
           <code-block lang="powershell" data-trim><script type="text/plain">
-docker run --name redis-aula -p 6379:6379 -d redis
+memurai-cli PING
 ipython
           </script></code-block>
           <div class="green-box">
-            <p>Deixe o <span class="mini-code">ipython</span> aberto. Os próximos slides serão executados dentro dele.</p>
+            <p>Se aparecer <span class="mini-code">PONG</span>, deixe o <span class="mini-code">ipython</span> aberto para os próximos slides.</p>
           </div>
           <div class="yellow-box">
-            <p>Se o contêiner já existir, use <span class="mini-code">docker start redis-aula</span>.</p>
+            <p>Se o comando não responder, abra o Memurai Developer pelo menu iniciar e tente novamente.</p>
           </div>
         </section>
 
