@@ -436,6 +436,10 @@ window.app = mountSlideApp();
 #### npm registry blocks webfetch
 - `npmjs.com` URLs return **403 Forbidden** to `webfetch`. Use GitHub repository pages, `winget.run`, or `github.com/search?q=<package>` instead for package research.
 
+#### Windows install commands with winget
+- `winget search` may return no useful output on first use unless `--accept-source-agreements` is included.
+- For Redis lessons that should resemble backend development, prefer Redis Server in Docker plus Python/IPython with `redis-py` over a Windows-native Redis-compatible server.
+
 #### Researching tool deprecation status
 - Always check deprecation/EOL status before mentioning tools in slides. MongoDB Atlas Data API was deprecated (End-of-Life) and should not be recommended to students. Verify via official docs release notes.
 
@@ -552,6 +556,11 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - `mongodb` from conda-forge provides `mongod` but NOT `mongosh`
 - Install `mongosh` separately via `npm install -g mongosh` for a complete test environment
 
+#### Redis Python teaching setup
+- For Python/IPython Redis examples, create the client with `redis.Redis(host="localhost", port=6379, decode_responses=True)` so string outputs are readable.
+- On Ubuntu 24.04+, avoid teaching `pip install --user redis` for the system Python; PEP 668 blocks it. Use `sudo apt install redis-server python3-redis ipython3` for a simple classroom setup.
+- `redis-py` may display membership checks like `r.sismember(...)` as `1` instead of `True`; both indicate membership.
+
 ---
 # IMPORTANT!!!!!
 ---
@@ -559,6 +568,7 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 ### Final Testing
 
 - Never skip testing, specially images status 200 and MIME type image, valid binary data (not placeholders <=1KB)
+- Run deterministic static checks with `python .opencode/skills/validate-slides/scripts/validate_slide_deck.py <slide-file.html>` instead of recreating ad hoc commands.
 - Test other links for 200
 - Double-check spelling for correct Portuguese (Brazilian) never Chinese characters only technical english terms
 are acceptable

@@ -128,12 +128,13 @@ Do NOT wait for the user to ask. Be proactive. Load the `reflect-and-learn` skil
 
 ## Skills
 
-Four opencode skills are available:
+Five opencode skills are available:
 
 1. **create-slides** — Generate new Reveal.js slide files (load for detailed patterns and gotchas)
 2. **search-images** — Find images via web search + deterministic extraction
 3. **run-notebook** — Execute Jupyter notebooks and extract images
 4. **reflect-and-learn** — Post-task reflection protocol for capturing and persisting learned patterns
+5. **validate-slides** — Run deterministic static validation for slide decks (HTML parse, Chinese characters, local refs, image alt text)
 
 ## Reference Documentation
 
