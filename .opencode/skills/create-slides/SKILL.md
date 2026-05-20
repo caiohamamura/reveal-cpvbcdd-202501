@@ -566,6 +566,11 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - `redis-py` may display membership checks like `r.sismember(...)` as `1` instead of `True`; both indicate membership.
 - The archived Windows `Redis.Redis` package is Redis 3.0 and does not support multi-field `HSET`; use repeated `r.hset(key, field, value)` calls instead of `r.hset(key, mapping={...})`.
 
+#### Redis Node.js teaching setup
+- For Node.js Redis examples, use the official `redis` package with `const { createClient } = await import("redis")`, `const r = createClient({ url: "redis://localhost:6379" })`, and `await r.connect()` in the Node REPL.
+- Test slide snippets against a real local Redis before finalizing. Docker may be installed but unavailable due socket permissions; fallback to `redis-server` locally or a micromamba-installed Redis.
+- Prefer `await r.sendCommand([...])` for administrative or less common Redis commands (`SAVE`, `CONFIG SET`, `CONFIG GET`, `CONFIG REWRITE`) because the Node client may not expose every command as a convenience method.
+
 ---
 # IMPORTANT!!!!!
 ---
@@ -577,5 +582,4 @@ For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM 
 - Test other links for 200
 - Double-check spelling for correct Portuguese (Brazilian) never Chinese characters only technical english terms
 are acceptable
-
 
