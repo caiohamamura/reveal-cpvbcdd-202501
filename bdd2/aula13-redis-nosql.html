@@ -139,35 +139,32 @@ graph LR
 
         <section data-auto-animate>
           <h2 style="color: #8be9fd;">Fase 2: Instalação local</h2>
-          <p style="color: #6272a4;">Vamos manter um <span class="mini-code">node</span> aberto e executar os comandos pelo cliente Redis para Node.js.</p>
+          <p style="color: #6272a4;">Vamos manter um <span class="mini-code">ipython</span> aberto e executar os comandos pelo cliente Python do Redis.</p>
           <div class="yellow-box">
-            <p>Isso fica mais próximo de um backend real: a aplicação Node.js conversa com um servidor Redis.</p>
+            <p>Isso fica mais próximo de um backend real: a aplicação Python conversa com um servidor Redis.</p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>Windows: preparar ambiente</h2>
           <code-block lang="powershell" data-trim>
-winget install OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
 winget install Redis.Redis --accept-source-agreements --accept-package-agreements
-mkdir redis-aula
-cd redis-aula
-npm init -y
-npm install redis
+py -m pip install redis ipython
 </code-block>
           <div class="info-box">
-            <p>No Windows, vamos usar o Redis instalado pelo <span class="mini-code">winget</span>. O Node.js acessa <span class="mini-code">localhost:6379</span>.</p>
+            <p>No Windows, vamos usar o Redis instalado pelo <span class="mini-code">winget</span>. O Python acessa <span class="mini-code">localhost:6379</span>.</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Windows: testar servidor e abrir Node</h2>
+          <h2>Windows: testar servidor e abrir IPython</h2>
           <code-block lang="powershell" data-trim>
 redis-cli PING
-node
+ipython
 </code-block>
           <div class="green-box">
-            <p>Se aparecer <span class="mini-code">PONG</span>, deixe o <span class="mini-code">node</span> aberto para os próximos slides.</p>
+            <p>Se aparecer <span class="mini-code">PONG</span>, deixe o <span class="mini-code">ipython</span> aberto para os próximos slides.</p>
           </div>
           <div class="yellow-box">
             <p>Se o comando não responder, feche e abra o terminal ou inicie o serviço <span class="mini-code">Redis</span> no Windows.</p>
@@ -178,44 +175,42 @@ node
           <h2>Linux: instalar com apt</h2>
           <code-block lang="bash" data-trim>
 sudo apt update
-sudo apt install redis-server nodejs npm
+sudo apt install redis-server python3-redis ipython3
 sudo systemctl enable --now redis-server
-mkdir redis-aula
-cd redis-aula
-npm init -y
-npm install redis
-node
+ipython3
 </code-block>
           <div class="green-box">
-            <p>No Linux, o Redis Server roda como serviço local e o Node.js conversa com ele pela porta <span class="mini-code">6379</span>.</p>
+            <p>No Linux, o Redis Server roda como serviço local e o IPython conversa com ele pela porta <span class="mini-code">6379</span>.</p>
           </div>
         </section>
 
       </section><!-- fim Fase 2 -->
 
       <!-- ============================================================
-         FASE 3: NODE.JS E CHAVE-VALOR
+         FASE 3: PYTHON E CHAVE-VALOR
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 3: Node.js e chave-valor</h2>
+          <h2 style="color: #8be9fd;">Fase 3: Python e chave-valor</h2>
           <p style="color: #6272a4;">Antes de estruturas avançadas, vamos tratar Redis como um mapa: chave → valor.</p>
         </section>
 
         <section data-auto-animate>
-          <h2>Conectar Node.js ao Redis</h2>
-          <code-block lang="javascript" data-trim>
-const { createClient } = await import("redis");
+          <h2>Conectar Python ao Redis</h2>
+          <code-block lang="python" data-trim>
+import redis
 
-const r = createClient({ url: "redis://localhost:6379" });
-r.on("error", err => console.log("Erro no Redis:", err));
-await r.connect();
+r = redis.Redis(
+    host="localhost",
+    port=6379,
+    decode_responses=True,
+)
 
-await r.ping();
+r.ping()
 </code-block>
           <div class="green-box">
-            <p>Resposta esperada: <span class="mini-code">PONG</span></p>
+            <p>Resposta esperada: <span class="mini-code">True</span></p>
           </div>
         </section>
 
@@ -223,12 +218,12 @@ await r.ping();
           <h2>Comandos básicos</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
-              <code-block lang="javascript" data-trim>
-await r.set("nome", "Ana");
-await r.get("nome");
-await r.exists("nome");
-await r.del("nome");
-await r.get("nome");
+              <code-block lang="python" data-trim>
+r.set("nome", "Ana")
+r.get("nome")
+r.exists("nome")
+r.delete("nome")
+r.get("nome")
 </code-block>
             </div>
             <div style="flex: 1;">
@@ -244,11 +239,11 @@ await r.get("nome");
 
         <section data-auto-animate>
           <h2>Contadores atômicos</h2>
-          <code-block lang="javascript" data-trim>
-await r.set("visitas", 0);
-await r.incr("visitas");
-await r.incr("visitas");
-await r.get("visitas");
+          <code-block lang="python" data-trim>
+r.set("visitas", 0)
+r.incr("visitas")
+r.incr("visitas")
+r.get("visitas")
 </code-block>
           <div class="yellow-box">
             <p><strong>Pergunta:</strong> por que <span class="mini-code">incr</span> é melhor que ler, somar na aplicação e gravar de novo?</p>
@@ -272,11 +267,11 @@ await r.get("visitas");
 
         <section data-auto-animate>
           <h2>TTL: tempo de vida da chave</h2>
-          <code-block lang="javascript" data-trim>
-await r.set("codigo:1234", "839201");
-await r.expire("codigo:1234", 30);
-await r.ttl("codigo:1234");
-await r.get("codigo:1234");
+          <code-block lang="python" data-trim>
+r.set("codigo:1234", "839201")
+r.expire("codigo:1234", 30)
+r.ttl("codigo:1234")
+r.get("codigo:1234")
 </code-block>
           <table class="comparison-table">
             <thead>
@@ -295,14 +290,14 @@ await r.get("codigo:1234");
           <div class="green-box">
             <p><strong>Objetivo:</strong> criar uma sessão temporária que expira em 20 segundos.</p>
           </div>
-          <code-block lang="javascript" data-trim>
-await r.set("sessao:usuario:1", "logado");
-await r.expire("sessao:usuario:1", 20);
-await r.ttl("sessao:usuario:1");
-await r.get("sessao:usuario:1");
+          <code-block lang="python" data-trim>
+r.set("sessao:usuario:1", "logado")
+r.expire("sessao:usuario:1", 20)
+r.ttl("sessao:usuario:1")
+r.get("sessao:usuario:1")
 
-await r.get("sessao:usuario:1");
-await r.ttl("sessao:usuario:1");
+r.get("sessao:usuario:1")
+r.ttl("sessao:usuario:1")
 </code-block>
           <p style="font-size: 0.56em; color: #6272a4;">Depois das quatro primeiras chamadas, aguarde mais de 20 segundos e rode as duas últimas.</p>
         </section>
@@ -383,17 +378,14 @@ sequenceDiagram
           <h2>Hashes: objetos pequenos</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1.2;">
-              <code-block lang="javascript" data-trim>
-await r.hSet("aluno:1", {
-  nome: "Ana",
-  curso: "Informática",
-  idade: "17",
-});
-
-await r.hGet("aluno:1", "nome");
-await r.hGetAll("aluno:1");
-await r.hIncrBy("aluno:1", "idade", 1);
-await r.hGetAll("aluno:1");
+              <code-block lang="python" data-trim>
+r.hset("aluno:1", "nome", "Ana")
+r.hset("aluno:1", "curso", "Informática")
+r.hset("aluno:1", "idade", 17)
+r.hget("aluno:1", "nome")
+r.hgetall("aluno:1")
+r.hincrby("aluno:1", "idade", 1)
+r.hgetall("aluno:1")
 </code-block>
             </div>
             <div style="flex: 0.8;">
@@ -419,17 +411,14 @@ await r.hGetAll("aluno:1");
           <div class="green-box">
             <p><strong>Objetivo:</strong> representar um produto com nome, categoria, preço e estoque. Depois, reduzir o estoque.</p>
           </div>
-          <code-block lang="javascript" data-trim>
-await r.hSet("produto:1", {
-  nome: "Mouse",
-  categoria: "Periféricos",
-  preco: "59.90",
-  estoque: "20",
-});
-
-await r.hGetAll("produto:1");
-await r.hIncrBy("produto:1", "estoque", -1);
-await r.hGetAll("produto:1");
+          <code-block lang="python" data-trim>
+r.hset("produto:1", "nome", "Mouse")
+r.hset("produto:1", "categoria", "Periféricos")
+r.hset("produto:1", "preco", "59.90")
+r.hset("produto:1", "estoque", 20)
+r.hgetall("produto:1")
+r.hincrby("produto:1", "estoque", -1)
+r.hgetall("produto:1")
 </code-block>
         </section>
 
@@ -437,14 +426,14 @@ await r.hGetAll("produto:1");
           <h2>Lists: filas e pilhas</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
-              <code-block lang="javascript" data-trim>
-await r.lPush("fila:emails", "email1");
-await r.lPush("fila:emails", "email2");
-await r.lPush("fila:emails", "email3");
+              <code-block lang="python" data-trim>
+r.lpush("fila:emails", "email1")
+r.lpush("fila:emails", "email2")
+r.lpush("fila:emails", "email3")
 
-await r.rPop("fila:emails");
-await r.rPop("fila:emails");
-await r.rPop("fila:emails");
+r.rpop("fila:emails")
+r.rpop("fila:emails")
+r.rpop("fila:emails")
 </code-block>
             </div>
             <div style="flex: 1;">
@@ -464,16 +453,16 @@ await r.rPop("fila:emails");
   <h2>Sets: valores únicos</h2>
   <multi-col style="gap:15px">
     <div style="flex: 1;">
-      <code-block lang="javascript" data-trim>
-await r.sAdd("usuarios:online", "ana");
-await r.sAdd("usuarios:online", "bruno");
-await r.sAdd("usuarios:online", "ana");
+      <code-block lang="python" data-trim>
+r.sadd("usuarios:online", "ana")
+r.sadd("usuarios:online", "bruno")
+r.sadd("usuarios:online", "ana")
 
-await r.sMembers("usuarios:online");
-await r.sCard("usuarios:online");
-await r.sIsMember("usuarios:online", "ana");
+r.smembers("usuarios:online")
+r.scard("usuarios:online")
+r.sismember("usuarios:online", "ana")
 
-await r.sRem("usuarios:online", "ana");
+r.srem("usuarios:online", "ana")
       </code-block>
     </div>
 
@@ -498,19 +487,23 @@ await r.sRem("usuarios:online", "ana");
 
   <multi-col style="gap:15px">
     <div style="flex: 1;font-size:0.67em;">
-      <code-block lang="javascript" data-trim>
-await r.sendCommand([
-  "ZADD", "jogo:ranking",
-  "500", "ana",
-  "700", "bruno",
-  "650", "carla",
-  "300", "diego",
-  "900", "elisa",
-]);
+      <code-block lang="python" data-trim>
+r.zadd(
+    "jogo:ranking",
+    {
+        "ana": 500,
+        "bruno": 700,
+        "carla": 650,
+        "diego": 300,
+        "elisa": 900,
+    },
+)
 
-await r.sendCommand(["ZREVRANGE", "jogo:ranking", "0", "-1", "WITHSCORES"]);
-await r.sendCommand(["ZINCRBY", "jogo:ranking", "100", "ana"]);
-await r.sendCommand(["ZREVRANGE", "jogo:ranking", "0", "2", "WITHSCORES"]);
+r.zrevrange("jogo:ranking", 0, -1, withscores=True)
+
+r.zincrby("jogo:ranking", 100, "ana")
+
+r.zrevrange("jogo:ranking", 0, 2, withscores=True)
       </code-block>
     </div>
 
@@ -566,14 +559,14 @@ await r.sendCommand(["ZREVRANGE", "jogo:ranking", "0", "2", "WITHSCORES"]);
         </section>
 
         <section data-auto-animate>
-          <h2>Ativar AOF e RDB pelo Node</h2>
+          <h2>Ativar AOF e RDB pelo IPython</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1.1;font-size:0.78em;">
-              <code-block lang="javascript" data-trim>
-await r.sendCommand(["CONFIG", "SET", "appendonly", "yes"]);
-await r.sendCommand(["CONFIG", "SET", "appendfsync", "everysec"]);
-await r.sendCommand(["CONFIG", "SET", "save", "900 1 300 10 60 10000"]);
-await r.sendCommand(["CONFIG", "REWRITE"]);
+              <code-block lang="python" data-trim>
+r.config_set("appendonly", "yes")
+r.config_set("appendfsync", "everysec")
+r.config_set("save", "900 1 300 10 60 10000")
+r.config_rewrite()
               </code-block>
             </div>
             <div style="flex: 0.9;">
@@ -589,10 +582,10 @@ await r.sendCommand(["CONFIG", "REWRITE"]);
 
         <section data-auto-animate>
           <h2>Verificar a configuração</h2>
-          <code-block lang="javascript" data-trim>
-await r.sendCommand(["CONFIG", "GET", "appendonly"]);
-await r.sendCommand(["CONFIG", "GET", "appendfsync"]);
-await r.sendCommand(["CONFIG", "GET", "save"]);
+          <code-block lang="python" data-trim>
+r.config_get("appendonly")
+r.config_get("appendfsync")
+r.config_get("save")
           </code-block>
           <div class="green-box">
             <p>Se aparecer <span class="mini-code">yes</span>, <span class="mini-code">everysec</span> e a regra <span class="mini-code">900 1 300 10 60 10000</span>, AOF e RDB estão ativos.</p>
@@ -623,11 +616,11 @@ await r.sendCommand(["CONFIG", "GET", "save"]);
           <h2>Testar persistência na prática</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
-              <p style="font-size:0.7em;color:#8be9fd;">No Node:</p>
-              <code-block lang="javascript" data-trim>
-await r.set("persistencia:teste", "sobreviveu");
-await r.save();
-await r.get("persistencia:teste");
+              <p style="font-size:0.7em;color:#8be9fd;">No IPython:</p>
+              <code-block lang="python" data-trim>
+r.set("persistencia:teste", "sobreviveu")
+r.save()
+r.get("persistencia:teste")
               </code-block>
             </div>
             <div style="flex: 1;">
@@ -642,7 +635,7 @@ sudo systemctl restart redis-server
             </div>
           </multi-col>
           <div class="yellow-box">
-            <p>Depois do reinício, rode <span class="mini-code">await r.get("persistencia:teste")</span> de novo. O valor deve continuar existindo.</p>
+            <p>Depois do reinício, rode <span class="mini-code">r.get("persistencia:teste")</span> de novo. O valor deve continuar existindo.</p>
           </div>
         </section>
 
