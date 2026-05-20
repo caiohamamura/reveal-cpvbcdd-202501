@@ -438,7 +438,8 @@ window.app = mountSlideApp();
 
 #### Windows install commands with winget
 - `winget search` may return no useful output on first use unless `--accept-source-agreements` is included.
-- For Windows machines without WSL/Docker Desktop, use `winget install Memurai.MemuraiDeveloper --accept-source-agreements --accept-package-agreements` as the Redis-compatible local server, then keep examples in Python/IPython with `redis-py`.
+- For Windows machines without WSL/Docker Desktop, `winget install Redis.Redis --accept-source-agreements --accept-package-agreements` installs the archived Windows Redis port and creates a `Redis` service. It is old, but works for basic classroom `redis-py` examples.
+- `winget install Memurai.MemuraiDeveloper` can fail with MSI `1603` on some machines; do not use it as the primary classroom path unless tested on that lab image.
 
 #### Researching tool deprecation status
 - Always check deprecation/EOL status before mentioning tools in slides. MongoDB Atlas Data API was deprecated (End-of-Life) and should not be recommended to students. Verify via official docs release notes.

@@ -149,25 +149,25 @@ graph LR
           <h2>Windows: preparar ambiente</h2>
           <code-block lang="powershell" data-trim><script type="text/plain">
 winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
-winget install Memurai.MemuraiDeveloper --accept-source-agreements --accept-package-agreements
+winget install Redis.Redis --accept-source-agreements --accept-package-agreements
 py -m pip install redis ipython
           </script></code-block>
           <div class="info-box">
-            <p>No Windows, vamos usar o Memurai Developer como servidor compatível com Redis. O Python acessa <span class="mini-code">localhost:6379</span>.</p>
+            <p>No Windows, vamos usar o Redis instalado pelo <span class="mini-code">winget</span>. O Python acessa <span class="mini-code">localhost:6379</span>.</p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>Windows: testar servidor e abrir IPython</h2>
           <code-block lang="powershell" data-trim><script type="text/plain">
-memurai-cli PING
+redis-cli PING
 ipython
           </script></code-block>
           <div class="green-box">
             <p>Se aparecer <span class="mini-code">PONG</span>, deixe o <span class="mini-code">ipython</span> aberto para os próximos slides.</p>
           </div>
           <div class="yellow-box">
-            <p>Se o comando não responder, abra o Memurai Developer pelo menu iniciar e tente novamente.</p>
+            <p>Se o comando não responder, feche e abra o terminal ou inicie o serviço <span class="mini-code">Redis</span> no Windows.</p>
           </div>
         </section>
 
