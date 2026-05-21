@@ -270,47 +270,6 @@ graph LR
           </table>
         </section>
 
-        <section data-auto-animate>
-          <h2>Exemplo visual: frequência e nota</h2>
-          <reveald3-plot file="aulas/aula14-frequencia-nota.html" width="820px" height="470px"></reveald3-plot>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
-            <strong>Passo 1:</strong> adicionar uma tendência visual.
-          </p>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
-            <strong>Passo 2:</strong> destacar estudantes com risco acadêmico.
-          </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Mesmo gráfico, três perguntas</h2>
-          <table class="compact-table">
-            <thead>
-              <tr>
-                <th>Pergunta</th>
-                <th>Tipo de análise</th>
-                <th>Próximo passo</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Como as notas estão distribuídas?</td>
-                <td>descritiva</td>
-                <td>histograma e boxplot</td>
-              </tr>
-              <tr>
-                <td>Frequência se relaciona com nota?</td>
-                <td>relação entre variáveis</td>
-                <td>scatterplot, correlação, regressão</td>
-              </tr>
-              <tr>
-                <td>Quem precisa de intervenção?</td>
-                <td>classificação ou regra de risco</td>
-                <td>definir alvo, métrica e custo do erro</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
       </section><!-- fim Fase 1 -->
 
       <!-- ============================================================
@@ -434,17 +393,6 @@ df.nunique().sort_values()
           </table>
         </section>
 
-        <section data-auto-animate>
-          <h2>Exemplo Plotly: evasão por frequência</h2>
-          <reveald3-plot file="aulas/aula14-evasao-faixas.html" width="820px" height="470px"></reveald3-plot>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
-            <strong>Passo 1:</strong> comparar quantidade de alunos por faixa.
-          </p>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
-            <strong>Passo 2:</strong> destacar onde a evasão exige prioridade.
-          </p>
-        </section>
-
       </section><!-- fim Fase 2 -->
 
       <!-- ============================================================
@@ -484,9 +432,21 @@ df.nunique().sort_values()
         </section>
 
         <section data-auto-animate>
+          <h2>Exemplo Plotly: empréstimos por semana</h2>
+          <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="470px"></reveald3-plot>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+            <strong>Passo 1:</strong> suavizar ruído com média móvel.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Passo 2:</strong> ligar picos e quedas a eventos do calendário.
+          </p>
+        </section>
+
+        <section data-auto-animate>
           <h2>Série temporal em Python</h2>
           <code-block lang="python" data-trim>
 import pandas as pd
+import plotly.graph_objects as go
 
 df = pd.read_csv("emprestimos.csv", parse_dates=["data"])
 serie = (
@@ -497,8 +457,26 @@ serie = (
 )
 
 media_movel = serie.rolling(4).mean()
-serie.plot()
-media_movel.plot()
+
+fig = go.Figure()
+fig.add_scatter(
+    x=serie.index,
+    y=serie,
+    mode="lines+markers",
+    name="empréstimos"
+)
+fig.add_scatter(
+    x=media_movel.index,
+    y=media_movel,
+    mode="lines",
+    name="média móvel de 4 semanas"
+)
+fig.update_layout(
+    title="Empréstimos por semana",
+    xaxis_title="semana",
+    yaxis_title="quantidade"
+)
+fig.show()
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">Pergunta possível: os empréstimos aumentam em semanas de prova ou caem nas férias?</p>
         </section>
@@ -525,11 +503,24 @@ media_movel.plot()
         </section>
 
         <section data-auto-animate>
-          <h2>Texto em Python: TF-IDF</h2>
+          <h2>Exemplo Plotly: clusters de respostas</h2>
+          <reveald3-plot file="aulas/aula14-nlp-clusters-respostas.html" width="820px" height="470px"></reveald3-plot>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+            <strong>Passo 1:</strong> colorir respostas parecidas pelo cluster.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Passo 2:</strong> anotar cada grupo com as palavras mais comuns.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Texto em Python: TF-IDF + clusters</h2>
           <code-block lang="python" data-trim>
 import pandas as pd
+import plotly.express as px
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
+from sklearn.decomposition import TruncatedSVD
 
 df = pd.read_csv("respostas.csv")
 textos = df["resposta_aberta"].fillna("")
@@ -540,10 +531,62 @@ vetor = TfidfVectorizer(
 )
 X = vetor.fit_transform(textos)
 
-clusters = KMeans(n_clusters=4, random_state=42).fit_predict(X)
-df["tema_estimado"] = clusters
+clusters = KMeans(
+    n_clusters=4,
+    random_state=42,
+    n_init="auto"
+).fit_predict(X)
+coords = TruncatedSVD(n_components=2, random_state=42).fit_transform(X)
+
+df["cluster"] = clusters.astype(str)
+df["x"] = coords[:, 0]
+df["y"] = coords[:, 1]
+
+fig = px.scatter(
+    df,
+    x="x",
+    y="y",
+    color="cluster",
+    hover_data=["resposta_aberta"]
+)
+fig.show()
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">Depois do agrupamento, leia exemplos de cada cluster e dê nomes interpretáveis aos temas.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Como ler clusters de texto</h2>
+          <table class="compact-table">
+            <thead>
+              <tr>
+                <th>Cluster</th>
+                <th>Palavras frequentes</th>
+                <th>Interpretação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Transporte</td>
+                <td>ônibus, horário, distância</td>
+                <td>dificuldade de deslocamento</td>
+              </tr>
+              <tr>
+                <td>Trabalho</td>
+                <td>turno, emprego, cansaço</td>
+                <td>conflito entre estudo e trabalho</td>
+              </tr>
+              <tr>
+                <td>Apoio</td>
+                <td>dúvida, monitoria, professor</td>
+                <td>necessidade de suporte acadêmico</td>
+              </tr>
+              <tr>
+                <td>Infraestrutura</td>
+                <td>internet, laboratório, equipamento</td>
+                <td>barreiras de acesso a recursos</td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
         <section data-auto-animate>
@@ -691,33 +734,6 @@ graph TD
             <li>"Como há ordem temporal, separamos treino e teste por data."</li>
             <li>"Como há muitas variáveis correlacionadas, usamos PCA para visualização."</li>
           </ul>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Exemplo Plotly: perfis de biblioteca</h2>
-          <reveald3-plot file="aulas/aula14-biblioteca-perfis.html" width="820px" height="470px"></reveald3-plot>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
-            <strong>Passo 1:</strong> nomear perfis interpretáveis, não apenas clusters.
-          </p>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
-            <strong>Passo 2:</strong> observar atraso como sinal operacional.
-          </p>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Como transformar gráfico em conclusão</h2>
-          <multi-col style="gap: 22px;">
-            <div class="decision-card" style="border-left-color: #8be9fd;">
-              <h4 style="color: #8be9fd;">Biblioteca</h4>
-              <p>"Há perfis de uso diferentes por curso."</p>
-              <p>"Atrasos maiores aparecem no perfil de leitura geral."</p>
-            </div>
-            <div class="decision-card" style="border-left-color: #50fa7b;">
-              <h4 style="color: #50fa7b;">Decisão</h4>
-              <p>Comprar mais livros técnicos para Informática.</p>
-              <p>Criar campanha de devolução para o grupo com mais atraso.</p>
-            </div>
-          </multi-col>
         </section>
 
       </section><!-- fim Fase 4 -->
