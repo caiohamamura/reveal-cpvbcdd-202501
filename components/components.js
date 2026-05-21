@@ -572,6 +572,29 @@ const plotlyFigureComponent = {
   `
 };
 
+const reveald3PlotComponent = {
+  props: {
+    file: { type: String, required: true },
+    width: { type: String, default: '780px' },
+    height: { type: String, default: '460px' },
+    scroll: { type: String, default: 'no' },
+  },
+  computed: {
+    dataStyle() {
+      return `width: ${this.width}; height: ${this.height};`;
+    }
+  },
+  template: `
+    <div
+      class="reveald3-plot"
+      :data-file="file"
+      :data-scroll="scroll"
+      :data-style="dataStyle"
+      :style="{ width, height, margin: '10px auto 0', border: '1px solid #44475a', background: '#282a36' }"
+    ></div>
+  `
+};
+
 function initializeComponents(app) {
   app.component('copy-btn', copyBtnComponent);
   app.component('code-block', codeBlockComponent);
@@ -583,6 +606,7 @@ function initializeComponents(app) {
   app.component("leader-line", leaderLineComponent);
   app.component('poll-question', pollQuestionComponent);
   app.component('plotly-figure', plotlyFigureComponent);
+  app.component('reveald3-plot', reveald3PlotComponent);
 }
 
 

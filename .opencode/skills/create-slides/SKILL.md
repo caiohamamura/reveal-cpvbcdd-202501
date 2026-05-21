@@ -455,11 +455,35 @@ window.app = mountSlideApp();
 
 This is cleaner than creating a separate Vue app, using globalProperties globally, or building a scoped component — the data lives only in the app instance that drives that specific slide deck.
 
+#### Default Plotly integration: RevealD3 iframe plots
+- For new Plotly charts, prefer a standalone HTML file loaded with RevealD3 instead of embedding all plot state in the deck HTML.
+- Load the plugin in the deck: `<script src="../plugin/reveald3/reveald3.js"></script>` before `init.js`; `slides_template/init.js` auto-detects `window.Reveald3`.
+- Put the chart container in the slide:
+  ```html
+  <reveald3-plot file="aulas/my-plot.html" width="780px" height="460px"></reveald3-plot>
+  ```
+- Raw RevealD3 markup is also valid: `<div data-file="aulas/my-plot.html" data-scroll="no"></div>`.
+- Put Plotly.js, data, layout, and animation code inside `aulas/my-plot.html`; this keeps the deck small and prevents Vue/globalProperties issues.
+- To export from Python or notebooks, use `.opencode/skills/export-plots/scripts/export_reveald3_plotly.py` or import `export_reveald3_plotly()`.
+- For fragments, add visible labels in the slide and define `_transitions` inside the iframe HTML with matching zero-based `index` values:
+  ```js
+  var _transitions = [
+    {
+      index: 0,
+      transitionForward: () => animateStep(1),
+      transitionBackward: () => animateStep(0)
+    }
+  ];
+  ```
+- Use `Plotly.react()` for initial render. Use `Plotly.animate()` for step transitions that should move points, resize markers, or update positions naturally. Keep trace order stable and set `uid` values on traces; adding/removing traces may require `frame.redraw: true`.
+- Color changes can still feel more abrupt than numeric changes because Plotly does not interpolate every marker style like D3. If fully interpolated style morphing is required, use native D3 inside the same RevealD3 iframe pattern.
+
 #### PlotlyFigure component
-- A global `plotlyFigureComponent` is available in `components/components.js` for rendering Plotly.js charts inside slides.
+- A global `plotlyFigureComponent` is available in `components/components.js` for rendering simple Plotly.js charts inline in slides.
 - It includes a Plotly guard (`typeof Plotly === 'undefined'`) so decks without the Plotly CDN don't break.
-- For interactive demos (e.g. K-Means), combine with the `mountSlideApp()` override pattern and `window.deck` (the Reveal instance) for fragment-synced step-by-step visualization.
-- When using fragment sync, scope your check (e.g. `.my-step-class`) to avoid responding to ALL fragments in the deck.
+- Use it for static charts or lightweight reactive charts only. For new step-by-step teaching plots, prefer RevealD3 iframe plots above.
+- Do not add new `<plotly-figure>` usage unless maintaining an existing deck.
+- When using fragment sync with inline charts, scope your check (e.g. `.my-step-class`) to avoid responding to ALL fragments in the deck.
 
 #### Plotly 6.x API changes
 - `colorbar.titlefont` is **removed** — use `colorbar=dict(title=dict(text='...', font=dict(color='...')))` instead
@@ -469,9 +493,10 @@ This is cleaner than creating a separate Vue app, using globalProperties globall
 #### Notebook → Slides Plotly pipeline
 1. Generate Plotly figures in Jupyter notebook
 2. Export as JSON: `json.dump(fig.to_dict(), f)`
-3. Convert to JS constants: `const PLOT_NAME_TRACES = [...]; const PLOT_NAME_LAYOUT = {...};`
-4. Load in slide HTML: `<script src="images/plotly/plot_name.js"></script>`
-5. **CRITICAL:** Vue 3 does NOT resolve bare `window` globals in templates. You MUST either:
+3. Convert to data/constants consumed by a standalone plot HTML file under `aulas/` or `images/plotly/`
+4. Load the plot into the slide with RevealD3: `<div data-file="aulas/plot_name.html" data-scroll="no"></div>`
+5. Define `_transitions` in the plot HTML when fragments should update the figure step by step
+6. Only for legacy inline `<plotly-figure>` charts: Vue 3 does NOT resolve bare `window` globals in templates. You MUST either:
    - **Option A (simple — static charts only):** Intercept `Vue.createApp` to inject constants as `globalProperties`:
      ```js
      var _createApp = Vue.createApp;
@@ -503,17 +528,17 @@ This is cleaner than creating a separate Vue app, using globalProperties globall
      });
      initializeComponents(app); initializeHeader(app); app.mount('#app');
      ```
-6. Reference in `<plotly-figure>`: `:traces="PLOT_NAME_TRACES" :layout="PLOT_NAME_LAYOUT"`
+7. Reference in `<plotly-figure>`: `:traces="PLOT_NAME_TRACES" :layout="PLOT_NAME_LAYOUT"`
 
-#### Interactive Plotly with Vue reactivity
-For step-by-step demos (K-Means, etc.), you MUST use Vue reactivity — raw DOM approaches fail:
+#### Legacy interactive Plotly with Vue reactivity
+For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for new plots, prefer RevealD3 iframe plots:
 1. Create `Vue.reactive({ step: 0 })` outside the app for shared mutable state
 2. Use `Vue.computed()` to derive traces from reactive state
 3. Use `<plotly-figure :traces="computedTraces" :layout="computedLayout">` component
 4. Use visible fragments with descriptive labels (NOT empty invisible divs): `<div class="fragment fade-in-then-out kmeans-step" data-fragment-index="N">`
 5. Do NOT add a separate `<p id="step-label">` — the fragment labels already show one at a time via `fade-in-then-out`. A duplicate label creates visual clutter and goes out of sync.
 6. Listen to `window.deck.on('fragmentshown'/'fragmenthidden')` scoped by class name
-7. **NEVER use `Plotly.animate()`** — it silently ignores new traces. **NEVER use raw DOM** — empty fragment divs don't fire events reliably.
+7. Avoid `Plotly.animate()` in the inline Vue component path when traces are added/removed; it can silently ignore new traces. Inside standalone RevealD3 iframe plots, `Plotly.animate()` is the preferred method for smooth numeric transitions.
 8. Color centroid markers to match their cluster colors (e.g. `['#8be9fd', '#ff79c6']`) so students can visually track which centroid owns which group. Use red `#ff5555` for both before any assignment happens.
 
 #### `multi-col` grid overflow with long inline content

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    html,
+    body,
+    #plot {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: #282a36;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="plot"></div>
+
+  <script>
+    const states = [
+      {
+        x: [1, 2, 3, 4, 5, 6],
+        y: [1.2, 1.8, 2.2, 3.8, 4.4, 5.1],
+        colors: ['#8be9fd', '#8be9fd', '#8be9fd', '#8be9fd', '#8be9fd', '#8be9fd'],
+        sizes: [18, 18, 18, 18, 18, 18],
+        line: false
+      },
+      {
+        x: [1.1, 2.0, 2.9, 4.15, 5.05, 5.95],
+        y: [1.1, 1.85, 2.35, 3.75, 4.5, 5.25],
+        colors: ['#8be9fd', '#8be9fd', '#8be9fd', '#ff79c6', '#ff79c6', '#ff79c6'],
+        sizes: [16, 16, 16, 26, 26, 26],
+        line: false
+      },
+      {
+        x: [1.05, 2.15, 3.25, 3.85, 4.85, 5.85],
+        y: [1.05, 1.95, 2.85, 3.55, 4.35, 5.15],
+        colors: ['#50fa7b', '#50fa7b', '#50fa7b', '#ff79c6', '#ff79c6', '#ff79c6'],
+        sizes: [18, 20, 22, 24, 26, 28],
+        line: true
+      }
+    ];
+
+    const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+    const layout = {
+      paper_bgcolor: '#282a36',
+      plot_bgcolor: '#282a36',
+      margin: { l: 55, r: 20, t: 20, b: 45 },
+      showlegend: false,
+      font: { color: '#f8f8f2', size: 16 },
+      xaxis: {
+        range: [0.5, 6.5],
+        gridcolor: '#44475a',
+        zerolinecolor: '#6272a4',
+        title: 'feature_1'
+      },
+      yaxis: {
+        range: [0.5, 5.6],
+        gridcolor: '#44475a',
+        zerolinecolor: '#6272a4',
+        title: 'feature_2'
+      }
+    };
+
+    function tracesForStep(step) {
+      const state = states[step];
+      const traces = [{
+        type: 'scatter',
+        uid: 'points',
+        mode: 'markers+text',
+        x: state.x,
+        y: state.y,
+        text: labels,
+        textposition: 'top center',
+        marker: {
+          color: state.colors,
+          size: state.sizes,
+          line: { color: '#f8f8f2', width: 1 }
+        }
+      }];
+
+      if (state.line) {
+        traces.push({
+          type: 'scatter',
+          uid: 'trend',
+          mode: 'lines',
+          x: [1, 6],
+          y: [1.05, 5.05],
+          line: { color: '#50fa7b', width: 4, dash: 'dot' },
+          hoverinfo: 'skip'
+        });
+      }
+
+      return traces;
+    }
+
+    function renderStep(step) {
+      return Plotly.react('plot', tracesForStep(step), layout, {
+        displayModeBar: false,
+        responsive: true
+      });
+    }
+
+    function animateStep(step) {
+      const traces = tracesForStep(step);
+      return Plotly.animate('plot', {
+        data: traces,
+        traces: traces.map((_, index) => index),
+        layout: layout
+      }, {
+        transition: {
+          duration: 900,
+          easing: 'cubic-in-out'
+        },
+        frame: {
+          duration: 900,
+          redraw: true
+        },
+        mode: 'immediate'
+      });
+    }
+
+    renderStep(0);
+
+    var _transitions = [
+      {
+        index: 0,
+        transitionForward: () => animateStep(1),
+        transitionBackward: () => animateStep(0)
+      },
+      {
+        index: 1,
+        transitionForward: () => animateStep(2),
+        transitionBackward: () => animateStep(1)
+      }
+    ];
+  </script>
+</body>
+</html>
