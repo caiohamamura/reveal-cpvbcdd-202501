@@ -76,6 +76,39 @@
       color: #8be9fd;
     }
 
+    .time-series-demo {
+      display: grid;
+      grid-template-columns: 1fr 0;
+      align-items: center;
+      gap: 20px;
+      transition: grid-template-columns 700ms ease;
+    }
+
+    .time-series-plot {
+      transform-origin: left center;
+      transition: transform 700ms ease;
+    }
+
+    .time-series-demo:has(.time-series-reading.visible) {
+      grid-template-columns: 0.62fr 0.38fr;
+    }
+
+    .time-series-demo:has(.time-series-reading.visible) .time-series-plot {
+      transform: scale(0.72);
+    }
+
+    .time-series-reading {
+      background: #282a36;
+      border: 2px solid #50fa7b;
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .time-series-reading li {
+      font-size: 18pt;
+      margin-bottom: 10px;
+    }
+
     code-block {
       font-size: 0.78em;
     }
@@ -433,13 +466,29 @@ df.nunique().sort_values()
 
         <section data-auto-animate>
           <h2>Exemplo Plotly: empréstimos por semana</h2>
-          <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="470px"></reveald3-plot>
+          <div class="time-series-demo">
+            <div class="time-series-plot">
+              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="470px"></reveald3-plot>
+            </div>
+            <div class="time-series-reading fragment fade-in" data-fragment-index="3">
+              <h4 style="color: #50fa7b; margin-top: 0;">Como interpretar</h4>
+              <ul>
+                <li>Média móvel mostra tendência sem ruído semanal.</li>
+                <li>Decomposição separa tendência e padrão recorrente.</li>
+                <li>Forecast dá uma hipótese simples para planejar ações.</li>
+                <li>Eventos do calendário explicam picos e quedas.</li>
+              </ul>
+            </div>
+          </div>
           <p style="font-size: 20pt; color: #f1fa8c;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> suavizar ruído com média móvel.
           </p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
-            <strong>Passo 2:</strong> ligar picos e quedas a eventos do calendário.
+            <strong>Passo 2:</strong> decompor tendência e padrão sazonal.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="2">
+            <strong>Passo 3:</strong> projetar um forecast simples para as próximas semanas.
           </p>
         </section>
 
@@ -480,6 +529,32 @@ fig.update_layout(
 fig.show()
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">A agregação semanal precisa fazer sentido para o dado. Se a meta for prever, separe treino e teste por data.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Decomposição e forecast em Python</h2>
+          <code-block lang="python" data-trim>
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+decomp = seasonal_decompose(
+    serie,
+    model="additive",
+    period=4
+)
+
+ultimas = serie.tail(4)
+passo = (ultimas.iloc[-1] - ultimas.iloc[0]) / 3
+forecast = [
+    serie.iloc[-1] + passo * i
+    for i in range(1, 5)
+]
+
+# Interpretação:
+# tendência: direção geral
+# sazonal: padrão que se repete
+# forecast: hipótese simples, não certeza
+          </code-block>
+          <p style="font-size: 22pt; color: #f1fa8c;">A decomposição ajuda a explicar o passado; o forecast ajuda a planejar, mas deve ser validado.</p>
         </section>
 
         <section data-auto-animate>

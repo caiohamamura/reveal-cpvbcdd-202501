@@ -34,6 +34,10 @@
       const janela = emprestimos.slice(i - 3, i + 1);
       return Math.round(janela.reduce((soma, valor) => soma + valor, 0) / janela.length);
     });
+    const tendencia = [45, 49, 53, 57, 61, 67, 73, 78, 78, 74, 66, 54, 48, 55, 64, 73, 82, 84];
+    const sazonalidade = emprestimos.map((valor, i) => valor - tendencia[i]);
+    const forecastSemanas = ['2026-06-08', '2026-06-15', '2026-06-22', '2026-06-29'];
+    const forecast = [81, 75, 68, 61];
 
     const serie = {
       type: 'scatter',
@@ -54,6 +58,37 @@
       name: 'média móvel 4 semanas',
       line: { color: '#ffb86c', width: 4 },
       hovertemplate: 'Semana: %{x}<br>Média móvel: %{y}<extra></extra>'
+    };
+
+    const traceTendencia = {
+      type: 'scatter',
+      mode: 'lines',
+      x: semanas,
+      y: tendencia,
+      name: 'tendência estimada',
+      line: { color: '#50fa7b', width: 4 },
+      hovertemplate: 'Semana: %{x}<br>Tendência: %{y}<extra></extra>'
+    };
+
+    const traceSazonal = {
+      type: 'bar',
+      x: semanas,
+      y: sazonalidade,
+      name: 'componente sazonal',
+      marker: { color: sazonalidade.map(v => v >= 0 ? '#bd93f9' : '#ff5555') },
+      yaxis: 'y2',
+      hovertemplate: 'Semana: %{x}<br>Sazonalidade: %{y:+d}<extra></extra>'
+    };
+
+    const traceForecast = {
+      type: 'scatter',
+      mode: 'lines+markers',
+      x: [semanas[semanas.length - 1], ...forecastSemanas],
+      y: [emprestimos[emprestimos.length - 1], ...forecast],
+      name: 'forecast simples',
+      line: { color: '#f1fa8c', width: 4, dash: 'dash' },
+      marker: { size: 9, color: '#f1fa8c', line: { color: '#282a36', width: 1 } },
+      hovertemplate: 'Semana: %{x}<br>Forecast: %{y}<extra></extra>'
     };
 
     const eventos = [
@@ -109,22 +144,48 @@
     ];
 
     function layout(step) {
+      const decomposicao = step === 2;
       return {
         paper_bgcolor: '#282a36',
         plot_bgcolor: '#282a36',
         margin: { l: 70, r: 30, t: 45, b: 70 },
         font: { color: '#f8f8f2', size: 16 },
-        title: { text: 'Empréstimos da biblioteca por semana', font: { color: '#8be9fd', size: 24 } },
-        xaxis: { title: 'semana', gridcolor: '#44475a', zerolinecolor: '#6272a4' },
-        yaxis: { title: 'quantidade de empréstimos', range: [25, 115], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
+        title: {
+          text: decomposicao ? 'Decomposição: tendência e sazonalidade' : 'Empréstimos da biblioteca por semana',
+          font: { color: '#8be9fd', size: 24 }
+        },
+        xaxis: {
+          title: 'semana',
+          gridcolor: '#44475a',
+          zerolinecolor: '#6272a4',
+          range: step >= 3 ? ['2026-02-02', '2026-06-29'] : ['2026-02-02', '2026-06-01']
+        },
+        yaxis: {
+          title: decomposicao ? 'empréstimos / tendência' : 'quantidade de empréstimos',
+          range: [25, 115],
+          gridcolor: '#44475a',
+          zerolinecolor: '#6272a4',
+          domain: decomposicao ? [0.38, 1] : [0, 1]
+        },
+        yaxis2: {
+          title: 'sazonal',
+          range: [-22, 32],
+          gridcolor: '#44475a',
+          zerolinecolor: '#f8f8f2',
+          domain: [0, 0.26],
+          visible: decomposicao
+        },
         legend: { orientation: 'h', x: 0.02, y: 1.12 },
-        shapes: step >= 2 ? eventos : [],
-        annotations: step >= 2 ? anotacoes : []
+        shapes: step >= 3 ? eventos : [],
+        annotations: step >= 3 ? anotacoes : []
       };
     }
 
     function renderStep(step) {
-      const traces = step === 0 ? [serie] : [serie, media];
+      let traces = [serie];
+      if (step === 1) traces = [serie, media];
+      if (step === 2) traces = [serie, traceTendencia, traceSazonal];
+      if (step >= 3) traces = [serie, media, traceForecast];
       return Plotly.react('plot', traces, layout(step), { displayModeBar: false, responsive: true });
     }
 
@@ -140,6 +201,11 @@
         index: 1,
         transitionForward: () => renderStep(2),
         transitionBackward: () => renderStep(1)
+      },
+      {
+        index: 2,
+        transitionForward: () => renderStep(3),
+        transitionBackward: () => renderStep(2)
       }
     ];
   </script>
