@@ -586,7 +586,7 @@ const reveald3PlotComponent = {
   },
   template: `
     <div
-      class="reveald3-plot"
+      class="fig-container reveald3-plot"
       :data-file="file"
       :data-scroll="scroll"
       :data-style="dataStyle"
@@ -613,4 +613,3 @@ function initializeComponents(app) {
 if (window.app?.component) {
   initializeComponents(app);
 }
-
