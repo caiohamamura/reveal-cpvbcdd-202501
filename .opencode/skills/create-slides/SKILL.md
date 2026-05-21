@@ -465,6 +465,7 @@ This is cleaner than creating a separate Vue app, using globalProperties globall
 - Raw RevealD3 markup is also valid: `<div data-file="aulas/my-plot.html" data-scroll="no"></div>`.
 - Put Plotly.js, data, layout, and animation code inside `aulas/my-plot.html`; this keeps the deck small and prevents Vue/globalProperties issues.
 - To export from Python or notebooks, use `.opencode/skills/export-plots/scripts/export_reveald3_plotly.py` or import `export_reveald3_plotly()`.
+- If a RevealD3 plot container is visible but no iframe is created, check that the rendered element has class `fig-container`; the plugin discovers plots with `document.getElementsByClassName('fig-container')`.
 - For fragments, add visible labels in the slide and define `_transitions` inside the iframe HTML with matching zero-based `index` values:
   ```js
   var _transitions = [
@@ -602,5 +603,4 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
 - Test other links for 200
 - Double-check spelling for correct Portuguese (Brazilian) never Chinese characters only technical english terms
 are acceptable
-
 
