@@ -434,6 +434,7 @@ df.nunique().sort_values()
         <section data-auto-animate>
           <h2>Exemplo Plotly: empréstimos por semana</h2>
           <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="470px"></reveald3-plot>
+          <p style="font-size: 20pt; color: #f1fa8c;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> suavizar ruído com média móvel.
           </p>
@@ -478,7 +479,7 @@ fig.update_layout(
 )
 fig.show()
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">Pergunta possível: os empréstimos aumentam em semanas de prova ou caem nas férias?</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">A agregação semanal precisa fazer sentido para o dado. Se a meta for prever, separe treino e teste por data.</p>
         </section>
 
         <section data-auto-animate>
@@ -505,6 +506,7 @@ fig.show()
         <section data-auto-animate>
           <h2>Exemplo Plotly: clusters de respostas</h2>
           <reveald3-plot file="aulas/aula14-nlp-clusters-respostas.html" width="820px" height="470px"></reveald3-plot>
+          <p style="font-size: 20pt; color: #f1fa8c;">Clusters sugerem temas prováveis; não substituem leitura de respostas reais.</p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> colorir respostas parecidas pelo cluster.
           </p>
@@ -551,7 +553,23 @@ fig = px.scatter(
 )
 fig.show()
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">Depois do agrupamento, leia exemplos de cada cluster e dê nomes interpretáveis aos temas.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">A posição 2D ajuda a visualizar. Os nomes dos clusters vêm das palavras fortes e da leitura de exemplos reais.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Termos fortes por cluster</h2>
+          <code-block lang="python" data-trim>
+import numpy as np
+
+termos = vetor.get_feature_names_out()
+for cluster_id in sorted(df["cluster"].unique()):
+    linhas = df["cluster"] == cluster_id
+    media_tfidf = X[linhas].mean(axis=0).A1
+    top = np.argsort(media_tfidf)[-5:][::-1]
+    palavras = ", ".join(termos[i] for i in top)
+    print(cluster_id, palavras)
+          </code-block>
+          <p style="font-size: 22pt; color: #f1fa8c;">Use esses termos como pista inicial. Depois leia algumas respostas para confirmar o nome do tema.</p>
         </section>
 
         <section data-auto-animate>
