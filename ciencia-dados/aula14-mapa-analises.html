@@ -65,6 +65,17 @@
       font-size: 18pt;
     }
 
+    .plot-step {
+      font-size: 19pt;
+      color: #f8f8f2;
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    .plot-step strong {
+      color: #8be9fd;
+    }
+
     code-block {
       font-size: 0.78em;
     }
@@ -259,6 +270,47 @@ graph LR
           </table>
         </section>
 
+        <section data-auto-animate>
+          <h2>Exemplo visual: frequência e nota</h2>
+          <reveald3-plot file="aulas/aula14-frequencia-nota.html" width="820px" height="470px"></reveald3-plot>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+            <strong>Passo 1:</strong> adicionar uma tendência visual.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Passo 2:</strong> destacar estudantes com risco acadêmico.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Mesmo gráfico, três perguntas</h2>
+          <table class="compact-table">
+            <thead>
+              <tr>
+                <th>Pergunta</th>
+                <th>Tipo de análise</th>
+                <th>Próximo passo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Como as notas estão distribuídas?</td>
+                <td>descritiva</td>
+                <td>histograma e boxplot</td>
+              </tr>
+              <tr>
+                <td>Frequência se relaciona com nota?</td>
+                <td>relação entre variáveis</td>
+                <td>scatterplot, correlação, regressão</td>
+              </tr>
+              <tr>
+                <td>Quem precisa de intervenção?</td>
+                <td>classificação ou regra de risco</td>
+                <td>definir alvo, métrica e custo do erro</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
       </section><!-- fim Fase 1 -->
 
       <!-- ============================================================
@@ -380,6 +432,17 @@ df.nunique().sort_values()
               </tr>
             </tbody>
           </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exemplo Plotly: evasão por frequência</h2>
+          <reveald3-plot file="aulas/aula14-evasao-faixas.html" width="820px" height="470px"></reveald3-plot>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+            <strong>Passo 1:</strong> comparar quantidade de alunos por faixa.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Passo 2:</strong> destacar onde a evasão exige prioridade.
+          </p>
         </section>
 
       </section><!-- fim Fase 2 -->
@@ -630,6 +693,33 @@ graph TD
           </ul>
         </section>
 
+        <section data-auto-animate>
+          <h2>Exemplo Plotly: perfis de biblioteca</h2>
+          <reveald3-plot file="aulas/aula14-biblioteca-perfis.html" width="820px" height="470px"></reveald3-plot>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+            <strong>Passo 1:</strong> nomear perfis interpretáveis, não apenas clusters.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Passo 2:</strong> observar atraso como sinal operacional.
+          </p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Como transformar gráfico em conclusão</h2>
+          <multi-col style="gap: 22px;">
+            <div class="decision-card" style="border-left-color: #8be9fd;">
+              <h4 style="color: #8be9fd;">Biblioteca</h4>
+              <p>"Há perfis de uso diferentes por curso."</p>
+              <p>"Atrasos maiores aparecem no perfil de leitura geral."</p>
+            </div>
+            <div class="decision-card" style="border-left-color: #50fa7b;">
+              <h4 style="color: #50fa7b;">Decisão</h4>
+              <p>Comprar mais livros técnicos para Informática.</p>
+              <p>Criar campanha de devolução para o grupo com mais atraso.</p>
+            </div>
+          </multi-col>
+        </section>
+
       </section><!-- fim Fase 4 -->
 
       <!-- ============================================================
@@ -830,7 +920,14 @@ graph TD
   <script src="../plugin/poll/plugin.js"></script>
   <script src="../plugin/customcontrols/plugin.js"></script>
   <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="../plugin/reveald3/reveald3.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    window.reveald3Config = {
+      disableCheckFile: true,
+      onSlideChangedDelay: 150
+    };
+  </script>
   <script src="../slides_template/init.js"></script>
   <script src="../plugin/seminar/plugin.js"></script>
 
