@@ -415,6 +415,11 @@ Technical details:
 - Use direct text inside `<code-block>` for ordinary code.
 - Use `<textarea>` inside `<code-block>` only when the code actually contains `<` or `>` that would be parsed as HTML, such as `#include <Arduino.h>`.
 
+#### Converting Google Slides with gogcli
+- If `gog slides list-slides/read-slide` fails with `403 accessNotConfigured`, enable Google Slides API for the OAuth project shown in the error URL, then retry after propagation.
+- Fallback path: export with `gog slides export <presentationId> --format pptx/pdf`, extract text from `ppt/slides/slide*.xml`, and extract images from `ppt/media/`.
+- Prefer committing only selected reusable assets, not source PPTX/PDF, unzip folders, or per-slide JSON dumps.
+
 #### HTML section nesting (Reveal.js)
 - Reveal.js uses nested `<section>` elements for vertical navigation. A misplaced closing `</section>` can cause slides to be nested incorrectly, making them invisible or out of order.
 - Use comment markers like `<!-- fim Fase N -->` to track section boundaries.
@@ -603,4 +608,3 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
 - Test other links for 200
 - Double-check spelling for correct Portuguese (Brazilian) never Chinese characters only technical english terms
 are acceptable
-
