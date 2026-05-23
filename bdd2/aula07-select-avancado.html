@@ -169,6 +169,25 @@
       font-size: 0.82em;
     }
 
+    .verb-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .verb-card {
+      background: rgba(219, 234, 248, 0.95);
+      color: var(--navy);
+      border: 2px solid rgba(8, 47, 111, 0.55);
+      border-radius: 18px;
+      padding: 16px 10px;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+    }
+
     .topic-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -803,35 +822,26 @@ WHERE id_aluno IN (
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
   <script src="../plugin/highlight/highlight.js"></script>
   <script src="../plugin/zoom/zoom.js"></script>
-  <script src="../plugin/notes/notes.js"></script>
-  <script src="../plugin/search/search.js"></script>
-  <script src="../plugin/poll/poll.js"></script>
-  <script src="../plugin/seminar/seminar.js"></script>
-  <script src="../plugin/chalkboard/chalkboard.js"></script>
-  <script src="../plugin/customcontrols/plugin.js"></script>
-  <script src="../components/components.js"></script>
-  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
 
   <script>
-    Reveal.initialize({
-      width: 1280,
-      height: 720,
-      margin: 0.04,
-      minScale: 0.2,
-      maxScale: 1.5,
-      hash: true,
-      history: true,
-      transition: 'slide',
-      transitionSpeed: 'default',
-      backgroundTransition: 'fade',
-      center: true,
-      slideNumber: 'c/t',
-      plugins: [RevealHighlight, RevealZoom, RevealNotes, RevealSearch, RevealPoll, RevealSeminar, RevealChalkboard, RevealCustomControls]
-    });
+    window.app = mountSlideApp();
   </script>
 
 </body>
