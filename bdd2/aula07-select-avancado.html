@@ -413,11 +413,8 @@ OFFSET 5 LIMIT 3;</code-block>
           <code-block lang="sql">SELECT nome, idade
 FROM aluno
 ORDER BY idade DESC
-<span class="fragment" style="color: var(--pink);">OFFSET 5</span> LIMIT 3;</code-block>
-          <div class="image-frame" style="margin-top: 12px;">
-            <img src="planos/img-aula07/slide9-step1.jpg" alt="Resultado após pular 5 registros" style="max-height: 300px;" />
-          </div>
-          <p class="fragment" style="color: var(--pink);"><span class="step-label">OFFSET 5</span> pula os primeiros 5 registros</p>
+OFFSET 5 LIMIT 3;</code-block>
+          <p class="fragment" style="color: var(--pink); margin-top: 8px;"><span class="step-label">OFFSET 5</span> pula os primeiros 5 registros</p>
         </section>
 
         <section data-auto-animate class="dml-bg">
@@ -425,11 +422,8 @@ ORDER BY idade DESC
           <code-block lang="sql">SELECT nome, idade
 FROM aluno
 ORDER BY idade DESC
-OFFSET 5 <span class="fragment" style="color: var(--green);">LIMIT 3</span>;</code-block>
-          <div class="image-frame" style="margin-top: 12px;">
-            <img src="planos/img-aula07/slide9-step1.jpg" alt="Resultado final com OFFSET e LIMIT" style="max-height: 300px;" />
-          </div>
-          <p class="fragment" style="color: var(--green);"><span class="step-label">LIMIT 3</span> retorna apenas 3 registros</p>
+OFFSET 5 LIMIT 3;</code-block>
+          <p class="fragment" style="color: var(--green); margin-top: 8px;"><span class="step-label">LIMIT 3</span> retorna apenas 3 registros</p>
         </section>
       </section>
 
@@ -477,7 +471,7 @@ ORDER BY idade DESC;</code-block>
     AVG(nota) AS media_nota
 FROM aluno
 GROUP BY idade
-<span class="fragment" style="color: var(--yellow);">HAVING COUNT(*) > 2</span>
+HAVING COUNT(*) > 2
 ORDER BY idade DESC;</code-block>
           <div class="image-frame fragment" style="margin-top: 12px;">
             <img src="planos/img-aula07/slide14-having.jpg" alt="Resultado filtrado com HAVING — apenas idades com mais de 2 alunos" />
@@ -496,7 +490,7 @@ ORDER BY idade DESC;</code-block>
     nome,
     nota
 FROM aluno
-WHERE nota < (<span style="color: var(--pink);">SELECT AVG(nota) FROM aluno</span>);</code-block>
+WHERE nota < (SELECT AVG(nota) FROM aluno);</code-block>
           <div class="image-frame" style="margin-top: 12px;">
             <img src="planos/img-aula07/slide15-sub.jpg" alt="Resultado da subconsulta — alunos com nota abaixo da média" />
           </div>
@@ -513,7 +507,7 @@ WHERE nota < (<span style="color: var(--pink);">SELECT AVG(nota) FROM aluno</spa
           <code-block lang="sql">SELECT
     nome,
     nota,
-    <span style="color: var(--yellow);">AVG(nota) OVER ()</span> AS nota_media
+    AVG(nota) OVER () AS nota_media
 FROM aluno
 ORDER BY nota DESC;</code-block>
           <div class="image-frame" style="margin-top: 12px;">
@@ -528,9 +522,9 @@ ORDER BY nota DESC;</code-block>
     nome,
     idade,
     nota,
-    <span style="color: var(--yellow);">RANK() OVER (
+    RANK() OVER (
         PARTITION BY idade
-        ORDER BY nota DESC)</span> AS rank
+        ORDER BY nota DESC) AS rank
 FROM aluno
 ORDER BY idade, nota DESC;</code-block>
           <div class="image-frame" style="margin-top: 12px;">
@@ -613,10 +607,10 @@ WHERE nota > media_geral;</code-block>
           <code-block lang="sql">SELECT
     nome,
     nota,
-    <span style="color: var(--yellow);">CASE
+    CASE
         WHEN nota >= 6 THEN 'Aprovado'
         ELSE 'Reprovado'
-    END</span> AS status
+    END AS status
 FROM aluno;</code-block>
           <div class="image-frame" style="margin-top: 12px;">
             <img src="planos/img-aula07/slide21-case.jpg" alt="Resultado com coluna status — Aprovado ou Reprovado" />
@@ -672,7 +666,7 @@ FROM aluno;</code-block>
 FROM
     post,
     usuario
-WHERE <span style="color: var(--yellow);">post.id_usuario = usuario.id_usuario</span>;</code-block>
+WHERE post.id_usuario = usuario.id_usuario;</code-block>
           <div class="image-frame" style="margin-top: 12px;">
             <img src="planos/img-aula07/slide28-where.jpg" alt="Resultado com WHERE filtrando pelo id_usuario" style="max-height: 300px;" />
           </div>
@@ -681,9 +675,9 @@ WHERE <span style="color: var(--yellow);">post.id_usuario = usuario.id_usuario</
         <section data-auto-animate class="dml-bg">
           <h2 style="color: var(--cyan);">Usando aliases nas tabelas</h2>
           <code-block lang="sql">SELECT *
-FROM post <span style="color: var(--yellow);">p</span>,
-     usuario <span style="color: var(--yellow);">u</span>
-WHERE <span style="color: var(--yellow);">p</span>.id_usuario = <span style="color: var(--yellow);">u</span>.id_usuario;</code-block>
+FROM post p,
+     usuario u
+WHERE p.id_usuario = u.id_usuario;</code-block>
           <div class="note-box">
             <p>Normalmente criamos <strong>aliases</strong> (apelidos) para as tabelas. Pode usar <span class="mini-code">AS</span>, mas não precisa!</p>
           </div>
@@ -693,8 +687,8 @@ WHERE <span style="color: var(--yellow);">p</span>.id_usuario = <span style="col
           <h2 style="color: var(--cyan);">Sintaxe JOIN (recomendada)</h2>
           <code-block lang="sql">SELECT *
 FROM post p
-<span style="color: var(--yellow);">JOIN</span> usuario u
-    <span style="color: var(--yellow);">ON</span> p.id_usuario = u.id_usuario;</code-block>
+JOIN usuario u
+    ON p.id_usuario = u.id_usuario;</code-block>
           <div class="ok-box">
             <p>É a mesma coisa, mas deixa <strong>claro</strong> que existe uma relação entre as duas tabelas.</p>
           </div>
@@ -812,7 +806,7 @@ WHERE id_aluno IN (
 
       <!-- SLIDE FINAL -->
       <section data-auto-animate class="centered">
-        <header1 curso="Banco de Dados 2" title-size="24" title="Bons estudos!">
+        <header1 aula="07" curso="Banco de Dados 2" title-size="24" title="Bons estudos!">
           <div class="image-frame" style="width: 470px; margin: 12px auto 0; padding: 8px;">
             <img src="planos/img-aula07/slide36-end2.jpg" alt="Ilustração de encerramento — Bons estudos!" style="max-height: 235px;" />
           </div>
@@ -829,6 +823,7 @@ WHERE id_aluno IN (
   <script src="../plugin/markdown/markdown.js"></script>
   <script src="../plugin/highlight/highlight.js"></script>
   <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
   <script src="../plugin/leader-line.min.js"></script>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
