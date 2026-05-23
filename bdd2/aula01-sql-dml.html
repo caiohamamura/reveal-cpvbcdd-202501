@@ -196,16 +196,39 @@
     <div class="slides">
 
       <!-- SLIDE 1: Capa -->
-      <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
+      <section data-auto-animate>
         <header1 aula="01" curso="Banco de Dados 2" title-size="24"
                  title="SQL: Data Manipulation Language">
-          <div class="image-frame" style="width: 620px; margin: 0 auto;">
-            <img src="planos/aula01_sql_dml_assets/dml-commands.png" alt="Diagrama dos comandos DML: INSERT, UPDATE, DELETE e SELECT" />
+          <div class="mermaid" data-id="cover-dml" style="width: 520px;">
+            <pre>
+---
+displayMode: compact
+config:
+  theme: dracula
+  themeVariables:
+    primaryColor: '#8be9fd'
+    primaryTextColor: '#282a36'
+    lineColor: '#f1fa8c'
+---
+graph LR
+  A["DML"] --> B["INSERT"]
+  A --> C["UPDATE"]
+  A --> D["DELETE"]
+  A --> E["SELECT"]
+            </pre>
           </div>
         </header1>
       </section>
 
-      <!-- SLIDE 2: Contexto -->
+      <!-- SLIDE 2: Mapa DML -->
+      <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
+        <h2 style="color: var(--navy);">Os comandos para manipular dados</h2>
+        <div class="image-frame">
+          <img src="planos/aula01_sql_dml_assets/dml-commands.png" alt="Diagrama dos comandos DML: INSERT, UPDATE, DELETE e SELECT" />
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Contexto -->
       <section data-auto-animate class="dml-bg">
         <h2>Contexto</h2>
         <multi-col style="gap: 22px; align-items: stretch;">
@@ -254,10 +277,8 @@
         </section>
 
         <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
-          <h2 style="color: var(--navy);">Os comandos para manipular dados</h2>
-          <div class="image-frame">
-            <img src="planos/aula01_sql_dml_assets/dml-commands.png" alt="Mapa dos comandos DML" />
-          </div>
+          <h2 style="color: var(--navy);">Do mapa para o CRUD</h2>
+          <p style="color: var(--navy); text-align: center;">Cada comando responde a uma ação comum de qualquer sistema com dados persistentes.</p>
           <div class="verb-grid">
             <div class="verb-card fragment">INSERT</div>
             <div class="verb-card fragment">UPDATE</div>
