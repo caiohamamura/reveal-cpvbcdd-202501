@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 07 - SQL: SELECT Avançado</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    :root {
+      --cream: #f6eadc;
+      --navy: #082f6f;
+      --ice: #dbeaf8;
+      --cyan: #8be9fd;
+      --green: #50fa7b;
+      --pink: #ff79c6;
+      --yellow: #f1fa8c;
+      --red: #ff5555;
+      --panel: rgba(40, 42, 54, 0.86);
+      --panel-soft: rgba(68, 71, 90, 0.64);
+    }
+
+    .reveal h2,
+    .reveal h3 {
+      text-transform: none;
+      letter-spacing: -0.02em;
+    }
+
+    .reveal .slides section {
+      text-align: left;
+    }
+
+    .reveal .slides section.centered {
+      text-align: center;
+    }
+
+    .reveal .slides section p {
+      font-size: 0.72em;
+      line-height: 1.35;
+      margin: 6px 0;
+    }
+
+    .reveal .slides section li {
+      font-size: 0.82em;
+      line-height: 1.32;
+      margin: 5px 0;
+    }
+
+    .dml-bg {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(139, 233, 253, 0.16), transparent 28%),
+        radial-gradient(circle at 88% 20%, rgba(255, 121, 198, 0.13), transparent 24%),
+        linear-gradient(135deg, #151925 0%, #282a36 54%, #1f2433 100%);
+    }
+
+    .soft-card {
+      background: var(--panel-soft);
+      border: 1px solid rgba(248, 248, 242, 0.10);
+      border-radius: 18px;
+      padding: 16px 20px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .cream-card {
+      background: var(--cream);
+      color: var(--navy);
+      border-radius: 18px;
+      padding: 16px 20px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+    }
+
+    .cream-card h3,
+    .cream-card p,
+    .cream-card li {
+      color: var(--navy);
+    }
+
+    .note-box {
+      background: rgba(241, 250, 140, 0.14);
+      border-left: 5px solid var(--yellow);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .danger-box {
+      background: rgba(255, 85, 85, 0.16);
+      border-left: 5px solid var(--red);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .ok-box {
+      background: rgba(80, 250, 123, 0.14);
+      border-left: 5px solid var(--green);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .mini-code {
+      color: var(--yellow);
+      background: rgba(40, 42, 54, 0.90);
+      border-radius: 8px;
+      padding: 2px 7px;
+      font-family: monospace;
+      white-space: nowrap;
+    }
+
+    .sql-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.64em;
+      background: rgba(40, 42, 54, 0.72);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .sql-table th {
+      background: rgba(98, 114, 164, 0.65);
+      color: #f8f8f2;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .sql-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(248, 248, 242, 0.10);
+      vertical-align: top;
+    }
+
+    .sql-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .image-frame {
+      background: var(--cream);
+      border-radius: 18px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+    }
+
+    .image-frame img {
+      max-width: 100%;
+      max-height: 500px;
+      border-radius: 10px;
+      margin: 0;
+    }
+
+    .tiny-caption {
+      font-size: 0.52em !important;
+      color: #6272a4;
+      text-align: center;
+      margin-top: 6px !important;
+    }
+
+    .reveal code-block {
+      font-size: 0.82em;
+    }
+
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .topic-item {
+      background: rgba(40, 42, 54, 0.72);
+      border: 1px solid rgba(248, 248, 242, 0.12);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.72em;
+      color: var(--cyan);
+    }
+
+    .topic-item strong {
+      color: var(--yellow);
+    }
+
+    .step-label {
+      display: inline-block;
+      background: var(--pink);
+      color: #282a36;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.62em;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .task-list li {
+      font-size: 0.70em;
+      line-height: 1.4;
+      margin: 6px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="07" curso="Banco de Dados 2" title-size="24"
+                 title="SQL: SELECT Avançado">
+          <div class="image-frame" style="width: 470px; margin: 12px auto 0; padding: 8px;">
+            <img src="planos/img-aula07/slide1-bg.jpg" alt="Ilustração de consulta SQL avançada" style="max-height: 235px;" />
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: Contexto -->
+      <section data-auto-animate class="dml-bg">
+        <h2>Contexto</h2>
+        <multi-col style="gap: 22px; align-items: stretch;">
+          <div class="soft-card" style="flex: 1;">
+            <h3 style="color: var(--cyan);">Na aula passada</h3>
+            <p>Vimos os comandos DML, o famoso CRUD:</p>
+            <div class="verb-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 12px;">
+              <div class="verb-card">INSERT<br><span style="font-size:0.7em; font-weight:400;">Create</span></div>
+              <div class="verb-card">SELECT<br><span style="font-size:0.7em; font-weight:400;">Read</span></div>
+              <div class="verb-card">UPDATE<br><span style="font-size:0.7em; font-weight:400;">Update</span></div>
+              <div class="verb-card">DELETE<br><span style="font-size:0.7em; font-weight:400;">Delete</span></div>
+            </div>
+          </div>
+          <div class="cream-card" style="flex: 1;">
+            <h3>Hoje</h3>
+            <p>Veremos mais detalhes do comando <strong>SELECT</strong> — consultas avançadas que vão além do básico.</p>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3: Tópicos da aula -->
+      <section data-auto-animate class="dml-bg">
+        <h2 style="color: var(--pink);">SELECT Avançado</h2>
+        <div class="topic-grid">
+          <div class="topic-item fragment"><strong>AS</strong> — Renomeando colunas</div>
+          <div class="topic-item fragment"><strong>ORDER BY</strong> — Ordenando resultados</div>
+          <div class="topic-item fragment"><strong>LIMIT / OFFSET</strong> — Paginação</div>
+          <div class="topic-item fragment"><strong>COUNT, SUM, AVG...</strong> — Agregação</div>
+          <div class="topic-item fragment"><strong>GROUP BY</strong> — Agrupando dados</div>
+          <div class="topic-item fragment"><strong>HAVING</strong> — Filtrando grupos</div>
+          <div class="topic-item fragment"><strong>Subconsultas</strong> — SELECT dentro de SELECT</div>
+          <div class="topic-item fragment"><strong>OVER / PARTITION BY</strong> — Funções de janela</div>
+          <div class="topic-item fragment"><strong>WITH (CTE)</strong> — Expressões comuns</div>
+          <div class="topic-item fragment"><strong>CASE WHEN</strong> — If-else em SQL</div>
+          <div class="topic-item fragment"><strong>JOIN</strong> — Juntando tabelas</div>
+          <div class="topic-item fragment"><strong>EXISTS</strong> — Testando existência</div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           BASE DE DADOS
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2>Banco de dados base</h2>
+          <p style="color: #6272a4;">Usaremos duas tabelas para os exemplos:</p>
+          <multi-col style="gap: 18px;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--cyan); font-size: 0.85em;">Tabela <span class="mini-code">aluno</span></h3>
+              <code-block lang="sql">CREATE TABLE aluno (
+    id_aluno SERIAL PRIMARY KEY,
+    nome VARCHAR(50),
+    idade INT,
+    nota FLOAT
+);
+
+INSERT INTO aluno (nome, idade, nota) VALUES
+('Alice', 20, 8.5), ('Bob', 18, 7.4),
+('Charlie', 22, 9.1), ('Diana', 17, 5.5),
+('Edward', 21, 7.7), ('Fiona', 19, 9.9),
+('George', 20, 9.8), ('Hannah', 19, 9.4),
+('Ian', 21, 5.7), ('Julia', 18, 9.2),
+('Kyle', 20, 6.6), ('Laura', 17, 6.4),
+('Mike', 19, 7.0), ('Nina', 22, 7.2),
+('Oscar', 18, 8.4);</code-block>
+            </div>
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--green); font-size: 0.85em;">Tabela <span class="mini-code">matricula</span></h3>
+              <code-block lang="sql">CREATE TABLE matricula (
+    id SERIAL PRIMARY KEY,
+    id_aluno INT REFERENCES aluno(id_aluno),
+    nome_da_aula VARCHAR(100)
+);
+
+INSERT INTO matricula (id_aluno, nome_da_aula) VALUES
+(1, 'Matemática'), (1, 'História'),
+(2, 'Física'), (2, 'Matemática'),
+(3, 'História'), (3, 'Química'),
+(4, 'Matemática'), (5, 'Física'),
+(5, 'História'), (6, 'Química'),
+(7, 'Matemática'), (8, 'História'),
+(8, 'Química'), (9, 'Física'),
+(10, 'História'), (11, 'Matemática'),
+(12, 'Física'), (12, 'Química'),
+(13, 'História'), (14, 'Física'),
+(14, 'Química'), (15, 'Matemática');</code-block>
+            </div>
+          </multi-col>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           1. RENOMEANDO (ALIAS): AS
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">1. Renomeando (alias): AS</h2>
+          <multi-col style="gap: 22px; align-items: stretch;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--yellow); font-size: 0.85em;">Sem alias</h3>
+              <code-block lang="sql">SELECT nome
+FROM aluno;</code-block>
+              <div class="image-frame" style="margin-top: 12px;">
+                <img src="planos/img-aula07/slide3-table1.jpg" alt="Resultado da consulta sem alias — coluna chamada 'nome'" />
+              </div>
+            </div>
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--green); font-size: 0.85em;">Com alias</h3>
+              <code-block lang="sql">SELECT nome AS "Nome do Aluno"
+FROM aluno;</code-block>
+              <div class="image-frame" style="margin-top: 12px;">
+                <img src="planos/img-aula07/slide3-table2.jpg" alt="Resultado da consulta com alias — coluna chamada 'Nome do Aluno'" />
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">1. Renomeando (alias): AS</h2>
+          <div class="note-box">
+            <p><strong>Aspas duplas</strong> não são string aqui — servem para nomes de colunas ou tabelas com espaço, maiúsculas ou acento.</p>
+          </div>
+          <code-block lang="sql">SELECT nome AS "Nome do Aluno"
+FROM aluno;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide3-table2.jpg" alt="Resultado com alias usando aspas duplas" style="max-height: 350px;" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           2. ORDENANDO: ORDER BY
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">2. Ordenando</h2>
+          <code-block lang="sql">SELECT nome, idade
+FROM aluno
+ORDER BY idade DESC;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide7-orderby.jpg" alt="Resultado ordenado por idade decrescente" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           3. LIMITANDO: LIMIT E OFFSET
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">3. Limitando os resultados</h2>
+          <code-block lang="sql">SELECT nome, idade
+FROM aluno
+ORDER BY idade DESC
+OFFSET 5 LIMIT 3;</code-block>
+          <multi-col style="gap: 18px; margin-top: 12px;">
+            <div class="image-frame" style="flex: 1;">
+              <img src="planos/img-aula07/slide8-limit.jpg" alt="Consulta com OFFSET 5 LIMIT 3" style="max-height: 200px;" />
+            </div>
+            <div class="image-frame" style="flex: 1;">
+              <img src="planos/img-aula07/slide8-result.jpg" alt="Resultado da consulta limitada" style="max-height: 200px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">3. Limitando os resultados</h2>
+          <code-block lang="sql">SELECT nome, idade
+FROM aluno
+ORDER BY idade DESC
+<span class="fragment" style="color: var(--pink);">OFFSET 5</span> LIMIT 3;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide9-step1.jpg" alt="Resultado após pular 5 registros" style="max-height: 300px;" />
+          </div>
+          <p class="fragment" style="color: var(--pink);"><span class="step-label">OFFSET 5</span> pula os primeiros 5 registros</p>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">3. Limitando os resultados</h2>
+          <code-block lang="sql">SELECT nome, idade
+FROM aluno
+ORDER BY idade DESC
+OFFSET 5 <span class="fragment" style="color: var(--green);">LIMIT 3</span>;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide9-step1.jpg" alt="Resultado final com OFFSET e LIMIT" style="max-height: 300px;" />
+          </div>
+          <p class="fragment" style="color: var(--green);"><span class="step-label">LIMIT 3</span> retorna apenas 3 registros</p>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           4. FUNÇÕES DE AGREGAÇÃO
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">4. Funções de agregação</h2>
+          <code-block lang="sql">SELECT
+    COUNT(*) AS total_alunos,
+    AVG(idade) AS media_idade,
+    AVG(nota) AS media_nota
+FROM aluno;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide12-agg.jpg" alt="Resultado das funções de agregação: total_alunos, media_idade, media_nota" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           5. GROUP BY
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">5. Agregando em grupos</h2>
+          <code-block lang="sql">SELECT
+    idade,
+    COUNT(*) AS n_alunos_idade,
+    AVG(nota) AS media_nota
+FROM aluno
+GROUP BY idade
+ORDER BY idade DESC;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide13-group.jpg" alt="Resultado agrupado por idade com contagem e média" />
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">5.a. Filtrando grupos com HAVING</h2>
+          <p>Apenas grupos com mais de 2 alunos:</p>
+          <code-block lang="sql">SELECT
+    idade,
+    COUNT(*) AS n_alunos_idade,
+    AVG(nota) AS media_nota
+FROM aluno
+GROUP BY idade
+<span class="fragment" style="color: var(--yellow);">HAVING COUNT(*) > 2</span>
+ORDER BY idade DESC;</code-block>
+          <div class="image-frame fragment" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide14-having.jpg" alt="Resultado filtrado com HAVING — apenas idades com mais de 2 alunos" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           6. SUBCONSULTAS
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">6. Subconsultas</h2>
+          <p>Alunos com nota abaixo da média:</p>
+          <code-block lang="sql">SELECT
+    nome,
+    nota
+FROM aluno
+WHERE nota < (<span style="color: var(--pink);">SELECT AVG(nota) FROM aluno</span>);</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide15-sub.jpg" alt="Resultado da subconsulta — alunos com nota abaixo da média" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           7. FUNÇÕES DE JANELA: OVER / PARTITION BY
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">7. Funções de Janela: OVER</h2>
+          <p>Comparando notas com a média geral:</p>
+          <code-block lang="sql">SELECT
+    nome,
+    nota,
+    <span style="color: var(--yellow);">AVG(nota) OVER ()</span> AS nota_media
+FROM aluno
+ORDER BY nota DESC;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide17-window2.jpg" alt="Resultado com coluna de média geral repetida em cada linha" />
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">7. Funções de Janela: PARTITION BY</h2>
+          <p>Rank de notas <strong>por idade</strong>:</p>
+          <code-block lang="sql">SELECT
+    nome,
+    idade,
+    nota,
+    <span style="color: var(--yellow);">RANK() OVER (
+        PARTITION BY idade
+        ORDER BY nota DESC)</span> AS rank
+FROM aluno
+ORDER BY idade, nota DESC;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide16-window1.jpg" alt="Resultado com ranking de notas particionado por idade" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           8. CTE: WITH
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">8. Expressões de tabela comuns (CTE): WITH</h2>
+          <ls-u>
+            <li>Subconsultas podem ficar bem complexas</li>
+            <li>Podem precisar ser reutilizadas várias vezes</li>
+            <li>CTEs permitem "gravar" a consulta temporariamente e reutilizá-la</li>
+            <li>CTEs deixam consultas complexas mais <strong>legíveis</strong></li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">8. CTE: Antes e Depois</h2>
+          <multi-col style="gap: 18px;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--red); font-size: 0.85em;">Sem CTE</h3>
+              <code-block lang="sql">SELECT
+    nome,
+    nota,
+    (SELECT AVG(nota)
+     FROM aluno
+    ) AS media_nota
+FROM aluno
+WHERE nota > (
+    SELECT AVG(nota)
+    FROM aluno
+);</code-block>
+            </div>
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--green); font-size: 0.85em;">Com CTE</h3>
+              <code-block lang="sql">WITH aluno_media_geral AS (
+    SELECT
+        nome,
+        nota,
+        AVG(nota) OVER () AS media_geral
+    FROM aluno
+)
+SELECT *
+FROM aluno_media_geral
+WHERE nota > media_geral;</code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">8. CTE: Resultado</h2>
+          <code-block lang="sql">WITH aluno_media_geral AS (
+    SELECT
+        nome,
+        nota,
+        AVG(nota) OVER () AS media_geral
+    FROM aluno
+)
+SELECT *
+FROM aluno_media_geral
+WHERE nota > media_geral;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide19-cte.jpg" alt="Resultado da CTE — alunos acima da média geral" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           9. CASE WHEN
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">9. If-else: CASE WHEN</h2>
+          <code-block lang="sql">SELECT
+    nome,
+    nota,
+    <span style="color: var(--yellow);">CASE
+        WHEN nota >= 6 THEN 'Aprovado'
+        ELSE 'Reprovado'
+    END</span> AS status
+FROM aluno;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide21-case.jpg" alt="Resultado com coluna status — Aprovado ou Reprovado" />
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           10. JOIN
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">10. JOIN: juntando tabelas</h2>
+          <div class="image-frame">
+            <img src="planos/img-aula07/slide22-join.jpg" alt="Diagrama de JOIN entre tabelas com chave estrangeira" style="max-height: 450px;" />
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Chaves primárias e estrangeiras</h2>
+          <p>Por que usamos números em vez de nomes?</p>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide23-pkfk.jpg" alt="Comparação entre usar nome vs ID como chave estrangeira" style="max-height: 350px;" />
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Por que usar números?</h2>
+          <div class="danger-box fragment">
+            <p><strong>PROBLEMA 1:</strong> Se o usuário alterar o nome, preciso atualizar em todos os lugares!</p>
+          </div>
+          <div class="danger-box fragment">
+            <p><strong>PROBLEMA 2:</strong> Espaço em disco — cada caractere gasta 4 bytes. "Superman" = 32 bytes vs Inteiro = 4 bytes.</p>
+          </div>
+          <div class="danger-box fragment">
+            <p><strong>PROBLEMA 3:</strong> Busca — números sequenciais facilitam encontrar a linha sem ler uma por uma.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Produto cartesiano</h2>
+          <p>Juntando com vírgula sem condição:</p>
+          <code-block lang="sql">SELECT * FROM post, usuario;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide26-cartesian.jpg" alt="Resultado do produto cartesiano — cada post repetido para cada usuário" style="max-height: 300px;" />
+          </div>
+          <p class="fragment" style="color: var(--red);">Não é bem isso que eu queria! Cada linha de post é repetida para cada usuário.</p>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Adicionando a condição WHERE</h2>
+          <code-block lang="sql">SELECT *
+FROM
+    post,
+    usuario
+WHERE <span style="color: var(--yellow);">post.id_usuario = usuario.id_usuario</span>;</code-block>
+          <div class="image-frame" style="margin-top: 12px;">
+            <img src="planos/img-aula07/slide28-where.jpg" alt="Resultado com WHERE filtrando pelo id_usuario" style="max-height: 300px;" />
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Usando aliases nas tabelas</h2>
+          <code-block lang="sql">SELECT *
+FROM post <span style="color: var(--yellow);">p</span>,
+     usuario <span style="color: var(--yellow);">u</span>
+WHERE <span style="color: var(--yellow);">p</span>.id_usuario = <span style="color: var(--yellow);">u</span>.id_usuario;</code-block>
+          <div class="note-box">
+            <p>Normalmente criamos <strong>aliases</strong> (apelidos) para as tabelas. Pode usar <span class="mini-code">AS</span>, mas não precisa!</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Sintaxe JOIN (recomendada)</h2>
+          <code-block lang="sql">SELECT *
+FROM post p
+<span style="color: var(--yellow);">JOIN</span> usuario u
+    <span style="color: var(--yellow);">ON</span> p.id_usuario = u.id_usuario;</code-block>
+          <div class="ok-box">
+            <p>É a mesma coisa, mas deixa <strong>claro</strong> que existe uma relação entre as duas tabelas.</p>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           11. EXISTS
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">11. EXISTS</h2>
+          <multi-col style="gap: 18px;">
+            <div class="image-frame" style="flex: 1;">
+              <img src="planos/img-aula07/slide31-exists.jpg" alt="Ilustração do operador EXISTS" style="max-height: 400px;" />
+            </div>
+            <div class="image-frame" style="flex: 1;">
+              <img src="planos/img-aula07/slide31-exists2.jpg" alt="Comparação EXISTS vs IN" style="max-height: 400px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">EXISTS vs IN</h2>
+          <p>Testa a existência de um campo em outra tabela na cláusula WHERE. Geralmente é <strong>mais rápido</strong> que testar com IN.</p>
+          <multi-col style="gap: 18px;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--yellow); font-size: 0.85em;">EXISTS</h3>
+              <code-block lang="sql">SELECT nome, idade
+FROM aluno a
+WHERE EXISTS (
+    SELECT 1
+    FROM matricula m
+    WHERE m.id_aluno = a.id_aluno AND
+        m.nome_da_aula = 'Matemática'
+);</code-block>
+            </div>
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--pink); font-size: 0.85em;">IN</h3>
+              <code-block lang="sql">SELECT nome, idade
+FROM aluno a
+WHERE id_aluno IN (
+    SELECT id_aluno
+    FROM matricula m
+    WHERE m.id_aluno = a.id_aluno AND
+        m.nome_da_aula = 'Matemática'
+);</code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Alternativa com JOIN</h2>
+          <code-block lang="sql">SELECT
+    nome, idade
+FROM aluno a
+JOIN matricula m
+    ON a.id_aluno = m.id_aluno
+WHERE m.nome_da_aula = 'Matemática';</code-block>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Por que usar EXISTS?</h2>
+          <p>É mais útil quando queremos algo que <strong>NÃO</strong> EXISTS — nesse caso o JOIN não resolveria.</p>
+          <div class="note-box">
+            <p><strong>Exemplo:</strong> alunos que NÃO estão matriculados em Matemática</p>
+          </div>
+          <multi-col style="gap: 18px;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--green); font-size: 0.85em;">NOT EXISTS (correto)</h3>
+              <code-block lang="sql">SELECT nome, idade
+FROM aluno a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM matricula m
+    WHERE m.id_aluno = a.id_aluno AND
+        m.nome_da_aula = 'Matemática'
+);</code-block>
+            </div>
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--red); font-size: 0.85em;">!= com IN (errado!)</h3>
+              <code-block lang="sql">SELECT nome, idade
+FROM aluno a
+WHERE id_aluno IN (
+    SELECT id_aluno
+    FROM matricula m
+    WHERE m.nome_da_aula != 'Matemática'
+);</code-block>
+              <p class="tiny-caption">Isso retorna alunos matriculados em outras matérias, não os que NÃO estão em Matemática!</p>
+            </div>
+          </multi-col>
+        </section>
+      </section>
+
+      <!-- ============================================================
+           TAREFA
+           ============================================================ -->
+      <section>
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--pink);">Tarefa</h2>
+          <p>Recrie o seu banco de dados da rede social e faça as consultas a seguir:</p>
+          <ol class="task-list">
+            <li class="fragment">Considerando um sistema com paginação mostrando 10 posts por página, como seria a consulta para ver os posts da segunda página ordenado por ordem do mais recente para o mais antigo?</li>
+            <li class="fragment">Conte quantos seguidores cada usuário tem, mostrando o nome do usuário e número de seguidores.</li>
+            <li class="fragment">Retorne o nome dos usuários que possuem mais de 2 seguidores.</li>
+            <li class="fragment">Mostre apenas os nomes dos usuários que seguem o usuário 1 do seu banco.</li>
+            <li class="fragment">Implemente o sistema de likes da sua rede social e peça para o ChatGPT adicionar 50 linhas de likes.</li>
+            <li class="fragment">Retornar apenas o(s) post(s) com maior número de likes.</li>
+            <li class="fragment">Mostre os 5 posts mais recentes da rede social, incluindo o nome do usuário que os publicou.</li>
+            <li class="fragment">Retorne todos os usuários que não possuem seguidores.</li>
+            <li class="fragment">Mostre a quantidade total de posts feitos por cada usuário.</li>
+          </ol>
+        </section>
+      </section>
+
+      <!-- SLIDE FINAL -->
+      <section data-auto-animate class="centered">
+        <header1 curso="Banco de Dados 2" title-size="24" title="Bons estudos!">
+          <div class="image-frame" style="width: 470px; margin: 12px auto 0; padding: 8px;">
+            <img src="planos/img-aula07/slide36-end2.jpg" alt="Ilustração de encerramento — Bons estudos!" style="max-height: 235px;" />
+          </div>
+        </header1>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/search/search.js"></script>
+  <script src="../plugin/poll/poll.js"></script>
+  <script src="../plugin/seminar/seminar.js"></script>
+  <script src="../plugin/chalkboard/chalkboard.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../slides_template/header1.js"></script>
+
+  <script>
+    Reveal.initialize({
+      width: 1280,
+      height: 720,
+      margin: 0.04,
+      minScale: 0.2,
+      maxScale: 1.5,
+      hash: true,
+      history: true,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      backgroundTransition: 'fade',
+      center: true,
+      slideNumber: 'c/t',
+      plugins: [RevealHighlight, RevealZoom, RevealNotes, RevealSearch, RevealPoll, RevealSeminar, RevealChalkboard, RevealCustomControls]
+    });
+  </script>
+
+</body>
+
+</html>
