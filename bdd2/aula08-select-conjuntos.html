@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title>Banco de Dados 2 - Aula 08 - SQL: Select + Teoria de Conjuntos</title>
+
+    <link rel="stylesheet" href="../dist/reset.css" />
+    <link rel="stylesheet" href="../dist/reveal.css" />
+    <link rel="stylesheet" href="../dist/theme/dracula.css" />
+    <link rel="stylesheet" href="../dist/custom.css" />
+    <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+    <link rel="stylesheet" href="../plugin/poll/style.css" />
+    <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+    <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+
+    <style>
+        :root {
+            --cyan: #8be9fd;
+            --green: #50fa7b;
+            --pink: #ff79c6;
+            --yellow: #f1fa8c;
+            --red: #ff5555;
+            --purple: #bd93f9;
+            --panel: rgba(40, 42, 54, 0.86);
+            --panel-soft: rgba(68, 71, 90, 0.64);
+        }
+
+        .reveal h2,
+        .reveal h3 {
+            text-transform: none;
+            letter-spacing: -0.02em;
+        }
+
+        .reveal .slides section {
+            text-align: left;
+        }
+
+        .reveal .slides section.centered {
+            text-align: center;
+        }
+
+        .reveal .slides section p {
+            font-size: 0.72em;
+            line-height: 1.35;
+            margin: 6px 0;
+        }
+
+        .reveal .slides section li {
+            font-size: 0.82em;
+            line-height: 1.32;
+            margin: 5px 0;
+        }
+
+        .venn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 15px 0;
+        }
+
+        .venn-svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .soft-card {
+            background: var(--panel-soft);
+            border: 1px solid rgba(248, 248, 242, 0.10);
+            border-radius: 18px;
+            padding: 16px 20px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+        }
+
+        .cream-card {
+            background: #f6eadc;
+            color: #082f6f;
+            border-radius: 18px;
+            padding: 16px 20px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+        }
+
+        .cream-card h3,
+        .cream-card p,
+        .cream-card li {
+            color: #082f6f;
+        }
+
+        .note-box {
+            background: rgba(241, 250, 140, 0.14);
+            border-left: 5px solid var(--yellow);
+            border-radius: 0 12px 12px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .danger-box {
+            background: rgba(255, 85, 85, 0.16);
+            border-left: 5px solid var(--red);
+            border-radius: 0 12px 12px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .ok-box {
+            background: rgba(80, 250, 123, 0.14);
+            border-left: 5px solid var(--green);
+            border-radius: 0 12px 12px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .mini-code {
+            color: var(--yellow);
+            background: rgba(40, 42, 54, 0.90);
+            border-radius: 8px;
+            padding: 2px 7px;
+            font-family: monospace;
+            white-space: nowrap;
+        }
+
+        .set-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.64em;
+            background: rgba(40, 42, 54, 0.72);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .set-table th {
+            background: rgba(98, 114, 164, 0.65);
+            color: #f8f8f2;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .set-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(248, 248, 242, 0.10);
+            vertical-align: top;
+        }
+
+        .set-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .image-frame {
+            background: #f6eadc;
+            border-radius: 18px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+        }
+
+        .image-frame img {
+            max-width: 100%;
+            max-height: 420px;
+            border-radius: 10px;
+            margin: 0;
+        }
+
+        .code-wrapper {
+            font-size: 0.82em;
+        }
+
+        .topic-tag {
+            display: inline-block;
+            background: rgba(189, 147, 249, 0.25);
+            border: 1px solid rgba(189, 147, 249, 0.45);
+            border-radius: 10px;
+            padding: 4px 12px;
+            font-size: 0.68em;
+            color: var(--purple);
+            margin: 3px;
+        }
+
+        .join-bg {
+            background:
+                radial-gradient(circle at 15% 20%, rgba(139, 233, 253, 0.12), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(255, 121, 198, 0.10), transparent 28%),
+                linear-gradient(160deg, #151925 0%, #282a36 55%, #1f2433 100%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app" class="reveal">
+        <div class="slides">
+
+            <!-- ============================================================
+                 SLIDE 1: Capa
+                 ============================================================ -->
+            <section data-auto-animate>
+                <header1 aula="08" curso="Banco de Dados 2" title-size="22"
+                         title="SQL: Select + Teoria de Conjuntos">
+                    <div style="text-align: center; margin-top: 20px;">
+                        <img src="planos/aula08-conjuntos/venn-diagram.png"
+                             alt="Diagrama de Venn com dois conjuntos A e B sobrepostos"
+                             style="max-height: 220px; border-radius: 16px;" />
+                    </div>
+                </header1>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE 2: Contexto
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2>Contexto</h2>
+                <multi-col style="gap: 22px; align-items: stretch;">
+                    <div class="soft-card" style="flex: 1;">
+                        <h3 style="color: var(--cyan);">Na aula passada</h3>
+                        <p>Vimos diversas formas de realizar consultas mais complexas em SQL:</p>
+                        <ul style="font-size: 0.78em;">
+                            <li>Alias com <span class="mini-code">AS</span></li>
+                            <li>Ordenação com <span class="mini-code">ORDER BY</span></li>
+                            <li>Limite e paginação</li>
+                            <li>Agregação e <span class="mini-code">GROUP BY</span></li>
+                            <li>Subconsultas e CTEs</li>
+                            <li><span class="mini-code">JOIN</span> básico</li>
+                        </ul>
+                    </div>
+                    <div class="cream-card" style="flex: 1;">
+                        <h3>Hoje</h3>
+                        <p>Veremos outras técnicas que vão nos permitir implementar <strong>algoritmos razoavelmente complexos</strong> usando SQL.</p>
+                        <div style="margin-top: 12px;">
+                            <span class="topic-tag">JOINs avançados</span>
+                            <span class="topic-tag">Teoria de conjuntos</span>
+                            <span class="topic-tag">Operadores de conjunto</span>
+                            <span class="topic-tag">INTERSECT</span>
+                            <span class="topic-tag">EXCEPT</span>
+                            <span class="topic-tag">UNION</span>
+                        </div>
+                    </div>
+                </multi-col>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE 3: Motivação
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2 style="color: var(--pink);">Motivacao</h2>
+                <p>Vamos pensar em uma <strong>rede social</strong>. Ela possui diversos algoritmos para calcular coisas como:</p>
+                <multi-col style="gap: 20px; margin-top: 18px;">
+                    <div class="soft-card" style="flex: 1; text-align: center;">
+                        <p style="font-size: 2em; margin: 0;">👥</p>
+                        <p><strong>Amigos em comum</strong></p>
+                        <p style="font-size: 0.75em;">Mostrar amigos ou pessoas seguidas em comum entre mim e outro usuário</p>
+                    </div>
+                    <div class="soft-card" style="flex: 1; text-align: center;">
+                        <p style="font-size: 2em; margin: 0;">🤝</p>
+                        <p><strong>Sugestão de amigos</strong></p>
+                        <p style="font-size: 0.75em;">Sugerir pessoas para seguir com base em interesses em comum</p>
+                    </div>
+                </multi-col>
+                <div class="fragment fade-in">
+                    <div class="note-box" style="margin-top: 18px;">
+                        <p><strong>Desafio:</strong> Como fazer isso tudo usando apenas SQL?</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE 4: Problema — Separado
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2 style="color: var(--cyan);">Problema</h2>
+                <p>Mostrar amigos/pessoas seguidas em comum entre <strong>eu (id = 1)</strong> e <strong>outra pessoa (id = 2)</strong>.</p>
+                <p style="color: #6272a4; font-size: 0.72em;">Dá para fazer isso com o que aprendemos?</p>
+
+                <div style="display: flex; justify-content: center; margin-top: 10px;">
+                    <svg width="780" height="320" viewBox="0 0 780 320">
+                        <!-- Circle 1 -->
+                        <circle cx="190" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+                        <!-- Circle 2 -->
+                        <circle cx="590" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+
+                        <!-- Text inside Circle 1 -->
+                        <text x="190" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem eu sigo?</text>
+                        <text x="190" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
+                        <text x="190" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
+                        <text x="190" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 1;</text>
+
+                        <!-- Text inside Circle 2 -->
+                        <text x="590" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem id = 2 segue?</text>
+                        <text x="590" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
+                        <text x="590" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
+                        <text x="590" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 2;</text>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE 5: Problema — Interseção
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2 style="color: var(--cyan);">Problema</h2>
+                <p>Mostrar amigos/pessoas seguidas em comum entre <strong>eu (id = 1)</strong> e <strong>outra pessoa (id = 2)</strong>.</p>
+                <p style="color: var(--yellow); font-size: 0.78em;"><strong>Reconhecem?</strong></p>
+
+                <div style="display: flex; justify-content: center; margin-top: 10px;">
+                    <svg width="780" height="320" viewBox="0 0 780 320">
+                        <defs>
+                            <!-- Diagonal hatch pattern for intersection -->
+                            <pattern id="hatch" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
+                                <line x1="0" y1="0" x2="0" y2="14" stroke="#8be9fd" stroke-width="3.5" opacity="0.75"/>
+                            </pattern>
+                            <!-- Clip path = circle 2 area -->
+                            <clipPath id="c2-clip">
+                                <circle cx="510" cy="160" r="150"/>
+                            </clipPath>
+                        </defs>
+
+                        <!-- Circle 1 fill (only intersection part, hatched) -->
+                        <circle cx="290" cy="160" r="150" fill="url(#hatch)" clip-path="url(#c2-clip)"/>
+                        <!-- Circle 1 stroke -->
+                        <circle cx="290" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+                        <!-- Circle 2 stroke -->
+                        <circle cx="510" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+
+                        <!-- Text inside Circle 1 (left non-overlapping part + intersection) -->
+                        <text x="230" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem eu sigo?</text>
+                        <text x="230" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
+                        <text x="230" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
+                        <text x="230" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 1;</text>
+
+                        <!-- Text inside Circle 2 (right non-overlapping part) -->
+                        <text x="570" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem id = 2 segue?</text>
+                        <text x="570" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
+                        <text x="570" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
+                        <text x="570" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 2;</text>
+                    </svg>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE 6: Teoria de Conjuntos
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2 style="color: var(--purple);">Teoria de Conjuntos</h2>
+                <p>Será que dá para fazer isso com o que já aprendemos?</p>
+                <div class="fragment fade-in" style="text-align: center; margin-top: 20px;">
+                    <img src="planos/aula08-conjuntos/venn-diagram.png"
+                         alt="Diagrama de Venn ilustrando intersecção, união e diferença entre conjuntos"
+                         style="max-height: 320px; border-radius: 16px;" />
+                </div>
+                <div class="fragment fade-in">
+                    <p style="text-align: center; font-size: 1.2em; color: var(--green);"><strong>Sim!</strong></p>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 FASE 1: APROFUNDANDO NOS JOINs
+                 ============================================================ -->
+            <section>
+
+                <!-- Header -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--cyan);">Aprofundando nos JOINs</h2>
+                    <p>Vamos revisar os tipos de JOIN e ver como eles se relacionam com a teoria de conjuntos.</p>
+                    <div style="display: flex; justify-content: center; margin-top: 20px;">
+                        <svg width="280" height="180" viewBox="0 0 280 180" class="venn-svg">
+                            <circle cx="90" cy="90" r="75" fill="rgba(139,233,253,0.2)" stroke="#8be9fd" stroke-width="3"/>
+                            <circle cx="190" cy="90" r="75" fill="rgba(255,121,198,0.2)" stroke="#ff79c6" stroke-width="3"/>
+                            <text x="55" y="95" fill="#f8f8f2" font-size="20" font-weight="bold">A</text>
+                            <text x="205" y="95" fill="#f8f8f2" font-size="20" font-weight="bold">B</text>
+                            <text x="130" y="85" fill="#f8f8f2" font-size="14" text-anchor="middle">A ∩ B</text>
+                        </svg>
+                    </div>
+                </section>
+
+                <!-- INNER JOIN -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--cyan);">INNER JOIN</h2>
+                    <p>É o padrão se usarmos só <span class="mini-code">JOIN</span>. Retorna <strong>apenas os registros que ocorrem nas duas tabelas</strong>.</p>
+                    <div class="fragment fade-in">
+                        <div style="display: flex; justify-content: center; margin: 16px 0;">
+                            <svg width="280" height="180" viewBox="0 0 280 180">
+                                <circle cx="90" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <circle cx="190" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <path d="M 130 50 A 75 75 0 0 1 130 130 A 75 75 0 0 1 130 50" fill="rgba(139,233,253,0.5)" stroke="#8be9fd" stroke-width="3"/>
+                                <text x="55" y="95" fill="#6272a4" font-size="18" font-weight="bold">A</text>
+                                <text x="205" y="95" fill="#6272a4" font-size="18" font-weight="bold">B</text>
+                                <text x="130" y="95" fill="#f8f8f2" font-size="14" text-anchor="middle" font-weight="bold">A ∩ B</text>
+                            </svg>
+                        </div>
+                        <p style="text-align: center; font-size: 0.85em;">Somente usuários que <strong>têm post</strong></p>
+                    </div>
+                </section>
+
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--cyan);">INNER JOIN — Exemplo</h2>
+                    <multi-col style="gap: 20px;">
+                        <div style="flex: 1;">
+                            <code-block lang="sql"><script type="text/plain">
+SELECT nome, titulo
+FROM usuario A
+JOIN post B
+    ON A.id_usuario = B.id_usuario;
+                            </script></code-block>
+                            <div class="ok-box" style="margin-top: 10px;">
+                                <p style="font-size: 0.75em;">Retorna <strong>somente usuários que têm post</strong>.</p>
+                            </div>
+                        </div>
+                        <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+                            <svg width="240" height="180" viewBox="0 0 240 180">
+                                <circle cx="80" cy="90" r="65" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <circle cx="160" cy="90" r="65" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <path d="M 115 55 A 65 65 0 0 1 115 125 A 65 65 0 0 1 115 55" fill="rgba(139,233,253,0.5)" stroke="#8be9fd" stroke-width="3"/>
+                                <text x="45" y="95" fill="#6272a4" font-size="16">Usuario</text>
+                                <text x="165" y="95" fill="#6272a4" font-size="16">Post</text>
+                                <text x="115" y="95" fill="#f8f8f2" font-size="12" text-anchor="middle" font-weight="bold">JOIN</text>
+                            </svg>
+                        </div>
+                    </multi-col>
+                </section>
+
+                <!-- LEFT JOIN -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--green);">LEFT JOIN</h2>
+                    <p>Retorna <strong>todos os registros da tabela da esquerda</strong>, mesmo que não haja correspondência na da direita.</p>
+                    <div class="fragment fade-in">
+                        <div style="display: flex; justify-content: center; margin: 16px 0;">
+                            <svg width="280" height="180" viewBox="0 0 280 180">
+                                <circle cx="90" cy="90" r="75" fill="rgba(139,233,253,0.35)" stroke="#8be9fd" stroke-width="3"/>
+                                <circle cx="190" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <text x="55" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">A</text>
+                                <text x="205" y="95" fill="#6272a4" font-size="18" font-weight="bold">B</text>
+                            </svg>
+                        </div>
+                        <p style="text-align: center; font-size: 0.85em;">Todos os usuários, <strong>mesmo que não tenha post</strong></p>
+                    </div>
+                </section>
+
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--green);">LEFT JOIN — Exemplo</h2>
+                    <code-block lang="sql"><script type="text/plain">
+SELECT nome, titulo
+FROM usuario A
+LEFT JOIN post B
+    ON A.id_usuario = B.id_usuario;
+                    </script></code-block>
+                    <div class="fragment fade-in">
+                        <div class="ok-box" style="margin-top: 10px;">
+                            <p style="font-size: 0.75em;">Retorna <strong>todos os usuários</strong>. Se não tiver post, <span class="mini-code">titulo</span> virá <span class="mini-code">NULL</span>.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LEFT JOIN (A - B) -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--yellow);">LEFT JOIN (A - B)</h2>
+                    <p>Como obter apenas os registros que estão em <strong>A mas NÃO estão em B</strong>?</p>
+                    <div class="fragment fade-in">
+                        <div style="display: flex; justify-content: center; margin: 16px 0;">
+                            <svg width="280" height="180" viewBox="0 0 280 180">
+                                <circle cx="90" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <circle cx="190" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <path d="M 90 15 A 75 75 0 0 0 90 165 A 75 75 0 0 0 50 105 A 75 75 0 0 1 130 105 A 75 75 0 0 1 90 15" fill="rgba(241,250,140,0.5)" stroke="#f1fa8c" stroke-width="3"/>
+                                <text x="55" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">A</text>
+                                <text x="205" y="95" fill="#6272a4" font-size="18" font-weight="bold">B</text>
+                                <text x="70" y="60" fill="#f8f8f2" font-size="12" font-weight="bold">A - B</text>
+                            </svg>
+                        </div>
+                        <p style="text-align: center; font-size: 0.85em;">Apenas usuários que <strong>não têm post</strong></p>
+                    </div>
+                </section>
+
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--yellow);">LEFT JOIN (A - B) — Exemplo</h2>
+                    <code-block lang="sql"><script type="text/plain">
+SELECT nome, titulo
+FROM usuario A
+LEFT JOIN post B
+    ON A.id_usuario = B.id_usuario
+WHERE B.id_usuario IS NULL;
+                    </script></code-block>
+                    <div class="fragment fade-in">
+                        <div class="note-box" style="margin-top: 10px;">
+                            <p style="font-size: 0.75em;">O truque está no <span class="mini-code">WHERE B.id_usuario IS NULL</span>. Filtramos apenas onde <strong>não houve correspondência</strong> em B.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FULL OUTER JOIN -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--pink);">Para PK/FK é JOIN, mas e tabelas não relacionadas?</h2>
+                    <p>Quero descobrir:</p>
+                    <ul style="font-size: 0.78em;">
+                        <li class="fragment">Posts que <strong>têm comentários E likes</strong></li>
+                        <li class="fragment">Posts que <strong>têm apenas comentário</strong></li>
+                        <li class="fragment">Posts que <strong>ou só têm comentário OU só têm likes</strong></li>
+                    </ul>
+                </section>
+
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--pink);">FULL OUTER JOIN (A OR B)</h2>
+                    <p>Posts que <strong>têm comentário OU likes</strong> (ou ambos).</p>
+                    <div class="fragment fade-in">
+                        <code-block lang="sql"><script type="text/plain">
+SELECT DISTINCT
+    COALESCE(A.id_post, B.id_post) AS id_post
+FROM comentario A
+FULL OUTER JOIN likes B
+    ON A.id_post = B.id_post;
+                        </script></code-block>
+                        <div style="display: flex; justify-content: center; margin-top: 12px;">
+                            <svg width="280" height="180" viewBox="0 0 280 180">
+                                <circle cx="90" cy="90" r="75" fill="rgba(139,233,253,0.35)" stroke="#8be9fd" stroke-width="3"/>
+                                <circle cx="190" cy="90" r="75" fill="rgba(255,121,198,0.35)" stroke="#ff79c6" stroke-width="3"/>
+                                <text x="55" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">A</text>
+                                <text x="205" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">B</text>
+                                <text x="130" y="165" fill="#f8f8f2" font-size="13" text-anchor="middle">A ∪ B</text>
+                            </svg>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--yellow);">LEFT JOIN (A - B) — Comentários sem likes</h2>
+                    <p>Posts que <strong>têm apenas comentários sem likes</strong>.</p>
+                    <div class="fragment fade-in">
+                        <code-block lang="sql"><script type="text/plain">
+SELECT DISTINCT A.id_post
+FROM comentario A
+LEFT JOIN likes B
+    ON A.id_post = B.id_post
+WHERE B.id_post IS NULL;
+                        </script></code-block>
+                        <div style="display: flex; justify-content: center; margin-top: 12px;">
+                            <svg width="280" height="180" viewBox="0 0 280 180">
+                                <circle cx="90" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <circle cx="190" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <path d="M 90 15 A 75 75 0 0 0 90 165 A 75 75 0 0 0 50 105 A 75 75 0 0 1 130 105 A 75 75 0 0 1 90 15" fill="rgba(241,250,140,0.5)" stroke="#f1fa8c" stroke-width="3"/>
+                                <text x="55" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">A</text>
+                                <text x="205" y="95" fill="#6272a4" font-size="18" font-weight="bold">B</text>
+                            </svg>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--red);">FULL OUTER JOIN (A XOR B)</h2>
+                    <p>Posts que <strong>ou têm apenas comentário OU têm apenas like</strong> (exclusivo).</p>
+                    <div class="fragment fade-in">
+                        <code-block lang="sql"><script type="text/plain">
+SELECT DISTINCT
+    COALESCE(A.id_post, B.id_post) AS id_post
+FROM comentario A
+FULL OUTER JOIN likes B
+    ON A.id_post = B.id_post
+WHERE A.id_post IS NULL OR B.id_post IS NULL;
+                        </script></code-block>
+                        <div style="display: flex; justify-content: center; margin-top: 12px;">
+                            <svg width="280" height="180" viewBox="0 0 280 180">
+                                <circle cx="90" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <circle cx="190" cy="90" r="75" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="6,4"/>
+                                <path d="M 90 15 A 75 75 0 0 0 90 165 A 75 75 0 0 0 50 105 A 75 75 0 0 1 130 105 A 75 75 0 0 1 90 15" fill="rgba(255,85,85,0.5)" stroke="#ff5555" stroke-width="3"/>
+                                <path d="M 190 15 A 75 75 0 0 1 190 165 A 75 75 0 0 1 230 105 A 75 75 0 0 0 150 105 A 75 75 0 0 0 190 15" fill="rgba(255,85,85,0.5)" stroke="#ff5555" stroke-width="3"/>
+                                <text x="55" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">A</text>
+                                <text x="205" y="95" fill="#f8f8f2" font-size="18" font-weight="bold">B</text>
+                            </svg>
+                        </div>
+                    </div>
+                </section>
+
+            </section><!-- fim Aprofundando nos JOINs -->
+
+            <!-- ============================================================
+                 FASE 2: OPERADORES DE CONJUNTO
+                 ============================================================ -->
+            <section>
+
+                <!-- Header -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--purple);">Operadores de Conjunto</h2>
+                    <p>Alternativa aos JOINs para operações de conjunto entre resultados de consultas.</p>
+                    <div style="text-align: center; margin-top: 16px;">
+                        <img src="planos/aula08-conjuntos/operadores-conjunto.png"
+                             alt="Tabela de referencia dos operadores de conjunto: UNION, INTERSECT e EXCEPT"
+                             style="max-height: 340px; border-radius: 16px;" />
+                    </div>
+                </section>
+
+                <!-- Usar ou não -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--yellow);">Usar ou não?</h2>
+                    <multi-col style="gap: 20px;">
+                        <div class="ok-box" style="flex: 1;">
+                            <h3 style="color: var(--green); font-size: 0.85em;">Vantagens</h3>
+                            <ul style="font-size: 0.75em;">
+                                <li>As consultas ficam <strong>muito mais claras e simples</strong></li>
+                                <li>É mais <strong>fácil de pensar</strong> em termos de conjuntos</li>
+                            </ul>
+                        </div>
+                        <div class="danger-box" style="flex: 1;">
+                            <h3 style="color: var(--red); font-size: 0.85em;">Desvantagens</h3>
+                            <ul style="font-size: 0.75em;">
+                                <li>Serão <strong>mais lentos</strong> que os JOINs</li>
+                                <li><strong>Não funciona</strong> se você quer obter dados de ambas as tabelas</li>
+                                <li>Se houver relação PK/FK, <strong>use JOIN</strong></li>
+                            </ul>
+                        </div>
+                    </multi-col>
+                </section>
+
+                <!-- JOIN vs INTERSECT -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--cyan);">JOIN vs CONJUNTO — A ∩ B</h2>
+                    <p style="font-size: 0.78em;"><strong>Observação:</strong> Não funciona com <span class="mini-code">JOIN</span> se queremos resgatar apenas a chave, pois o JOIN traria colunas de ambas as tabelas.</p>
+                    <multi-col style="gap: 18px; margin-top: 12px;">
+                        <div class="soft-card" style="flex: 1;">
+                            <h3 style="color: var(--cyan); font-size: 0.8em;">Com JOIN</h3>
+                            <code-block lang="sql"><script type="text/plain">
+SELECT id_usuario
+FROM usuario A
+JOIN post B
+    ON A.id_usuario = B.id_usuario;
+                            </script></code-block>
+                            <p style="font-size: 0.7em; color: #6272a4;">Pergunta: quais usuários (id) <strong>têm post</strong>?</p>
+                        </div>
+                        <div class="soft-card" style="flex: 1;">
+                            <h3 style="color: var(--purple); font-size: 0.8em;">Com INTERSECT</h3>
+                            <code-block lang="sql"><script type="text/plain">
+SELECT id_usuario FROM usuario
+INTERSECT
+SELECT id_usuario FROM post;
+                            </script></code-block>
+                            <p style="font-size: 0.7em; color: #6272a4;">Mesma pergunta, mais clara!</p>
+                        </div>
+                    </multi-col>
+                    <div style="display: flex; justify-content: center; margin-top: 10px;">
+                        <svg width="200" height="130" viewBox="0 0 200 130">
+                            <circle cx="70" cy="65" r="55" fill="rgba(139,233,253,0.25)" stroke="#8be9fd" stroke-width="2.5"/>
+                            <circle cx="130" cy="65" r="55" fill="rgba(255,121,198,0.25)" stroke="#ff79c6" stroke-width="2.5"/>
+                            <text x="40" y="70" fill="#f8f8f2" font-size="16" font-weight="bold">A</text>
+                            <text x="140" y="70" fill="#f8f8f2" font-size="16" font-weight="bold">B</text>
+                            <text x="100" y="115" fill="#f8f8f2" font-size="12" text-anchor="middle">A ∩ B</text>
+                        </svg>
+                    </div>
+                </section>
+
+                <!-- JOIN vs EXCEPT -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--yellow);">JOIN vs CONJUNTO — A - B</h2>
+                    <multi-col style="gap: 18px; margin-top: 12px;">
+                        <div class="soft-card" style="flex: 1;">
+                            <h3 style="color: var(--yellow); font-size: 0.8em;">Com JOIN</h3>
+                            <code-block lang="sql"><script type="text/plain">
+SELECT id_usuario
+FROM usuario A
+LEFT JOIN post B
+    ON A.id_usuario = B.id_usuario
+WHERE B.id_usuario IS NULL;
+                            </script></code-block>
+                            <p style="font-size: 0.7em; color: #6272a4;">Quais usuários (id) <strong>não têm post</strong>?</p>
+                        </div>
+                        <div class="soft-card" style="flex: 1;">
+                            <h3 style="color: var(--purple); font-size: 0.8em;">Com EXCEPT</h3>
+                            <code-block lang="sql"><script type="text/plain">
+SELECT id_usuario FROM usuario
+EXCEPT
+SELECT id_usuario FROM post;
+                            </script></code-block>
+                            <p style="font-size: 0.7em; color: #6272a4;">Mesma pergunta, mais direta!</p>
+                        </div>
+                    </multi-col>
+                    <div style="display: flex; justify-content: center; margin-top: 10px;">
+                        <svg width="200" height="130" viewBox="0 0 200 130">
+                            <circle cx="70" cy="65" r="55" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="5,4"/>
+                            <circle cx="130" cy="65" r="55" fill="rgba(40,42,54,0.5)" stroke="#6272a4" stroke-width="2" stroke-dasharray="5,4"/>
+                            <path d="M 70 10 A 55 55 0 0 0 70 120 A 55 55 0 0 0 35 70 A 55 55 0 0 1 105 70 A 55 55 0 0 1 70 10" fill="rgba(241,250,140,0.4)" stroke="#f1fa8c" stroke-width="2.5"/>
+                            <text x="40" y="70" fill="#f8f8f2" font-size="16" font-weight="bold">A</text>
+                            <text x="140" y="70" fill="#6272a4" font-size="16">B</text>
+                            <text x="55" y="115" fill="#f8f8f2" font-size="12">A - B</text>
+                        </svg>
+                    </div>
+                </section>
+
+                <!-- JOIN vs UNION -->
+                <section data-auto-animate class="join-bg">
+                    <h2 style="color: var(--pink);">JOIN vs CONJUNTO — A ∪ B</h2>
+                    <multi-col style="gap: 18px; margin-top: 12px;">
+                        <div class="soft-card" style="flex: 1;">
+                            <h3 style="color: var(--pink); font-size: 0.8em;">Com FULL OUTER JOIN</h3>
+                            <code-block lang="sql"><script type="text/plain">
+SELECT DISTINCT
+    COALESCE(A.id_post, B.id_post) AS id_post
+FROM comentario A
+FULL OUTER JOIN likes B
+    ON A.id_post = B.id_post;
+                            </script></code-block>
+                        </div>
+                        <div class="soft-card" style="flex: 1;">
+                            <h3 style="color: var(--purple); font-size: 0.8em;">Com UNION</h3>
+                            <code-block lang="sql"><script type="text/plain">
+SELECT id_post FROM comentario
+UNION
+SELECT id_post FROM likes;
+                            </script></code-block>
+                        </div>
+                    </multi-col>
+                    <div style="display: flex; justify-content: center; margin-top: 10px;">
+                        <svg width="200" height="130" viewBox="0 0 200 130">
+                            <circle cx="70" cy="65" r="55" fill="rgba(139,233,253,0.3)" stroke="#8be9fd" stroke-width="2.5"/>
+                            <circle cx="130" cy="65" r="55" fill="rgba(255,121,198,0.3)" stroke="#ff79c6" stroke-width="2.5"/>
+                            <text x="40" y="70" fill="#f8f8f2" font-size="16" font-weight="bold">A</text>
+                            <text x="140" y="70" fill="#f8f8f2" font-size="16" font-weight="bold">B</text>
+                            <text x="100" y="115" fill="#f8f8f2" font-size="12" text-anchor="middle">A ∪ B</text>
+                        </svg>
+                    </div>
+                </section>
+
+            </section><!-- fim Operadores de Conjunto -->
+
+            <!-- ============================================================
+                 SLIDE: Exercício
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2 style="color: var(--green);">Exercício</h2>
+                <p>Baseado no que aprendeu, faça as questões iniciais usando <strong>JOIN</strong> e usando <strong>operadores de conjunto</strong>:</p>
+                <div class="soft-card" style="margin-top: 14px;">
+                    <ol style="font-size: 0.78em;">
+                        <li class="fragment">Mostrar amigos/pessoas seguidas em comum entre mim e outro usuário</li>
+                        <li class="fragment">Sugestão de amigos/quem seguir</li>
+                    </ol>
+                </div>
+                <div class="fragment fade-in">
+                    <div class="note-box" style="margin-top: 14px;">
+                        <p style="font-size: 0.75em;"><strong>Dica:</strong> Tente resolver de <strong>duas formas</strong> — com JOINs e com operadores de conjunto — e compare a clareza de cada uma!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE: Resumo
+                 ============================================================ -->
+            <section data-auto-animate class="join-bg">
+                <h2>Resumo da Aula</h2>
+                <multi-col style="gap: 18px;">
+                    <div class="soft-card" style="flex: 1;">
+                        <h3 style="color: var(--cyan); font-size: 0.85em;">JOINs Avançados</h3>
+                        <ul style="font-size: 0.72em;">
+                            <li><strong>INNER JOIN</strong> — apenas correspondências (A ∩ B)</li>
+                            <li><strong>LEFT JOIN</strong> — todos de A, com ou sem B</li>
+                            <li><strong>LEFT JOIN + IS NULL</strong> — apenas em A, não em B (A - B)</li>
+                            <li><strong>FULL OUTER JOIN</strong> — todos de A e B (A ∪ B)</li>
+                            <li><strong>FULL OUTER JOIN + IS NULL</strong> — apenas A ou apenas B (A XOR B)</li>
+                        </ul>
+                    </div>
+                    <div class="soft-card" style="flex: 1;">
+                        <h3 style="color: var(--purple); font-size: 0.85em;">Operadores de Conjunto</h3>
+                        <ul style="font-size: 0.72em;">
+                            <li><strong>INTERSECT</strong> — apenas em ambos (A ∩ B)</li>
+                            <li><strong>EXCEPT</strong> — em A mas não em B (A - B)</li>
+                            <li><strong>UNION</strong> — em A ou em B (A ∪ B)</li>
+                            <li>Mais claros, mas potencialmente mais lentos</li>
+                            <li>Para PK/FK, prefira JOINs</li>
+                        </ul>
+                    </div>
+                </multi-col>
+            </section>
+
+            <!-- ============================================================
+                 SLIDE: Encerramento
+                 ============================================================ -->
+            <section data-auto-animate class="centered">
+                <header1 aula="08" curso="Banco de Dados 2" title-size="28" title="Bons estudos!">
+                    <div style="text-align: center; margin-top: 20px;">
+                        <p style="font-size: 1.1em; color: var(--cyan);">Prof. Caio Hamamura</p>
+                        <p style="font-size: 0.85em; color: #6272a4;">Próxima aula: novos tópicos de SQL</p>
+                    </div>
+                </header1>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="../dist/reveal.js"></script>
+    <script src="../plugin/notes/notes.js"></script>
+    <script src="../plugin/math/math.js"></script>
+    <script src="../plugin/markdown/markdown.js"></script>
+    <script src="../plugin/highlight/highlight.js"></script>
+    <script src="../plugin/zoom/zoom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+    <script src="../plugin/leader-line.min.js"></script>
+    <script src="../dist/vue.js"></script>
+    <script src="../slides_template/header1.js"></script>
+    <script src="../components/components.js"></script>
+    <script src="../plugin/poll/plugin.js"></script>
+    <script src="../plugin/customcontrols/plugin.js"></script>
+    <script src="../plugin/chalkboard/plugin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="../slides_template/init.js"></script>
+    <script src="../plugin/seminar/plugin.js"></script>
+
+    <script>
+        window.app = mountSlideApp();
+    </script>
+
+</body>
+
+</html>

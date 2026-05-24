@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 10 - Acessando o BD por API</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2, .reveal h3 { text-transform: none; }
+    .reveal .slides section { text-align: left; }
+    .reveal .slides section p { font-size: 0.76em; line-height: 1.35; }
+    .reveal .slides section li { font-size: 0.78em; line-height: 1.32; margin: 5px 0; }
+    .muted { color: #6272a4; }
+    .source-image-frame { background: rgba(248, 248, 242, 0.96); border-radius: 16px; padding: 10px; text-align: center; box-shadow: 0 16px 34px rgba(0,0,0,0.24); }
+    .source-image-frame img { max-width: 100%; max-height: 500px; margin: 4px auto; border-radius: 8px; display: block; }
+    .cover-image { width: 470px; margin: 12px auto 0; padding: 8px; }
+    .cover-image img { max-height: 235px; }
+    code-block { font-size: 0.80em; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="10" curso="Banco de Dados 2" title-size="24"
+                 title="Acessando o BD por API">
+
+        </header1>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Contexto</h2>
+          <ls-u>
+            <li>Agora já sabemos criar bancos de dados e fazer consultas relativamente complexas</li>
+            <li>Como expor o nosso banco de dados para um aplicativo da web?</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Problema</h2>
+          <ls-u>
+            <li>Já falamos que o SGBD na verdade instala um serviço TCP em uma determinada porta</li>
+            <li>No caso do PostgreSQL a porta 5432</li>
+            <li>Então na teoria eu poderia acessar de aplicativos pela rede?</li>
+            <li>Sim, mas não do navegador</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Segurança</h2>
+          <ls-u>
+            <li>Qualquer um poderia tentar descobrir o usuário e senha e apagar ou ter acesso aos dados</li>
+            <li>Você daria o endereço IP do servidor real abrindo mais brechas para Hackers tentar acessar o servidor</li>
+            <li>O que fazer?</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Expondo o banco de dados por uma API</h2>
+        <p class="muted">Slide visual do material original.</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Expondo por meio de uma API</h2>
+          <ls-u>
+            <li>Uma API é um serviço intermediário</li>
+            <li>Vai fazer o meio de campo entre a web e o banco de dados</li>
+            <li>VANTAGENS</li>
+            <li>Permite criar um mecanismo de autenticação intermediário e só envia para o BD requisições autenticadas</li>
+            <li>Permite definir funções intermediárias que podem fazer várias operações no BD</li>
+            <li>Pode esconder o IP do servidor de banco de dados (você pode rodar essa aplicação em outro servidor)</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>PostGraphile</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide07_image1.png" alt="Imagem original do slide 7" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Gerador automático de API tipo GraphQL</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Padrão criado pelo Facebook em 2012</li>
+            <li>O GraphQL é uma maneira de definir consultas pelo cliente de forma mais amigável</li>
+            <li>Solicita de maneira parecida com o resultado que retornará em JSON</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide08_image1.png" alt="Imagem original do slide 8" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>JSON: JavaScript Object Notation</h2>
+          <ls-u>
+            <li>Notação de objeto do javascript é o padrão de transferência de dados na web</li>
+            <li>Ele é legível para humanos, além de ser eficiente</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>JSON</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide10_image1.png" alt="Imagem original do slide 10" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Exemplo consulta GraphQL</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide11_image1.png" alt="Imagem original do slide 11" />
+              <img src="planos/aula10_bd_api_assets/slide11_image2.png" alt="Imagem original do slide 11" />
+              <img src="planos/aula10_bd_api_assets/slide11_image3.png" alt="Imagem original do slide 11" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Instalando e rodando o PostGraphile</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide12_image1.png" alt="Imagem original do slide 12" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Banco de Dados</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+CREATE TABLE herois ( id SERIAL PRIMARY KEY, nome VARCHAR(50), poder VARCHAR(50), cidade VARCHAR(50) );
+
+INSERT INTO herois (nome, poder, cidade) VALUES ('Superman', 'Força sobre-humana', 'Metrópolis'), ('Batman', 'Inteligência e tecnologia', 'Gotham'), ('Mulher-Maravilha', 'Força e agilidade', 'Themyscira'), ('Flash', 'Super velocidade', 'Central City'), ('Homem-Aranha', 'Agilidade e sentido aranha', 'Nova York');
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Requisitos</h2>
+          <ls-u>
+            <li>Instalação do Node</li>
+            <li>https://nodejs.org/dist/v22.11.0/node-v22.11.0-x64.msi</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Após instalar o node</h2>
+          <ls-u>
+            <li>Abrir cmd</li>
+            <li>npm install -g postgraphile</li>
+            <li>No linux: sudo npm install -g postgraphile</li>
+            <li>Fechar e abrir novamente o cmd</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Rodando o PostGraphile</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>O PostGraphile vai se conectar ao SGBD, então vamos rodar o comando no cmd</p>
+          <p>postgraphile -c postgres://&lt;usuario&gt;:&lt;senha&gt;@&lt;endereco&gt;/&lt;nome_banco&gt; --enhance-graphiql --cors --watch</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide16_image1.png" alt="Imagem original do slide 16" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Rodando o PostGraphile</h2>
+          <ls-u>
+            <li>-c: define onde vai se conectar, troque &lt;endereco&gt; pelo endereço da máquina, se for local, localhost</li>
+            <li>--enhance-graphiql: vai criar uma interface de consulta com ajuda</li>
+            <li>--cors: vai permitir fazer a consulta de qualquer site (caso contrário precisa ser do mesmo endereço de origem)</li>
+            <li>--watch: vai verificar mudanças no banco e atualizar automaticamente o GraphQL</li>
+          </ls-u>
+          <p>postgraphile -c postgres://&lt;endereco&gt;/&lt;nome_banco&gt; --enhance-graphiql --cors --watch</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>graphiql</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide18_image1.png" alt="Imagem original do slide 18" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Criando uma consulta no navegador</h2>
+          <p>Para realizarmos a consulta em javascript podemos fazer o seguinte fetch</p>
+          <code-block lang="sql" data-trim><script type="text/plain">
+let dado = await(await fetch("http://localhost:5000/graphql", {
+    method: "POST",
+    headers: {
+        "content-type": "application/json"
+    },
+    body: JSON.stringify({
+        query: `
+query MyQuery {
+  allPosts {
+    nodes {
+      idUsuario
+      conteudo
+    }
+  }
+}
+`})
+})).json();
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Podemos colocar isso em um site e utilizar os dados da consulta!</h2>
+        <p class="muted">Slide visual do material original.</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Prática!</h2>
+        <p class="muted">Slide visual do material original.</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Prof. Caio Hamamura</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Bons estudos!</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula10_bd_api_assets/slide22_image1.png" alt="Imagem original do slide 22" />
+              <img src="planos/aula10_bd_api_assets/slide22_image2.png" alt="Imagem original do slide 22" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

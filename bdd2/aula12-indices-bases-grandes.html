@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 12 - Índices e Bases Grandes</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2, .reveal h3 { text-transform: none; }
+    .reveal .slides section { text-align: left; }
+    .reveal .slides section p { font-size: 0.76em; line-height: 1.35; }
+    .reveal .slides section li { font-size: 0.78em; line-height: 1.32; margin: 5px 0; }
+    .muted { color: #6272a4; }
+    .source-image-frame { background: rgba(248, 248, 242, 0.96); border-radius: 16px; padding: 10px; text-align: center; box-shadow: 0 16px 34px rgba(0,0,0,0.24); }
+    .source-image-frame img { max-width: 100%; max-height: 500px; margin: 4px auto; border-radius: 8px; display: block; }
+    .cover-image { width: 470px; margin: 12px auto 0; padding: 8px; }
+    .cover-image img { max-height: 235px; }
+    code-block { font-size: 0.80em; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="12" curso="Banco de Dados 2" title-size="24"
+                 title="Índices e Bases Grandes">
+
+        </header1>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Contexto</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Até agora trabalhamos com pouquíssimos dados em relação à banco de dados reais</li>
+            <li>Imagina o volume de dados de usuários, posts e comentários de uma rede social real</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide02_image1.png" alt="Imagem original do slide 2" />
+              <img src="planos/aula12_indices_bases_assets/slide02_image2.png" alt="Imagem original do slide 2" />
+              <img src="planos/aula12_indices_bases_assets/slide02_image3.png" alt="Imagem original do slide 2" />
+              <img src="planos/aula12_indices_bases_assets/slide02_image4.png" alt="Imagem original do slide 2" />
+              <img src="planos/aula12_indices_bases_assets/slide02_image5.png" alt="Imagem original do slide 2" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Para termos uma pequena ideia vamos baixar e inserir uma base de dados maior</h2>
+        <p class="muted">Slide visual do material original.</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Contexto</h2>
+          <ls-u>
+            <li>Os bancos de dados NoSQL ganham fôlego ao se perceberem as limitações dos BD-R</li>
+            <li>Flexibilidade de adicionar/remover colunas (estruturas flexíveis)</li>
+            <li>Necessidade de transformar dados de/para JSON (web)</li>
+            <li>Representar estruturas não relacionais de forma rápida</li>
+            <li>Representar outros tipos de estruturas (grafos, vetores, etc.)</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Vamos criar um banco de dados de produção agrícola do IBGE</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide05_image1.png" alt="Imagem original do slide 5" />
+              <img src="planos/aula12_indices_bases_assets/slide05_image2.png" alt="Imagem original do slide 5" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Baixando os dados</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Para baixar muitos dados precisamos acessar o sistema SIDRA</li>
+            <li>https://sidra.ibge.gov.br/</li>
+            <li>No caso vamos precisar fazer o login (dá para usar redes sociais para isso)</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide06_image1.png" alt="Imagem original do slide 6" />
+              <img src="planos/aula12_indices_bases_assets/slide06_image2.png" alt="Imagem original do slide 6" />
+              <img src="planos/aula12_indices_bases_assets/slide06_image3.png" alt="Imagem original do slide 6" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Escolhendo a tabela</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Role para baixo e escolha</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide07_image1.png" alt="Imagem original do slide 7" />
+              <img src="planos/aula12_indices_bases_assets/slide07_image2.png" alt="Imagem original do slide 7" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Escolhendo dados</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Vamos trocar o layout da tabela, pois em banco de dados relacionais queremos tudo nas linhas, exceto as diferentes variáveis</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide08_image1.png" alt="Imagem original do slide 8" />
+              <img src="planos/aula12_indices_bases_assets/slide08_image2.png" alt="Imagem original do slide 8" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Escolhendo dados</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>As variáveis que escolheremos serão</p>
+          <p>Nas lavouras escolha tudo, menos total</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide09_image1.png" alt="Imagem original do slide 9" />
+              <img src="planos/aula12_indices_bases_assets/slide09_image2.png" alt="Imagem original do slide 9" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Escolhendo dados</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Mesmo logado, o SIDRA limita em 3 milhões de dados por exportação, então só podemos escolher 3 anos por vez</p>
+          <p>Vamos pegar dados de todos os municípios</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide10_image1.png" alt="Imagem original do slide 10" />
+              <img src="planos/aula12_indices_bases_assets/slide10_image2.png" alt="Imagem original do slide 10" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Escolhendo dados</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Clique em download e escolha as opções</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide11_image1.png" alt="Imagem original do slide 11" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Verificando os dados</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide12_image1.png" alt="Imagem original do slide 12" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Verificando os dados pelo terminal</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Os dados são meio grandes</p>
+          <ls-u>
+            <li>A melhor maneira para não sobrecarregar é dar uma olhada pelo terminal</li>
+            <li>(No windows cmd): troque a codificação do terminal para 65001 (utf-8)</li>
+            <li>Rode o comando more seguido pelo nome do arquivo</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide13_image1.png" alt="Imagem original do slide 13" />
+              <img src="planos/aula12_indices_bases_assets/slide13_image2.png" alt="Imagem original do slide 13" />
+              <img src="planos/aula12_indices_bases_assets/slide13_image3.png" alt="Imagem original do slide 13" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>O comando more</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>O comando more vai mostrar o arquivo e ao chegar no final do terminal ele vai permitir ver mais dados interativamente</li>
+            <li>Enter: vê mais uma linha</li>
+            <li>Espaço: vê próxima página</li>
+            <li>q: sai da visualização</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide14_image1.png" alt="Imagem original do slide 14" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Podemos ver que temos as colunas</h2>
+          <ls-u>
+            <li>Cód. (município)</li>
+            <li>Município</li>
+            <li>Ano</li>
+            <li>Produto das lavouras temporárias</li>
+            <li>Área plantada (hectares)</li>
+            <li>Área colhida (hectares)</li>
+            <li>Quantidade produzida (toneladas)</li>
+            <li>Valor da produção (Mil reais)</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Vamos importar tudo como texto!</h2>
+          <ls-u>
+            <li>Evita precisar tratar as coisas antes de importar</li>
+            <li>Podemos fazer o tratamento no próprio SQL</li>
+            <li>Vamos então criar a tabela</li>
+          </ls-u>
+          <code-block lang="sql" data-trim><script type="text/plain">
+CREATE TABLE ibge_bruto (
+    cod TEXT,
+    municipio TEXT,
+    ano TEXT,
+    produto TEXT,
+    area_plantada TEXT,
+    area_colhida TEXT,
+    quantidade TEXT,
+    valor TEXT
+);
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Linhas ruins que não são dados?</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>No SIDRA, alguns metadados (dados sobre os dados) são colocados na própria tabela, vamos ter que limpar e deixar só os dados!</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide17_image1.png" alt="Imagem original do slide 17" />
+              <img src="planos/aula12_indices_bases_assets/slide17_image2.png" alt="Imagem original do slide 17" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Limpando linhas que não são válidas</h2>
+          <ls-u>
+            <li>Para limpar podemos usar diversas soluções:</li>
+            <li>Manualmente: abrir arquivo e apagar linhas (problema: trabalhoso e pode não ser possível para arquivos grandes)</li>
+            <li>Por scripts:</li>
+            <li>Python</li>
+            <li>Bash (linux)</li>
+            <li>Powershell (windows)</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Quantas linhas vamos remover do início = 3</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Get-Content .\pam_21-23-var.csv -TotalCount 10 | Select-String . | Select-Object linenumber,line</p>
+          <p>head pam_21-23-var.csv | nl</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide19_image1.png" alt="Imagem original do slide 19" />
+              <img src="planos/aula12_indices_bases_assets/slide19_image2.png" alt="Imagem original do slide 19" />
+              <img src="planos/aula12_indices_bases_assets/slide19_image3.png" alt="Imagem original do slide 19" />
+              <img src="planos/aula12_indices_bases_assets/slide19_image4.png" alt="Imagem original do slide 19" />
+              <img src="planos/aula12_indices_bases_assets/slide19_image5.png" alt="Imagem original do slide 19" />
+              <img src="planos/aula12_indices_bases_assets/slide19_image6.png" alt="Imagem original do slide 19" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Quantas linhas vamos remover do final = (40 - 7) = 33</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Get-Content .\pam_21-23-var.csv -Tail 40 | Select-String . | Select-Object linenumber,line</p>
+          <p>tail -n 40 pam_21-23-var.csv | nl</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide20_image1.png" alt="Imagem original do slide 20" />
+              <img src="planos/aula12_indices_bases_assets/slide20_image2.png" alt="Imagem original do slide 20" />
+              <img src="planos/aula12_indices_bases_assets/slide20_image3.png" alt="Imagem original do slide 20" />
+              <img src="planos/aula12_indices_bases_assets/slide20_image4.png" alt="Imagem original do slide 20" />
+              <img src="planos/aula12_indices_bases_assets/slide20_image5.png" alt="Imagem original do slide 20" />
+              <img src="planos/aula12_indices_bases_assets/slide20_image6.png" alt="Imagem original do slide 20" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Removendo e jogando em um novo arquivo</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li># Configura diretório atual</li>
+            <li>[System.IO.Directory]::SetCurrentDirectory($PWD)</li>
+            <li># Importa bibliotecas</li>
+            <li>$linq = [Linq.Enumerable];</li>
+            <li>$io = [System.IO.File];</li>
+            <li># Lê as linhas do arquivo</li>
+            <li>$lines = $io::ReadLines(&quot;pam_21-23-var.csv&quot;)</li>
+            <li># Conta linhas</li>
+            <li>$nlinhas = $linq::Count($lines);</li>
+            <li># Pula 3 primeiras e pega as 33 últimas</li>
+            <li>$ok = $linq::Take($lines, $nlinhas - 33).Skip(3);</li>
+            <li>$io::WriteAllLines(&quot;pam_ok.csv&quot;, $ok)</li>
+          </ls-u>
+          <p>head -n -33 pam_21-23-var.csv | tail -n +4 &gt; pam_ok.csv</p>
+          <code-block lang="sql" data-trim><script type="text/plain">
+# Alternativa com Get-Content 17s vs 1s
+$conteudo = (Get-Content .\pam_21-23-var.csv)
+$nlinhas = $conteudo.Count
+$conteudo | Select-Object -First ($nlinhas - 33 - 3) -Skip 3 | Set-Content .\pam_ok.csv
+          </script></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide21_image1.png" alt="Imagem original do slide 21" />
+              <img src="planos/aula12_indices_bases_assets/slide21_image2.png" alt="Imagem original do slide 21" />
+              <img src="planos/aula12_indices_bases_assets/slide21_image3.png" alt="Imagem original do slide 21" />
+              <img src="planos/aula12_indices_bases_assets/slide21_image4.png" alt="Imagem original do slide 21" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Copiando dados</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+Apesar de o SQL ter o INSERT INTO para inserir dados, ele é lento para inserir muitos dados
+Por que é lento?
+Suporte transacional: o banco de dados funciona de forma transacional, deixando marcando os dados como não válidos até que termine
+Alternativa: COPY no PostgreSQL:
+MySQL: LOAD DATA LOCAL INFILE 'abc.csv' INTO TABLE abc
+SQL Server: bcp ou BULK INSERT
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Copiando dados com</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><script type="text/plain">
+Limitações:
+Como o comando COPY roda direto na máquina servidora, os arquivo precisam estar lá
+O usuário que roda o serviço do postgresql normalmente é restrito e não pode acessar arquivos baixados diretamente:
+Preciso dar permissão
+Alternativa: função \copy do psql (sintaxe idêntica ao COPY original)
+          </script></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide23_image1.png" alt="Imagem original do slide 23" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Importando os dados do IBGE</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide24_image1.png" alt="Imagem original do slide 24" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Importando com psql</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+Abra o psql no banco de dados escolhido e rode o copy:
+\copy ibge_bruto FROM pam_ok.csv WITH (FORMAT csv, DELIMITER $$;$$, QUOTE $$"$$, ENCODING 'utf8')
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Modificando dados para inteiro!</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide26_image1.png" alt="Imagem original do slide 26" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Para verificar se tem algum erro na coluna de inteiro é só tentar transformar</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+SELECT COUNT(ano::INTEGER) FROM ibge_bruto;
+SELECT COUNT(valor::INTEGER) FROM ibge_bruto;
+
+e assim por diante
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>E se não der certo?</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><script type="text/plain">
+SELECT COUNT(valor::INTEGER) FROM ibge_bruto;
+
+Basta fazer um WHERE para verificar quais são os valores inválidos e trocá-los conforme necessário
+
+SELECT COUNT(valor::INTEGER) FROM ibge_bruto WHERE valor NOT IN ('...', '-');
+          </script></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide28_image1.png" alt="Imagem original do slide 28" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Agora podemos atualizar os valores</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><script type="text/plain">
+UPDATE ibge_bruto SET valor = 0 WHERE valor = '-';
+UPDATE ibge_bruto SET valor = NULL WHERE valor = '...';
+          </script></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide29_image1.png" alt="Imagem original do slide 29" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Separando em tabelas</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Dadas as colunas</li>
+            <li>O correto seria ter uma tabela para:</li>
+            <li>Município</li>
+            <li>Produto</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide30_image1.png" alt="Imagem original do slide 30" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Tabela Município</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+CREATE TABLE municipio(cod INT PRIMARY KEY, nome TEXT);
+
+INSERT INTO municipio
+SELECT DISTINCT cod::INTEGER, municipio FROM ibge_bruto i
+WHERE NOT EXISTS (SELECT 1 FROM municipio m WHERE i.cod::INTEGER = m.cod)
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Tabela Produto</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+CREATE TABLE produto(id_produto SERIAL PRIMARY KEY, nome TEXT);
+
+INSERT INTO produto (nome)
+SELECT DISTINCT produto FROM ibge_bruto i
+WHERE NOT EXISTS (SELECT 1 FROM produto p WHERE i.produto = p.nome)
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Consultas lentas e índices</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide33_image1.png" alt="Imagem original do slide 33" />
+              <img src="planos/aula12_indices_bases_assets/slide33_image2.png" alt="Imagem original do slide 33" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Índices em bancos de dados relacionais</h2>
+          <ls-u>
+            <li>Funcionam de forma análoga aos índices de livros</li>
+            <li>SGBD-R armazenam em um formato específico dependendo do tipo de índice</li>
+            <li>Os índices são baseados em uma ou mais colunas</li>
+          </ls-u>
+          <ls-u>
+            <li>Vantagens</li>
+            <li>Acelera consultas (muito)</li>
+          </ls-u>
+          <ls-u>
+            <li>Desvantagens</li>
+            <li>Ocupa espaço</li>
+            <li>Deixa inserções, atualizações e remoções mais lentas</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Quando e como usar índice?</h2>
+          <code-block lang="sql" data-trim><script type="text/plain">
+Quando a consulta estiver lenta
+O índice vai acelerar colunas que estiverem sendo usadas em: WHERE, ORDER BY, GROUP BY
+          </script></code-block>
+          <code-block lang="sql" data-trim><script type="text/plain">
+CREATE INDEX index_name
+ON table_name (column1, column2, ...);
+          </script></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Analisando necessidade de índice</h2>
+          <ls-u>
+            <li>Caso queira analisar se uma consulta precisa de índice use a função:</li>
+            <li>EXPLAIN ANALYZE</li>
+            <li>Para descobrir o que melhorar procure as partes com maior incremento de custo (cost) e por palavras-chave como:</li>
+            <li>Seq Scan</li>
+            <li>Nested loop</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Slide 37</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide37_image1.png" alt="Imagem original do slide 37" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>CREATE INDEX idx_line_item_orders ON line_items (order_id);
+CREATE INDEX idx_user_orders on orders (user_id);</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide38_image1.png" alt="Imagem original do slide 38" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Como os índices funcionam?</h2>
+          <ls-u>
+            <li>O índice usado normalmente por SGBD é o B-tree</li>
+            <li>É semelhante a uma árvore binária, mas tem algumas peculiaridades que a deixam mais adequadas como:</li>
+            <li>Balanceamento automático</li>
+            <li>Otimizações para ajuste ao atualizar, inserir ou apagar</li>
+            <li>https://www.youtube.com/watch?v=K1a2Bk8NrYQ&amp;pp=ygUOw61uZGljZSBiLXRyZWU%3D</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Prática!</h2>
+        <p class="muted">Slide visual do material original.</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Prof. Caio Hamamura</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Bons estudos!</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula12_indices_bases_assets/slide41_image1.png" alt="Imagem original do slide 41" />
+              <img src="planos/aula12_indices_bases_assets/slide41_image2.png" alt="Imagem original do slide 41" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
