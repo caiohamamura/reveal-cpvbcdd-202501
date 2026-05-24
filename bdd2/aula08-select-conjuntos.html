@@ -67,6 +67,18 @@
             height: auto;
         }
 
+        .problem-venn .venn-title {
+            font-size: 17px !important;
+            font-weight: 700;
+            font-family: Impact, sans-serif;
+        }
+
+        .problem-venn .venn-code {
+            font-size: 11.5px !important;
+            font-family: "Fira Code", "Source Code Pro", monospace;
+            letter-spacing: -0.02em;
+        }
+
         .soft-card {
             background: var(--panel-soft);
             border: 1px solid rgba(248, 248, 242, 0.10);
@@ -273,23 +285,25 @@
                 <p style="color: #6272a4; font-size: 0.72em;">Dá para fazer isso com o que aprendemos?</p>
 
                 <div style="display: flex; justify-content: center; margin-top: 10px;">
-                    <svg width="780" height="320" viewBox="0 0 780 320">
+                    <svg class="problem-venn" width="780" height="320" viewBox="0 0 780 320">
                         <!-- Circle 1 -->
                         <circle cx="190" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
                         <!-- Circle 2 -->
                         <circle cx="590" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
 
                         <!-- Text inside Circle 1 -->
-                        <text x="190" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem eu sigo?</text>
-                        <text x="190" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
-                        <text x="190" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
-                        <text x="190" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 1;</text>
+                        <text class="venn-title" x="190" y="88" text-anchor="middle" fill="#f8f8f2">Quem eu sigo?</text>
+                        <text class="venn-code" x="190" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text class="venn-code" x="190" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text class="venn-code" x="190" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text class="venn-code" x="190" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 1;</text>
 
                         <!-- Text inside Circle 2 -->
-                        <text x="590" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem id = 2 segue?</text>
-                        <text x="590" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
-                        <text x="590" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
-                        <text x="590" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 2;</text>
+                        <text class="venn-title" x="590" y="88" text-anchor="middle" fill="#f8f8f2">Quem id = 2 segue?</text>
+                        <text class="venn-code" x="590" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text class="venn-code" x="590" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text class="venn-code" x="590" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text class="venn-code" x="590" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 2;</text>
                     </svg>
                 </div>
             </section>
@@ -303,7 +317,7 @@
                 <p style="color: var(--yellow); font-size: 0.78em;"><strong>Reconhecem?</strong></p>
 
                 <div style="display: flex; justify-content: center; margin-top: 10px;">
-                    <svg width="780" height="320" viewBox="0 0 780 320">
+                    <svg class="problem-venn" width="780" height="320" viewBox="0 0 780 320">
                         <defs>
                             <!-- Diagonal hatch pattern for intersection -->
                             <pattern id="hatch" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(45)">
@@ -323,16 +337,18 @@
                         <circle cx="510" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
 
                         <!-- Text inside Circle 1 (left non-overlapping part + intersection) -->
-                        <text x="230" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem eu sigo?</text>
-                        <text x="230" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
-                        <text x="230" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
-                        <text x="230" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 1;</text>
+                        <text class="venn-title" x="230" y="88" text-anchor="middle" fill="#f8f8f2">Quem eu sigo?</text>
+                        <text class="venn-code" x="230" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text class="venn-code" x="230" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text class="venn-code" x="230" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text class="venn-code" x="230" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 1;</text>
 
                         <!-- Text inside Circle 2 (right non-overlapping part) -->
-                        <text x="570" y="90" text-anchor="middle" fill="#f8f8f2" font-size="18" font-weight="bold" font-family="Impact, sans-serif">Quem id = 2 segue?</text>
-                        <text x="570" y="125" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">SELECT id_seguido</text>
-                        <text x="570" y="145" text-anchor="middle" fill="#ff79c6" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">FROM seguidores</text>
-                        <text x="570" y="165" text-anchor="middle" fill="#8be9fd" font-size="13" font-family="'Fira Code', 'Source Code Pro', monospace">WHERE id_usuario = 2;</text>
+                        <text class="venn-title" x="570" y="88" text-anchor="middle" fill="#f8f8f2">Quem id = 2 segue?</text>
+                        <text class="venn-code" x="570" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text class="venn-code" x="570" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text class="venn-code" x="570" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text class="venn-code" x="570" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 2;</text>
                     </svg>
                 </div>
             </section>
