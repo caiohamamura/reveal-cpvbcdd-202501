@@ -287,23 +287,23 @@
                 <div style="display: flex; justify-content: center; margin-top: 10px;">
                     <svg class="problem-venn" width="780" height="320" viewBox="0 0 780 320">
                         <!-- Circle 1 -->
-                        <circle cx="190" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+                        <circle data-id="problem-left-circle" cx="190" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
                         <!-- Circle 2 -->
-                        <circle cx="590" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+                        <circle data-id="problem-right-circle" cx="590" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
 
                         <!-- Text inside Circle 1 -->
-                        <text class="venn-title" x="190" y="88" text-anchor="middle" fill="#f8f8f2">Quem eu sigo?</text>
-                        <text class="venn-code" x="190" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
-                        <text class="venn-code" x="190" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
-                        <text class="venn-code" x="190" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
-                        <text class="venn-code" x="190" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 1;</text>
+                        <text data-id="problem-left-title" class="venn-title" x="190" y="88" text-anchor="middle" fill="#f8f8f2">Quem eu sigo?</text>
+                        <text data-id="problem-left-select" class="venn-code" x="190" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text data-id="problem-left-from" class="venn-code" x="190" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text data-id="problem-left-where" class="venn-code" x="190" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text data-id="problem-left-user" class="venn-code" x="190" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 1;</text>
 
                         <!-- Text inside Circle 2 -->
-                        <text class="venn-title" x="590" y="88" text-anchor="middle" fill="#f8f8f2">Quem id = 2 segue?</text>
-                        <text class="venn-code" x="590" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
-                        <text class="venn-code" x="590" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
-                        <text class="venn-code" x="590" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
-                        <text class="venn-code" x="590" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 2;</text>
+                        <text data-id="problem-right-title" class="venn-title" x="590" y="88" text-anchor="middle" fill="#f8f8f2">Quem id = 2 segue?</text>
+                        <text data-id="problem-right-select" class="venn-code" x="590" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text data-id="problem-right-from" class="venn-code" x="590" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text data-id="problem-right-where" class="venn-code" x="590" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text data-id="problem-right-user" class="venn-code" x="590" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 2;</text>
                     </svg>
                 </div>
             </section>
@@ -332,23 +332,23 @@
                         <!-- Circle 1 fill (only intersection part, hatched) -->
                         <circle cx="290" cy="160" r="150" fill="url(#hatch)" clip-path="url(#c2-clip)"/>
                         <!-- Circle 1 stroke -->
-                        <circle cx="290" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+                        <circle data-id="problem-left-circle" cx="290" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
                         <!-- Circle 2 stroke -->
-                        <circle cx="510" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
+                        <circle data-id="problem-right-circle" cx="510" cy="160" r="150" fill="rgba(80,250,123,0.05)" stroke="#50fa7b" stroke-width="4"/>
 
                         <!-- Text inside Circle 1 (left non-overlapping part + intersection) -->
-                        <text class="venn-title" x="230" y="88" text-anchor="middle" fill="#f8f8f2">Quem eu sigo?</text>
-                        <text class="venn-code" x="230" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
-                        <text class="venn-code" x="230" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
-                        <text class="venn-code" x="230" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
-                        <text class="venn-code" x="230" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 1;</text>
+                        <text data-id="problem-left-title" class="venn-title" x="230" y="88" text-anchor="middle" fill="#f8f8f2">Quem eu sigo?</text>
+                        <text data-id="problem-left-select" class="venn-code" x="230" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text data-id="problem-left-from" class="venn-code" x="230" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text data-id="problem-left-where" class="venn-code" x="230" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text data-id="problem-left-user" class="venn-code" x="230" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 1;</text>
 
                         <!-- Text inside Circle 2 (right non-overlapping part) -->
-                        <text class="venn-title" x="570" y="88" text-anchor="middle" fill="#f8f8f2">Quem id = 2 segue?</text>
-                        <text class="venn-code" x="570" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
-                        <text class="venn-code" x="570" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
-                        <text class="venn-code" x="570" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
-                        <text class="venn-code" x="570" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 2;</text>
+                        <text data-id="problem-right-title" class="venn-title" x="570" y="88" text-anchor="middle" fill="#f8f8f2">Quem id = 2 segue?</text>
+                        <text data-id="problem-right-select" class="venn-code" x="570" y="122" text-anchor="middle" fill="#8be9fd">SELECT id_seguido</text>
+                        <text data-id="problem-right-from" class="venn-code" x="570" y="142" text-anchor="middle" fill="#ff79c6">FROM seguidores</text>
+                        <text data-id="problem-right-where" class="venn-code" x="570" y="162" text-anchor="middle" fill="#8be9fd">WHERE</text>
+                        <text data-id="problem-right-user" class="venn-code" x="570" y="182" text-anchor="middle" fill="#8be9fd">id_usuario = 2;</text>
                     </svg>
                 </div>
             </section>
