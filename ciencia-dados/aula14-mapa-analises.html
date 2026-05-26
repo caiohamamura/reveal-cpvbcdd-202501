@@ -121,6 +121,26 @@
       margin-bottom: 10px;
     }
 
+    .decomp-reading {
+      max-width: 820px;
+      margin: 6px auto 0;
+      padding: 8px 12px;
+      border: 1px solid #50fa7b;
+      border-radius: 6px;
+      background: #282a36;
+      color: #f8f8f2;
+      font-size: 15pt;
+      line-height: 1.18;
+    }
+
+    .decomp-reading strong {
+      color: #50fa7b;
+    }
+
+    .decomp-reading .warning {
+      color: #ffb86c;
+    }
+
     @media (max-width: 700px), (max-height: 700px) {
       .reveal .slides section.weekly-loans-slide {
         top: 0 !important;
@@ -179,6 +199,14 @@
         font-size: 12pt;
         line-height: 1.15;
         margin: 0;
+      }
+
+      .weekly-loans-slide .decomp-reading {
+        max-width: 820px;
+        margin-top: 5px;
+        padding: 6px 10px;
+        font-size: 12pt;
+        line-height: 1.12;
       }
 
       .weekly-loans-slide .weekly-loans-question,
@@ -559,10 +587,10 @@ df.nunique().sort_values()
             <div class="time-series-reading fragment fade-in" data-fragment-index="3">
               <h4 style="color: #50fa7b; margin-top: 0;">Como interpretar</h4>
               <ul>
-                <li>Média móvel mostra tendência sem ruído semanal.</li>
-                <li>Decomposição separa tendência e padrão recorrente.</li>
-                <li>Forecast dá uma hipótese simples para planejar ações.</li>
-                <li>Eventos do calendário explicam picos e quedas.</li>
+                <li>Tendência: alta até março, queda em abril, retomada em maio.</li>
+                <li>Barras positivas: demanda acima do esperado pela tendência.</li>
+                <li>Barras negativas: semanas fracas além da queda normal.</li>
+                <li>Uso prático: reforçar atendimento em provas e ajustar prazos no recesso.</li>
               </ul>
             </div>
           </div>
@@ -570,6 +598,10 @@ df.nunique().sort_values()
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> suavizar ruído com média móvel.
           </p>
+          <div class="decomp-reading fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Resultado:</strong> linha verde = demanda esperada; barras = semanas acima ou abaixo dela.
+            <span class="warning">Interpretação:</span> provas elevam a demanda; recesso/feriados derrubam além da tendência.
+          </div>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
             <strong>Passo 2:</strong> decompor tendência e padrão sazonal.
           </p>

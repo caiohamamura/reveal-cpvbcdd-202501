@@ -143,8 +143,63 @@
       }
     ];
 
+    const anotacoesDecomposicao = [
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.02,
+        y: 0.98,
+        text: '<b>Tendência</b>: alta até março, queda em abril, retomada em maio',
+        showarrow: false,
+        align: 'left',
+        font: { color: '#50fa7b', size: 12 },
+        bgcolor: 'rgba(40, 42, 54, 0.85)',
+        bordercolor: '#50fa7b',
+        borderpad: 4
+      },
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.02,
+        y: 0.31,
+        text: '<b>Sazonalidade</b>: acima de 0 = demanda extra',
+        showarrow: false,
+        align: 'left',
+        font: { color: '#bd93f9', size: 12 },
+        bgcolor: 'rgba(40, 42, 54, 0.85)',
+        bordercolor: '#bd93f9',
+        borderpad: 4
+      },
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.98,
+        y: 0.09,
+        text: 'abaixo de 0 = queda extra',
+        showarrow: false,
+        align: 'right',
+        xanchor: 'right',
+        font: { color: '#ff5555', size: 12 },
+        bgcolor: 'rgba(40, 42, 54, 0.85)',
+        bordercolor: '#ff5555',
+        borderpad: 4
+      }
+    ];
+
+    const linhaZeroSazonal = {
+      type: 'line',
+      xref: 'x',
+      yref: 'y2',
+      x0: semanas[0],
+      x1: semanas[semanas.length - 1],
+      y0: 0,
+      y1: 0,
+      line: { color: '#f8f8f2', width: 1, dash: 'dot' }
+    };
+
     function layout(step) {
       const decomposicao = step === 2;
+      const shapes = decomposicao ? [linhaZeroSazonal] : step >= 3 ? eventos : [];
       return {
         paper_bgcolor: '#282a36',
         plot_bgcolor: '#282a36',
@@ -175,8 +230,8 @@
           visible: decomposicao
         },
         legend: { orientation: 'h', x: 0.02, y: 1.02, font: { size: 11 } },
-        shapes: step >= 3 ? eventos : [],
-        annotations: step >= 3 ? anotacoes : []
+        shapes,
+        annotations: step === 2 ? anotacoesDecomposicao : step >= 3 ? anotacoes : []
       };
     }
 
