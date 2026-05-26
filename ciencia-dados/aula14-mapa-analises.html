@@ -66,10 +66,10 @@
     }
 
     .plot-step {
-      font-size: 19pt;
+      font-size: 18pt;
       color: #f8f8f2;
       text-align: center;
-      margin-top: 6px;
+      margin: 4px 0 0;
     }
 
     .plot-step strong {
@@ -80,13 +80,19 @@
       display: grid;
       grid-template-columns: 1fr 0;
       align-items: center;
-      gap: 20px;
+      gap: 14px;
       transition: grid-template-columns 700ms ease;
     }
 
     .time-series-plot {
+      height: 360px;
       transform-origin: left center;
       transition: transform 700ms ease;
+    }
+
+    .time-series-plot reveald3-plot {
+      display: block;
+      max-width: 100%;
     }
 
     .time-series-demo:has(.time-series-reading.visible) {
@@ -94,7 +100,7 @@
     }
 
     .time-series-demo:has(.time-series-reading.visible) .time-series-plot {
-      transform: scale(0.72);
+      transform: scale(0.74);
     }
 
     .time-series-reading {
@@ -479,10 +485,10 @@ df.nunique().sort_values()
         </section>
 
         <section data-auto-animate>
-          <h2>Exemplo Plotly: empréstimos por semana</h2>
+          <h2 style="margin-bottom: 8px;">Exemplo Plotly: empréstimos por semana</h2>
           <div class="time-series-demo">
             <div class="time-series-plot">
-              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="470px"></reveald3-plot>
+              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="360px"></reveald3-plot>
             </div>
             <div class="time-series-reading fragment fade-in" data-fragment-index="3">
               <h4 style="color: #50fa7b; margin-top: 0;">Como interpretar</h4>
@@ -494,7 +500,7 @@ df.nunique().sort_values()
               </ul>
             </div>
           </div>
-          <p style="font-size: 20pt; color: #f1fa8c;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
+          <p style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> suavizar ruído com média móvel.
           </p>
