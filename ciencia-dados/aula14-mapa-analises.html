@@ -121,7 +121,7 @@
       margin-bottom: 10px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 700px), (max-height: 700px) {
       .reveal .slides section.weekly-loans-slide {
         top: 160px !important;
       }
@@ -133,18 +133,22 @@
       }
 
       .weekly-loans-slide .time-series-demo {
+        grid-template-columns: 1fr !important;
         gap: 6px;
       }
 
       .weekly-loans-slide .time-series-plot {
         height: 220px;
+        transform: none !important;
+      }
+
+      .weekly-loans-slide .time-series-reading {
+        display: none !important;
       }
 
       .weekly-loans-slide .weekly-loans-question,
       .weekly-loans-slide .plot-step {
-        font-size: 14pt !important;
-        line-height: 1.15;
-        margin-top: 4px !important;
+        display: none !important;
       }
     }
 
