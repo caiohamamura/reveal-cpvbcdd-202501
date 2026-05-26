@@ -145,13 +145,40 @@
       }
 
       .weekly-loans-slide .time-series-reading {
-        display: none !important;
+        max-width: 820px;
+        margin: 6px auto 0;
+        border-width: 1px;
+        border-radius: 6px;
+        padding: 8px 10px;
       }
 
       .weekly-loans-slide .time-series-plot .fig-container,
       .weekly-loans-slide .time-series-plot iframe {
         height: 400px !important;
         max-height: 400px !important;
+      }
+
+      .weekly-loans-slide .time-series-reading:not(.visible) {
+        display: none !important;
+      }
+
+      .weekly-loans-slide .time-series-reading h4 {
+        display: none;
+      }
+
+      .weekly-loans-slide .time-series-reading ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .weekly-loans-slide .time-series-reading li {
+        font-size: 12pt;
+        line-height: 1.15;
+        margin: 0;
       }
 
       .weekly-loans-slide .weekly-loans-question,
