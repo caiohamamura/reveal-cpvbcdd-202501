@@ -141,6 +141,25 @@
       color: #ffb86c;
     }
 
+    .result-card {
+      max-width: 900px;
+      margin: 8px auto 0;
+      padding: 10px 14px;
+      border: 1px solid #6272a4;
+      border-radius: 6px;
+      background: #282a36;
+      font-size: 16pt;
+      line-height: 1.22;
+    }
+
+    .result-card strong {
+      color: #50fa7b;
+    }
+
+    .result-card code {
+      color: #f1fa8c;
+    }
+
     @media (max-width: 700px), (max-height: 700px) {
       .reveal .slides section.weekly-loans-slide {
         top: 0 !important;
@@ -672,7 +691,17 @@ forecast = [
 # sazonal: padrão que se repete
 # forecast: hipótese simples, não certeza
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">A decomposição ajuda a explicar o passado; o forecast ajuda a planejar, mas deve ser validado.</p>
+          <p style="font-size: 20pt; color: #f1fa8c;">Interpretação: tendência explica a direção geral; sazonalidade mostra semanas acima/abaixo do esperado; forecast é hipótese de planejamento, não certeza.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Resultado da execução</h2>
+          <div class="result-card" style="font-size: 20pt;">
+            <p><strong>Tendência:</strong> sobe até cerca de <code>89,6</code> empréstimos/semana em março, cai para <code>48,0</code> no fim de abril e volta a <code>76,9</code> em maio.</p>
+            <p><strong>Sazonal:</strong> o ciclo de 4 semanas fica em torno de <code>[-5,8; -2,7; +4,2; +4,3]</code>. As duas últimas posições do ciclo tendem a ficar acima da tendência.</p>
+            <p><strong>Forecast simples:</strong> usando as últimas quatro semanas <code>[68, 84, 91, 77]</code>, o passo é <code>+3</code> por semana e a projeção fica <code>[80, 83, 86, 89]</code>.</p>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">Leitura: abril foi fraco além da tendência; maio recupera. A previsão sugere retomada, mas ainda precisa ser confrontada com calendário acadêmico.</p>
         </section>
 
         <section data-auto-animate>
