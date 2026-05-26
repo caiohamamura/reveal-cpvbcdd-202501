@@ -85,7 +85,7 @@
     }
 
     .time-series-plot {
-      height: 360px;
+      height: 280px;
       transform-origin: left center;
       transition: transform 700ms ease;
     }
@@ -119,6 +119,33 @@
     .time-series-reading li {
       font-size: 18pt;
       margin-bottom: 10px;
+    }
+
+    @media (max-width: 700px) {
+      .reveal .slides section.weekly-loans-slide {
+        top: 160px !important;
+      }
+
+      .weekly-loans-slide h2 {
+        font-size: 25pt;
+        line-height: 1.1;
+        margin-bottom: 4px !important;
+      }
+
+      .weekly-loans-slide .time-series-demo {
+        gap: 6px;
+      }
+
+      .weekly-loans-slide .time-series-plot {
+        height: 220px;
+      }
+
+      .weekly-loans-slide .weekly-loans-question,
+      .weekly-loans-slide .plot-step {
+        font-size: 14pt !important;
+        line-height: 1.15;
+        margin-top: 4px !important;
+      }
     }
 
     code-block {
@@ -484,11 +511,11 @@ df.nunique().sort_values()
           </multi-col>
         </section>
 
-        <section data-auto-animate>
+        <section class="weekly-loans-slide" data-auto-animate>
           <h2 style="margin-bottom: 8px;">Exemplo Plotly: empréstimos por semana</h2>
           <div class="time-series-demo">
             <div class="time-series-plot">
-              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="360px"></reveald3-plot>
+              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="280px"></reveald3-plot>
             </div>
             <div class="time-series-reading fragment fade-in" data-fragment-index="3">
               <h4 style="color: #50fa7b; margin-top: 0;">Como interpretar</h4>
@@ -500,7 +527,7 @@ df.nunique().sort_values()
               </ul>
             </div>
           </div>
-          <p style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
+          <p class="weekly-loans-question" style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> suavizar ruído com média móvel.
           </p>
