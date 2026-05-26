@@ -132,6 +132,13 @@
                  title="Tipos de análise em Ciência de Dados: como escolher o método certo">
           <div class="mermaid" data-id="cover-analysis-map" style="width:520px">
             <pre>
+---
+config:
+  themeVariables:
+    primary: '#ff5555'
+    lineColor: '#F8B229'
+    fontSize: 50px
+---
 graph LR
   A["Problema"] --> B["Pergunta"]
   B --> C["Alvo"]
@@ -150,26 +157,27 @@ graph LR
       <!-- SLIDE 2: Revisão -->
       <section data-auto-animate>
         <h2>Revisão: o que já temos na caixa de ferramentas</h2>
-        <ls-u>
+        <ol>
+          <li>Inferência estatística.</li>
           <li>Regressão e classificação para problemas com alvo conhecido.</li>
           <li>KNN, árvore de decisão e Random Forest para previsão.</li>
           <li>PCA para muitas variáveis e visualização.</li>
           <li>K-Means, clustering hierárquico e DBSCAN para segmentação.</li>
           <li>IQR, Z-score, Isolation Forest, LOF e One-Class SVM para anomalias.</li>
-        </ls-u>
+        </ol>
       </section>
 
       <!-- SLIDE 3: Motivação -->
       <section data-auto-animate>
-        <h2>Motivação: o dataset pode vir de qualquer lugar</h2>
+        <h2>Trabalho Final: o dataset pode vir de qualquer lugar</h2>
         <ls-u>
-          <li>Cada grupo pode receber um dataset diferente.</li>
+          <li>Cada grupo pode receber um dataset diferente (por enquanto não temos muitos).</li>
           <li>Nem todo problema começa com "treine um modelo".</li>
           <li>Às vezes a melhor resposta é uma tabela, um gráfico ou uma comparação.</li>
           <li>O primeiro erro comum é escolher o algoritmo antes de entender a pergunta.</li>
         </ls-u>
         <highlight-box class="fragment" instant>
-          <p style="font-size: 26pt;">Hoje a aula é um mapa: problema → pergunta → tipo de análise → método.</p>
+          <p style="font-size: 26pt;">Mapa: problema → pergunta → tipo de análise → método.</p>
         </highlight-box>
       </section>
 
@@ -191,12 +199,12 @@ graph LR
           <h2>Algoritmo não é ponto de partida</h2>
           <multi-col style="gap: 22px;">
             <div class="decision-card" style="border-left-color: #ff5555;">
-              <h4 style="color: #ff5555;">Jeito fraco</h4>
+              <h4 style="color: #ff5555;">Errado</h4>
               <p>"Vou usar Random Forest porque parece avançado."</p>
               <p>"Vou usar K-Means porque caiu na aula passada."</p>
             </div>
             <div class="decision-card" style="border-left-color: #50fa7b;">
-              <h4 style="color: #50fa7b;">Jeito forte</h4>
+              <h4 style="color: #50fa7b;">Certo</h4>
               <p>"Qual decisão precisa ser tomada?"</p>
               <p>"Existe uma variável alvo?"</p>
               <p>"Que evidência responderia a pergunta?"</p>
