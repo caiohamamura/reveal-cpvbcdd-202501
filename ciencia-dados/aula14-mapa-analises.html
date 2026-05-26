@@ -65,61 +65,6 @@
       font-size: 18pt;
     }
 
-    .plot-step {
-      font-size: 18pt;
-      color: #f8f8f2;
-      text-align: center;
-      margin: 4px 0 0;
-    }
-
-    .plot-step strong {
-      color: #8be9fd;
-    }
-
-    .time-series-demo {
-      display: grid;
-      grid-template-columns: 1fr 0;
-      align-items: center;
-      gap: 14px;
-      transition: grid-template-columns 700ms ease;
-    }
-
-    .time-series-plot {
-      height: 420px;
-      transform-origin: left center;
-      transition: transform 700ms ease;
-    }
-
-    .time-series-plot reveald3-plot {
-      display: block;
-      max-width: 100%;
-    }
-
-    .time-series-demo:has(.time-series-reading.visible) {
-      grid-template-columns: 0.62fr 0.38fr;
-    }
-
-    .time-series-demo:has(.time-series-reading.visible) .time-series-plot {
-      transform: scale(0.74);
-    }
-
-    .time-series-reading {
-      background: #282a36;
-      border: 2px solid #50fa7b;
-      border-radius: 10px;
-      padding: 16px;
-      overflow: hidden;
-    }
-
-    .time-series-reading:not(.visible) {
-      border-width: 0;
-      padding: 0;
-    }
-
-    .time-series-reading li {
-      font-size: 18pt;
-      margin-bottom: 10px;
-    }
 
     .decomp-reading {
       max-width: 820px;
@@ -183,80 +128,6 @@
       color: #f8f8f2;
     }
 
-    @media (max-width: 700px), (max-height: 700px) {
-      .reveal .slides section.weekly-loans-slide {
-        top: 0 !important;
-        padding-top: 0 !important;
-      }
-
-      .weekly-loans-slide h2 {
-        font-size: 25pt;
-        line-height: 1.1;
-        margin-top: 0 !important;
-        margin-bottom: 4px !important;
-      }
-
-      .weekly-loans-slide .time-series-demo {
-        grid-template-columns: 1fr !important;
-        gap: 6px;
-      }
-
-      .weekly-loans-slide .time-series-plot {
-        height: 400px;
-        transform: none !important;
-      }
-
-      .weekly-loans-slide .time-series-reading {
-        max-width: 820px;
-        margin: 6px auto 0;
-        border-width: 1px;
-        border-radius: 6px;
-        padding: 8px 10px;
-      }
-
-      .weekly-loans-slide .time-series-plot .fig-container,
-      .weekly-loans-slide .time-series-plot iframe {
-        height: 400px !important;
-        max-height: 400px !important;
-      }
-
-      .weekly-loans-slide .time-series-reading:not(.visible) {
-        display: none !important;
-      }
-
-      .weekly-loans-slide .time-series-reading h4 {
-        display: none;
-      }
-
-      .weekly-loans-slide .time-series-reading ul {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 4px 12px;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-
-      .weekly-loans-slide .time-series-reading li {
-        font-size: 12pt;
-        line-height: 1.15;
-        margin: 0;
-      }
-
-      .weekly-loans-slide .decomp-reading {
-        max-width: 820px;
-        margin-top: 5px;
-        padding: 6px 10px;
-        font-size: 12pt;
-        line-height: 1.12;
-      }
-
-      .weekly-loans-slide .weekly-loans-question,
-      .weekly-loans-slide .plot-step {
-        display: none !important;
-      }
-    }
-
     code-block {
       font-size: 0.78em;
     }
@@ -271,7 +142,7 @@
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
         <header1 aula="14" curso="Ciência de Dados" title-size="28"
-                 title="Tipos de análise em Ciência de Dados: como escolher o método certo">
+          title="Tipos de análise em Ciência de Dados: como escolher o método certo">
           <div class="mermaid" data-id="cover-analysis-map" style="width:520px">
             <pre>
 ---
@@ -313,7 +184,7 @@ graph LR
       <section data-auto-animate>
         <h2>Trabalho Final: o dataset pode vir de qualquer lugar</h2>
         <ls-u>
-          <li>Cada grupo pode receber um dataset diferente (por enquanto não temos muitos).</li>
+          <li>Cada grupo vai receber um dataset diferente (por enquanto não temos muitos).</li>
           <li>Nem todo problema começa com "treine um modelo".</li>
           <li>Às vezes a melhor resposta é uma tabela, um gráfico ou uma comparação.</li>
           <li>O primeiro erro comum é escolher o algoritmo antes de entender a pergunta.</li>
@@ -523,18 +394,19 @@ graph LR
         <section data-auto-animate>
           <h2>Roteiro de inspeção em Python</h2>
           <code-block lang="python" data-trim>
-import pandas as pd
+            import pandas as pd
 
-df = pd.read_csv("dados.csv")
+            df = pd.read_csv("dados.csv")
 
-df.shape
-df.head()
-df.info()
-df.describe(include="all")
-df.isna().mean().sort_values(ascending=False)
-df.nunique().sort_values()
+            df.shape
+            df.head()
+            df.info()
+            df.describe(include="all")
+            df.isna().mean().sort_values(ascending=False)
+            df.nunique().sort_values()
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">Antes de modelar, descubra: linhas, colunas, tipos, faltantes, categorias e possíveis alvos.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Antes de modelar, descubra: linhas, colunas, tipos, faltantes,
+            categorias e possíveis alvos.</p>
         </section>
 
         <section data-auto-animate>
@@ -556,7 +428,8 @@ nota_final    6.35    1.48  4.40  8.50
 
 faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
           </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: já aparecem variáveis de risco, qualidade do dado e um possível alvo binário para modelagem.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: já aparecem variáveis de risco, qualidade do dado e
+            um possível alvo binário para modelagem.</p>
         </section>
 
         <section data-auto-animate>
@@ -643,74 +516,87 @@ faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
         </section>
 
         <section class="weekly-loans-slide" data-auto-animate>
-          <h2 style="margin-bottom: 8px;">Exemplo Plotly: empréstimos por semana</h2>
-          <div class="time-series-demo">
-            <div class="time-series-plot">
-              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="420px"></reveald3-plot>
+          <h2 style="margin-bottom: 8px;font-size:1em;">Exemplo Plotly: empréstimos por semana</h2>
+          <div style="max-height:400px ">
+            <div class="time-series-demo" style="max-height:420px">
+              <div class="time-series-plot">
+                <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px"
+                  height="420px"></reveald3-plot>
+              </div>
+              <div class="time-series-reading fragment fade-in" data-fragment-index="3">
+                <h4 style="color: #50fa7b; margin-top: 10px;font-size:0.6em;">Como interpretar</h4>
+                <ul style="display:flex;">
+                  <li style="font-size:0.4em;">Tendência: alta até março, queda em abril, retomada em maio.</li>
+                  <li style="font-size:0.4em;">Barras positivas: demanda acima do esperado pela tendência.</li>
+                  <li style="font-size:0.4em;">Barras negativas: semanas fracas além da queda normal.</li>
+                  <li style="font-size:0.4em;">Uso prático: reforçar atendimento em provas e ajustar prazos no recesso.
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="time-series-reading fragment fade-in" data-fragment-index="3">
-              <h4 style="color: #50fa7b; margin-top: 0;">Como interpretar</h4>
-              <ul>
-                <li>Tendência: alta até março, queda em abril, retomada em maio.</li>
-                <li>Barras positivas: demanda acima do esperado pela tendência.</li>
-                <li>Barras negativas: semanas fracas além da queda normal.</li>
-                <li>Uso prático: reforçar atendimento em provas e ajustar prazos no recesso.</li>
-              </ul>
+            <div class="r-stack" style="height:150px">
+              <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+                <strong>Passo 1:</strong> suavizar ruído com média móvel.
+              </p>
+              <p class="plot-step fragment fade-in-then-out" data-fragment-index="1" style="margin-top:20px;">
+                <strong>Passo 2:</strong> decompor tendência e padrão sazonal.
+                <p class="decomp-reading fragment fade-in-then-out" data-fragment-index="1" style="margin-top:70px;">
+                <strong>Resultado:</strong> linha verde = demanda esperada; barras = semanas acima ou abaixo dela.
+                <span class="warning">Interpretação:</span> provas elevam a demanda; recesso/feriados derrubam além da
+                tendência.
+              </p>
+              </p>
+              
+              <p class="plot-step fragment fade-in-then-out" data-fragment-index="2">
+                <strong>Passo 3:</strong> projetar um forecast simples para as próximas semanas.
+              </p>
             </div>
+            <p class="weekly-loans-question" style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas
+              de prova aumentam o uso da biblioteca? Férias reduzem?</p>
+
+
+
           </div>
-          <p class="weekly-loans-question" style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
-            <strong>Passo 1:</strong> suavizar ruído com média móvel.
-          </p>
-          <div class="decomp-reading fragment fade-in-then-out" data-fragment-index="1">
-            <strong>Resultado:</strong> linha verde = demanda esperada; barras = semanas acima ou abaixo dela.
-            <span class="warning">Interpretação:</span> provas elevam a demanda; recesso/feriados derrubam além da tendência.
-          </div>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
-            <strong>Passo 2:</strong> decompor tendência e padrão sazonal.
-          </p>
-          <p class="plot-step fragment fade-in-then-out" data-fragment-index="2">
-            <strong>Passo 3:</strong> projetar um forecast simples para as próximas semanas.
-          </p>
         </section>
 
         <section data-auto-animate>
           <h2>Série temporal em Python</h2>
           <code-block lang="python" data-trim>
-import pandas as pd
-import plotly.graph_objects as go
+            import pandas as pd
+            import plotly.graph_objects as go
 
-df = pd.read_csv("emprestimos.csv", parse_dates=["data"])
-serie = (
-    df.set_index("data")
-      .resample("W")
-      .size()
-      .rename("emprestimos")
-)
+            df = pd.read_csv("emprestimos.csv", parse_dates=["data"])
+            serie = (
+            df.set_index("data")
+            .resample("W")
+            .size()
+            .rename("emprestimos")
+            )
 
-media_movel = serie.rolling(4).mean()
+            media_movel = serie.rolling(4).mean()
 
-fig = go.Figure()
-fig.add_scatter(
-    x=serie.index,
-    y=serie,
-    mode="lines+markers",
-    name="empréstimos"
-)
-fig.add_scatter(
-    x=media_movel.index,
-    y=media_movel,
-    mode="lines",
-    name="média móvel de 4 semanas"
-)
-fig.update_layout(
-    title="Empréstimos por semana",
-    xaxis_title="semana",
-    yaxis_title="quantidade"
-)
-fig.show()
+            fig = go.Figure()
+            fig.add_scatter(
+            x=serie.index,
+            y=serie,
+            mode="lines+markers",
+            name="empréstimos"
+            )
+            fig.add_scatter(
+            x=media_movel.index,
+            y=media_movel,
+            mode="lines",
+            name="média móvel de 4 semanas"
+            )
+            fig.update_layout(
+            title="Empréstimos por semana",
+            xaxis_title="semana",
+            yaxis_title="quantidade"
+            )
+            fig.show()
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">A agregação semanal precisa fazer sentido para o dado. Se a meta for prever, separe treino e teste por data.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">A agregação semanal precisa fazer sentido para o dado. Se a meta
+            for prever, separe treino e teste por data.</p>
         </section>
 
         <section data-auto-animate>
@@ -733,43 +619,49 @@ media_movel.tail(6)
 2026-05-25    73.8
 2026-06-01    80.0</pre>
           </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: a média móvel mostra recuperação em maio, apesar da queda forte no fim de abril.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: a média móvel mostra recuperação em maio, apesar da
+            queda forte no fim de abril.</p>
         </section>
 
         <section data-auto-animate>
           <h2>Decomposição e forecast em Python</h2>
           <code-block lang="python" data-trim>
-from statsmodels.tsa.seasonal import seasonal_decompose
+            from statsmodels.tsa.seasonal import seasonal_decompose
 
-decomp = seasonal_decompose(
-    serie,
-    model="additive",
-    period=4
-)
+            decomp = seasonal_decompose(
+            serie,
+            model="additive",
+            period=4
+            )
 
-ultimas = serie.tail(4)
-passo = (ultimas.iloc[-1] - ultimas.iloc[0]) / 3
-forecast = [
-    serie.iloc[-1] + passo * i
-    for i in range(1, 5)
-]
+            ultimas = serie.tail(4)
+            passo = (ultimas.iloc[-1] - ultimas.iloc[0]) / 3
+            forecast = [
+            serie.iloc[-1] + passo * i
+            for i in range(1, 5)
+            ]
 
-# Interpretação:
-# tendência: direção geral
-# sazonal: padrão que se repete
-# forecast: hipótese simples, não certeza
+            # Interpretação:
+            # tendência: direção geral
+            # sazonal: padrão que se repete
+            # forecast: hipótese simples, não certeza
           </code-block>
-          <p style="font-size: 20pt; color: #f1fa8c;">Interpretação: tendência explica a direção geral; sazonalidade mostra semanas acima/abaixo do esperado; forecast é hipótese de planejamento, não certeza.</p>
+          <p style="font-size: 20pt; color: #f1fa8c;">Interpretação: tendência explica a direção geral; sazonalidade
+            mostra semanas acima/abaixo do esperado; forecast é hipótese de planejamento, não certeza.</p>
         </section>
 
         <section data-auto-animate>
           <h2>Resultado da execução</h2>
           <div class="result-card" style="font-size: 20pt;">
-            <p><strong>Tendência:</strong> sobe até cerca de <code>89,6</code> empréstimos/semana em março, cai para <code>48,0</code> no fim de abril e volta a <code>76,9</code> em maio.</p>
-            <p><strong>Sazonal:</strong> o ciclo de 4 semanas fica em torno de <code>[-5,8; -2,7; +4,2; +4,3]</code>. As duas últimas posições do ciclo tendem a ficar acima da tendência.</p>
-            <p><strong>Forecast simples:</strong> usando as últimas quatro semanas <code>[68, 84, 91, 77]</code>, o passo é <code>+3</code> por semana e a projeção fica <code>[80, 83, 86, 89]</code>.</p>
+            <p><strong>Tendência:</strong> sobe até cerca de <code>89,6</code> empréstimos/semana em março, cai para
+              <code>48,0</code> no fim de abril e volta a <code>76,9</code> em maio.</p>
+            <p><strong>Sazonal:</strong> o ciclo de 4 semanas fica em torno de <code>[-5,8; -2,7; +4,2; +4,3]</code>. As
+              duas últimas posições do ciclo tendem a ficar acima da tendência.</p>
+            <p><strong>Forecast simples:</strong> usando as últimas quatro semanas <code>[68, 84, 91, 77]</code>, o
+              passo é <code>+3</code> por semana e a projeção fica <code>[80, 83, 86, 89]</code>.</p>
           </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">Leitura: abril foi fraco além da tendência; maio recupera. A previsão sugere retomada, mas ainda precisa ser confrontada com calendário acadêmico.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Leitura: abril foi fraco além da tendência; maio recupera. A
+            previsão sugere retomada, mas ainda precisa ser confrontada com calendário acadêmico.</p>
         </section>
 
         <section data-auto-animate>
@@ -796,7 +688,8 @@ forecast = [
         <section data-auto-animate>
           <h2>Exemplo Plotly: clusters de respostas</h2>
           <reveald3-plot file="aulas/aula14-nlp-clusters-respostas.html" width="820px" height="470px"></reveald3-plot>
-          <p style="font-size: 20pt; color: #f1fa8c;">Clusters sugerem temas prováveis; não substituem leitura de respostas reais.</p>
+          <p style="font-size: 20pt; color: #f1fa8c;">Clusters sugerem temas prováveis; não substituem leitura de
+            respostas reais.</p>
           <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
             <strong>Passo 1:</strong> colorir respostas parecidas pelo cluster.
           </p>
@@ -808,42 +701,43 @@ forecast = [
         <section data-auto-animate>
           <h2>Texto em Python: TF-IDF + clusters</h2>
           <code-block lang="python" data-trim>
-import pandas as pd
-import plotly.express as px
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
-from sklearn.decomposition import TruncatedSVD
+            import pandas as pd
+            import plotly.express as px
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            from sklearn.cluster import KMeans
+            from sklearn.decomposition import TruncatedSVD
 
-df = pd.read_csv("respostas.csv")
-textos = df["resposta_aberta"].fillna("")
+            df = pd.read_csv("respostas.csv")
+            textos = df["resposta_aberta"].fillna("")
 
-vetor = TfidfVectorizer(
-    lowercase=True,
-    stop_words=["de", "da", "do", "e", "a", "o", "para"]
-)
-X = vetor.fit_transform(textos)
+            vetor = TfidfVectorizer(
+            lowercase=True,
+            stop_words=["de", "da", "do", "e", "a", "o", "para"]
+            )
+            X = vetor.fit_transform(textos)
 
-clusters = KMeans(
-    n_clusters=4,
-    random_state=42,
-    n_init="auto"
-).fit_predict(X)
-coords = TruncatedSVD(n_components=2, random_state=42).fit_transform(X)
+            clusters = KMeans(
+            n_clusters=4,
+            random_state=42,
+            n_init="auto"
+            ).fit_predict(X)
+            coords = TruncatedSVD(n_components=2, random_state=42).fit_transform(X)
 
-df["cluster"] = clusters.astype(str)
-df["x"] = coords[:, 0]
-df["y"] = coords[:, 1]
+            df["cluster"] = clusters.astype(str)
+            df["x"] = coords[:, 0]
+            df["y"] = coords[:, 1]
 
-fig = px.scatter(
-    df,
-    x="x",
-    y="y",
-    color="cluster",
-    hover_data=["resposta_aberta"]
-)
-fig.show()
+            fig = px.scatter(
+            df,
+            x="x",
+            y="y",
+            color="cluster",
+            hover_data=["resposta_aberta"]
+            )
+            fig.show()
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">A posição 2D ajuda a visualizar. Os nomes dos clusters vêm das palavras fortes e da leitura de exemplos reais.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">A posição 2D ajuda a visualizar. Os nomes dos clusters vêm das
+            palavras fortes e da leitura de exemplos reais.</p>
         </section>
 
         <section data-auto-animate>
@@ -862,23 +756,25 @@ cluster      x      y
 0        0.018 -0.000
 0        0.026  0.000</pre>
           </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: o número do cluster ainda não tem nome; ele só vira tema depois de olhar termos fortes e respostas reais.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: o número do cluster ainda não tem nome; ele só vira
+            tema depois de olhar termos fortes e respostas reais.</p>
         </section>
 
         <section data-auto-animate>
           <h2>Termos fortes por cluster</h2>
           <code-block lang="python" data-trim>
-import numpy as np
+            import numpy as np
 
-termos = vetor.get_feature_names_out()
-for cluster_id in sorted(df["cluster"].unique()):
-    linhas = (df["cluster"] == cluster_id).to_numpy()
-    media_tfidf = X[linhas].mean(axis=0).A1
-    top = np.argsort(media_tfidf)[-5:][::-1]
-    palavras = ", ".join(termos[i] for i in top)
-    print(cluster_id, palavras)
+            termos = vetor.get_feature_names_out()
+            for cluster_id in sorted(df["cluster"].unique()):
+            linhas = (df["cluster"] == cluster_id).to_numpy()
+            media_tfidf = X[linhas].mean(axis=0).A1
+            top = np.argsort(media_tfidf)[-5:][::-1]
+            palavras = ", ".join(termos[i] for i in top)
+            print(cluster_id, palavras)
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">Use esses termos como pista inicial. Depois leia algumas respostas para confirmar o nome do tema.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Use esses termos como pista inicial. Depois leia algumas respostas
+            para confirmar o nome do tema.</p>
         </section>
 
         <section data-auto-animate>
@@ -890,7 +786,8 @@ for cluster_id in sorted(df["cluster"].unique()):
 2 transporte, onibus, longe, campus, distancia
 3 duvidas, apoio, monitoria, exercicios, professor</pre>
           </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: esses termos sugerem nomes de temas, mas a confirmação vem da leitura das respostas originais.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: esses termos sugerem nomes de temas, mas a
+            confirmação vem da leitura das respostas originais.</p>
         </section>
 
         <section data-auto-animate>
@@ -966,18 +863,19 @@ for cluster_id in sorted(df["cluster"].unique()):
         <section data-auto-animate>
           <h2>Questionário em Python</h2>
           <code-block lang="python" data-trim>
-import pandas as pd
+            import pandas as pd
 
-df = pd.read_csv("questionario.csv")
-itens = ["q1_satisfacao", "q2_apoio", "q3_estrutura", "q4_clareza"]
+            df = pd.read_csv("questionario.csv")
+            itens = ["q1_satisfacao", "q2_apoio", "q3_estrutura", "q4_clareza"]
 
-resumo = df[itens].agg(["mean", "median", "std"]).T
-por_curso = df.groupby("curso")[itens].mean()
+            resumo = df[itens].agg(["mean", "median", "std"]).T
+            por_curso = df.groupby("curso")[itens].mean()
 
-df["indice_experiencia"] = df[itens].mean(axis=1)
-df.boxplot(column="indice_experiencia", by="curso")
+            df["indice_experiencia"] = df[itens].mean(axis=1)
+            df.boxplot(column="indice_experiencia", by="curso")
           </code-block>
-          <p style="font-size: 22pt; color: #f1fa8c;">Uma boa conclusão não é "usei Python"; é dizer qual grupo, tema ou item precisa de atenção.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Uma boa conclusão não é "usei Python"; é dizer qual grupo, tema ou
+            item precisa de atenção.</p>
         </section>
 
         <section data-auto-animate>
@@ -995,7 +893,8 @@ indice_experiencia por curso
 Adm   mean 2.94  min 2.00  max 4.00
 Info  mean 3.75  min 2.50  max 4.75</pre>
           </div>
-          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: estrutura é o item mais fraco; Administração tem índice médio menor que Informática.</p>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: estrutura é o item mais fraco; Administração tem
+            índice médio menor que Informática.</p>
         </section>
 
       </section><!-- fim Fase 3 -->
@@ -1106,11 +1005,11 @@ graph TD
             <p><strong>Objetivo:</strong> classificar cartões de projeto antes de escrever qualquer código.</p>
             <ls-u>
               <li>Identifique a pergunta principal.</li>
+              <li>Escolha o primeiro gráfico útil.</li>
+              <li>Que hipóteses podemos testar?</li>
               <li>Decida se existe variável alvo.</li>
               <li>Classifique o alvo: numérico, categórico, temporal, raro ou ausente.</li>
               <li>Escolha métodos do curso que poderiam aplicar.</li>
-              <li>Escolha o primeiro gráfico útil.</li>
-              <li>Escreva uma conclusão final possível.</li>
             </ls-u>
           </div>
         </section>
@@ -1119,9 +1018,11 @@ graph TD
           <h2>Cartão 1: cantina</h2>
           <div class="project-card">
             <h4 style="color: #8be9fd;">Dataset</h4>
-            <p class="tiny">Vendas da cantina: data_venda, produto, tipo_item, turno_compra, quantidade, valor_unitario, forma_pagamento.</p>
+            <p class="tiny">Vendas da cantina: data_venda, produto, tipo_item, turno_compra, quantidade, valor_unitario,
+              forma_pagamento.</p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
-            <p class="tiny">"Quero entender quais produtos têm maior saída e se a demanda muda por turno ou dia da semana."</p>
+            <p class="tiny">"Quero entender quais produtos têm maior saída e se a demanda muda por turno ou dia da
+              semana."</p>
             <h4 style="color: #50fa7b;">Entregável esperado</h4>
             <p class="tiny">Gráficos claros e uma recomendação para compra, reposição e redução de desperdício.</p>
           </div>
@@ -1131,11 +1032,14 @@ graph TD
           <h2>Cartão 2: atendimento</h2>
           <div class="project-card">
             <h4 style="color: #8be9fd;">Dataset</h4>
-            <p class="tiny">Chamados de suporte acadêmico: abertura, tipo_demanda, canal, turma, prioridade, tempo_resposta, resolvido.</p>
+            <p class="tiny">Chamados de suporte acadêmico: abertura, tipo_demanda, canal, turma, prioridade,
+              tempo_resposta, resolvido.</p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
-            <p class="tiny">"Quero identificar quais tipos de demanda demoram mais e quais têm maior chance de não serem resolvidas."</p>
+            <p class="tiny">"Quero identificar quais tipos de demanda demoram mais e quais têm maior chance de não serem
+              resolvidas."</p>
             <h4 style="color: #50fa7b;">Entregável esperado</h4>
-            <p class="tiny">Modelo interpretável, variáveis mais importantes e propostas para priorizar atendimentos críticos.</p>
+            <p class="tiny">Modelo interpretável, variáveis mais importantes e propostas para priorizar atendimentos
+              críticos.</p>
           </div>
         </section>
 
@@ -1143,7 +1047,8 @@ graph TD
           <h2>Cartão 3: manutenção</h2>
           <div class="project-card">
             <h4 style="color: #8be9fd;">Dataset</h4>
-            <p class="tiny">Medições de máquinas: temperatura, vibração, corrente, data, operador, registro de falha.</p>
+            <p class="tiny">Medições de máquinas: temperatura, vibração, corrente, data, operador, registro de falha.
+            </p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
             <p class="tiny">"Quero saber quais leituras parecem fora do padrão e se isso antecipa falhas."</p>
             <h4 style="color: #50fa7b;">Entregável esperado</h4>
@@ -1215,7 +1120,8 @@ graph TD
               </tr>
               <tr>
                 <td><strong>Conclusão possível</strong></td>
-                <td>estudantes com frequência abaixo de 60% e queda em notas parciais exigem intervenção prioritária</td>
+                <td>estudantes com frequência abaixo de 60% e queda em notas parciais exigem intervenção prioritária
+                </td>
               </tr>
             </tbody>
           </table>
