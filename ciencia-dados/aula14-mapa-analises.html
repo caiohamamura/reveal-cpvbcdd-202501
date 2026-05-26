@@ -1307,6 +1307,7 @@ graph TD
             <h4 style="color: #8be9fd;">Dataset</h4>
             <p class="tiny">Vendas da cantina: data_venda, produto, tipo_item, turno_compra, quantidade, valor_unitario,
               forma_pagamento.</p>
+            <p class="tiny"><strong>Arquivo:</strong> <code>dados/aula14/cartoes/cantina_vendas.csv</code></p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
             <p class="tiny">"Quero entender quais produtos têm maior saída e se a demanda muda por turno ou dia da
               semana."</p>
@@ -1321,6 +1322,7 @@ graph TD
             <h4 style="color: #8be9fd;">Dataset</h4>
             <p class="tiny">Chamados de suporte acadêmico: abertura, tipo_demanda, canal, turma, prioridade,
               tempo_resposta, resolvido.</p>
+            <p class="tiny"><strong>Arquivo:</strong> <code>dados/aula14/cartoes/atendimento_chamados.csv</code></p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
             <p class="tiny">"Quero identificar quais tipos de demanda demoram mais e quais têm maior chance de não serem
               resolvidas."</p>
@@ -1336,6 +1338,7 @@ graph TD
             <h4 style="color: #8be9fd;">Dataset</h4>
             <p class="tiny">Medições de máquinas: temperatura, vibração, corrente, data, operador, registro de falha.
             </p>
+            <p class="tiny"><strong>Arquivo:</strong> <code>dados/aula14/cartoes/manutencao_maquinas.csv</code></p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
             <p class="tiny">"Quero saber quais leituras parecem fora do padrão e se isso antecipa falhas."</p>
           </div>
@@ -1352,61 +1355,64 @@ graph TD
             </thead>
             <tbody>
               <tr>
+                <td>Dataset usado</td>
+                <td>Nome do CSV e unidade de observação: venda, chamado ou leitura de máquina</td>
+              </tr>
+              <tr>
                 <td>Pergunta principal</td>
-                <td>O que queremos descobrir, prever ou comparar?</td>
+                <td>O que queremos descobrir, prever, comparar ou detectar?</td>
+              </tr>
+              <tr>
+                <td>Hipóteses</td>
+                <td>2 hipóteses testáveis com colunas do CSV</td>
               </tr>
               <tr>
                 <td>Variável alvo</td>
-                <td>Existe? Qual é o tipo?</td>
+                <td>Existe? Qual coluna? É numérica, categórica, temporal, rara ou ausente?</td>
               </tr>
               <tr>
-                <td>Tipo de análise</td>
-                <td>descritiva, comparação, regressão, classificação, clustering, PCA, anomalia, tempo ou texto</td>
+                <td>Gráficos</td>
+                <td>2 gráficos iniciais e o que cada um deve mostrar</td>
               </tr>
               <tr>
-                <td>Métodos candidatos</td>
-                <td>2 ou 3 métodos, não uma lista infinita</td>
+                <td>Métodos</td>
+                <td>2 ou 3 métodos do curso, com justificativa curta</td>
               </tr>
               <tr>
-                <td>Primeiro gráfico</td>
-                <td>o gráfico que ajuda a entender antes de modelar</td>
-              </tr>
-              <tr>
-                <td>Conclusão possível</td>
-                <td>uma frase de decisão ou recomendação</td>
+                <td>Conclusão esperada</td>
+                <td>uma frase de decisão ou recomendação baseada nos resultados</td>
               </tr>
             </tbody>
           </table>
         </section>
 
         <section data-auto-animate>
-          <h2>Exemplo de resposta: evasão</h2>
+          <h2>Exemplo de resposta: atendimento</h2>
           <table class="compact-table">
             <tbody>
               <tr>
                 <td><strong>Pergunta</strong></td>
-                <td>Quem tem maior risco de evasão?</td>
+                <td>Quais demandas demoram mais e quais têm maior chance de não serem resolvidas?</td>
               </tr>
               <tr>
                 <td><strong>Alvo</strong></td>
-                <td><code>evadiu</code>, categoria binária</td>
+                <td><code>resolvido</code>, categoria binária; <code>tempo_resposta_horas</code>, variável numérica</td>
               </tr>
               <tr>
                 <td><strong>Análise</strong></td>
-                <td>classificação, com atenção a desbalanceamento</td>
+                <td>comparação por grupo, classificação e regressão</td>
               </tr>
               <tr>
                 <td><strong>Métodos</strong></td>
-                <td>regressão logística, árvore, Random Forest</td>
+                <td>barras por tipo de demanda, boxplot de tempo, árvore ou regressão logística</td>
               </tr>
               <tr>
                 <td><strong>Primeiro gráfico</strong></td>
-                <td>taxa de evasão por faixa de frequência e por curso</td>
+                <td>tempo médio de resposta por tipo de demanda e prioridade</td>
               </tr>
               <tr>
                 <td><strong>Conclusão possível</strong></td>
-                <td>estudantes com frequência abaixo de 60% e queda em notas parciais exigem intervenção prioritária
-                </td>
+                <td>chamados de bolsa com prioridade alta acumulam maior demora e devem ter fila específica</td>
               </tr>
             </tbody>
           </table>
@@ -1427,6 +1433,7 @@ graph TD
             <li>O primeiro gráfico realmente ajuda a entender o problema?</li>
             <li>O método escolhido combina com a pergunta?</li>
             <li>A métrica combina com o custo do erro?</li>
+            <li>Os resultados respondem às hipóteses e à pergunta principal?</li>
             <li>A conclusão responde ao professor, não apenas ao algoritmo?</li>
           </ls-u>
         </section>
@@ -1442,8 +1449,8 @@ graph TD
             </div>
             <div class="decision-card" style="border-left-color: #50fa7b;">
               <h4 style="color: #50fa7b;">Prefira</h4>
-              <p>"A pergunta pede classificação binária."</p>
-              <p>"Recall importa porque perder caso de risco é caro."</p>
+              <p>"A pergunta pede classificação binária 0 ou 1, classificando o risco de evasão."</p>
+              <p>"Sensibilidade é mais importante porque perder caso de risco é caro."</p>
               <p>"O cluster 2 representa uso intenso no período noturno."</p>
             </div>
           </multi-col>
