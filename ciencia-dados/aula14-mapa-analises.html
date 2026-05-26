@@ -160,6 +160,29 @@
       color: #f1fa8c;
     }
 
+    .output-card {
+      max-width: 900px;
+      margin: 8px auto 0;
+      padding: 10px 12px;
+      border: 1px solid #6272a4;
+      border-radius: 6px;
+      background: #282a36;
+      font-size: 14pt;
+      line-height: 1.18;
+    }
+
+    .output-card strong {
+      color: #50fa7b;
+    }
+
+    .output-card pre {
+      margin: 6px 0 0;
+      white-space: pre-wrap;
+      font-size: 0.76em;
+      line-height: 1.12;
+      color: #f8f8f2;
+    }
+
     @media (max-width: 700px), (max-height: 700px) {
       .reveal .slides section.weekly-loans-slide {
         top: 0 !important;
@@ -515,6 +538,28 @@ df.nunique().sort_values()
         </section>
 
         <section data-auto-animate>
+          <h2>Resultado da inspeção</h2>
+          <div class="output-card" style="font-size: 18pt;">
+            <strong>Resultado executado</strong>
+            <pre>df.shape -> (6, 6)
+
+df.head(3)
+aluno  curso  turno  frequencia  nota_final evadiu
+Ana    Info   Noite        0.92         8.5    nao
+Bruno  Info   Noite        0.58         5.1    sim
+Carla  Adm    Manha        0.81         7.2    nao
+
+describe numerico
+             media  desvio   min   max
+frequencia    0.71    0.17  0.49  0.92
+nota_final    6.35    1.48  4.40  8.50
+
+faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: já aparecem variáveis de risco, qualidade do dado e um possível alvo binário para modelagem.</p>
+        </section>
+
+        <section data-auto-animate>
           <h2>Primeiros gráficos por tipo de pergunta</h2>
           <table class="compact-table">
             <thead>
@@ -669,6 +714,29 @@ fig.show()
         </section>
 
         <section data-auto-animate>
+          <h2>Resultado da série temporal</h2>
+          <div class="output-card" style="font-size: 18pt;">
+            <strong>Resultado numérico por trás do gráfico</strong>
+            <pre>serie.tail(6)
+2026-04-27    35
+2026-05-04    52
+2026-05-11    68
+2026-05-18    84
+2026-05-25    91
+2026-06-01    77
+
+media_movel.tail(6)
+2026-04-27    52.5
+2026-05-04    47.5
+2026-05-11    48.5
+2026-05-18    59.8
+2026-05-25    73.8
+2026-06-01    80.0</pre>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: a média móvel mostra recuperação em maio, apesar da queda forte no fim de abril.</p>
+        </section>
+
+        <section data-auto-animate>
           <h2>Decomposição e forecast em Python</h2>
           <code-block lang="python" data-trim>
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -779,19 +847,50 @@ fig.show()
         </section>
 
         <section data-auto-animate>
+          <h2>Resultado do TF-IDF + clusters</h2>
+          <div class="output-card" style="font-size: 18pt;">
+            <strong>Resultado executado</strong>
+            <pre>matriz TF-IDF -> (16, 40)
+respostas por cluster -> {'0': 4, '1': 4, '2': 4, '3': 4}
+
+df[["cluster", "x", "y"]].head(6)
+cluster      x      y
+2        0.052  0.000
+2        0.111 -0.000
+2        0.034 -0.000
+2        0.030 -0.000
+0        0.018 -0.000
+0        0.026  0.000</pre>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: o número do cluster ainda não tem nome; ele só vira tema depois de olhar termos fortes e respostas reais.</p>
+        </section>
+
+        <section data-auto-animate>
           <h2>Termos fortes por cluster</h2>
           <code-block lang="python" data-trim>
 import numpy as np
 
 termos = vetor.get_feature_names_out()
 for cluster_id in sorted(df["cluster"].unique()):
-    linhas = df["cluster"] == cluster_id
+    linhas = (df["cluster"] == cluster_id).to_numpy()
     media_tfidf = X[linhas].mean(axis=0).A1
     top = np.argsort(media_tfidf)[-5:][::-1]
     palavras = ", ".join(termos[i] for i in top)
     print(cluster_id, palavras)
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">Use esses termos como pista inicial. Depois leia algumas respostas para confirmar o nome do tema.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Saída dos termos fortes</h2>
+          <div class="output-card" style="font-size: 20pt;">
+            <strong>Saída do print</strong>
+            <pre>0 trabalho, turno, cansaco, noite, emprego
+1 laboratorio, computador, internet, equipamento, trabalhos
+2 transporte, onibus, longe, campus, distancia
+3 duvidas, apoio, monitoria, exercicios, professor</pre>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: esses termos sugerem nomes de temas, mas a confirmação vem da leitura das respostas originais.</p>
         </section>
 
         <section data-auto-animate>
@@ -879,6 +978,24 @@ df["indice_experiencia"] = df[itens].mean(axis=1)
 df.boxplot(column="indice_experiencia", by="curso")
           </code-block>
           <p style="font-size: 22pt; color: #f1fa8c;">Uma boa conclusão não é "usei Python"; é dizer qual grupo, tema ou item precisa de atenção.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Resultado do questionário</h2>
+          <div class="output-card" style="font-size: 18pt;">
+            <strong>Resultado das tabelas</strong>
+            <pre>resumo
+               mean  median   std
+q1_satisfacao  3.62     3.5  1.06
+q2_apoio       3.25     3.0  1.04
+q3_estrutura   2.88     3.0  0.83
+q4_clareza     3.62     3.5  1.06
+
+indice_experiencia por curso
+Adm   mean 2.94  min 2.00  max 4.00
+Info  mean 3.75  min 2.50  max 4.75</pre>
+          </div>
+          <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: estrutura é o item mais fraco; Administração tem índice médio menor que Informática.</p>
         </section>
 
       </section><!-- fim Fase 3 -->
