@@ -65,7 +65,6 @@
       font-size: 18pt;
     }
 
-
     .decomp-reading {
       max-width: 820px;
       margin: 6px auto 0;
@@ -516,47 +515,35 @@ faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
         </section>
 
         <section class="weekly-loans-slide" data-auto-animate>
-          <h2 style="margin-bottom: 8px;font-size:1em;">Exemplo Plotly: empréstimos por semana</h2>
-          <div style="max-height:400px ">
-            <div class="time-series-demo" style="max-height:420px">
-              <div class="time-series-plot">
-                <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px"
-                  height="420px"></reveald3-plot>
-              </div>
-              <div class="time-series-reading fragment fade-in" data-fragment-index="3">
-                <h4 style="color: #50fa7b; margin-top: 10px;font-size:0.6em;">Como interpretar</h4>
-                <ul style="display:flex;">
-                  <li style="font-size:0.4em;">Tendência: alta até março, queda em abril, retomada em maio.</li>
-                  <li style="font-size:0.4em;">Barras positivas: demanda acima do esperado pela tendência.</li>
-                  <li style="font-size:0.4em;">Barras negativas: semanas fracas além da queda normal.</li>
-                  <li style="font-size:0.4em;">Uso prático: reforçar atendimento em provas e ajustar prazos no recesso.
-                  </li>
-                </ul>
-              </div>
+          <h2 style="margin-bottom: 8px; font-size: 0.9em;">Exemplo Plotly: empréstimos por semana</h2>
+          <div class="time-series-demo">
+            <div class="time-series-plot">
+              <reveald3-plot file="aulas/aula14-serie-temporal-emprestimos.html" width="820px" height="420px"></reveald3-plot>
             </div>
-            <div class="r-stack" style="height:150px">
-              <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
-                <strong>Passo 1:</strong> suavizar ruído com média móvel.
-              </p>
-              <p class="plot-step fragment fade-in-then-out" data-fragment-index="1" style="margin-top:20px;">
-                <strong>Passo 2:</strong> decompor tendência e padrão sazonal.
-                <p class="decomp-reading fragment fade-in-then-out" data-fragment-index="1" style="margin-top:70px;">
-                <strong>Resultado:</strong> linha verde = demanda esperada; barras = semanas acima ou abaixo dela.
-                <span class="warning">Interpretação:</span> provas elevam a demanda; recesso/feriados derrubam além da
-                tendência.
-              </p>
-              </p>
-              
-              <p class="plot-step fragment fade-in-then-out" data-fragment-index="2">
-                <strong>Passo 3:</strong> projetar um forecast simples para as próximas semanas.
-              </p>
+            <div class="time-series-reading fragment fade-in" data-fragment-index="3">
+              <h4 style="color: #50fa7b; margin-top: 0; font-size: 0.7em;">Como interpretar</h4>
+              <ul style="display: flex; flex-flow: row-wrap;">
+                <li style="font-size: 0.5em;">Tendência: alta até março, queda em abril, retomada em maio.</li>
+                <li style="font-size: 0.5em;">Barras positivas: demanda acima do esperado pela tendência.</li>
+                <li style="font-size: 0.5em;">Barras negativas: semanas fracas além da queda normal.</li>
+                <li style="font-size: 0.5em;">Uso prático: reforçar atendimento em provas e ajustar prazos no recesso.</li>
+              </ul>
             </div>
-            <p class="weekly-loans-question" style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas
-              de prova aumentam o uso da biblioteca? Férias reduzem?</p>
-
-
-
           </div>
+          <p class="weekly-loans-question fragment" data-fragment-index="3" style="font-size: 18pt; color: #f1fa8c; margin: 8px 0 0;">Pergunta: semanas de prova aumentam o uso da biblioteca? Férias reduzem?</p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="0">
+            <strong>Passo 1:</strong> suavizar ruído com média móvel.
+          </p>
+          <div class="decomp-reading fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Resultado:</strong> linha verde = demanda esperada; barras = semanas acima ou abaixo dela.
+            <span class="warning">Interpretação:</span> provas elevam a demanda; recesso/feriados derrubam além da tendência.
+          </div>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="1">
+            <strong>Passo 2:</strong> decompor tendência e padrão sazonal.
+          </p>
+          <p class="plot-step fragment fade-in-then-out" data-fragment-index="2">
+            <strong>Passo 3:</strong> projetar um forecast simples para as próximas semanas.
+          </p>
         </section>
 
         <section data-auto-animate>
