@@ -54,31 +54,49 @@
       { x: 2.35, y: -2.65, text: '<b>infraestrutura</b><br>internet<br>laboratório<br>equipamento', color: '#f1fa8c' }
     ];
 
-    function traceUnico() {
-      return {
-        type: 'scatter',
-        mode: 'markers',
-        x: pontos.map(p => p.x),
-        y: pontos.map(p => p.y),
-        text: pontos.map(p => p.texto),
-        marker: { size: 16, color: '#6272a4', line: { color: '#f8f8f2', width: 1 } },
-        hovertemplate: '%{text}<extra></extra>',
-        showlegend: false
-      };
-    }
-
-    function traceCluster(cluster) {
+    function traceCluster(cluster, step) {
       const selecionados = pontos.filter(p => p.cluster === cluster);
+      const clusterVisivel = step >= 1;
       return {
         type: 'scatter',
+        uid: cluster,
         mode: 'markers',
         x: selecionados.map(p => p.x),
         y: selecionados.map(p => p.y),
         text: selecionados.map(p => p.texto),
         name: cluster,
-        marker: { size: 17, color: cores[cluster], line: { color: '#f8f8f2', width: 1 } },
-        hovertemplate: '%{text}<extra></extra>'
+        marker: {
+          size: clusterVisivel ? 18 : 12,
+          color: clusterVisivel ? cores[cluster] : '#6272a4',
+          line: { color: '#f8f8f2', width: 1 }
+        },
+        opacity: clusterVisivel ? 1 : 0.48,
+        hovertemplate: '%{text}<extra></extra>',
+        showlegend: true
       };
+    }
+
+    function traceAnotacao(anotacao, step) {
+      return {
+        type: 'scatter',
+        uid: `label-${anotacao.text}`,
+        mode: 'text',
+        x: [anotacao.x],
+        y: [anotacao.y],
+        text: [anotacao.text],
+        textposition: 'middle center',
+        textfont: { color: anotacao.color, size: 14 },
+        opacity: step >= 2 ? 1 : 0,
+        hoverinfo: 'skip',
+        showlegend: false
+      };
+    }
+
+    function tracesForStep(step) {
+      return [
+        ...['Transporte', 'Trabalho', 'Apoio', 'Infraestrutura'].map(cluster => traceCluster(cluster, step)),
+        ...anotacoes.map(anotacao => traceAnotacao(anotacao, step))
+      ];
     }
 
     function layout(step) {
@@ -90,26 +108,32 @@
         title: { text: 'Clusters de respostas abertas sobre permanência', font: { color: '#8be9fd', size: 24 } },
         xaxis: { title: 'componente textual 1', range: [-3.2, 3.1], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
         yaxis: { title: 'componente textual 2', range: [-3.0, 2.6], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
-        legend: { orientation: 'h', x: 0.02, y: 1.12 },
-        annotations: step >= 2 ? anotacoes.map(a => ({
-          x: a.x,
-          y: a.y,
-          text: a.text,
-          showarrow: false,
-          align: 'left',
-          bgcolor: 'rgba(40, 42, 54, 0.88)',
-          bordercolor: a.color,
-          borderwidth: 2,
-          font: { color: a.color, size: 14 }
-        })) : []
+        showlegend: step >= 1,
+        legend: { orientation: 'h', x: 0.02, y: 1.12 }
       };
     }
 
     function renderStep(step) {
-      const traces = step === 0
-        ? [traceUnico()]
-        : ['Transporte', 'Trabalho', 'Apoio', 'Infraestrutura'].map(traceCluster);
-      return Plotly.react('plot', traces, layout(step), { displayModeBar: false, responsive: true });
+      return Plotly.react('plot', tracesForStep(step), layout(step), { displayModeBar: false, responsive: true });
+    }
+
+    function animateStep(step) {
+      const traces = tracesForStep(step);
+      return Plotly.animate('plot', {
+        data: traces,
+        traces: traces.map((_, index) => index),
+        layout: layout(step)
+      }, {
+        transition: {
+          duration: 850,
+          easing: 'cubic-in-out'
+        },
+        frame: {
+          duration: 850,
+          redraw: true
+        },
+        mode: 'immediate'
+      });
     }
 
     renderStep(0);
@@ -117,13 +141,13 @@
     var _transitions = [
       {
         index: 0,
-        transitionForward: () => renderStep(1),
-        transitionBackward: () => renderStep(0)
+        transitionForward: () => animateStep(1),
+        transitionBackward: () => animateStep(0)
       },
       {
         index: 1,
-        transitionForward: () => renderStep(2),
-        transitionBackward: () => renderStep(1)
+        transitionForward: () => animateStep(2),
+        transitionBackward: () => animateStep(1)
       }
     ];
   </script>

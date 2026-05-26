@@ -1,0 +1,7 @@
+aluno,curso,turno,frequencia,nota_final,evadiu
+Ana,Info,Noite,0.92,8.5,nao
+Bruno,Info,Noite,0.58,5.1,sim
+Carla,Adm,Manha,0.81,7.2,nao
+Diego,Info,Noite,,4.4,sim
+Elisa,Adm,Manha,0.73,6.8,nao
+Fabio,Adm,Noite,0.49,6.1,sim

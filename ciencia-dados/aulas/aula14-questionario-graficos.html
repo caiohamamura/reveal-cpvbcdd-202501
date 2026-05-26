@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    html,
+    body,
+    #plot {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: #282a36;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="plot"></div>
+
+  <script>
+    const itens = ['Satisfação', 'Apoio', 'Estrutura', 'Clareza'];
+    const mediasAdm = [3.00, 2.50, 2.50, 3.00];
+    const mediasInfo = [4.00, 3.50, 3.25, 3.75];
+
+    const likertEstrutura = {
+      Adm: { '1': 0, '2': 2, '3': 2, '4': 0, '5': 0 },
+      Info: { '1': 0, '2': 1, '3': 2, '4': 0, '5': 1 }
+    };
+
+    const indiceAdm = [2.00, 2.50, 3.00, 3.50];
+    const indiceInfo = [2.50, 3.75, 3.50, 4.75];
+
+    const coresLikert = {
+      '1': '#ff5555',
+      '2': '#ffb86c',
+      '3': '#f1fa8c',
+      '4': '#50fa7b',
+      '5': '#8be9fd'
+    };
+
+    function layoutBase(titulo) {
+      return {
+        paper_bgcolor: '#282a36',
+        plot_bgcolor: '#282a36',
+        margin: { l: 62, r: 24, t: 58, b: 70 },
+        font: { color: '#f8f8f2', size: 15 },
+        title: { text: titulo, font: { color: '#8be9fd', size: 24 } },
+        legend: { orientation: 'h', x: 0.02, y: 1.14 },
+        xaxis: { gridcolor: '#44475a', zerolinecolor: '#6272a4' },
+        yaxis: { gridcolor: '#44475a', zerolinecolor: '#6272a4' }
+      };
+    }
+
+    function groupedBars() {
+      return {
+        traces: [
+          {
+            type: 'bar',
+            uid: 'adm',
+            name: 'Administração',
+            x: itens,
+            y: mediasAdm,
+            marker: { color: '#ff79c6' },
+            text: mediasAdm.map(v => v.toFixed(2)),
+            textposition: 'outside',
+            hovertemplate: '%{x}<br>Adm: %{y:.2f}<extra></extra>'
+          },
+          {
+            type: 'bar',
+            uid: 'info',
+            name: 'Informática',
+            x: itens,
+            y: mediasInfo,
+            marker: { color: '#8be9fd' },
+            text: mediasInfo.map(v => v.toFixed(2)),
+            textposition: 'outside',
+            hovertemplate: '%{x}<br>Info: %{y:.2f}<extra></extra>'
+          }
+        ],
+        layout: {
+          ...layoutBase('Médias por item e curso'),
+          barmode: 'group',
+          yaxis: { ...layoutBase('').yaxis, title: 'média da escala 1-5', range: [0, 5.4] },
+          annotations: [
+            {
+              x: 'Estrutura',
+              y: 3.55,
+              text: 'maior diferença no item estrutura',
+              showarrow: true,
+              arrowcolor: '#f1fa8c',
+              font: { color: '#f1fa8c', size: 14 }
+            }
+          ]
+        }
+      };
+    }
+
+    function stackedLikert() {
+      const traces = ['1', '2', '3', '4', '5'].map(nota => ({
+        type: 'bar',
+        uid: `likert-${nota}`,
+        name: `${nota}`,
+        x: ['Administração', 'Informática'],
+        y: [likertEstrutura.Adm[nota], likertEstrutura.Info[nota]],
+        marker: { color: coresLikert[nota] },
+        hovertemplate: `nota ${nota}<br>%{x}: %{y} resposta(s)<extra></extra>`
+      }));
+      return {
+        traces,
+        layout: {
+          ...layoutBase('Distribuição das respostas: estrutura'),
+          barmode: 'stack',
+          yaxis: { ...layoutBase('').yaxis, title: 'número de respostas', range: [0, 4.6] },
+          xaxis: { ...layoutBase('').xaxis, title: 'curso' }
+        }
+      };
+    }
+
+    function boxplotIndice() {
+      return {
+        traces: [
+          {
+            type: 'box',
+            uid: 'box-adm',
+            name: 'Administração',
+            y: indiceAdm,
+            boxpoints: 'all',
+            jitter: 0.25,
+            marker: { color: '#ff79c6', size: 8 },
+            line: { color: '#ff79c6' },
+            hovertemplate: 'Adm: %{y:.2f}<extra></extra>'
+          },
+          {
+            type: 'box',
+            uid: 'box-info',
+            name: 'Informática',
+            y: indiceInfo,
+            boxpoints: 'all',
+            jitter: 0.25,
+            marker: { color: '#8be9fd', size: 8 },
+            line: { color: '#8be9fd' },
+            hovertemplate: 'Info: %{y:.2f}<extra></extra>'
+          }
+        ],
+        layout: {
+          ...layoutBase('Índice de experiência por curso'),
+          yaxis: { ...layoutBase('').yaxis, title: 'índice médio individual', range: [1.5, 5.1] },
+          xaxis: { ...layoutBase('').xaxis, title: 'curso' }
+        }
+      };
+    }
+
+    function chartForStep(step) {
+      if (step === 1) return stackedLikert();
+      if (step === 2) return boxplotIndice();
+      return groupedBars();
+    }
+
+    function renderStep(step) {
+      const chart = chartForStep(step);
+      return Plotly.react('plot', chart.traces, chart.layout, { displayModeBar: false, responsive: true });
+    }
+
+    renderStep(0);
+
+    var _transitions = [
+      {
+        index: 0,
+        transitionForward: () => renderStep(1),
+        transitionBackward: () => renderStep(0)
+      },
+      {
+        index: 1,
+        transitionForward: () => renderStep(2),
+        transitionBackward: () => renderStep(1)
+      }
+    ];
+  </script>
+</body>
+
+</html>

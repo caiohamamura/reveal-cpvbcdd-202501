@@ -395,7 +395,7 @@ graph LR
           <code-block lang="python" data-trim>
             import pandas as pd
 
-            df = pd.read_csv("dados.csv")
+df = pd.read_csv("dados/aula14/dados.csv")
 
             df.shape
             df.head()
@@ -415,15 +415,15 @@ graph LR
             <pre>df.shape -> (6, 6)
 
 df.head(3)
-aluno  curso  turno  frequencia  nota_final evadiu
-Ana    Info   Noite        0.92         8.5    nao
-Bruno  Info   Noite        0.58         5.1    sim
-Carla  Adm    Manha        0.81         7.2    nao
+aluno curso turno  frequencia  nota_final evadiu
+  Ana  Info Noite        0.92         8.5    nao
+Bruno  Info Noite        0.58         5.1    sim
+Carla   Adm Manha        0.81         7.2    nao
 
 describe numerico
-             media  desvio   min   max
-frequencia    0.71    0.17  0.49  0.92
-nota_final    6.35    1.48  4.40  8.50
+            mean   std   min   max
+frequencia  0.71  0.17  0.49  0.92
+nota_final  6.35  1.48  4.40  8.50
 
 faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
           </div>
@@ -552,13 +552,8 @@ faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
             import pandas as pd
             import plotly.graph_objects as go
 
-            df = pd.read_csv("emprestimos.csv", parse_dates=["data"])
-            serie = (
-            df.set_index("data")
-            .resample("W")
-            .size()
-            .rename("emprestimos")
-            )
+df = pd.read_csv("dados/aula14/emprestimos.csv", parse_dates=["semana"])
+serie = df.set_index("semana")["emprestimos"]
 
             media_movel = serie.rolling(4).mean()
 
@@ -591,23 +586,288 @@ faltantes: frequencia = 16,7%; alvo: evadiu tem 2 classes</pre>
           <div class="output-card" style="font-size: 18pt;">
             <strong>Resultado numérico por trás do gráfico</strong>
             <pre>serie.tail(6)
+semana
 2026-04-27    35
 2026-05-04    52
 2026-05-11    68
 2026-05-18    84
 2026-05-25    91
 2026-06-01    77
+Name: emprestimos, dtype: int64
 
 media_movel.tail(6)
+semana
 2026-04-27    52.5
 2026-05-04    47.5
 2026-05-11    48.5
 2026-05-18    59.8
 2026-05-25    73.8
-2026-06-01    80.0</pre>
+2026-06-01    80.0
+Name: emprestimos, dtype: float64</pre>
           </div>
           <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: a média móvel mostra recuperação em maio, apesar da
             queda forte no fim de abril.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Intuição: meses como dummies</h2>
+          <multi-col style="gap: 18px;">
+            <div>
+              <p style="font-size: 21pt;">Primeiro pense como uma regressão linear comum:</p>
+              <ul>
+                <li>criamos uma variável binária para cada mês;</li>
+                <li><code>éFevereiro = 1</code> quando a data está em fevereiro;</li>
+                <li><code>éFevereiro = 0</code> nos outros meses;</li>
+                <li>o coeficiente isola o efeito esperado daquele mês.</li>
+              </ul>
+            </div>
+            <div class="output-card" style="font-size: 15pt;">
+              <strong>Exemplo de one-hot encoding</strong>
+              <pre>data        éFev  éMar  éAbr
+2026-02-09     1     0     0
+2026-03-16     0     1     0
+2026-04-20     0     0     1
+2026-05-11     0     0     0</pre>
+            </div>
+          </multi-col>
+          <p style="font-size: 21pt; color: #f1fa8c;">Se o coeficiente de <code>éMar</code> for positivo, março adiciona demanda esperada em relação ao mês de referência.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Sazonalidade como OLS</h2>
+          <div class="output-card" style="font-size: 18pt;">
+            <strong>Modelo mental</strong>
+            <pre>emprestimos =
+    tendencia
+  + efeito_fevereiro * éFevereiro
+  + efeito_marco * éMarço
+  + efeito_abril * éAbril
+  + erro</pre>
+          </div>
+          <multi-col style="gap: 18px;">
+            <div class="result-card" style="font-size: 17pt;">
+              <p><strong>Quando <code>éMarço = 1</code>:</strong> o efeito de março entra na previsão.</p>
+            </div>
+            <div class="result-card" style="font-size: 17pt;">
+              <p><strong>Quando <code>éMarço = 0</code>:</strong> aquele efeito não entra.</p>
+            </div>
+          </multi-col>
+          <p style="font-size: 21pt; color: #f1fa8c;">A ideia central é controlar a tendência e medir o desvio típico causado por cada período conhecido.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quando OLS é uma boa ideia?</h2>
+          <multi-col style="gap: 18px;">
+            <div>
+              <ul>
+                <li>Quando já sabemos quais períodos podem mudar a demanda.</li>
+                <li>Exemplo: semana de prova, fechamento de bimestre, férias ou recesso.</li>
+                <li>Cada evento vira uma coluna binária: <code>éProva</code>, <code>éRecesso</code>.</li>
+                <li>O coeficiente estima o efeito médio daquele evento.</li>
+              </ul>
+            </div>
+            <div class="output-card" style="font-size: 16pt;">
+              <strong>Exemplo</strong>
+              <pre>emprestimos =
+    tendencia
+  + 18 * éSemanaDeProva
+  - 22 * éRecesso
+  + erro</pre>
+            </div>
+          </multi-col>
+          <p style="font-size: 21pt; color: #f1fa8c;">Aqui a sazonalidade é guiada pelo calendário acadêmico, não apenas por um ciclo automático.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>OLS em Python: períodos conhecidos</h2>
+          <code-block lang="python" data-trim>
+import statsmodels.api as sm
+
+df = pd.read_csv("dados/aula14/emprestimos.csv", parse_dates=["semana"])
+df["t"] = range(len(df))
+df["mes"] = df["semana"].dt.month_name()
+df["eh_prova"] = (
+    df["semana"].between("2026-03-09", "2026-03-23") |
+    df["semana"].between("2026-06-09", "2026-06-23") |
+    df["semana"].between("2026-09-09", "2026-09-23") |
+    df["semana"].between("2026-11-09", "2026-11-23")
+).astype(int)df["eh_recesso"] = df["semana"].between("2026-07-01", "2026-07-21").astype(int)
+
+dummies_mes = pd.get_dummies(df["mes"], prefix="mes", drop_first=True, dtype=int)
+X = pd.concat([df[["t", "eh_prova", "eh_recesso"]], dummies_mes], axis=1)
+X = sm.add_constant(X)
+
+modelo = sm.OLS(df["emprestimos"], X).fit()
+modelo.params
+          </code-block>
+          <p style="font-size: 20pt; color: #f1fa8c;">Aqui os coeficientes estimam tendência, efeito de prova, efeito de recesso e diferença média entre meses.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Decomposição automática: testar sazonalidade</h2>
+          <multi-col style="gap: 22px;">
+            <div>
+              <p style="font-size: 21pt;">Para usar <code>seasonal_decompose</code>, precisamos transformar a tabela em uma série:</p>
+              <ul>
+                <li>datas no índice;</li>
+                <li>uma medida numérica por data;</li>
+                <li>intervalo regular entre observações;</li>
+                <li>um período fixo para o ciclo.</li>
+              </ul>
+            </div>
+            <div class="output-card" style="font-size: 17pt;">
+              <strong>Objeto usado no exemplo</strong>
+              <pre>serie = df.set_index("semana")["emprestimos"]
+
+semana
+2026-02-02     42
+2026-02-09     48
+2026-02-16     51
+...
+Name: emprestimos, dtype: int64</pre>
+            </div>
+          </multi-col>
+          <p style="font-size: 21pt; color: #f1fa8c;">A decomposição clássica procura um padrão repetitivo regular dentro de uma sequência temporal numérica.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Ideia da decomposição temporal</h2>
+          <div class="mermaid" data-id="time-decomposition-map">
+            <pre>
+graph LR
+  A["série observada"] --> B["tendência"]
+  A --> C["sazonalidade"]
+  A --> D["resíduo"]
+  B --> E["direção geral"]
+  C --> F["padrão que se repete"]
+  D --> G["o que sobrou"]
+  style A fill:#8be9fd,color:#282a36
+  style B fill:#50fa7b,color:#282a36
+  style C fill:#bd93f9,color:#282a36
+  style D fill:#ff5555,color:#282a36
+            </pre>
+          </div>
+          <div class="result-card">
+            <p><strong>Modelo aditivo:</strong> observado = tendência + sazonalidade + resíduo.</p>
+            <p><strong>Leitura prática:</strong> primeiro entenda a direção geral, depois veja quais semanas ficam acima ou abaixo do esperado.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Por que <code>period=4</code>?</h2>
+          <multi-col style="gap: 22px;">
+            <div>
+              <ul>
+                <li>Os dados estão em semanas.</li>
+                <li>Queremos procurar um padrão que se repete a cada 4 semanas.</li>
+                <li>Esse período pode representar um ciclo mensal aproximado.</li>
+                <li>Se o dado fosse mensal e o ciclo fosse anual, usaríamos <code>period=12</code>.</li>
+              </ul>
+            </div>
+            <div class="output-card" style="font-size: 19pt;">
+              <strong>Chamada principal</strong>
+              <pre>decomp = seasonal_decompose(
+    serie,
+    model="additive",
+    period=4
+)</pre>
+            </div>
+          </multi-col>
+          <p style="font-size: 21pt; color: #f1fa8c;">O período é uma hipótese sobre o ciclo do problema. Ele deve vir do contexto, não do chute automático.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>OLS ou decomposição clássica?</h2>
+          <table class="compact-table">
+            <thead>
+              <tr>
+                <th>Situação</th>
+                <th>Boa escolha</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>sei que provas aumentam a demanda</td>
+                <td>OLS com dummy <code>éProva</code></td>
+                <td>o evento é conhecido no calendário</td>
+              </tr>
+              <tr>
+                <td>há um ciclo regular a cada 4 semanas</td>
+                <td><code>seasonal_decompose(period=4)</code></td>
+                <td>o padrão se repete de forma regular</td>
+              </tr>
+              <tr>
+                <td>quero previsão operacional séria</td>
+                <td>modelo temporal mais completo</td>
+                <td>precisa validar erro fora da amostra</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Forecast simples: a conta</h2>
+          <multi-col style="gap: 22px;">
+            <div class="output-card" style="font-size: 18pt;">
+              <strong>Últimas quatro semanas</strong>
+              <pre>ultimas = serie.tail(4)
+
+2026-05-11    68
+2026-05-18    84
+2026-05-25    91
+2026-06-01    77</pre>
+            </div>
+            <div>
+              <p style="font-size: 22pt;">O forecast usa a inclinação recente:</p>
+              <div class="result-card" style="font-size: 18pt;">
+                <p><code>passo = (77 - 68) / 3 = 3</code></p>
+                <p>Próxima semana: <code>77 + 3 = 80</code></p>
+                <p>Depois: <code>83, 86, 89</code></p>
+              </div>
+            </div>
+          </multi-col>
+          <p style="font-size: 21pt; color: #f1fa8c;">É uma extrapolação linear curta: útil para explicar a lógica, mas fraca como modelo final.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Código linha por linha</h2>
+          <table class="compact-table">
+            <thead>
+              <tr>
+                <th>Linha</th>
+                <th>O que faz</th>
+                <th>Por que importa</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>seasonal_decompose(...)</code></td>
+                <td>separa tendência, sazonalidade e resíduo</td>
+                <td>transforma uma linha confusa em partes interpretáveis</td>
+              </tr>
+              <tr>
+                <td><code>serie.tail(4)</code></td>
+                <td>pega as quatro semanas mais recentes</td>
+                <td>usa o comportamento mais próximo do presente</td>
+              </tr>
+              <tr>
+                <td><code>passo</code></td>
+                <td>calcula a inclinação média recente</td>
+                <td>define quanto a projeção cresce por semana</td>
+              </tr>
+              <tr>
+                <td><code>pd.date_range(...)</code></td>
+                <td>cria as próximas datas semanais</td>
+                <td>mantém o forecast com índice temporal</td>
+              </tr>
+              <tr>
+                <td><code>pd.Series(...)</code></td>
+                <td>junta valores previstos e datas</td>
+                <td>gera uma saída legível como série temporal</td>
+              </tr>
+            </tbody>
+          </table>
         </section>
 
         <section data-auto-animate>
@@ -621,17 +881,26 @@ media_movel.tail(6)
             period=4
             )
 
-            ultimas = serie.tail(4)
-            passo = (ultimas.iloc[-1] - ultimas.iloc[0]) / 3
-            forecast = [
-            serie.iloc[-1] + passo * i
-            for i in range(1, 5)
-            ]
+ultimas = serie.tail(4)
+passo = (ultimas.iloc[-1] - ultimas.iloc[0]) / 3
+forecast = [
+    serie.iloc[-1] + passo * i
+    for i in range(1, 5)
+]
+forecast_index = pd.date_range(
+    serie.index[-1] + pd.Timedelta(days=7),
+    periods=4,
+    freq="7D"
+)
+forecast_simples = pd.Series(
+    forecast,
+    index=forecast_index,
+    name="forecast"
+)
 
-            # Interpretação:
-            # tendência: direção geral
-            # sazonal: padrão que se repete
-            # forecast: hipótese simples, não certeza
+print(decomp.trend.dropna().tail(6).round(1))
+print(decomp.seasonal.head(4).round(1).to_numpy())
+print(forecast_simples.round().astype(int))
           </code-block>
           <p style="font-size: 20pt; color: #f1fa8c;">Interpretação: tendência explica a direção geral; sazonalidade
             mostra semanas acima/abaixo do esperado; forecast é hipótese de planejamento, não certeza.</p>
@@ -639,18 +908,43 @@ media_movel.tail(6)
 
         <section data-auto-animate>
           <h2>Resultado da execução</h2>
-          <div class="result-card" style="font-size: 20pt;">
-            <p><strong>Tendência:</strong> sobe até cerca de <code>89,6</code> empréstimos/semana em março, cai para
-              <code>48,0</code> no fim de abril e volta a <code>76,9</code> em maio.</p>
-            <p><strong>Sazonal:</strong> o ciclo de 4 semanas fica em torno de <code>[-5,8; -2,7; +4,2; +4,3]</code>. As
-              duas últimas posições do ciclo tendem a ficar acima da tendência.</p>
-            <p><strong>Forecast simples:</strong> usando as últimas quatro semanas <code>[68, 84, 91, 77]</code>, o
-              passo é <code>+3</code> por semana e a projeção fica <code>[80, 83, 86, 89]</code>.</p>
+          <div class="output-card" style="font-size: 18pt;">
+            <strong>Saída do Python</strong>
+            <pre>decomp.trend.dropna().tail(6).round(1)
+semana
+2026-04-13    59.1
+2026-04-20    50.0
+2026-04-27    48.0
+2026-05-04    54.1
+2026-05-11    66.8
+2026-05-18    76.9
+Name: trend, dtype: float64
+
+decomp.seasonal.head(4).round(1).to_numpy()
+[-5.8 -2.7  4.2  4.3]
+
+forecast_simples.round().astype(int)
+2026-06-08    80
+2026-06-15    83
+2026-06-22    86
+2026-06-29    89
+Freq: 7D, Name: forecast, dtype: int64</pre>
           </div>
           <p style="font-size: 22pt; color: #f1fa8c;">Leitura: abril foi fraco além da tendência; maio recupera. A
             previsão sugere retomada, mas ainda precisa ser confrontada com calendário acadêmico.</p>
         </section>
 
+      </section>
+      <section>
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Análise de texto e outros dados que pedem cuidado especial</h2>
+          <div style="text-align: center; margin-top: 40px;">
+            <p style="font-size: 24pt; color: #44f75a;">
+              Como lidar com dados que não são números ou categorias simples?
+            </p>
+            <img src="https://img.magnific.com/vetores-gratis/icone-vetorial-de-desenho-animado-flutuante-educacao-icone-de-objeto-vector-plano-isolado_138676-13661.jpg?semt=ais_hybrid&w=740&q=80" alt="" height="200" srcset="">
+          </div>
+        </section>
         <section data-auto-animate>
           <h2>Texto e respostas abertas</h2>
           <multi-col style="gap: 22px;">
@@ -694,8 +988,8 @@ media_movel.tail(6)
             from sklearn.cluster import KMeans
             from sklearn.decomposition import TruncatedSVD
 
-            df = pd.read_csv("respostas.csv")
-            textos = df["resposta_aberta"].fillna("")
+df = pd.read_csv("dados/aula14/respostas.csv")
+textos = df["resposta_aberta"].fillna("")
 
             vetor = TfidfVectorizer(
             lowercase=True,
@@ -731,17 +1025,17 @@ media_movel.tail(6)
           <h2>Resultado do TF-IDF + clusters</h2>
           <div class="output-card" style="font-size: 18pt;">
             <strong>Resultado executado</strong>
-            <pre>matriz TF-IDF -> (16, 40)
+            <pre>matriz TF-IDF -> (16, 32)
 respostas por cluster -> {'0': 4, '1': 4, '2': 4, '3': 4}
 
 df[["cluster", "x", "y"]].head(6)
-cluster      x      y
-2        0.052  0.000
-2        0.111 -0.000
-2        0.034 -0.000
-2        0.030 -0.000
-0        0.018 -0.000
-0        0.026  0.000</pre>
+cluster    x    y
+      2 -0.0  0.0
+      2  0.0 -0.0
+      2 -0.0  0.0
+      2  0.0  0.0
+      0 -0.0  0.0
+      0 -0.0  0.0</pre>
           </div>
           <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: o número do cluster ainda não tem nome; ele só vira
             tema depois de olhar termos fortes e respostas reais.</p>
@@ -768,10 +1062,10 @@ cluster      x      y
           <h2>Saída dos termos fortes</h2>
           <div class="output-card" style="font-size: 20pt;">
             <strong>Saída do print</strong>
-            <pre>0 trabalho, turno, cansaco, noite, emprego
+            <pre>0 trabalho, cansaco, emprego, turno, noite
 1 laboratorio, computador, internet, equipamento, trabalhos
-2 transporte, onibus, longe, campus, distancia
-3 duvidas, apoio, monitoria, exercicios, professor</pre>
+2 transporte, campus, onibus, distancia, longe
+3 professor, duvidas, apoio, exercicios, monitoria</pre>
           </div>
           <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: esses termos sugerem nomes de temas, mas a
             confirmação vem da leitura das respostas originais.</p>
@@ -852,8 +1146,8 @@ cluster      x      y
           <code-block lang="python" data-trim>
             import pandas as pd
 
-            df = pd.read_csv("questionario.csv")
-            itens = ["q1_satisfacao", "q2_apoio", "q3_estrutura", "q4_clareza"]
+df = pd.read_csv("dados/aula14/questionario.csv")
+itens = ["q1_satisfacao", "q2_apoio", "q3_estrutura", "q4_clareza"]
 
             resumo = df[itens].agg(["mean", "median", "std"]).T
             por_curso = df.groupby("curso")[itens].mean()
@@ -871,14 +1165,20 @@ cluster      x      y
             <strong>Resultado das tabelas</strong>
             <pre>resumo
                mean  median   std
-q1_satisfacao  3.62     3.5  1.06
-q2_apoio       3.25     3.0  1.04
-q3_estrutura   2.88     3.0  0.83
-q4_clareza     3.62     3.5  1.06
+q1_satisfacao  3.50     3.5  0.93
+q2_apoio       3.00     3.0  0.76
+q3_estrutura   2.88     3.0  0.99
+q4_clareza     3.38     3.5  1.06
+
+medias por curso
+       q1_satisfacao  q2_apoio  q3_estrutura  q4_clareza
+curso
+Adm              3.0       2.5          2.50        3.00
+Info             4.0       3.5          3.25        3.75
 
 indice_experiencia por curso
-Adm   mean 2.94  min 2.00  max 4.00
-Info  mean 3.75  min 2.50  max 4.75</pre>
+Adm  mean 2.75  min 2.00  max 3.50
+Info mean 3.62  min 2.50  max 4.75</pre>
           </div>
           <p style="font-size: 22pt; color: #f1fa8c;">Interpretação: estrutura é o item mais fraco; Administração tem
             índice médio menor que Informática.</p>
@@ -989,13 +1289,13 @@ graph TD
         <section data-auto-animate>
           <h2 style="color: #bd93f9;">Fase 5: atividade prática</h2>
           <div style="background: #282a36; border-left: 5px solid #50fa7b; padding: 20px;">
-            <p><strong>Objetivo:</strong> classificar cartões de projeto antes de escrever qualquer código.</p>
+            <p><strong>Objetivo:</strong> classificar cartões de projeto:</p>
             <ls-u>
               <li>Identifique a pergunta principal.</li>
-              <li>Escolha o primeiro gráfico útil.</li>
-              <li>Que hipóteses podemos testar?</li>
-              <li>Decida se existe variável alvo.</li>
-              <li>Classifique o alvo: numérico, categórico, temporal, raro ou ausente.</li>
+              <li>Que gráficos seriam úteis fazer?</li>
+              <li>Que hipóteses poderiam ser testadas?</li>
+              <li>Decida se existe variável alvo. Ela é numérica, categórica, temporal, rara ou ausente?</li>
+              <li>Que tipos de análises são apropriadas?</li>
               <li>Escolha métodos do curso que poderiam aplicar.</li>
             </ls-u>
           </div>
@@ -1038,8 +1338,6 @@ graph TD
             </p>
             <h4 style="color: #ff79c6;">Pedido do professor</h4>
             <p class="tiny">"Quero saber quais leituras parecem fora do padrão e se isso antecipa falhas."</p>
-            <h4 style="color: #50fa7b;">Entregável esperado</h4>
-            <p class="tiny">Lista priorizada de registros suspeitos, gráfico temporal e proposta de monitoramento.</p>
           </div>
         </section>
 
