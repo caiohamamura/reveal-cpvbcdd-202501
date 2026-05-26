@@ -414,6 +414,7 @@ Technical details:
 - Never use `<script>` tags inside `<code-block>`; Vue ignores side-effect tags and emits warnings.
 - Use direct text inside `<code-block>` for ordinary code.
 - Use `<textarea>` inside `<code-block>` only when the code actually contains `<` or `>` that would be parsed as HTML, such as `#include <Arduino.h>`.
+- In Python examples that index a SciPy sparse matrix with a pandas boolean mask, convert the mask first: `X[mask.to_numpy()]`. Recent pandas/scipy combinations can fail on `X[mask]`.
 
 #### Converting Google Slides with gogcli
 - If `gog slides list-slides/read-slide` fails with `403 accessNotConfigured`, enable Google Slides API for the OAuth project shown in the error URL, then retry after propagation.
