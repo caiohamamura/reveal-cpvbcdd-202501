@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    html,
+    body,
+    #plot {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: #282a36;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="plot"></div>
+
+  <script>
+    const pontos = [
+      { x: -2.4, y: 1.2, cluster: 'Transporte', texto: 'O ônibus atrasa e perco a primeira aula.' },
+      { x: -2.0, y: 1.6, cluster: 'Transporte', texto: 'Moro longe e o horário do transporte é ruim.' },
+      { x: -2.7, y: 0.8, cluster: 'Transporte', texto: 'A distância até o campus pesa muito.' },
+      { x: -1.8, y: 0.9, cluster: 'Transporte', texto: 'Quando chove, o trajeto fica imprevisível.' },
+      { x: 1.7, y: 1.5, cluster: 'Trabalho', texto: 'Trabalho em turno e chego cansado.' },
+      { x: 2.2, y: 1.1, cluster: 'Trabalho', texto: 'Meu emprego muda de horário toda semana.' },
+      { x: 1.5, y: 0.9, cluster: 'Trabalho', texto: 'Falta tempo para estudar depois do serviço.' },
+      { x: 2.5, y: 1.7, cluster: 'Trabalho', texto: 'O cansaço atrapalha as atividades.' },
+      { x: -0.7, y: -1.5, cluster: 'Apoio', texto: 'Tenho dúvidas e preciso de monitoria.' },
+      { x: -0.2, y: -1.9, cluster: 'Apoio', texto: 'A explicação do professor ajuda, mas preciso praticar.' },
+      { x: -1.0, y: -2.1, cluster: 'Apoio', texto: 'Faltam grupos de estudo para tirar dúvidas.' },
+      { x: -0.4, y: -1.2, cluster: 'Apoio', texto: 'Queria mais apoio nas listas de exercícios.' },
+      { x: 1.4, y: -1.4, cluster: 'Infraestrutura', texto: 'A internet cai durante as aulas práticas.' },
+      { x: 1.9, y: -1.8, cluster: 'Infraestrutura', texto: 'O laboratório nem sempre tem computador disponível.' },
+      { x: 2.3, y: -1.2, cluster: 'Infraestrutura', texto: 'Falta equipamento para fazer os trabalhos.' },
+      { x: 1.2, y: -2.2, cluster: 'Infraestrutura', texto: 'Preciso de acesso ao laboratório fora da aula.' }
+    ];
+
+    const cores = {
+      Transporte: '#8be9fd',
+      Trabalho: '#ff79c6',
+      Apoio: '#50fa7b',
+      Infraestrutura: '#f1fa8c'
+    };
+
+    const anotacoes = [
+      { x: -2.35, y: 2.05, text: '<b>transporte</b><br>ônibus<br>horário<br>distância', color: '#8be9fd' },
+      { x: 2.35, y: 2.1, text: '<b>trabalho</b><br>turno<br>emprego<br>cansaço', color: '#ff79c6' },
+      { x: -1.25, y: -2.65, text: '<b>apoio</b><br>dúvida<br>monitoria<br>professor', color: '#50fa7b' },
+      { x: 2.35, y: -2.65, text: '<b>infraestrutura</b><br>internet<br>laboratório<br>equipamento', color: '#f1fa8c' }
+    ];
+
+    function traceCluster(cluster, step) {
+      const selecionados = pontos.filter(p => p.cluster === cluster);
+      const clusterVisivel = step >= 1;
+      return {
+        type: 'scatter',
+        uid: cluster,
+        mode: 'markers',
+        x: selecionados.map(p => p.x),
+        y: selecionados.map(p => p.y),
+        text: selecionados.map(p => p.texto),
+        name: cluster,
+        marker: {
+          size: clusterVisivel ? 18 : 12,
+          color: clusterVisivel ? cores[cluster] : '#6272a4',
+          line: { color: '#f8f8f2', width: 1 }
+        },
+        opacity: clusterVisivel ? 1 : 0.48,
+        hovertemplate: '%{text}<extra></extra>',
+        showlegend: true
+      };
+    }
+
+    function traceAnotacao(anotacao, step) {
+      return {
+        type: 'scatter',
+        uid: `label-${anotacao.text}`,
+        mode: 'text',
+        x: [anotacao.x],
+        y: [anotacao.y],
+        text: [anotacao.text],
+        textposition: 'middle center',
+        textfont: { color: anotacao.color, size: 14 },
+        opacity: step >= 2 ? 1 : 0,
+        hoverinfo: 'skip',
+        showlegend: false
+      };
+    }
+
+    function tracesForStep(step) {
+      return [
+        ...['Transporte', 'Trabalho', 'Apoio', 'Infraestrutura'].map(cluster => traceCluster(cluster, step)),
+        ...anotacoes.map(anotacao => traceAnotacao(anotacao, step))
+      ];
+    }
+
+    function layout(step) {
+      return {
+        paper_bgcolor: '#282a36',
+        plot_bgcolor: '#282a36',
+        margin: { l: 70, r: 30, t: 45, b: 65 },
+        font: { color: '#f8f8f2', size: 16 },
+        title: { text: 'Clusters de respostas abertas sobre permanência', font: { color: '#8be9fd', size: 24 } },
+        xaxis: { title: 'componente textual 1', range: [-3.2, 3.1], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
+        yaxis: { title: 'componente textual 2', range: [-3.0, 2.6], gridcolor: '#44475a', zerolinecolor: '#6272a4' },
+        showlegend: step >= 1,
+        legend: { orientation: 'h', x: 0.02, y: 1.12 }
+      };
+    }
+
+    function renderStep(step) {
+      return Plotly.react('plot', tracesForStep(step), layout(step), { displayModeBar: false, responsive: true });
+    }
+
+    function animateStep(step) {
+      const traces = tracesForStep(step);
+      return Plotly.animate('plot', {
+        data: traces,
+        traces: traces.map((_, index) => index),
+        layout: layout(step)
+      }, {
+        transition: {
+          duration: 850,
+          easing: 'cubic-in-out'
+        },
+        frame: {
+          duration: 850,
+          redraw: true
+        },
+        mode: 'immediate'
+      });
+    }
+
+    renderStep(0);
+
+    var _transitions = [
+      {
+        index: 0,
+        transitionForward: () => animateStep(1),
+        transitionBackward: () => animateStep(0)
+      },
+      {
+        index: 1,
+        transitionForward: () => animateStep(2),
+        transitionBackward: () => animateStep(1)
+      }
+    ];
+  </script>
+</body>
+
+</html>

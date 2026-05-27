@@ -51,11 +51,13 @@ for f in glob.glob('*.html'):
 ## Slide Patterns Specific to Ciência de Dados
 
 ### Plotly charts in slides
-- Load Plotly.js CDN before the component: `<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>`
-- Use `<plotly-figure :traces="tracesVar" :layout="layoutVar">` from `components/components.js`
-- For interactive step-by-step demos (e.g. K-Means centroids), override `mountSlideApp()` to inject reactive state — see `.opencode/skills/create-slides/SKILL.md` → "Interactive Plotly with Vue reactivity"
-- Export Plotly JSON from Python via `fig.to_dict()`, clean `None` values before embedding in JS
-- Vue 3 does NOT resolve bare `window` globals in templates — inject via `globalProperties` or custom `mountSlideApp()`
+- Default method: use RevealD3 (`../plugin/reveald3/reveald3.js`) with each Plotly chart in a separate HTML file loaded by `data-file`.
+- Put plot logic, data, and transitions inside the iframe HTML; the slide deck should only contain `<reveald3-plot file="aulas/<plot>.html">` and visible fragment labels.
+- For step-by-step updates, define `_transitions` in the plot HTML and call `Plotly.animate()` for smooth movement/size changes; use stable trace order/`uid` values and fall back to `Plotly.react()` only for initial render or structural resets.
+- Do not call `Plotly.react()` from `_transitions` when only colors, sizes, opacity, labels, or annotations change; keep traces stable and animate those attributes.
+- Use `<plotly-figure :traces="tracesVar" :layout="layoutVar">` only for legacy decks that have not been migrated.
+- Export Plotly JSON from Python via `fig.to_dict()`, clean `None` values before embedding in JS.
+- Preferred exporter: `python ../.opencode/skills/export-plots/scripts/export_reveald3_plotly.py plot_steps.json --output aulas/plot.html`
 
 ### Dracula plot colors
 ```python
@@ -64,15 +66,21 @@ dracula = ['#8be9fd', '#ff5555', '#f1fa8c', '#50fa7b', '#bd93f9', '#ff79c6', '#6
 
 ### Notebook → Slide pipeline
 1. Generate figures in notebook
-2. Export as JSON: `json.dump(fig.to_dict(), f)`
-3. Convert to JS constants: `const NAME_TRACES = [...]; const NAME_LAYOUT = {...};`
-4. Reference in `<plotly-figure :traces="NAME_TRACES" :layout="NAME_LAYOUT">`
+2. Export as JSON or JS constants for the standalone plot HTML
+3. Create `aulas/<plot-name>.html` with Plotly.js, `renderStep()`, and `_transitions`
+4. Load it in the slide with `<reveald3-plot file="aulas/<plot-name>.html" width="780px" height="460px"></reveald3-plot>`
 
 ### Standalone Plotly figure generation (when Jupyter env is missing packages)
 - Create a Python script with the same plotting code + `write_plotly_js()` helper
 - Run directly with `python script.py` after `pip install numpy pandas plotly scikit-learn`
 - This avoids `jupyter nbconvert --execute` dependency issues and is faster for iterative plot tuning
 - Example: `notebooks/run_svm_plots.py` → outputs `images/plotly/aula13_oneclass_svm_figures.js`
+
+### Slide code outputs
+- When slides show Python output, keep a real script or notebook in `notebooks/` that generates the displayed values.
+- When slides use `pd.read_csv()`, commit the concrete CSV under the course directory, even for fictitious classroom data.
+- For `statsmodels.OLS`, create dummy variables as numeric columns, e.g. `pd.get_dummies(..., dtype=int)`, to avoid object/boolean dtype errors.
+- For `statsmodels.seasonal_decompose()`, trend values are `NaN` at series edges; cite the last valid trend date instead of implying the final date has a trend estimate.
 
 ### R Scripts for plot fixes
 - `fix_plots.R`, `regenerate_plots.R` — fix/regenerate Python-level plot aesthetics

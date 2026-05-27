@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 11 - SQL vs NoSQL</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2, .reveal h3 { text-transform: none; }
+    .reveal .slides section { text-align: left; }
+    .reveal .slides section p { font-size: 0.76em; line-height: 1.35; }
+    .reveal .slides section li { font-size: 0.78em; line-height: 1.32; margin: 5px 0; }
+    .muted { color: #6272a4; }
+    .source-image-frame { background: rgba(248, 248, 242, 0.96); border-radius: 16px; padding: 10px; text-align: center; box-shadow: 0 16px 34px rgba(0,0,0,0.24); }
+    .source-image-frame img { max-width: 100%; max-height: 500px; margin: 4px auto; border-radius: 8px; display: block; }
+    .cover-image { width: 470px; margin: 12px auto 0; padding: 8px; }
+    .cover-image img { max-height: 235px; }
+    code-block { font-size: 0.80em; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="11" curso="Banco de Dados 2" title-size="24"
+                 title="SQL vs NoSQL">
+
+        </header1>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Contexto</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Aprendemos bastante sobre SQL</li>
+            <li>Vocês vêem problemas no bancos de dados relacional SQL (BD-R)?</li>
+            <li>Existem aplicações para as quais o BD-R não seriam bons? Quais?</li>
+            <li>Já ouviram falar em alternativas?</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide02_image1.png" alt="Imagem original do slide 2" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Contexto</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Os bancos de dados NoSQL ganham fôlego ao se perceberem as limitações dos BD-R</li>
+            <li>Flexibilidade de adicionar/remover colunas (estruturas flexíveis)</li>
+            <li>Necessidade de transformar dados de/para JSON (web)</li>
+            <li>Representar estruturas não relacionais de forma rápida</li>
+            <li>Representar outros tipos de estruturas (grafos, vetores, etc.)</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide03_image1.png" alt="Imagem original do slide 3" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide03_image2.png" alt="Imagem original do slide 3" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>NoSQL</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide04_image1.png" alt="Imagem original do slide 4" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>O que é NoSQL?</h2>
+          <ls-u>
+            <li>Não SQL???</li>
+            <li>Não apenas SQL (Not only SQL)</li>
+            <li>Diversas opções! Normalmente flexível, sem um esquema fixo</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Slide 6</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide06_image1.png" alt="Imagem original do slide 6" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Vantagens dos NoSQL</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Mais eficiente para representar alguns formatos (ou falta de formato) de dados:</li>
+            <li>Grafo (redes sociais)</li>
+            <li>Sem estrutura padrão (dados de configurações do aplicativo)</li>
+            <li>Mais moderno: pensado em aumentar de tamanho horizontalmente:</li>
+            <li>posso separar em múltiplos servidores, em vez de 1 servidor melhor</li>
+            <li>+ barato</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide07_image1.png" alt="Imagem original do slide 7" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide07_image2.png" alt="Imagem original do slide 7" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide07_image3.png" alt="Imagem original do slide 7" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Tipos de NoSQL</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide08_image1.png" alt="Imagem original do slide 8" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide08_image2.png" alt="Imagem original do slide 8" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide08_image3.png" alt="Imagem original do slide 8" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>CHAVE</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>VALOR</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide09_image1.png" alt="Imagem original do slide 9" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide09_image2.png" alt="Imagem original do slide 9" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide09_image3.png" alt="Imagem original do slide 9" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide09_image4.png" alt="Imagem original do slide 9" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Coleção (ex: usuários)</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Documento</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide10_image1.png" alt="Imagem original do slide 10" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide10_image2.png" alt="Imagem original do slide 10" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide10_image3.png" alt="Imagem original do slide 10" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Coleção (ex: usuários)</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Documento</p>
+          <p>JSON?</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide11_image1.png" alt="Imagem original do slide 11" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide11_image2.png" alt="Imagem original do slide 11" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide11_image3.png" alt="Imagem original do slide 11" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Dados armazenados por coluna!
+Ótimo para aplicações de ciência de dados:
+Quero a média da coluna Nota</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide12_image1.png" alt="Imagem original do slide 12" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide12_image2.png" alt="Imagem original do slide 12" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide12_image3.png" alt="Imagem original do slide 12" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Slide 13</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide13_image1.png" alt="Imagem original do slide 13" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide13_image2.png" alt="Imagem original do slide 13" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide13_image3.png" alt="Imagem original do slide 13" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Então devo esquecer o SQL?</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Não!</li>
+            <li>Normalmente os bancos de dados NoSQL são escolhidos para representar apenas uma parte do sistema</li>
+            <li>Ex:</li>
+            <li>seguidores em redes sociais</li>
+            <li>guardar os dados de configurações</li>
+            <li>armazenar dados hierárquicos</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide14_image1.png" alt="Imagem original do slide 14" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide14_image2.png" alt="Imagem original do slide 14" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Então devo esquecer o SQL?</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>Não!</li>
+            <li>Normalmente os bancos de dados NoSQL são escolhidos para representar apenas uma parte do sistema</li>
+            <li>Ex:</li>
+            <li>seguidores em redes sociais</li>
+            <li>guardar os dados de configurações</li>
+            <li>armazenar dados hierárquicos</li>
+          </ls-u>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide15_image1.png" alt="Imagem original do slide 15" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide15_image2.png" alt="Imagem original do slide 15" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Problemas do NoSQL</h2>
+          <ls-u>
+            <li>Falta de padrão!</li>
+            <li>Problemas de consistência nos dados (servidores diferentes, dados relacionados podem ser apagados?)</li>
+            <li>Consultas são muito mais limitadas do que SQL, normalmente não tem:</li>
+            <li>Agrupar dados</li>
+            <li>calcular estatísticas</li>
+            <li>relacionar dados de maneiras complexas</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Voltando ao SQL</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide17_image1.png" alt="Imagem original do slide 17" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>O PostgreSQL implementou muita coisa que o NoSQL tinha:</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><textarea>
+Tipo de dado JSON e JSONB
+Funções para converter dados das colunas em um objeto JSON
+Isso já resolveu quasetodas as limitaçõesdo SQL
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide18_image1.png" alt="Imagem original do slide 18" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>JSON vs JSONB</h2>
+          <code-block lang="sql" data-trim><textarea>
+JSON serve apenas para armazenar dados em JSON como texto mesmo
+JSONB transformar em um objeto dentro do BD
+Permite manipular e extrair o conteúdo;
+Permite inclusive INDEX de partes para acelerar as consultas.
+Limpa chaves duplicadas (mantém apenas a última)
+          </textarea></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Importando dados JSON</h2>
+          <code-block lang="sql" data-trim><textarea>
+Também é possível importar dados JSON com muita facilidade e organizar as informações
+Vamos pegar um dado em JSON e salvar em um arquivo texto usando o psql
+          </textarea></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Baixe o conteudo.json</h2>
+          <p>https://drive.google.com/uc?export=download&amp;id=1J_-squJ7lBeT4PbLVOk9mPIChC7108ky</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Para importar:</h2>
+          <code-block lang="sql" data-trim><textarea>
+Abra o psql  onde está o conteudo.json
+No windows para executar o psql vocẽ precisa colocar o endereço completo  de onde está o psql
+"C:\Program Files\PostgreSQL\<versao>\bin\psql.exe"
+No linux apenas:
+psql
+          </textarea></code-block>
+          <code-block lang="sql" data-trim><textarea>
+CREATE TABLE dados_json(conteudo JSONB);
+
+-- windows
+\set conteudo `more conteudo.json`
+
+--linux
+\set conteudo `cat conteudo.json`
+
+INSERT INTO dados_json
+VALUES (:'conteudo');
+          </textarea></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Trabalhando com JSONB no PostgreSQL</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide23_image1.png" alt="Imagem original do slide 23" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide23_image2.png" alt="Imagem original do slide 23" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>-&gt;: depois da seta escreva o nome de uma chave ou um número para acessar um campo 
+-&gt;&gt;: escreva o nome de uma chave ou um número para acessar um campo como texto
+#&gt;: mesmo que -&gt;, mas permite acessar por meio de um caminho objetos aninhados
+#&gt;&gt;: mesmo que -&gt;&gt;, mas permite acessar por meio de um caminho objetos aninhados</h2>
+          <p>Funções básicas de acesso</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>SELECT conteudo-&gt;0-&gt;&#x27;nome&#x27; FROM dados_json;</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Funções básicas de acesso</p>
+          <code-block lang="sql" data-trim><textarea>
+SELECT conteudo#>'{0, nome}' FROM dados_json;
+          </textarea></code-block>
+          <p>OU</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide25_image1.png" alt="Imagem original do slide 25" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Modificando dados no JSON</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <ls-u>
+            <li>||: atualiza ou cria novos campos no JSON (apenas na consulta)</li>
+            <li>-: remove um campo do JSON (apenas na consulta)</li>
+          </ls-u>
+          <code-block lang="sql" data-trim><textarea>
+SELECT conteudo->0 || '{"nota":10, "idade":17}'
+FROM dados_json;
+          </textarea></code-block>
+          <code-block lang="sql" data-trim><textarea>
+SELECT (conteudo->0)::JSONB - 'nota' 
+FROM dados_json;
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide26_image1.png" alt="Imagem original do slide 26" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide26_image2.png" alt="Imagem original do slide 26" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Expandindo array para linhas</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><textarea>
+SELECT a
+FROM dados_json
+CROSS JOIN jsonb_array_elements(conteudo) a;
+          </textarea></code-block>
+          <code-block lang="sql" data-trim><textarea>
+SELECT *
+FROM dados_json;
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide27_image1.png" alt="Imagem original do slide 27" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide27_image2.png" alt="Imagem original do slide 27" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Expandindo JSONB para colunas</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><textarea>
+SELECT b.*
+FROM dados_json
+CROSS JOIN jsonb_array_elements(conteudo) a
+CROSS JOIN jsonb_to_record(a) AS b(nome text, nota FLOAT, idade INT);
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide28_image1.png" alt="Imagem original do slide 28" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Filtrando diretamente no JSON</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Quando tiver um JSON em cada linha</p>
+          <code-block lang="sql" data-trim><textarea>
+SELECT a
+FROM dados_json
+CROSS JOIN jsonb_array_elements(conteudo) a
+WHERE (a->>'nota')::FLOAT < 6;
+          </textarea></code-block>
+          <code-block lang="sql" data-trim><textarea>
+SELECT a
+FROM dados_json
+CROSS JOIN jsonb_array_elements(conteudo) a
+WHERE a @@ '$.nota < 6';
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide29_image1.png" alt="Imagem original do slide 29" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Filtrando diretamente no JSON</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Quando tiver um array em JSON</p>
+          <code-block lang="sql" data-trim><textarea>
+SELECT jsonb_path_query(conteudo, '$ ? (@.nota < 6)')
+FROM dados_json;
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide30_image1.png" alt="Imagem original do slide 30" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Saiba mais</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>PostgreSQL: Documentation: 17: 9.16. JSON Functions and Operators</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide31_image1.png" alt="Imagem original do slide 31" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Retornando tabelas como JSON</h2>
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide32_image1.png" alt="Imagem original do slide 32" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide32_image2.png" alt="Imagem original do slide 32" />
+          </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Vamos criar a tabela de alunos</h2>
+          <code-block lang="sql" data-trim><textarea>
+CREATE TABLE alunos (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100),
+    idade INT,
+    nota DECIMAL(3,1)
+);
+          </textarea></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Podemos adicionar os dados a partir da tabela com dados JSON</h2>
+          <code-block lang="sql" data-trim><textarea>
+INSERT INTO alunos (nome, nota, idade)
+SELECT b.*
+FROM dados_json
+CROSS JOIN jsonb_array_elements(conteudo) a
+CROSS JOIN jsonb_to_record(a) AS b(nome text, nota FLOAT, idade INT);
+          </textarea></code-block>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Podemos adicionar os dados a partir da tabela com dados JSON</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <code-block lang="sql" data-trim><textarea>
+INSERT INTO alunos (nome, idade, nota)
+SELECT b.*
+FROM dados_json
+CROSS JOIN jsonb_array_elements(conteudo) a
+CROSS JOIN jsonb_to_record(a) AS b(nome text, idade INT, nota FLOAT);
+
+SELECT * FROM alunos;
+          </textarea></code-block>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide35_image1.png" alt="Imagem original do slide 35" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Se quisermos voltar para JSON</h2>
+          <code-block lang="sql" data-trim><textarea>
+SELECT array_agg(
+    json_build_object(
+        'nome', nome,
+        'nota', nota,
+        'idade', idade
+    )
+)
+FROM alunos;
+          </textarea></code-block>
+          <ls-u>
+            <li>[</li>
+            <li>{</li>
+            <li>&quot;nome&quot;: &quot;Ana Clara&quot;,</li>
+            <li>&quot;nota&quot;: 16,</li>
+            <li>&quot;idade&quot;: 8</li>
+            <li>},</li>
+            <li>{</li>
+            <li>&quot;nome&quot;: &quot;Bruno Miguel&quot;,</li>
+            <li>&quot;nota&quot;: 17,</li>
+            <li>&quot;idade&quot;: 7</li>
+            <li>},</li>
+            <li>{</li>
+            <li>&quot;nome&quot;: &quot;Carla Sofia&quot;,</li>
+            <li>&quot;nota&quot;: 15,</li>
+            <li>&quot;idade&quot;: 9</li>
+            <li>},</li>
+            <li>...</li>
+            <li>]</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Ou ainda formatando como objeto de objetos</h2>
+          <code-block lang="sql" data-trim><textarea>
+SELECT json_object_agg(
+    nome,
+    json_build_object(
+        'idade', idade,
+        'nota', nota
+    )
+)
+FROM alunos;
+          </textarea></code-block>
+          <ls-u>
+            <li>{</li>
+            <li>&quot;Ana Clara&quot;: {</li>
+            <li>&quot;nota&quot;: 8.5,</li>
+            <li>&quot;idade&quot;: 16</li>
+            <li>},</li>
+            <li>&quot;Igor Souza&quot;: {</li>
+            <li>&quot;nota&quot;: 5.4,</li>
+            <li>&quot;idade&quot;: 16</li>
+            <li>},</li>
+            <li>&quot;Carla Sofia&quot;: {</li>
+            <li>&quot;nota&quot;: 9.1,</li>
+            <li>&quot;idade&quot;: 15</li>
+            <li>},</li>
+            <li>&quot;Diego Alves&quot;: {</li>
+            <li>&quot;nota&quot;: 6.5,</li>
+            <li>&quot;idade&quot;: 18</li>
+            <li>},</li>
+            <li>...</li>
+            <li>]</li>
+          </ls-u>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Prática!</h2>
+        <p class="muted">Slide visual do material original.</p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Prof. Caio Hamamura</h2>
+        <multi-col style="gap: 18px; align-items: center;">
+          <div style="flex: 1;">
+          <p>Bons estudos!</p>
+          </div>
+          <div style="flex: 1;">
+          <div class="source-image-frame">
+              <img src="planos/aula11_sql_vs_nosql_assets/slide39_image1.png" alt="Imagem original do slide 39" />
+              <img src="planos/aula11_sql_vs_nosql_assets/slide39_image2.png" alt="Imagem original do slide 39" />
+          </div>
+          </div>
+        </multi-col>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

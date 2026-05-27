@@ -1,0 +1,33 @@
+data_venda,produto,tipo_item,turno_compra,quantidade,valor_unitario,forma_pagamento
+2026-03-02,cafe,bebida,Manha,38,3.50,pix
+2026-03-02,salgado,lanche,Manha,24,7.00,pix
+2026-03-02,suco,bebida,Tarde,18,5.00,cartao
+2026-03-02,sanduiche,lanche,Noite,21,9.50,pix
+2026-03-03,cafe,bebida,Manha,41,3.50,dinheiro
+2026-03-03,pao de queijo,lanche,Manha,30,5.00,pix
+2026-03-03,refrigerante,bebida,Tarde,22,6.00,cartao
+2026-03-03,salgado,lanche,Noite,29,7.00,pix
+2026-03-04,cafe,bebida,Manha,36,3.50,pix
+2026-03-04,suco,bebida,Tarde,20,5.00,pix
+2026-03-04,sanduiche,lanche,Noite,27,9.50,cartao
+2026-03-04,bolo,doce,Tarde,16,4.50,dinheiro
+2026-03-05,cafe,bebida,Manha,44,3.50,pix
+2026-03-05,pao de queijo,lanche,Manha,34,5.00,pix
+2026-03-05,refrigerante,bebida,Noite,31,6.00,cartao
+2026-03-05,salgado,lanche,Noite,35,7.00,pix
+2026-03-06,cafe,bebida,Manha,32,3.50,dinheiro
+2026-03-06,suco,bebida,Tarde,25,5.00,pix
+2026-03-06,bolo,doce,Tarde,20,4.50,pix
+2026-03-06,sanduiche,lanche,Noite,33,9.50,cartao
+2026-03-09,cafe,bebida,Manha,46,3.50,pix
+2026-03-09,salgado,lanche,Noite,42,7.00,pix
+2026-03-09,refrigerante,bebida,Noite,38,6.00,cartao
+2026-03-09,sanduiche,lanche,Noite,37,9.50,pix
+2026-03-10,cafe,bebida,Manha,43,3.50,pix
+2026-03-10,pao de queijo,lanche,Manha,31,5.00,dinheiro
+2026-03-10,suco,bebida,Tarde,19,5.00,pix
+2026-03-10,salgado,lanche,Noite,40,7.00,pix
+2026-03-11,cafe,bebida,Manha,39,3.50,pix
+2026-03-11,bolo,doce,Tarde,18,4.50,dinheiro
+2026-03-11,refrigerante,bebida,Noite,35,6.00,cartao
+2026-03-11,sanduiche,lanche,Noite,34,9.50,pix

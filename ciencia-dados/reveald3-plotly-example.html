@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Ciência de Dados - RevealD3 + Plotly</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .step-label {
+      font-size: 20pt;
+      color: #f8f8f2;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .step-label strong {
+      color: #8be9fd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <section data-auto-animate>
+        <header1 aula="EX" curso="Ciência de Dados" title-size="24"
+                 title="Plotly em arquivo separado com RevealD3">
+        </header1>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Plotly controlado por fragments</h2>
+        <reveald3-plot file="aulas/reveald3-plotly-step.html" width="780px" height="460px"></reveald3-plot>
+        <p class="step-label fragment fade-in-then-out" data-fragment-index="0">
+          <strong>Passo 1:</strong> destacar o grupo de maior valor médio.
+        </p>
+        <p class="step-label fragment fade-in-then-out" data-fragment-index="1">
+          <strong>Passo 2:</strong> adicionar a linha de tendência.
+        </p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Quando vale a pena</h2>
+        <ul>
+          <li>Vale para gráficos pesados, reutilizáveis ou com lógica própria.</li>
+          <li>Reduz o HTML do deck e carrega o gráfico só quando o slide entra em cena.</li>
+          <li>Funciona bem quando a animação é uma sequência fechada de estados.</li>
+          <li>O componente <code>plotly-figure</code> fica apenas para compatibilidade com decks antigos.</li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="../plugin/reveald3/reveald3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    window.reveald3Config = {
+      disableCheckFile: true,
+      onSlideChangedDelay: 150
+    };
+  </script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

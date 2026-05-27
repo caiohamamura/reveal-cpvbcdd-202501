@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 13 - Redis: Chaves, Cache e Estruturas de Dados</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2 { text-transform: none; }
+    .reveal h3 { text-transform: none; }
+    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 10px 14px; margin: 6px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.64em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 6px 8px; text-align: left; }
+    .comparison-table td { padding: 5px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 1px 5px; word-break: break-all; font-size: 0.85em; }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .redis-card { background: rgba(68, 71, 90, 0.72); border-radius: 10px; padding: 10px 12px; margin: 6px 0; }
+    .redis-card p { margin: 2px 0; }
+    .reveal .slides section ul li,
+    .reveal .slides section ol li { font-size: 0.82em; line-height: 1.32; margin: 3px 0; }
+    .reveal .slides section p { font-size: 0.72em; line-height: 1.35; margin: 4px 0; }
+    .reveal .slides section code-block { font-size: 0.86em; overflow-x: auto; max-width: 100%; }
+    .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="13" curso="Banco de Dados 2" title-size="24"
+                 title="Redis: Chaves, Cache e Estruturas de Dados">
+          <div class="mermaid" data-id="cover-redis" style="width:520px">
+            <pre>
+---
+displayMode: compact
+config:
+  theme: dracula
+  themeVariables:
+    primary: '#ff5555'
+    lineColor: '#F8B229'
+    fontSize: 50px
+---
+graph LR
+  A["Aplicação"] ---> B["Redis"]
+  B --> C["Cache"]
+  B --> D["Sessões"]
+  B --> E["Filas"]
+  B --> F["Rankings"]
+  A --> G["PostgreSQL / MongoDB"]
+  style B fill:#ff5555,color:#f8f8f2
+  style G fill:#8be9fd,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE: Revisão -->
+      <section data-auto-animate>
+        <h2>Revisão: Aula Passada</h2>
+        <ls-u>
+          <li>JSONB mostrou documentos dentro do PostgreSQL</li>
+          <li>MongoDB mostrou um banco orientado a documentos</li>
+          <li>NoSQL não significa sempre “JSON sem tabela”</li>
+          <li>Hoje: NoSQL como estruturas de dados rápidas em memória</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         FASE 1: MOTIVAÇÃO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 1: Por que Redis?</h2>
+          <p style="color: #6272a4;">Redis não é “MongoDB mais simples”. Ele resolve outro tipo de problema.</p>
+          <div class="yellow-box">
+            <p><strong>Ideia central:</strong> Redis é um servidor de estruturas de dados em memória, usado junto com bancos como PostgreSQL ou MongoDB.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quando Redis aparece em sistemas reais?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Problema</th><th>Recurso do Redis</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Lembrar sessão de login por 30 minutos</td><td>Chave com TTL</td></tr>
+              <tr><td>Contar visualizações em tempo real</td><td>Contador atômico</td></tr>
+              <tr><td>Guardar carrinho temporário</td><td>Hash + TTL na chave</td></tr>
+              <tr><td>Processar tarefas em segundo plano</td><td>Lista como fila</td></tr>
+              <tr><td>Registrar usuários online sem repetição</td><td>Set</td></tr>
+              <tr><td>Ranking de jogo</td><td>Sorted set</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comparação rápida</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Banco</th><th>Ideia principal</th><th>Exemplo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>PostgreSQL</td><td>Dados relacionais, SQL, restrições</td><td>pedidos, alunos, vendas</td></tr>
+              <tr><td>PostgreSQL JSONB</td><td>Relacional com JSON flexível</td><td>atributos de produto</td></tr>
+              <tr><td>MongoDB</td><td>Documentos como modelo principal</td><td>perfis, catálogos</td></tr>
+              <tr><td>Redis</td><td>Chave-valor e estruturas em memória</td><td>cache, sessões, filas</td></tr>
+              <tr><td>Neo4j</td><td>Grafo de relações</td><td>recomendações</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+         FASE 2: INSTALAÇÃO LOCAL
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 2: Instalação local</h2>
+          <p style="color: #6272a4;">Vamos manter um <span class="mini-code">ipython</span> aberto e executar os comandos pelo cliente Python do Redis.</p>
+          <div class="yellow-box">
+            <p>Isso fica mais próximo de um backend real: a aplicação Python conversa com um servidor Redis.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Windows: preparar ambiente</h2>
+          <code-block lang="powershell" data-trim>
+winget install Python.Python.3.12 --accept-source-agreements --accept-package-agreements
+winget install Redis.Redis --accept-source-agreements --accept-package-agreements
+py -m pip install redis ipython
+</code-block>
+          <div class="info-box">
+            <p>No Windows, vamos usar o Redis instalado pelo <span class="mini-code">winget</span>. O Python acessa <span class="mini-code">localhost:6379</span>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Windows: testar servidor e abrir IPython</h2>
+          <code-block lang="powershell" data-trim>
+redis-cli PING
+ipython
+</code-block>
+          <div class="green-box">
+            <p>Se aparecer <span class="mini-code">PONG</span>, deixe o <span class="mini-code">ipython</span> aberto para os próximos slides.</p>
+          </div>
+          <div class="yellow-box">
+            <p>Se o comando não responder, feche e abra o terminal ou inicie o serviço <span class="mini-code">Redis</span> no Windows.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Linux: instalar com apt</h2>
+          <code-block lang="bash" data-trim>
+sudo apt update
+sudo apt install redis-server python3-redis ipython3
+sudo systemctl enable --now redis-server
+ipython3
+</code-block>
+          <div class="green-box">
+            <p>No Linux, o Redis Server roda como serviço local e o IPython conversa com ele pela porta <span class="mini-code">6379</span>.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: PYTHON E CHAVE-VALOR
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 3: Python e chave-valor</h2>
+          <p style="color: #6272a4;">Antes de estruturas avançadas, vamos tratar Redis como um mapa: chave → valor.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Conectar Python ao Redis</h2>
+          <code-block lang="python" data-trim>
+import redis
+
+r = redis.Redis(
+    host="localhost",
+    port=6379,
+    decode_responses=True,
+)
+
+r.ping()
+</code-block>
+          <div class="green-box">
+            <p>Resposta esperada: <span class="mini-code">True</span></p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comandos básicos</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <code-block lang="python" data-trim>
+r.set("nome", "Ana")
+r.get("nome")
+r.exists("nome")
+r.delete("nome")
+r.get("nome")
+</code-block>
+            </div>
+            <div style="flex: 1;">
+              <div class="info-box">
+                <p><span class="pill">set</span> grava um valor</p>
+                <p><span class="pill">get</span> lê um valor</p>
+                <p><span class="pill">exists</span> verifica existência</p>
+                <p><span class="pill">delete</span> remove a chave</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Contadores atômicos</h2>
+          <code-block lang="python" data-trim>
+r.set("visitas", 0)
+r.incr("visitas")
+r.incr("visitas")
+r.get("visitas")
+</code-block>
+          <div class="yellow-box">
+            <p><strong>Pergunta:</strong> por que <span class="mini-code">incr</span> é melhor que ler, somar na aplicação e gravar de novo?</p>
+          </div>
+          <div class="green-box fragment">
+            <p><strong>Resposta esperada:</strong> porque a operação é atômica. Vários processos podem incrementar sem sobrescrever uns aos outros.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+         FASE 4: EXPIRAÇÃO E CACHE
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 4: Expiração e cache</h2>
+          <p style="color: #6272a4;">Uma chave que desaparece sozinha é uma ferramenta poderosa para sistemas web.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>TTL: tempo de vida da chave</h2>
+          <code-block lang="python" data-trim>
+r.set("codigo:1234", "839201")
+r.expire("codigo:1234", 30)
+r.ttl("codigo:1234")
+r.get("codigo:1234")
+</code-block>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Resultado</th><th>Significado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="mini-code">TTL = número positivo</span></td><td>segundos restantes</td></tr>
+              <tr><td><span class="mini-code">TTL = -1</span></td><td>a chave existe, mas não expira</td></tr>
+              <tr><td><span class="mini-code">TTL = -2</span></td><td>a chave não existe mais</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Mini-exercício: token de login</h2>
+          <div class="green-box">
+            <p><strong>Objetivo:</strong> criar uma sessão temporária que expira em 20 segundos.</p>
+          </div>
+          <code-block lang="python" data-trim>
+r.set("sessao:usuario:1", "logado")
+r.expire("sessao:usuario:1", 20)
+r.ttl("sessao:usuario:1")
+r.get("sessao:usuario:1")
+
+r.get("sessao:usuario:1")
+r.ttl("sessao:usuario:1")
+</code-block>
+          <p style="font-size: 0.56em; color: #6272a4;">Depois das quatro primeiras chamadas, aguarde mais de 20 segundos e rode as duas últimas.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Cache não é o dado principal</h2>
+          <div class="mermaid" data-id="cache-flow">
+            <pre>
+---
+config:
+  theme: base
+  themeVariables:
+    background: '#282a36'
+    primaryColor: '#44475a'
+    primaryTextColor: '#f8f8f2'
+    primaryBorderColor: '#bd93f9'
+    lineColor: '#f8b229'
+    secondaryColor: '#6272a4'
+    tertiaryColor: '#44475a'
+    actorBkg: '#44475a'
+    actorTextColor: '#f8f8f2'
+    actorBorder: '#bd93f9'
+    actorLineColor: '#f8b229'
+    signalColor: '#f8f8f2'
+    signalTextColor: '#f8f8f2'
+    labelBoxBkgColor: '#44475a'
+    labelBoxBorderColor: '#bd93f9'
+    labelTextColor: '#f8f8f2'
+    loopTextColor: '#f8f8f2'
+    activationBkgColor: '#6272a4'
+    activationBorderColor: '#f8b229'
+    noteBkgColor: '#44475a'
+    noteTextColor: '#f8f8f2'
+    noteBorderColor: '#f8b229'
+    fontSize: '28px'
+---
+sequenceDiagram
+  participant App as Aplicação
+  participant R as Redis
+  participant DB as PostgreSQL
+
+  App->>R: GET produto:10
+
+  alt cache hit
+    R-->>App: JSON do produto
+  else cache miss
+    App->>DB: SELECT produto
+    DB-->>App: registro
+    App->>R: SET produto:10 EX 300
+  end
+            </pre>
+          </div>
+          <p style="font-size: 0.58em; color: #6272a4;">
+            Redis acelera a leitura, mas a fonte de verdade pode continuar sendo PostgreSQL.
+          </p>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+         FASE 5: ESTRUTURAS DE DADOS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 5: Estruturas de dados</h2>
+          <p style="color: #6272a4;">Redis não guarda só strings. A força dele está nas estruturas prontas.</p>
+          <div>
+            <span class="pill">String</span>
+            <span class="pill">Hash</span>
+            <span class="pill">List</span>
+            <span class="pill">Set</span>
+            <span class="pill">Sorted Set</span>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Hashes: objetos pequenos</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1.2;">
+              <code-block lang="python" data-trim>
+r.hset("aluno:1", "nome", "Ana")
+r.hset("aluno:1", "curso", "Informática")
+r.hset("aluno:1", "idade", 17)
+r.hget("aluno:1", "nome")
+r.hgetall("aluno:1")
+r.hincrby("aluno:1", "idade", 1)
+r.hgetall("aluno:1")
+</code-block>
+            </div>
+            <div style="flex: 0.8;">
+              <table class="comparison-table">
+                <thead>
+                  <tr><th>SQL</th><th>Redis Hash</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>linha</td><td>hash</td></tr>
+                  <tr><td>coluna</td><td>campo</td></tr>
+                  <tr><td>chave primária</td><td>nome da chave</td></tr>
+                </tbody>
+              </table>
+              <div class="red-box">
+                <p>Hash não tem join, chave estrangeira nem SQL.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exercício: produto em hash</h2>
+          <div class="green-box">
+            <p><strong>Objetivo:</strong> representar um produto com nome, categoria, preço e estoque. Depois, reduzir o estoque.</p>
+          </div>
+          <code-block lang="python" data-trim>
+r.hset("produto:1", "nome", "Mouse")
+r.hset("produto:1", "categoria", "Periféricos")
+r.hset("produto:1", "preco", "59.90")
+r.hset("produto:1", "estoque", 20)
+r.hgetall("produto:1")
+r.hincrby("produto:1", "estoque", -1)
+r.hgetall("produto:1")
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Lists: filas e pilhas</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <code-block lang="python" data-trim>
+r.lpush("fila:emails", "email1")
+r.lpush("fila:emails", "email2")
+r.lpush("fila:emails", "email3")
+
+r.rpop("fila:emails")
+r.rpop("fila:emails")
+r.rpop("fila:emails")
+</code-block>
+            </div>
+            <div style="flex: 1;">
+              <div class="info-box">
+                <p><span class="mini-code">lpush</span> insere à esquerda</p>
+                <p><span class="mini-code">rpop</span> remove da direita</p>
+                <p><span class="mini-code">lpush + rpop</span> cria comportamento de fila</p>
+              </div>
+              <div class="yellow-box">
+                <p>Uso real: pedidos de envio de e-mail, geração de relatórios, processamento assíncrono.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+  <h2>Sets: valores únicos</h2>
+  <multi-col style="gap:15px">
+    <div style="flex: 1;">
+      <code-block lang="python" data-trim>
+r.sadd("usuarios:online", "ana")
+r.sadd("usuarios:online", "bruno")
+r.sadd("usuarios:online", "ana")
+
+r.smembers("usuarios:online")
+r.scard("usuarios:online")
+r.sismember("usuarios:online", "ana")
+
+r.srem("usuarios:online", "ana")
+      </code-block>
+    </div>
+
+    <div style="flex: 1;">
+      <div class="info-box">
+        <p><span class="mini-code">sadd</span> adiciona ao conjunto</p>
+        <p><span class="mini-code">smembers</span> lista os valores</p>
+        <p><span class="mini-code">scard</span> conta quantos existem</p>
+        <p><span class="mini-code">sismember</span> testa se existe</p>
+        <p><span class="mini-code">srem</span> remove do conjunto</p>
+      </div>
+
+      <div class="green-box">
+        <p>Sets ignoram repetição: adicionar <span class="mini-code">ana</span> duas vezes mantém apenas uma ocorrência.</p>
+      </div>
+    </div>
+  </multi-col>
+</section>
+
+        <section data-auto-animate>
+  <h2>Sorted sets: ranking com pontuação</h2>
+
+  <multi-col style="gap:15px">
+    <div style="flex: 1;font-size:0.67em;">
+      <code-block lang="python" data-trim>
+r.zadd(
+    "jogo:ranking",
+    {
+        "ana": 500,
+        "bruno": 700,
+        "carla": 650,
+        "diego": 300,
+        "elisa": 900,
+    },
+)
+
+r.zrevrange("jogo:ranking", 0, -1, withscores=True)
+
+r.zincrby("jogo:ranking", 100, "ana")
+
+r.zrevrange("jogo:ranking", 0, 2, withscores=True)
+      </code-block>
+    </div>
+
+    <div style="flex: 1;">
+      <div class="info-box">
+        <p><span class="mini-code">zadd</span> adiciona valores com pontuação</p>
+        <p><span class="mini-code">zrevrange</span> lista do maior para o menor</p>
+        <p><span class="mini-code">0, -1</span> pega todos os elementos</p>
+        <p><span class="mini-code">withscores=True</span> mostra também a pontuação</p>
+        <p><span class="mini-code">zincrby</span> aumenta a pontuação de um item</p>
+        <p><span class="mini-code">0, 2</span> pega os três primeiros</p>
+      </div>
+
+      <div class="yellow-box">
+        <p>Uso real: ranking de jogos, placar de alunos, posts mais curtidos, produtos mais acessados.</p>
+      </div>
+    </div>
+  </multi-col>
+</section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- ============================================================
+         FASE 6: PERSISTÊNCIA E DECISÃO TÉCNICA
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Fase 6: Persistência e decisão técnica</h2>
+          <p style="color: #6272a4;">Redis é em memória, mas isso não significa “sempre temporário”.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Redis perde tudo ao reiniciar?</h2>
+            <div class="green-box" style="flex: 1;">
+              <p>Redis guarda dados em memória para velocidade, mas pode salvar em disco conforme a configuração.</p>
+            </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Modos de persistência</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Modo</th><th>Ideia</th><th>Uso típico</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Sem persistência</td><td>dados desaparecem após reinício</td><td>cache puro</td></tr>
+              <tr><td>RDB</td><td>snapshots periódicos</td><td>backup com perda aceitável</td></tr>
+              <tr><td>AOF</td><td>log de operações de escrita</td><td>maior durabilidade</td></tr>
+              <tr><td>RDB + AOF</td><td>modo híbrido</td><td>produção com durabilidade</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Ativar AOF e RDB pelo IPython</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1.1;font-size:0.78em;">
+              <code-block lang="python" data-trim>
+r.config_set("appendonly", "yes")
+r.config_set("appendfsync", "everysec")
+r.config_set("save", "900 1 300 10 60 10000")
+r.config_rewrite()
+              </code-block>
+            </div>
+            <div style="flex: 0.9;">
+              <div class="info-box">
+                <p><span class="mini-code">appendonly yes</span>: liga o AOF.</p>
+                <p><span class="mini-code">appendfsync everysec</span>: grava o log a cada segundo.</p>
+                <p><span class="mini-code">save</span>: liga snapshots RDB automáticos.</p>
+                <p><span class="mini-code">config_rewrite</span>: salva a configuração no arquivo do Redis.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Verificar a configuração</h2>
+          <code-block lang="python" data-trim>
+r.config_get("appendonly")
+r.config_get("appendfsync")
+r.config_get("save")
+          </code-block>
+          <div class="green-box">
+            <p>Se aparecer <span class="mini-code">yes</span>, <span class="mini-code">everysec</span> e a regra <span class="mini-code">900 1 300 10 60 10000</span>, AOF e RDB estão ativos.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Como ler <span class="mini-code">900 1 300 10 60 10000</span>?</h2>
+          <div class="info-box">
+            <p>O Redis lê essa configuração em pares: <span class="mini-code">segundos mudanças</span>.</p>
+          </div>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Par</th><th>Significado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="mini-code">900 1</span></td><td>se pelo menos 1 chave mudou em 900 segundos, salve um snapshot RDB</td></tr>
+              <tr><td><span class="mini-code">300 10</span></td><td>se pelo menos 10 chaves mudaram em 300 segundos, salve um snapshot RDB</td></tr>
+              <tr><td><span class="mini-code">60 10000</span></td><td>se pelo menos 10000 chaves mudaram em 60 segundos, salve um snapshot RDB</td></tr>
+            </tbody>
+          </table>
+          <div class="yellow-box">
+            <p>Ideia central: quanto mais mudanças acontecem, menor pode ser o intervalo até o próximo snapshot.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Testar persistência na prática</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <p style="font-size:0.7em;color:#8be9fd;">No IPython:</p>
+              <code-block lang="python" data-trim>
+r.set("persistencia:teste", "sobreviveu")
+r.save()
+r.get("persistencia:teste")
+              </code-block>
+            </div>
+            <div style="flex: 1;">
+              <p style="font-size:0.7em;color:#8be9fd;">Reinicie o serviço:</p>
+              <p style="font-size:0.52em;color:#6272a4;">No Windows, use PowerShell como administrador.</p>
+              <code-block lang="powershell" data-trim>
+Restart-Service Redis
+              </code-block>
+              <code-block lang="bash" data-trim>
+sudo systemctl restart redis-server
+              </code-block>
+            </div>
+          </multi-col>
+          <div class="yellow-box">
+            <p>Depois do reinício, rode <span class="mini-code">r.get("persistencia:teste")</span> de novo. O valor deve continuar existindo.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que deve persistir?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Dado</th><th>Persistir?</th><th>Por quê?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Sessão de login</td><td>Normalmente não</td><td>pode expirar e ser recriada</td></tr>
+              <tr><td>Pedido de compra</td><td>Sim</td><td>registro de negócio</td></tr>
+              <tr><td>Cache de página</td><td>Normalmente não</td><td>pode ser regenerado</td></tr>
+              <tr><td>Ranking de jogo</td><td>Talvez</td><td>depende do sistema</td></tr>
+              <tr><td>Código de verificação</td><td>Não</td><td>deve expirar rapidamente</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+      <!-- ============================================================
+         QUIZ
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2>Quiz Interativo</h2>
+          <p>Conecte-se à sala e responda às questões.</p>
+        </section>
+
+        <section>
+          <poll-question
+            id="redis-q1"
+            title="Questão 1: Papel do Redis"
+            question="Qual frase descreve melhor o Redis nesta aula?"
+            answer="b"
+            answer-text="Redis é um servidor de estruturas de dados em memória, frequentemente usado junto com outro banco."
+            :options="[
+              { value: 'a', label: 'Um MongoDB mais simples' },
+              { value: 'b', label: 'Um servidor de estruturas de dados em memória' },
+              { value: 'c', label: 'Um substituto obrigatório para PostgreSQL' },
+              { value: 'd', label: 'Um banco apenas para arquivos JSON' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="redis-q2"
+            title="Questão 2: TTL"
+            question="O que significa TTL = -2 em uma chave Redis?"
+            answer="c"
+            answer-text="TTL = -2 significa que a chave não existe mais."
+            :options="[
+              { value: 'a', label: 'A chave nunca expira' },
+              { value: 'b', label: 'A chave expira em dois segundos' },
+              { value: 'c', label: 'A chave não existe mais' },
+              { value: 'd', label: 'A chave está bloqueada' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="redis-q3"
+            title="Questão 3: Ranking"
+            question="Qual estrutura do Redis é mais adequada para um ranking com pontuação?"
+            answer="d"
+            answer-text="Sorted set armazena membros únicos ordenados por score."
+            :options="[
+              { value: 'a', label: 'String' },
+              { value: 'b', label: 'Hash' },
+              { value: 'c', label: 'List' },
+              { value: 'd', label: 'Sorted set' },
+            ]" />
+        </section>
+
+      </section><!-- fim Quiz -->
+
+      <!-- SLIDE: Encerramento -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Redis é chave-valor, mas também é servidor de estruturas de dados</li>
+          <li>TTL torna sessões, tokens e caches mais simples</li>
+          <li>Hashes, lists, sets e sorted sets modelam problemas comuns</li>
+          <li>Redis pode persistir, mas não substitui automaticamente PostgreSQL</li>
+          <li>A decisão técnica começa pelo caso de uso, não pelo hype</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>grafos, recomendações e Neo4j</strong></p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

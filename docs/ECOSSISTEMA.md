@@ -303,9 +303,86 @@ Cada questão é um slide separado dentro de uma `<section>`. Requer `<section>`
 
 **Dependência:** Requer `plugin/leader-line.min.js` carregado via `<script>` antes do módulo principal.
 
-#### `plotly-figure` — Gráficos Plotly.js Interativos
+#### RevealD3 + Plotly — Método padrão para gráficos
 
-Renderiza gráficos Plotly.js com suporte a animações reativas via Vue. Quando a prop `traces` muda, o gráfico anima automaticamente com `Plotly.animate()`.
+Para novos gráficos Plotly, o padrão recomendado é isolar cada figura em um HTML próprio e carregá-la no slide via RevealD3. Isso reduz o tamanho do deck, evita conflitos com Vue/globalProperties e permite que a lógica de animação fique perto dos dados do gráfico.
+
+**Dependências:**
+```html
+<script src="../plugin/reveald3/reveald3.js"></script>
+```
+
+`slides_template/init.js` detecta `window.Reveald3` automaticamente. Configurações opcionais podem ser passadas por `window.reveald3Config` antes de carregar `init.js`.
+
+**Uso:**
+```html
+<section data-auto-animate>
+  <h2>Plotly controlado por fragments</h2>
+  <reveald3-plot file="aulas/meu-grafico.html" width="780px" height="460px"></reveald3-plot>
+  <p class="fragment fade-in-then-out" data-fragment-index="0">Passo 1</p>
+  <p class="fragment fade-in-then-out" data-fragment-index="1">Passo 2</p>
+</section>
+```
+
+No HTML separado (`aulas/meu-grafico.html`), carregue Plotly.js e defina as transições que o RevealD3 chamará:
+
+```html
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script>
+  function renderStep(step) {
+    return Plotly.react('plot', tracesForStep(step), layout, { displayModeBar: false });
+  }
+
+  function animateStep(step) {
+    const traces = tracesForStep(step);
+    return Plotly.animate('plot', { data: traces, traces: traces.map((_, i) => i) }, {
+      transition: { duration: 900, easing: 'cubic-in-out' },
+      frame: { duration: 900, redraw: true },
+      mode: 'immediate'
+    });
+  }
+
+  renderStep(0);
+
+  var _transitions = [
+    { index: 0, transitionForward: () => animateStep(1), transitionBackward: () => animateStep(0) },
+    { index: 1, transitionForward: () => animateStep(2), transitionBackward: () => animateStep(1) }
+  ];
+</script>
+```
+
+**Regras práticas:**
+- Use `Plotly.react()` para o estado inicial.
+- Use `Plotly.animate()` para transições suaves de posição, tamanho e valores numéricos.
+- Mantenha a ordem dos traces estável e defina `uid` em traces importantes.
+- Use `frame.redraw: true` quando adicionar/remover traces.
+- Mudanças de cor podem ser mais abruptas que movimento/tamanho; para interpolação visual total, use D3 puro dentro do mesmo iframe.
+
+**Exportação a partir de Python/notebook:**
+
+```python
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path("..") / ".opencode" / "skills" / "export-plots" / "scripts"))
+from export_reveald3_plotly import export_reveald3_plotly
+
+export_reveald3_plotly(
+    [fig_inicial, fig_passo_1, fig_passo_2],
+    Path("../aulas/meu-grafico.html"),
+    title="Meu gráfico",
+)
+```
+
+Pelo terminal, exporte uma lista de `fig.to_dict()` para JSON e rode:
+
+```bash
+python ../.opencode/skills/export-plots/scripts/export_reveald3_plotly.py plot_steps.json --output aulas/meu-grafico.html
+```
+
+#### `plotly-figure` — Gráficos Plotly.js inline
+
+Renderiza gráficos Plotly.js diretamente no DOM do slide via Vue. Este componente permanece por compatibilidade com decks antigos; para novos gráficos, use RevealD3 + HTML separado.
 
 **Dependência (CDN):** Requer Plotly.js carregado **antes** do componente montar:
 ```html
@@ -315,49 +392,14 @@ Se Plotly.js não estiver carregado, o componente exibe um aviso no console e n�
 
 **Uso:**
 ```html
-<!-- No <head> ou antes dos scripts do slide -->
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-
-<!-- No slide -->
-<section data-auto-animate>
-  <h2>K-Means Clustering</h2>
-  <plotly-figure
-    :traces="currentTraces"
-    :layout="plotLayout"
-  ></plotly-figure>
-</section>
+<plotly-figure :traces="currentTraces" :layout="plotLayout"></plotly-figure>
 ```
 
 **Props:**
 | Prop | Tipo | Default | Descrição |
 |------|------|---------|-----------|
-| `traces` | Array | `[]` | Array de objetos trace do Plotly (reactive — mudanças animam o gráfico) |
-| `layout` | Object | — | Objeto layout do Plotly (paper_bgcolor, plot_bgcolor, eixos, etc.) |
-
-**Estilo CSS necessário:**
-O componente renderiza uma `<div class="plot">`. Defina largura/altura no CSS:
-```css
-.plot {
-  width: 700px;
-  height: 500px;
-  margin: auto;
-}
-```
-
-**Reatividade com Reveal.js Fragments:**
-Para sincronizar o gráfico com fragments do Reveal.js, use `Vue.reactive()` no data do app e escute os eventos `fragmentshown`/`fragmenthidden`:
-```js
-const revealState = Vue.reactive({ step: 0 });
-
-Reveal.on('fragmentshown', event => {
-  revealState.step = +event.fragment.dataset.fragmentIndex + 1;
-});
-
-Reveal.on('fragmenthidden', event => {
-  revealState.step = +event.fragment.dataset.fragmentIndex;
-});
-```
-Use `revealState.step` em `computed` para derivar `traces` diferentes para cada etapa. O deep watcher do componente chama `Plotly.animate()` automaticamente.
+| `traces` | Array | `[]` | Array de objetos trace do Plotly |
+| `layout` | Object | — | Objeto layout do Plotly |
 
 **Cores Dracula para Plotly:**
 ```js

@@ -84,6 +84,7 @@ function initializeReveal() {
   if (window.RevealChart) plugins.push(RevealChart);
   if (window.RevealCustomControls) plugins.push(RevealCustomControls);
   if (window.RevealChalkboard) plugins.push(RevealChalkboard);
+  if (window.Reveald3) plugins.push(Reveald3);
 
   const config = {
     controls: true,
@@ -103,6 +104,7 @@ function initializeReveal() {
   if (window.customControlsConfig) config.customcontrols = window.customControlsConfig;
   if (window.chartConfig) config.chart = window.chartConfig;
   if (window.chalkboardConfig) config.chalkboard = window.chalkboardConfig;
+  if (window.reveald3Config) config.reveald3 = window.reveald3Config;
 
   window.deck = new Reveal(document.querySelector('.reveal'), config);
   deck.initialize();

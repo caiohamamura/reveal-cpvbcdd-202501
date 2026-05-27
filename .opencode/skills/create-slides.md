@@ -129,6 +129,8 @@ Rules:
 - The first slide inside a super section should be a header/intro slide with a colored h2
 - Close with `<!-- fim {NOME} -->` comment for clarity
 - Comment dividers (`<!-- ============ -->`) go BEFORE the opening `<section>` tag, not inside
+- If `FASE N` starts before `fim Fase N-1`, Reveal can mix the first slides of the next phase and render following slides blank
+- Run `python .opencode/skills/validate-slides/scripts/validate_slide_deck.py <slide-file.html>` after edits to catch unclosed phase comments
 
 #### Review slide (when continuing a course)
 ```html
@@ -165,14 +167,14 @@ Rules:
 ```html
       <section data-auto-animate>
         <h2>{TITULO}</h2>
-        <code-block lang="{lang}" data-trim><script type="text/plain">
-{CODE HERE - raw code, angle brackets preserved}
-</script></code-block>
+        <code-block lang="{lang}" data-trim>
+{CODE HERE}
+</code-block>
       </section>
 ```
 - Use `lang="sql"` for SQL, `lang="cpp"` or `lang="c"` for Arduino/C++, `lang="python"` for Python, `lang="r"` for R
-- **ALWAYS** wrap code content in `<script type="text/plain">` — this prevents the browser's HTML parser from mangling angle brackets (e.g. `#include <Arduino.h>` would become `#include <arduino.h>` without it)
-- The `<script type="text/plain">` is invisible to the browser and acts as a raw text container
+- Do not use `<script>` tags inside `<code-block>`; Vue treats them as side-effect tags and logs template compilation warnings.
+- Use raw text directly for ordinary code. Use `<textarea>` only when the code actually contains `<` or `>` that the browser would parse as HTML.
 
 #### Challenge / "Desafio" slide
 ```html
@@ -207,7 +209,7 @@ Rules:
           </ls-u>
         </div>
         <div>
-          <code-block lang="sql"><script type="text/plain">
+          <code-block lang="sql">
 CREATE OR REPLACE FUNCTION nome_funcao(
     -- parâmetros
 ) RETURNS tipo AS $$
@@ -215,7 +217,7 @@ BEGIN
     -- sua lógica aqui
 END;
 $$ LANGUAGE plpgsql;
-</script></code-block>
+</code-block>
         </div>
       </section>
 ```

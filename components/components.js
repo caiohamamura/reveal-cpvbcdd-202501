@@ -98,8 +98,8 @@ function escapeHtml(text) {
 (function captureCodeBlocks() {
   document.querySelectorAll('code-block').forEach(el => {
     const id = '__cb_' + (window.__codeBlockCounter++);
-    // Prefer <script type="text/plain"> child to avoid HTML parser mangling
-    // (e.g. #include <Arduino.h> becomes <arduino.h>)
+    // Use raw text for ordinary code; use <textarea> only when angle brackets
+    // would otherwise be parsed as HTML (e.g. #include <Arduino.h>).
     const raw = el.textContent;
     window.__codeBlockRaw[id] = escapeHtml(stripIndentation(raw));
     el.setAttribute('data-cb-id', id);
@@ -490,7 +490,7 @@ const pollQuestionComponent = {
       <p v-if="question">{{ question }}</p>
       <multi-col>
       <div class="poll" :data-poll="id">
-        <button v-for="opt in options" :data-value="opt.value">
+        <button v-for="opt in options" :data-value="opt.value" style="font-size:0.5em">
           {{ String(opt.value).toUpperCase() }}) {{ opt.label }}
         </button>
       </div>
@@ -572,6 +572,29 @@ const plotlyFigureComponent = {
   `
 };
 
+const reveald3PlotComponent = {
+  props: {
+    file: { type: String, required: true },
+    width: { type: String, default: '780px' },
+    height: { type: String, default: '460px' },
+    scroll: { type: String, default: 'no' },
+  },
+  computed: {
+    dataStyle() {
+      return `width: ${this.width}; height: ${this.height};`;
+    }
+  },
+  template: `
+    <div
+      class="fig-container reveald3-plot"
+      :data-file="file"
+      :data-scroll="scroll"
+      :data-style="dataStyle"
+      :style="{ width, height, margin: '10px auto 0', border: '1px solid #44475a', background: '#282a36' }"
+    ></div>
+  `
+};
+
 function initializeComponents(app) {
   app.component('copy-btn', copyBtnComponent);
   app.component('code-block', codeBlockComponent);
@@ -583,10 +606,10 @@ function initializeComponents(app) {
   app.component("leader-line", leaderLineComponent);
   app.component('poll-question', pollQuestionComponent);
   app.component('plotly-figure', plotlyFigureComponent);
+  app.component('reveald3-plot', reveald3PlotComponent);
 }
 
 
 if (window.app?.component) {
   initializeComponents(app);
 }
-

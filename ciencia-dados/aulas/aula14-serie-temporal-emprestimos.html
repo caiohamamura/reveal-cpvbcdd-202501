@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    html,
+    body,
+    #plot {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: #282a36;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="plot"></div>
+
+  <script>
+    const semanas = [
+      '2026-02-02', '2026-02-09', '2026-02-16', '2026-02-23',
+      '2026-03-02', '2026-03-09', '2026-03-16', '2026-03-23',
+      '2026-03-30', '2026-04-06', '2026-04-13', '2026-04-20',
+      '2026-04-27', '2026-05-04', '2026-05-11', '2026-05-18',
+      '2026-05-25', '2026-06-01'
+    ];
+    const emprestimos = [42, 48, 51, 63, 58, 71, 96, 103, 88, 72, 64, 39, 35, 52, 68, 84, 91, 77];
+    const mediaMovel = emprestimos.map((_, i) => {
+      if (i < 3) return null;
+      const janela = emprestimos.slice(i - 3, i + 1);
+      return Math.round(janela.reduce((soma, valor) => soma + valor, 0) / janela.length);
+    });
+    const tendencia = [45, 49, 53, 57, 61, 67, 73, 78, 78, 74, 66, 54, 48, 55, 64, 73, 82, 84];
+    const sazonalidade = emprestimos.map((valor, i) => valor - tendencia[i]);
+    const forecastSemanas = ['2026-06-08', '2026-06-15', '2026-06-22', '2026-06-29'];
+    const forecast = [81, 75, 68, 61];
+
+    const serie = {
+      type: 'scatter',
+      mode: 'lines+markers',
+      x: semanas,
+      y: emprestimos,
+      name: 'empréstimos',
+      line: { color: '#8be9fd', width: 3 },
+      marker: { size: 9, color: '#8be9fd', line: { color: '#f8f8f2', width: 1 } },
+      hovertemplate: 'Semana: %{x}<br>Empréstimos: %{y}<extra></extra>'
+    };
+
+    const media = {
+      type: 'scatter',
+      mode: 'lines',
+      x: semanas,
+      y: mediaMovel,
+      name: 'média móvel 4 semanas',
+      line: { color: '#ffb86c', width: 4 },
+      hovertemplate: 'Semana: %{x}<br>Média móvel: %{y}<extra></extra>'
+    };
+
+    const traceTendencia = {
+      type: 'scatter',
+      mode: 'lines',
+      x: semanas,
+      y: tendencia,
+      name: 'tendência estimada',
+      line: { color: '#50fa7b', width: 4 },
+      hovertemplate: 'Semana: %{x}<br>Tendência: %{y}<extra></extra>'
+    };
+
+    const traceSazonal = {
+      type: 'bar',
+      x: semanas,
+      y: sazonalidade,
+      name: 'componente sazonal',
+      marker: { color: sazonalidade.map(v => v >= 0 ? '#bd93f9' : '#ff5555') },
+      yaxis: 'y2',
+      hovertemplate: 'Semana: %{x}<br>Sazonalidade: %{y:+d}<extra></extra>'
+    };
+
+    const traceForecast = {
+      type: 'scatter',
+      mode: 'lines+markers',
+      x: [semanas[semanas.length - 1], ...forecastSemanas],
+      y: [emprestimos[emprestimos.length - 1], ...forecast],
+      name: 'forecast simples',
+      line: { color: '#f1fa8c', width: 4, dash: 'dash' },
+      marker: { size: 9, color: '#f1fa8c', line: { color: '#282a36', width: 1 } },
+      hovertemplate: 'Semana: %{x}<br>Forecast: %{y}<extra></extra>'
+    };
+
+    const eventos = [
+      {
+        type: 'rect',
+        xref: 'x',
+        yref: 'paper',
+        x0: '2026-03-09',
+        x1: '2026-03-23',
+        y0: 0,
+        y1: 1,
+        fillcolor: 'rgba(80, 250, 123, 0.12)',
+        line: { width: 0 }
+      },
+      {
+        type: 'rect',
+        xref: 'x',
+        yref: 'paper',
+        x0: '2026-04-13',
+        x1: '2026-04-27',
+        y0: 0,
+        y1: 1,
+        fillcolor: 'rgba(255, 85, 85, 0.12)',
+        line: { width: 0 }
+      }
+    ];
+
+    const anotacoes = [
+      {
+        x: '2026-03-16',
+        y: 106,
+        text: 'semana de provas',
+        showarrow: true,
+        arrowcolor: '#50fa7b',
+        font: { color: '#50fa7b', size: 15 }
+      },
+      {
+        x: '2026-04-20',
+        y: 42,
+        text: 'feriados e recesso',
+        showarrow: true,
+        arrowcolor: '#ff5555',
+        font: { color: '#ff5555', size: 15 }
+      },
+      {
+        x: '2026-05-25',
+        y: 92,
+        text: 'entrega de trabalhos',
+        showarrow: true,
+        arrowcolor: '#f1fa8c',
+        font: { color: '#f1fa8c', size: 15 }
+      }
+    ];
+
+    const anotacoesDecomposicao = [
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.02,
+        y: 0.90,
+        text: '<b>Tendência</b>: alta até março, queda em abril, retomada em maio',
+        showarrow: false,
+        align: 'left',
+        font: { color: '#50fa7b', size: 12 },
+        bgcolor: 'rgba(40, 42, 54, 0.85)',
+        bordercolor: '#50fa7b',
+        borderpad: 4
+      },
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.02,
+        y: 0.31,
+        text: '<b>Sazonalidade</b>: acima de 0 = demanda extra',
+        showarrow: false,
+        align: 'left',
+        font: { color: '#bd93f9', size: 12 },
+        bgcolor: 'rgba(40, 42, 54, 0.85)',
+        bordercolor: '#bd93f9',
+        borderpad: 4
+      },
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.98,
+        y: 0.09,
+        text: 'abaixo de 0 = queda extra',
+        showarrow: false,
+        align: 'right',
+        xanchor: 'right',
+        font: { color: '#ff5555', size: 12 },
+        bgcolor: 'rgba(40, 42, 54, 0.85)',
+        bordercolor: '#ff5555',
+        borderpad: 4
+      }
+    ];
+
+    const linhaZeroSazonal = {
+      type: 'line',
+      xref: 'x',
+      yref: 'y2',
+      x0: semanas[0],
+      x1: semanas[semanas.length - 1],
+      y0: 0,
+      y1: 0,
+      line: { color: '#f8f8f2', width: 1, dash: 'dot' }
+    };
+
+    function layout(step) {
+      const decomposicao = step === 2;
+      const shapes = decomposicao ? [linhaZeroSazonal] : step >= 3 ? eventos : [];
+      return {
+        paper_bgcolor: '#282a36',
+        plot_bgcolor: '#282a36',
+        margin: { l: 56, r: 18, t: 12, b: 42 },
+        font: { color: '#f8f8f2', size: 12 },
+        title: {
+          text: ''
+        },
+        xaxis: {
+          title: 'semana',
+          gridcolor: '#44475a',
+          zerolinecolor: '#6272a4',
+          range: step >= 3 ? ['2026-02-02', '2026-06-29'] : ['2026-02-02', '2026-06-01']
+        },
+        yaxis: {
+          title: decomposicao ? 'empréstimos / tendência' : 'empréstimos',
+          range: [25, 115],
+          gridcolor: '#44475a',
+          zerolinecolor: '#6272a4',
+          domain: decomposicao ? [0.38, 1] : [0, 1]
+        },
+        yaxis2: {
+          title: 'sazonal',
+          range: [-22, 32],
+          gridcolor: '#44475a',
+          zerolinecolor: '#f8f8f2',
+          domain: [0, 0.26],
+          visible: decomposicao
+        },
+        legend: { orientation: 'h', x: 0.02, y: 1.02, font: { size: 11 } },
+        shapes,
+        annotations: step === 2 ? anotacoesDecomposicao : step >= 3 ? anotacoes : []
+      };
+    }
+
+    function renderStep(step) {
+      let traces = [serie];
+      if (step === 1) traces = [serie, media];
+      if (step === 2) traces = [serie, traceTendencia, traceSazonal];
+      if (step >= 3) traces = [serie, media, traceForecast];
+      return Plotly.react('plot', traces, layout(step), { displayModeBar: false, responsive: true });
+    }
+
+    renderStep(0);
+
+    var _transitions = [
+      {
+        index: 0,
+        transitionForward: () => renderStep(1),
+        transitionBackward: () => renderStep(0)
+      },
+      {
+        index: 1,
+        transitionForward: () => renderStep(2),
+        transitionBackward: () => renderStep(1)
+      },
+      {
+        index: 2,
+        transitionForward: () => renderStep(3),
+        transitionBackward: () => renderStep(2)
+      }
+    ];
+  </script>
+</body>
+
+</html>

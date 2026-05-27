@@ -24,7 +24,7 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="08" curso="Banco de Dados 2" title-size="24"
+        <header1 aula="10" curso="Banco de Dados 2" title-size="24"
                  title="Triggers e APIs">
           <div class="mermaid" data-id="cover-overview" style="width:500px">
             <pre>
@@ -234,7 +234,7 @@ $$ LANGUAGE plpgsql;
 
           <multi-col style="gap: 30px;">
             <div style="flex: 1;">
-              <code-block style="min-height:600px" lang="sql" data-trim data-line-numbers="1-99|2-6|8-12|15-19|21-29" data-fragment-index="1"><script type="text/plain">
+              <code-block style="min-height:600px" lang="sql" data-trim data-line-numbers="1-99|2-6|8-12|15-19|21-29" data-fragment-index="1"><textarea>
 -- Tabelas
 CREATE TABLE produtos (
   id SERIAL PRIMARY KEY,
@@ -264,7 +264,7 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-</script></code-block>
+</textarea></code-block>
             </div>
             <div style="flex: 1;">
               <ol>
@@ -447,7 +447,7 @@ $$ LANGUAGE plpgsql;
         <section data-auto-animate>
           <h2>Setup: Sistema de Biblioteca</h2>
           <p style="font-size: 0.75em; color: #6272a4;">Copie e execute no psql para criar o schema do exercício</p>
-          <code-block lang="sql" data-trim><script type="text/plain">
+          <code-block lang="sql" data-trim><textarea>
 -- Autores
 CREATE TABLE autores (
   id SERIAL PRIMARY KEY,
@@ -489,7 +489,7 @@ CREATE TABLE log_auditoria (
 INSERT INTO autores (nome) VALUES ('Machado de Assis'), ('Clarice Lispector');
 INSERT INTO livros (titulo, autor_id) VALUES ('Dom Casmurro', 1), ('A Hora da Estrela', 2);
 INSERT INTO membros (nome) VALUES ('Ana'), ('Carlos');
-</script></code-block>
+</textarea></code-block>
           <copy-btn></copy-btn>
         </section>
 

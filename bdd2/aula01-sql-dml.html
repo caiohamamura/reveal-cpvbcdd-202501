@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 01 - SQL: DML</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    :root {
+      --cream: #f6eadc;
+      --navy: #082f6f;
+      --ice: #dbeaf8;
+      --cyan: #8be9fd;
+      --green: #50fa7b;
+      --pink: #ff79c6;
+      --yellow: #f1fa8c;
+      --red: #ff5555;
+      --panel: rgba(40, 42, 54, 0.86);
+      --panel-soft: rgba(68, 71, 90, 0.64);
+    }
+
+    .reveal h2,
+    .reveal h3 {
+      text-transform: none;
+      letter-spacing: -0.02em;
+    }
+
+    .reveal .slides section {
+      text-align: left;
+    }
+
+    .reveal .slides section.centered {
+      text-align: center;
+    }
+
+    .reveal .slides section p {
+      font-size: 0.72em;
+      line-height: 1.35;
+      margin: 6px 0;
+    }
+
+    .reveal .slides section li {
+      font-size: 0.82em;
+      line-height: 1.32;
+      margin: 5px 0;
+    }
+
+    .dml-bg {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(139, 233, 253, 0.16), transparent 28%),
+        radial-gradient(circle at 88% 20%, rgba(255, 121, 198, 0.13), transparent 24%),
+        linear-gradient(135deg, #151925 0%, #282a36 54%, #1f2433 100%);
+    }
+
+    .soft-card {
+      background: var(--panel-soft);
+      border: 1px solid rgba(248, 248, 242, 0.10);
+      border-radius: 18px;
+      padding: 16px 20px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .cream-card {
+      background: var(--cream);
+      color: var(--navy);
+      border-radius: 18px;
+      padding: 16px 20px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+    }
+
+    .cream-card h3,
+    .cream-card p,
+    .cream-card li {
+      color: var(--navy);
+    }
+
+    .note-box {
+      background: rgba(241, 250, 140, 0.14);
+      border-left: 5px solid var(--yellow);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .danger-box {
+      background: rgba(255, 85, 85, 0.16);
+      border-left: 5px solid var(--red);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .ok-box {
+      background: rgba(80, 250, 123, 0.14);
+      border-left: 5px solid var(--green);
+      border-radius: 0 12px 12px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+    }
+
+    .mini-code {
+      color: var(--yellow);
+      background: rgba(40, 42, 54, 0.90);
+      border-radius: 8px;
+      padding: 2px 7px;
+      font-family: monospace;
+      white-space: nowrap;
+    }
+
+    .verb-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .verb-card {
+      background: rgba(219, 234, 248, 0.95);
+      color: var(--navy);
+      border: 2px solid rgba(8, 47, 111, 0.55);
+      border-radius: 18px;
+      padding: 16px 10px;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+    }
+
+    .sql-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.64em;
+      background: rgba(40, 42, 54, 0.72);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .sql-table th {
+      background: rgba(98, 114, 164, 0.65);
+      color: #f8f8f2;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .sql-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(248, 248, 242, 0.10);
+      vertical-align: top;
+    }
+
+    .sql-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .image-frame {
+      background: var(--cream);
+      border-radius: 18px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+    }
+
+    .image-frame img {
+      max-width: 100%;
+      max-height: 500px;
+      border-radius: 10px;
+      margin: 0;
+    }
+
+    .tiny-caption {
+      font-size: 0.52em !important;
+      color: #6272a4;
+      text-align: center;
+      margin-top: 6px !important;
+    }
+
+    .reveal code-block {
+      font-size: 0.82em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="01" curso="Banco de Dados 2" title-size="24"
+                 title="SQL: Data Manipulation Language">
+          <div class="image-frame" style="width: 470px; margin: 12px auto 0; padding: 8px;">
+            <img src="planos/aula01_sql_dml_assets/dml-commands.png" alt="Diagrama dos comandos DML: INSERT, UPDATE, DELETE e SELECT" style="max-height: 235px;" />
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: Contexto -->
+      <section data-auto-animate class="dml-bg">
+        <h2>Contexto</h2>
+        <multi-col style="gap: 22px; align-items: stretch;">
+          <div class="soft-card" style="flex: 1;">
+            <h3 style="color: var(--cyan);">Na aula passada</h3>
+            <ls-u>
+              <li>Conectamos ao banco pelo Visual Studio Code com SQLTools</li>
+              <li>Executamos comandos SQL em um SGBD real</li>
+              <li>Criamos estruturas e inserimos dados iniciais</li>
+            </ls-u>
+          </div>
+          <div class="cream-card" style="flex: 1;">
+            <h3>Hoje</h3>
+            <p>Vamos aprofundar a manipulação de dados: inserir, atualizar, remover e consultar registros com segurança.</p>
+            <p><strong>Meta:</strong> sair do “rodei um comando” para “sei o efeito do comando”.</p>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- ============================================================
+         FASE 1: MAPA DA LINGUAGEM
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--pink);">Fase 1: DDL ou DML?</h2>
+          <p style="color: #bd93f9;">SQL é uma linguagem declarativa: você descreve o que quer, e o SGBD decide como executar.</p>
+          <multi-col style="gap: 22px;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--cyan);">DDL</h3>
+              <p><strong>Data Definition Language</strong></p>
+              <ls-u>
+                <li>Define bancos, tabelas, campos e restrições</li>
+                <li>Exemplos: <span class="mini-code">CREATE TABLE</span>, <span class="mini-code">ALTER TABLE</span></li>
+              </ls-u>
+            </div>
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--green);">DML</h3>
+              <p><strong>Data Manipulation Language</strong></p>
+              <ls-u>
+                <li>Manipula os registros existentes nas tabelas</li>
+                <li>É o famoso CRUD do banco relacional</li>
+              </ls-u>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
+          <h2 style="color: var(--navy);">Os comandos para manipular dados</h2>
+          <div class="image-frame">
+            <img src="planos/aula01_sql_dml_assets/dml-commands.png" alt="Mapa dos comandos DML" />
+          </div>
+          <div class="verb-grid">
+            <div class="verb-card fragment">INSERT</div>
+            <div class="verb-card fragment">UPDATE</div>
+            <div class="verb-card fragment">DELETE</div>
+            <div class="verb-card fragment">SELECT</div>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>CRUD em SQL</h2>
+          <table class="sql-table">
+            <thead>
+              <tr><th>Operação</th><th>Verbo SQL</th><th>Pergunta prática</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Create</td><td><span class="mini-code">INSERT</span></td><td>Como adiciono novos registros?</td></tr>
+              <tr><td>Read</td><td><span class="mini-code">SELECT</span></td><td>Como recupero dados?</td></tr>
+              <tr><td>Update</td><td><span class="mini-code">UPDATE</span></td><td>Como corrijo ou recalculo valores?</td></tr>
+              <tr><td>Delete</td><td><span class="mini-code">DELETE</span></td><td>Como removo registros sem quebrar relações?</td></tr>
+            </tbody>
+          </table>
+          <div class="note-box fragment">
+            <p><strong>Ideia da aula:</strong> DML muda ou lê o estado da tabela. O risco quase sempre está no escopo: quais linhas serão afetadas?</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+         FASE 2: INSERT
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--green);">Fase 2: INSERT</h2>
+          <p>O <span class="mini-code">INSERT</span> adiciona linhas novas em uma tabela.</p>
+          <code-block lang="sql" data-trim><textarea>
+INSERT INTO nome_tabela (coluna1, coluna2, ...)
+VALUES (valor1, 'valor_textual', ...);
+          </textarea></code-block>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>Inserindo vários registros</h2>
+          <p>Quando várias linhas têm a mesma estrutura, podemos inserir tudo em um comando.</p>
+          <code-block lang="sql" data-trim><textarea>
+INSERT INTO produto (nome, categoria, preco)
+VALUES
+  ('Mouse', 'Eletrônicos', 60.00),
+  ('Teclado', 'Eletrônicos', 120.00),
+  ('Caderno', 'Papelaria', 18.50);
+          </textarea></code-block>
+          <div class="ok-box fragment">
+            <p><strong>Boa prática:</strong> informe explicitamente as colunas. Isso deixa o comando legível e menos dependente da ordem física da tabela.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>Valores automáticos</h2>
+          <multi-col style="gap: 18px;">
+            <div style="flex: 1.1;">
+              <code-block lang="sql" data-trim><textarea>
+CREATE TABLE usuario (
+  id SERIAL PRIMARY KEY,
+  nome VARCHAR(80),
+  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO usuario (nome)
+VALUES ('Caio'), ('Outro');
+              </textarea></code-block>
+            </div>
+            <div class="soft-card fragment" style="flex: 0.9;">
+              <h3 style="color: var(--yellow);">O banco completa</h3>
+              <ls-u>
+                <li><span class="mini-code">id</span> vem da sequência</li>
+                <li><span class="mini-code">data_criacao</span> vem do valor padrão</li>
+                <li>A aplicação envia só o que precisa informar</li>
+              </ls-u>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>Cuidado ao restaurar dados</h2>
+          <p>Valores automáticos são ótimos para a aplicação, mas podem atrapalhar restauração manual.</p>
+          <multi-col style="gap: 18px;">
+            <div class="danger-box" style="flex: 1;">
+              <p><strong>Risco:</strong> executar duas vezes um <span class="mini-code">INSERT</span> sem informar o ID pode duplicar dados sem perceber.</p>
+            </div>
+            <div style="flex: 1.2;">
+              <code-block lang="sql" data-trim><textarea>
+INSERT INTO usuario (id, nome)
+VALUES
+  (1, 'Caio'),
+  (2, 'Outro');
+              </textarea></code-block>
+            </div>
+          </multi-col>
+          <div class="ok-box fragment">
+            <p>Ao informar a chave primária, a segunda execução falha por ID duplicado. Nesse caso, o erro protege a consistência.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: UPDATE E WHERE
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--cyan);">Fase 3: UPDATE</h2>
+          <p>O <span class="mini-code">UPDATE</span> altera valores em linhas existentes.</p>
+          <code-block lang="sql" data-trim><textarea>
+UPDATE nome_tabela
+SET coluna1 = valor1,
+    coluna2 = valor2
+WHERE condicao;
+          </textarea></code-block>
+          <div class="danger-box fragment">
+            <p><strong>Pergunta obrigatória:</strong> quais linhas esta condição seleciona?</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>E se não tiver WHERE?</h2>
+          <multi-col style="gap: 20px; align-items: stretch;">
+            <div style="flex: 1;">
+              <code-block lang="sql" data-trim><textarea>
+UPDATE produto
+SET preco = preco * 1.1;
+              </textarea></code-block>
+            </div>
+            <div class="danger-box fragment" style="flex: 1;">
+              <h3>ATUALIZA TUDO</h3>
+              <p>Sem <span class="mini-code">WHERE</span>, o comando vale para todas as linhas da tabela.</p>
+              <p>Em produção, isso costuma virar incidente.</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>Quando atualizar várias linhas?</h2>
+          <p>Nem todo <span class="mini-code">UPDATE</span> precisa afetar apenas uma linha. O importante é a regra ser intencional.</p>
+          <code-block lang="sql" data-trim><textarea>
+UPDATE produto
+SET preco = preco * 1.1
+WHERE categoria = 'Eletrônicos';
+          </textarea></code-block>
+          <div class="ok-box fragment">
+            <p>Aumenta em 10% o preço de todos os produtos da categoria <strong>Eletrônicos</strong>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>Usando campos nas operações</h2>
+          <p>Dentro do contexto da tabela, você pode usar os próprios campos para calcular novos valores.</p>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1.1;">
+              <code-block lang="sql" data-trim><textarea>
+UPDATE produto
+SET preco = preco * 1.1
+WHERE categoria = 'Eletrônicos';
+              </textarea></code-block>
+            </div>
+            <div class="soft-card" style="flex: 0.9;">
+              <ls-u>
+                <li><span class="mini-code">preco</span> à direita: valor antigo</li>
+                <li><span class="mini-code">preco</span> à esquerda: valor novo</li>
+                <li>A expressão roda linha por linha</li>
+              </ls-u>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
+          <h2 style="color: var(--navy);">WHERE: operadores condicionais</h2>
+          <div class="image-frame">
+            <img src="planos/aula01_sql_dml_assets/where-operadores-comparacao.png" alt="Tabela de operadores condicionais SQL" />
+          </div>
+          <p class="tiny-caption">Use operadores para transformar uma intenção em uma condição precisa.</p>
+        </section>
+
+        <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
+          <h2 style="color: var(--navy);">WHERE: operadores booleanos</h2>
+          <div class="image-frame">
+            <img src="planos/aula01_sql_dml_assets/where-operadores-booleanos.png" alt="Tabela de operadores booleanos SQL" />
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>Checklist antes de executar UPDATE</h2>
+          <div class="soft-card">
+            <ls-u>
+              <li>Rode um <span class="mini-code">SELECT</span> com o mesmo <span class="mini-code">WHERE</span></li>
+              <li>Confira quantas linhas serão afetadas</li>
+              <li>Confirme se a expressão usa os campos corretos</li>
+              <li>Em dados importantes: transação antes, commit depois</li>
+            </ls-u>
+          </div>
+          <code-block lang="sql" data-trim class="fragment"><textarea>
+SELECT id, nome, preco
+FROM produto
+WHERE categoria = 'Eletrônicos';
+          </textarea></code-block>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+         FASE 4: DELETE E CHAVES ESTRANGEIRAS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--red);">Fase 4: DELETE</h2>
+          <p>O <span class="mini-code">DELETE</span> remove registros da tabela.</p>
+          <code-block lang="sql" data-trim><textarea>
+DELETE FROM nome_tabela
+WHERE condicao;
+          </textarea></code-block>
+          <div class="danger-box fragment">
+            <p>Se o <span class="mini-code">WHERE</span> for omitido, todos os registros da tabela serão removidos.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>DELETE não é TRUNCATE</h2>
+          <table class="sql-table">
+            <thead>
+              <tr><th>Comando</th><th>Uso típico</th><th>Cuidado</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="mini-code">DELETE</span></td><td>Remove linhas selecionadas</td><td>Depende de condição; pode esbarrar em FK</td></tr>
+              <tr><td><span class="mini-code">TRUNCATE</span></td><td>Esvazia a tabela inteira rapidamente</td><td>É uma decisão de administração de dados</td></tr>
+            </tbody>
+          </table>
+          <div class="note-box fragment">
+            <p>Na aula de DML, o foco é remover linhas com critério e entender o efeito sobre as relações.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
+          <h2 style="color: var(--navy);">Exemplo: usuários e posts</h2>
+          <multi-col style="gap: 16px;">
+            <div class="image-frame" style="flex: 1.1;">
+              <img src="planos/aula01_sql_dml_assets/tabela-usuarios.png" alt="Tabela de usuários com heróis" />
+            </div>
+            <div class="image-frame" style="flex: 0.95;">
+              <img src="planos/aula01_sql_dml_assets/tabela-posts.png" alt="Tabela de posts referenciando usuários" />
+            </div>
+          </multi-col>
+          <p class="tiny-caption">A coluna <span class="mini-code">posts.id_usuario</span> aponta para um usuário.</p>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>O problema da FK</h2>
+          <multi-col style="gap: 20px;">
+            <div style="flex: 1;">
+              <code-block lang="sql" data-trim><textarea>
+DELETE FROM usuario
+WHERE id_usuario = 2;
+              </textarea></code-block>
+            </div>
+            <div class="danger-box" style="flex: 1;">
+              <h3>Por que pode falhar?</h3>
+              <p>Se houver posts apontando para esse usuário, o banco protege a integridade referencial.</p>
+              <p>Ele impede que um registro filho fique “órfão”.</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>ON DELETE CASCADE: solução com cuidado</h2>
+          <p>Uma FK pode ser criada para apagar automaticamente os registros dependentes.</p>
+          <code-block lang="sql" data-trim><textarea>
+CREATE TABLE posts (
+  id SERIAL PRIMARY KEY,
+  usuario_id INT REFERENCES usuario(id) ON DELETE CASCADE,
+  conteudo TEXT NOT NULL,
+  data_postagem TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+          </textarea></code-block>
+          <div class="danger-box fragment">
+            <p><strong>Cuidado:</strong> cascade transforma um delete pequeno em vários deletes automáticos.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+         FASE 5: SELECT
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2 style="color: var(--yellow);">Fase 5: SELECT</h2>
+          <p>O <span class="mini-code">SELECT</span> recupera dados de uma ou mais tabelas.</p>
+          <code-block lang="sql" data-trim><textarea>
+SELECT coluna1, coluna2
+FROM nome_tabela
+WHERE condicao
+ORDER BY coluna1 ASC;
+          </textarea></code-block>
+          <div class="ok-box fragment">
+            <p>Antes de alterar ou apagar, use <span class="mini-code">SELECT</span> para enxergar o conjunto de linhas que você está selecionando.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>SELECT como ferramenta de segurança</h2>
+          <multi-col style="gap: 18px;">
+            <div class="soft-card" style="flex: 1;">
+              <h3 style="color: var(--red);">Antes do DELETE</h3>
+              <code-block lang="sql" data-trim><textarea>
+SELECT *
+FROM usuario
+WHERE id_usuario = 2;
+              </textarea></code-block>
+            </div>
+            <div class="soft-card fragment" style="flex: 1;">
+              <h3 style="color: var(--cyan);">Antes do UPDATE</h3>
+              <code-block lang="sql" data-trim><textarea>
+SELECT id, nome, preco
+FROM produto
+WHERE categoria = 'Eletrônicos';
+              </textarea></code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate class="dml-bg">
+          <h2>O que vem depois?</h2>
+          <table class="sql-table">
+            <thead>
+              <tr><th>Recurso</th><th>Para que serve</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="mini-code">ORDER BY</span></td><td>Ordenar resultados</td></tr>
+              <tr><td><span class="mini-code">GROUP BY</span></td><td>Agrupar linhas e resumir dados</td></tr>
+              <tr><td><span class="mini-code">COUNT, SUM, AVG</span></td><td>Calcular agregações</td></tr>
+              <tr><td><span class="mini-code">HAVING</span></td><td>Filtrar grupos</td></tr>
+              <tr><td><span class="mini-code">UNION</span></td><td>Combinar resultados</td></tr>
+              <tr><td><span class="mini-code">LIMIT</span></td><td>Restringir quantidade de linhas</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- SLIDE: Fechamento -->
+      <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)" class="centered">
+        <h2 style="color: var(--navy);">DML: manipular dados com intenção</h2>
+        <div class="verb-grid">
+          <div class="verb-card">INSERT</div>
+          <div class="verb-card">UPDATE</div>
+          <div class="verb-card">DELETE</div>
+          <div class="verb-card">SELECT</div>
+        </div>
+        <div class="cream-card fragment" style="margin-top: 28px;">
+          <p><strong>Regra de ouro:</strong> antes de alterar ou apagar, use um SELECT para confirmar quais linhas serão afetadas.</p>
+        </div>
+        <p style="color: var(--navy); margin-top: 26px;">Prof. Caio Hamamura</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

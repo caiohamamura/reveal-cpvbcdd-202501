@@ -128,12 +128,46 @@ Do NOT wait for the user to ask. Be proactive. Load the `reflect-and-learn` skil
 
 ## Skills
 
-Four opencode skills are available:
+Five opencode skills are available:
 
 1. **create-slides** — Generate new Reveal.js slide files (load for detailed patterns and gotchas)
 2. **search-images** — Find images via web search + deterministic extraction
 3. **run-notebook** — Execute Jupyter notebooks and extract images
 4. **reflect-and-learn** — Post-task reflection protocol for capturing and persisting learned patterns
+5. **validate-slides** — Run deterministic static validation for slide decks (HTML parse, Chinese characters, local refs, image alt text)
+
+## Google Drive Access (gogcli)
+
+`gog` (from `gogcli` package) is installed at `/home/linuxbrew/.linuxbrew/opt/gogcli/bin/gog`.
+
+```bash
+GOG_KEYRING_PASSWORD=x /home/linuxbrew/.linuxbrew/opt/gogcli/bin/gog <command>
+```
+
+**Key gotchas:**
+- Binary is named `gog`, not `gogcli`
+- `/home/homebrew` does not exist; use `/home/linuxbrew/.linuxbrew/`
+- Keyring password is `x` (from `.bashrc`), but stored tokens may be corrupted — re-auth if "integrity check failed"
+- `gog search` does NOT support `--query`; use `gog ls --parent <folder-id>` to list folder contents
+- Folder names are case-sensitive in Drive
+
+**Auth flow (when tokens are corrupted):**
+```bash
+# Step 1: print auth URL
+GOG_KEYRING_PASSWORD=x gog auth add <email> --remote --step 1 --services drive
+
+# Step 2: paste redirect URL from browser
+GOG_KEYRING_PASSWORD=x gog auth add <email> --remote --step 2 --auth-url '<redirect-url>' --services drive
+```
+
+**Navigate Drive folders:**
+```bash
+# Find folder by name
+gog search "foldername" -a <email> -j
+
+# List folder contents by ID
+gog ls -a <email> -j --parent <folder-id> --max 100
+```
 
 ## Reference Documentation
 
