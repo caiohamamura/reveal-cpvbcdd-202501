@@ -202,15 +202,42 @@ curtidas(usuario_id, post_id)
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 3: Instalação com Docker</h2>
-          <p style="color: #6272a4;">Para a aula, Docker reduz problemas específicos de sistema operacional.</p>
+          <h2 style="color: #8be9fd;">Fase 3: Instalação</h2>
+          <p style="color: #6272a4;">Vamos usar o <strong>Neo4j Desktop</strong> como caminho padrão para subir um banco local.</p>
           <div class="green-box">
             <p>Vamos usar o navegador em <span class="mini-code">http://localhost:7474</span> e escrever consultas em Cypher.</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Subir o Neo4J</h2>
+          <h2>Subir o Neo4j Desktop</h2>
+          <ol style="text-align:left; color:#f8f8f2; font-size:0.9em; line-height:1.55;">
+            <li>Baixe e instale o <strong>Neo4j Desktop</strong> no computador.</li>
+            <li>Crie um novo <strong>Local DBMS</strong>.</li>
+            <li>Defina a senha inicial como <span class="mini-code">senhabdd2</span>.</li>
+            <li>Inicie o banco e abra o <strong>Neo4j Browser</strong>.</li>
+            <li>Acesse <span class="mini-code">http://localhost:7474</span> e autentique com o usuário <span class="mini-code">neo4j</span>.</li>
+          </ol>
+          <div class="info-box">
+            <p>Esse é o caminho padrão da aula: interface gráfica, banco local e acesso direto ao Browser.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Resetar o ambiente</h2>
+          <ol style="text-align:left; color:#f8f8f2; font-size:0.9em; line-height:1.55;">
+            <li>Feche o banco no Neo4j Desktop.</li>
+            <li>Apague o <strong>Local DBMS</strong> criado para a aula.</li>
+            <li>Se quiser recomeçar do zero, crie outro DBMS com a mesma senha.</li>
+          </ol>
+          <div class="yellow-box">
+            <p>Opções alternativas: <strong>Docker</strong>, <strong>Neo4j Aura Free</strong> ou <strong>Neo4j Sandbox</strong>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Alternativa com Docker</h2>
+          <p style="color: #6272a4;">Se você preferir containers, o mesmo exercício também funciona com Docker.</p>
           <code-block lang="bash" data-trim><textarea>
 docker run \
   --name neo4j-bdd2 \
@@ -221,20 +248,6 @@ docker run \
   -v neo4j_bdd2_data:/data \
   neo4j:2026.04.0
 </textarea></code-block>
-          <div class="info-box">
-            <p>Usuário: <span class="mini-code">neo4j</span> · senha: <span class="mini-code">senhabdd2</span></p>
-          </div>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Resetar o ambiente</h2>
-          <code-block lang="bash" data-trim><textarea>
-docker rm -f neo4j-bdd2
-docker volume rm neo4j_bdd2_data
-</textarea></code-block>
-          <div class="yellow-box">
-            <p>Se o laboratório não tiver Docker, use Neo4J Aura Free, Neo4J Sandbox ou uma máquina projetada pelo professor.</p>
-          </div>
         </section>
 
       </section><!-- fim Fase 3 -->
