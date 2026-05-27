@@ -416,6 +416,7 @@ Technical details:
 - Use `<textarea>` inside `<code-block>` only when the code actually contains `<` or `>` that would be parsed as HTML, such as `#include <Arduino.h>`.
 - In Python examples that index a SciPy sparse matrix with a pandas boolean mask, convert the mask first: `X[mask.to_numpy()]`. Recent pandas/scipy combinations can fail on `X[mask]`.
 - For SQL/Cypher/Mongo examples that show a result table, include enough seed data earlier in the deck so the query actually returns the displayed rows.
+- Do not use one of the student task options as the fully worked example in the same lesson; choose a separate domain so the example does not solve a proposed activity.
 
 #### Converting Google Slides with gogcli
 - If `gog slides list-slides/read-slide` fails with `403 accessNotConfigured`, enable Google Slides API for the OAuth project shown in the error URL, then retry after propagation.
