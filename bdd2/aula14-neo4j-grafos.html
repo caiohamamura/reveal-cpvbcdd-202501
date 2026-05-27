@@ -80,12 +80,12 @@
       </section>
 
       <!-- ============================================================
-         FASE 1: MOTIVAÇÃO
+         Parte 1: MOTIVAÇÃO
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Fase 1: De onde vêm as recomendações?</h2>
+          <h2 style="color: #ff79c6;">Parte 1: De onde vêm as recomendações?</h2>
           <p style="color: #6272a4;">Instagram, TikTok, YouTube, Spotify e jogos não olham só para registros isolados.</p>
           <div class="yellow-box">
             <p><strong>Ideia central:</strong> muitas perguntas importantes são sobre conexões entre pessoas, conteúdos, temas, produtos e ações.</p>
@@ -129,15 +129,15 @@ curtidas(usuario_id, post_id)
           </div>
         </section>
 
-      </section><!-- fim Fase 1 -->
+      </section><!-- fim Parte 1 -->
 
       <!-- ============================================================
-         FASE 2: MODELO DE GRAFOS
+         Parte 2: MODELO DE GRAFOS
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 2: O que é um grafo?</h2>
+          <h2 style="color: #8be9fd;">Parte 2: O que é um grafo?</h2>
           <table class="comparison-table">
             <thead>
               <tr><th>Conceito</th><th>No Neo4J</th><th>Exemplo</th></tr>
@@ -200,24 +200,26 @@ curtidas(usuario_id, post_id)
           </div>
         </section>
 
-      </section><!-- fim Fase 2 -->
+      </section><!-- fim Parte 2 -->
 
       <!-- ============================================================
-         FASE 3: INSTALAÇÃO
+         Parte 3: INSTALAÇÃO
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 3: Instalação</h2>
+          <h2 style="color: #8be9fd;">Parte 3: Instalação</h2>
           <p style="color: #6272a4;">Vamos usar o <strong>Neo4j Desktop</strong> como caminho padrão para subir um banco local.</p>
           <div class="green-box">
+            <p>Cypher é o nome da linguagem de consulta do Neo4j.</p>
             <p>Vamos usar o navegador em <span class="mini-code">http://localhost:7474</span> e escrever consultas em Cypher.</p>
           </div>
-          <img
+          <div class="fragment center"><img 
             src="aula14/neo_cypher.png"
             alt="Piada interna relacionando Neo, personagem de Matrix, e Cypher como linguagem de consulta do Neo4j"
             style="max-width:520px; max-height:280px; width:100%; object-fit:contain; margin-top:12px;"
           />
+          </div>
         </section>
 
         <section data-auto-animate>
@@ -287,15 +289,15 @@ docker run \
 </textarea></code-block>
         </section>
 
-      </section><!-- fim Fase 3 -->
+      </section><!-- fim Parte 3 -->
 
       <!-- ============================================================
-         FASE 4: PRIMEIRO GRAFO SOCIAL
+         Parte 4: PRIMEIRO GRAFO SOCIAL
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Fase 4: Primeiro grafo social</h2>
+          <h2 style="color: #50fa7b;">Parte 4: Primeiro grafo social</h2>
           <p style="color: #6272a4;">Vamos criar pessoas, posts, relações de seguir e relações de curtida.</p>
           <img
             src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
@@ -386,15 +388,15 @@ RETURN post.texto, post.tema;
           </div>
         </section>
 
-      </section><!-- fim Fase 4 -->
+      </section><!-- fim Parte 4 -->
 
       <!-- ============================================================
-         FASE 5: RECOMENDAÇÃO DE PESSOAS
+         Parte 5: RECOMENDAÇÃO DE PESSOAS
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Fase 5: Sugestão de pessoas</h2>
+          <h2 style="color: #ff79c6;">Parte 5: Sugestão de pessoas</h2>
           <p style="color: #6272a4;">Problema: sugerir pessoas que Ana talvez conheça.</p>
           <img
             src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
@@ -473,15 +475,15 @@ REMOVE p:Origem, p:Intermediario, p:Sugestao;
 <p>O set, configura o label de um nó no banco de dados de forma persistente! Precisamos limpar depois.</p>
         </section>
 
-      </section><!-- fim Fase 5 -->
+      </section><!-- fim Parte 5 -->
 
       <!-- ============================================================
-         FASE 6: RECOMENDAÇÃO DE CONTEÚDO
+         Parte 6: RECOMENDAÇÃO DE CONTEÚDO
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Fase 6: Recomendação de conteúdo</h2>
+          <h2 style="color: #50fa7b;">Parte 6: Recomendação de conteúdo</h2>
           <p style="color: #6272a4;">Agora a pergunta muda: quais posts Ana poderia gostar?</p>
           <table class="comparison-table">
             <thead>
@@ -547,15 +549,15 @@ RETURN recomendado.texto AS post_recomendado,
           </div>
         </section>
 
-      </section><!-- fim Fase 6 -->
+      </section><!-- fim Parte 6 -->
 
       <!-- ============================================================
-         FASE 7: CAMINHOS
+         Parte 7: CAMINHOS
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 7: Caminhos e graus de separação</h2>
+          <h2 style="color: #8be9fd;">Parte 7: Caminhos e graus de separação</h2>
           <p style="color: #6272a4;">Outra força de grafos é responder perguntas sobre caminhos.</p>
           <div class="info-box">
             <p>Quantas conexões existem entre Ana e Elisa?</p>
@@ -599,15 +601,15 @@ RETURN path, length(path) AS saltos;
           </multi-col>
         </section>
 
-      </section><!-- fim Fase 7 -->
+      </section><!-- fim Parte 7 -->
 
       <!-- ============================================================
-         FASE 8: MODELAGEM
+         Parte 8: MODELAGEM
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Fase 8: Atividade de modelagem</h2>
+          <h2 style="color: #ff79c6;">Parte 8: Atividade de modelagem</h2>
           <p style="color: #6272a4;">Em grupos, escolham um cenário e modelem um grafo.</p>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
@@ -654,15 +656,15 @@ RETURN f.tipo AS falha,
           </multi-col>
         </section>
 
-      </section><!-- fim Fase 8 -->
+      </section><!-- fim Parte 8 -->
 
       <!-- ============================================================
-         FASE 9: COMPARAÇÃO FINAL
+         Parte 9: COMPARAÇÃO FINAL
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 9: Quando usar Neo4J?</h2>
+          <h2 style="color: #8be9fd;">Parte 9: Quando usar Neo4J?</h2>
           <table class="comparison-table">
             <thead>
               <tr><th>Pergunta</th><th>Relacional</th><th>Grafo</th></tr>
@@ -689,7 +691,7 @@ RETURN f.tipo AS falha,
           </ls-u>
         </section>
 
-      </section><!-- fim Fase 9 -->
+      </section><!-- fim Parte 9 -->
 
       <!-- SLIDE: Exercício Final -->
       <section data-auto-animate>
