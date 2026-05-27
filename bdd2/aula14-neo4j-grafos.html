@@ -36,6 +36,12 @@
     .reveal .slides section p { font-size: 0.72em; line-height: 1.35; margin: 4px 0; }
     .reveal .slides section code-block { font-size: 0.82em; overflow-x: auto; max-width: 100%; }
     .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
+    .qr { background: rgba(40,42,54,0.95); border:1px solid #6272a4; border-radius:6px; padding:5px 10px; margin:5px 0; font-family:monospace; font-size:0.55em; }
+    .qr th { color:#8be9fd; border-bottom:1px solid #6272a4; padding:1px 8px; text-align:left; font-weight:bold; }
+    .qr td { padding:1px 8px; border-bottom:1px solid rgba(98,114,164,0.2); }
+    .qr tr:last-child td { border-bottom:none; }
+    .qr-label { color:#f1fa8c; font-size:0.7em; margin-bottom:2px; }
+    .qr-path { color:#50fa7b; font-size:0.75em; }
   </style>
 </head>
 
@@ -328,6 +334,17 @@ CREATE
 MATCH (p:Pessoa)
 RETURN p;
 </textarea></code-block>
+              <div class="qr">
+                <div class="qr-label">&#9654; Resultado:</div>
+                <table style="width:100%;border-collapse:collapse;">
+                  <tr><th>p</th></tr>
+                  <tr><td>(:Pessoa {nome: 'Ana', turma: '2INFO'})</td></tr>
+                  <tr><td>(:Pessoa {nome: 'Bruno', turma: '2INFO'})</td></tr>
+                  <tr><td>(:Pessoa {nome: 'Carla', turma: '2INFO'})</td></tr>
+                  <tr><td>(:Pessoa {nome: 'Diego', turma: '3INFO'})</td></tr>
+                  <tr><td>(:Pessoa {nome: 'Elisa', turma: '3INFO'})</td></tr>
+                </table>
+              </div>
             </div>
             <div style="flex: 1;">
               <h3>Quem segue quem</h3>
@@ -335,6 +352,17 @@ RETURN p;
 MATCH (p:Pessoa)-[:SEGUE]->(outro:Pessoa)
 RETURN p.nome, outro.nome;
 </textarea></code-block>
+              <div class="qr">
+                <div class="qr-label">&#9654; Resultado:</div>
+                <table style="width:100%;border-collapse:collapse;">
+                  <tr><th>p.nome</th><th>outro.nome</th></tr>
+                  <tr><td>Ana</td><td>Bruno</td></tr>
+                  <tr><td>Ana</td><td>Diego</td></tr>
+                  <tr><td>Bruno</td><td>Carla</td></tr>
+                  <tr><td>Diego</td><td>Carla</td></tr>
+                  <tr><td>Carla</td><td>Elisa</td></tr>
+                </table>
+              </div>
             </div>
           </multi-col>
           <div class="green-box fragment">
@@ -348,6 +376,14 @@ RETURN p.nome, outro.nome;
 MATCH (p:Pessoa {nome: 'Ana'})-[:CURTIU]->(post:Post)
 RETURN post.texto, post.tema;
 </textarea></code-block>
+          <div class="qr">
+            <div class="qr-label">&#9654; Resultado:</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><th>post.texto</th><th>post.tema</th></tr>
+              <tr><td>Aprendendo banco de dados grafos</td><td>banco de dados</td></tr>
+              <tr><td>Dicas de Python para iniciantes</td><td>programacao</td></tr>
+            </table>
+          </div>
           <div class="info-box">
             <p><span class="mini-code">p</span> é variável · <span class="mini-code">Pessoa</span> é label · <span class="mini-code">nome</span> é propriedade · <span class="mini-code">CURTIU</span> é relacionamento · <span class="mini-code">-&gt;</span> é direção.</p>
           </div>
@@ -378,6 +414,13 @@ WHERE NOT (ana)-[:SEGUE]->(sugestao)
   AND ana <> sugestao
 RETURN sugestao.nome AS sugestao;
 </textarea></code-block>
+          <div class="qr">
+            <div class="qr-label">&#9654; Resultado:</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><th>sugestao</th></tr>
+              <tr><td>Carla</td></tr>
+            </table>
+          </div>
           <div class="yellow-box fragment">
             <p>A consulta procura alguém a dois passos de Ana e remove quem ela já segue.</p>
           </div>
@@ -393,6 +436,13 @@ RETURN sugestao.nome AS sugestao,
        count(intermediario) AS conexoes_em_comum
 ORDER BY conexoes_em_comum DESC;
 </textarea></code-block>
+          <div class="qr">
+            <div class="qr-label">&#9654; Resultado:</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><th>sugestao</th><th>conexoes_em_comum</th></tr>
+              <tr><td>Carla</td><td>2</td></tr>
+            </table>
+          </div>
           <div class="green-box">
             <p>Este é o primeiro momento “recomendação”: a sugestão aparece porque existe um padrão de relações no grafo.</p>
           </div>
@@ -430,6 +480,13 @@ RETURN recomendado.texto AS post_recomendado,
        count(parecido) AS usuarios_parecidos
 ORDER BY usuarios_parecidos DESC;
 </textarea></code-block>
+          <div class="qr">
+            <div class="qr-label">&#9654; Resultado:</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><th>post_recomendado</th><th>tema</th><th>usuarios_parecidos</th></tr>
+              <tr><td>Como estudar para prova de redes</td><td>redes</td><td>2</td></tr>
+            </table>
+          </div>
         </section>
 
         <section data-auto-animate>
@@ -453,6 +510,10 @@ WHERE recomendado.tema IN temas
 RETURN recomendado.texto AS post_recomendado,
        recomendado.tema AS tema;
 </textarea></code-block>
+          <div class="qr">
+            <div class="qr-label">&#9654; Resultado:</div>
+            <p style="color:#6272a4;margin:2px 0;">(nenhum resultado — nenhum post novo com temas que Ana já curtiu)</p>
+          </div>
           <div class="purple-box fragment">
             <p>Aqui a recomendação não depende de usuários parecidos: depende do tema dos posts que Ana já curtiu.</p>
           </div>
@@ -481,6 +542,10 @@ MATCH path = shortestPath(
 )
 RETURN path;
 </textarea></code-block>
+          <div class="qr">
+            <div class="qr-label">&#9654; Resultado:</div>
+            <p class="qr-path">Ana &rarr; Bruno &rarr; Carla &rarr; Elisa &nbsp;(3 saltos)</p>
+          </div>
           <div class="green-box">
             <p>O <span class="mini-code">*</span> indica um caminho com quantidade variável de relações <span class="mini-code">SEGUE</span>.</p>
           </div>
