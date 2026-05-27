@@ -59,12 +59,18 @@
       <!-- SLIDE: Revisão -->
       <section data-auto-animate>
         <h2>Revisão: Aula Passada</h2>
-        <ls-u>
+        <ul>
           <li>Redis mostrou NoSQL como estruturas rápidas em memória</li>
           <li>MongoDB mostrou documentos como modelo principal</li>
           <li>Hoje: NoSQL quando as relações são o centro do problema</li>
-          <li>Pergunta-guia: como uma plataforma recomenda pessoas, posts ou vídeos?</li>
-        </ls-u>
+        </ul>
+        <div class="fragment" data-fragment-index="1" style="">
+          <highlight-box instant style="font-size:0.8em;width:100%;">Pergunta-guia: como uma plataforma recomenda pessoas, posts ou vídeos?</highlight-box>
+          <div style="min-width:300px; display:flex; justify-content:space-around; align-items:center;">
+            <img src="https://i.imgur.com/2ZkQEdB.png" alt="" srcset="" width="300">
+            <img src="https://i.imgur.com/v3ZGaYG.png" alt="" srcset="" width="300">
+          </div>
+        </div>
       </section>
 
       <!-- ============================================================
@@ -82,25 +88,23 @@
 
         <section data-auto-animate>
           <h2>Uma pergunta simples</h2>
-          <multi-col style="gap:15px">
             <div style="flex: 1;">
               <div class="graph-card">
                 <p><span class="pill">fato 1</span> Ana segue Bruno</p>
                 <p><span class="pill">fato 2</span> Bruno segue Carla</p>
                 <p><span class="pill">fato 3</span> Ana ainda não segue Carla</p>
               </div>
-              <div class="purple-box fragment">
+              <div class="purple-box">
                 <p>O aplicativo deveria sugerir Carla para Ana?</p>
               </div>
             </div>
-            <div style="flex: 1;">
+          <div style="flex: 1;">
               <img
                 src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
                 alt="Grafo de recomendações em Neo4j com destaque para Ana, Bruno e Carla"
-                style="width:100%; max-width:540px; display:block; margin:0 auto; object-fit:contain;"
+                style="width:100%; display:block; margin:0 auto; object-fit:contain;"
               />
             </div>
-          </multi-col>
         </section>
 
         <section data-auto-animate>
@@ -134,7 +138,7 @@ curtidas(usuario_id, post_id)
             </thead>
             <tbody>
               <tr><td>Nó</td><td>Entidade</td><td><span class="mini-code">(:Pessoa {nome: 'Ana'})</span></td></tr>
-              <tr><td>Relacionamento</td><td>Conexão direcionada</td><td><span class="mini-code">[:SEGUE]</span>, <span class="mini-code">[:CURTIU]</span></td></tr>
+              <tr><td>Aresta</td><td>Relacionamento</td><td><span class="mini-code">[:SEGUE]</span>, <span class="mini-code">[:CURTIU]</span></td></tr>
               <tr><td>Propriedade</td><td>Dado dentro de nó ou relação</td><td><span class="mini-code">turma</span>, <span class="mini-code">tema</span>, <span class="mini-code">peso</span></td></tr>
               <tr><td>Padrão</td><td>Caminho que queremos encontrar</td><td><span class="mini-code">(a)-[:SEGUE]->(b)</span></td></tr>
             </tbody>
