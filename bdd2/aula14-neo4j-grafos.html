@@ -563,7 +563,7 @@ RETURN recomendado.texto AS post_recomendado,
 MATCH path = shortestPath(
   (:Pessoa {nome: 'Ana'})-[:SEGUE*]-(:Pessoa {nome: 'Elisa'})
 )
-RETURN path;
+RETURN path, length(path) AS saltos;
 </textarea></code-block>
           <div class="qr">
             <div class="qr-label">&#9654; Resultado:</div>
@@ -628,22 +628,22 @@ RETURN path;
         </section>
 
         <section data-auto-animate>
-          <h2>Exemplo: sistema acadêmico</h2>
+          <h2>Exemplo: manutenção industrial</h2>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
               <div class="graph-card">
-                <p><strong>Nós:</strong> Aluno, Disciplina, Assunto</p>
-                <p><strong>Relações:</strong> CURSA, ENSINA, TEM_DIFICULDADE_EM, PRE_REQUISITO_DE</p>
+                <p><strong>Nós:</strong> Máquina, Sensor, Falha, Peça</p>
+                <p><strong>Relações:</strong> TEM_SENSOR, REGISTROU, INDICA, DEPENDE_DE</p>
               </div>
               <div class="yellow-box">
-                <p>Que assuntos Ana deveria revisar antes de estudar um novo assunto?</p>
+                <p>Que peça deve ser inspecionada quando uma máquina registra um padrão de falha?</p>
               </div>
             </div>
             <div style="flex: 1;">
               <code-block lang="cypher" data-trim><textarea>
-MATCH (:Aluno {nome: 'Ana'})-[:TEM_DIFICULDADE_EM]->(a:Assunto)-[:PRE_REQUISITO_DE]->(novo:Assunto)
-RETURN novo.nome AS assunto_novo,
-       a.nome AS revisar_antes;
+MATCH (:Maquina {codigo: 'M-12'})-[:TEM_SENSOR]->(:Sensor)-[:REGISTROU]->(f:Falha)-[:INDICA]->(p:Peca)
+RETURN f.tipo AS falha,
+       p.nome AS peca_para_inspecionar;
 </textarea></code-block>
             </div>
           </multi-col>
@@ -667,7 +667,7 @@ RETURN novo.nome AS assunto_novo,
               <tr><td>Quem são amigos de amigos?</td><td>self-join</td><td>caminho natural</td></tr>
               <tr><td>Qual o menor caminho entre duas pessoas?</td><td>consulta recursiva</td><td>travessia de grafo</td></tr>
               <tr><td>Como recomendar pessoas ou conteúdo?</td><td>muitas junções e regras</td><td>casamento de padrões</td></tr>
-              <tr><td>Listar usuários por cidade</td><td>muito bom</td><td>não é especial</td></tr>
+              <tr><td>Listar usuários por cidade</td><td>muito bom</td><td>fácil também</td></tr>
             </tbody>
           </table>
           <div class="red-box fragment">
