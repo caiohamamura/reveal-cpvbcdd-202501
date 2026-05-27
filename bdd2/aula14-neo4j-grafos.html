@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 14 - Neo4J: Grafos, Redes e Recomendações</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2 { text-transform: none; }
+    .reveal h3 { text-transform: none; }
+    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 10px 14px; margin: 6px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.62em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 6px 8px; text-align: left; }
+    .comparison-table td { padding: 5px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); vertical-align: top; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 1px 5px; word-break: break-all; font-size: 0.85em; }
+    .graph-card { background: rgba(68, 71, 90, 0.72); border-radius: 8px; padding: 10px 12px; margin: 6px 0; }
+    .graph-card p { margin: 2px 0; }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .reveal .slides section ul li,
+    .reveal .slides section ol li { font-size: 0.82em; line-height: 1.32; margin: 3px 0; }
+    .reveal .slides section p { font-size: 0.72em; line-height: 1.35; margin: 4px 0; }
+    .reveal .slides section code-block { font-size: 0.82em; overflow-x: auto; max-width: 100%; }
+    .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="14" curso="Banco de Dados 2" title-size="24"
+                 title="Neo4J: Grafos, Redes e Recomendações">
+          <div class="mermaid" data-id="cover-neo4j" style="width:540px">
+            <pre>
+---
+displayMode: compact
+config:
+  theme: dracula
+  themeVariables:
+    primary: '#50fa7b'
+    lineColor: '#8be9fd'
+    fontSize: 42px
+---
+graph LR
+  Ana(("Ana")) -->|SEGUE| Bruno(("Bruno"))
+  Bruno -->|SEGUE| Carla(("Carla"))
+  Ana -->|CURTIU| Post1["Post BD"]
+  Carla -->|CURTIU| Post2["Post Redes"]
+  Post1 -->|TEM_TAG| BD["banco de dados"]
+  Post2 -->|TEM_TAG| Redes["redes"]
+  style Ana fill:#ff79c6,color:#282a36
+  style Bruno fill:#8be9fd,color:#282a36
+  style Carla fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE: Revisão -->
+      <section data-auto-animate>
+        <h2>Revisão: Aula Passada</h2>
+        <ls-u>
+          <li>Redis mostrou NoSQL como estruturas rápidas em memória</li>
+          <li>MongoDB mostrou documentos como modelo principal</li>
+          <li>Hoje: NoSQL quando as relações são o centro do problema</li>
+          <li>Pergunta-guia: como uma plataforma recomenda pessoas, posts ou vídeos?</li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         FASE 1: MOTIVAÇÃO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 1: De onde vêm as recomendações?</h2>
+          <p style="color: #6272a4;">Instagram, TikTok, YouTube, Spotify e jogos não olham só para registros isolados.</p>
+          <div class="yellow-box">
+            <p><strong>Ideia central:</strong> muitas perguntas importantes são sobre conexões entre pessoas, conteúdos, temas, produtos e ações.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Uma pergunta simples</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="graph-card">
+                <p><span class="pill">fato 1</span> Ana segue Bruno</p>
+                <p><span class="pill">fato 2</span> Bruno segue Carla</p>
+                <p><span class="pill">fato 3</span> Ana ainda não segue Carla</p>
+              </div>
+              <div class="purple-box fragment">
+                <p>O aplicativo deveria sugerir Carla para Ana?</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="mermaid" data-id="ana-bruno-carla">
+                <pre>
+graph LR
+  Ana(("Ana")) -->|SEGUE| Bruno(("Bruno"))
+  Bruno -->|SEGUE| Carla(("Carla"))
+  Ana -. sugestão .-> Carla
+  style Ana fill:#ff79c6,color:#282a36
+  style Carla fill:#50fa7b,color:#282a36
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Limite de pensar só em tabelas</h2>
+          <code-block lang="sql" data-trim><textarea>
+usuarios(id, nome)
+amizades(usuario1_id, usuario2_id)
+posts(id, usuario_id, texto)
+curtidas(usuario_id, post_id)
+</textarea></code-block>
+          <div class="info-box">
+            <p>No modelo relacional isso funciona, mas perguntas sobre “amigos de amigos”, “caminhos” e “recomendações” tendem a virar muitas junções.</p>
+          </div>
+          <div class="green-box fragment">
+            <p>Em banco de grafos, a relação não é detalhe: ela é parte principal do modelo.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+         FASE 2: MODELO DE GRAFOS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 2: O que é um grafo?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Conceito</th><th>No Neo4J</th><th>Exemplo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Nó</td><td>Entidade</td><td><span class="mini-code">(:Pessoa {nome: 'Ana'})</span></td></tr>
+              <tr><td>Relacionamento</td><td>Conexão direcionada</td><td><span class="mini-code">[:SEGUE]</span>, <span class="mini-code">[:CURTIU]</span></td></tr>
+              <tr><td>Propriedade</td><td>Dado dentro de nó ou relação</td><td><span class="mini-code">turma</span>, <span class="mini-code">tema</span>, <span class="mini-code">peso</span></td></tr>
+              <tr><td>Padrão</td><td>Caminho que queremos encontrar</td><td><span class="mini-code">(a)-[:SEGUE]->(b)</span></td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exemplos do dia a dia</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <h3>Rede social</h3>
+              <div class="graph-card">
+                <p>Pessoa → SEGUE → Pessoa</p>
+                <p>Pessoa → CURTIU → Post</p>
+                <p>Post → TEM_TAG → Tag</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <h3>Streaming</h3>
+              <div class="graph-card">
+                <p>Usuário → ASSISTIU → Vídeo</p>
+                <p>Vídeo → TEM_GÊNERO → Gênero</p>
+                <p>Usuário → CURTIU → Vídeo</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <h3>Escola</h3>
+              <div class="graph-card">
+                <p>Aluno → FEZ → Atividade</p>
+                <p>Aluno → TEM_DIFICULDADE_EM → Assunto</p>
+                <p>Assunto → PRE_REQUISITO_DE → Assunto</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Onde Neo4J entra no curso?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Banco</th><th>Ideia principal</th><th>Bom para</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>PostgreSQL</td><td>Relações, SQL, consistência</td><td>cadastros, pedidos, regras transacionais</td></tr>
+              <tr><td>MongoDB</td><td>Documentos</td><td>registros flexíveis e aninhados</td></tr>
+              <tr><td>Redis</td><td>Chave-valor em memória</td><td>cache, sessões, filas, rankings</td></tr>
+              <tr><td>Neo4J</td><td>Grafos</td><td>relações, caminhos, recomendações</td></tr>
+              <tr><td>DuckDB</td><td>Colunar analítico</td><td>análise local e OLAP</td></tr>
+            </tbody>
+          </table>
+          <div class="yellow-box fragment">
+            <p>Neo4J não substitui PostgreSQL: ele ajuda quando a estrutura de relações é a parte mais importante da pergunta.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: INSTALAÇÃO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 3: Instalação com Docker</h2>
+          <p style="color: #6272a4;">Para a aula, Docker reduz problemas específicos de sistema operacional.</p>
+          <div class="green-box">
+            <p>Vamos usar o navegador em <span class="mini-code">http://localhost:7474</span> e escrever consultas em Cypher.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Subir o Neo4J</h2>
+          <code-block lang="bash" data-trim><textarea>
+docker run \
+  --name neo4j-bdd2 \
+  --restart unless-stopped \
+  -p 7474:7474 \
+  -p 7687:7687 \
+  -e NEO4J_AUTH=neo4j/senhabdd2 \
+  -v neo4j_bdd2_data:/data \
+  neo4j:2026.04.0
+</textarea></code-block>
+          <div class="info-box">
+            <p>Usuário: <span class="mini-code">neo4j</span> · senha: <span class="mini-code">senhabdd2</span></p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Resetar o ambiente</h2>
+          <code-block lang="bash" data-trim><textarea>
+docker rm -f neo4j-bdd2
+docker volume rm neo4j_bdd2_data
+</textarea></code-block>
+          <div class="yellow-box">
+            <p>Se o laboratório não tiver Docker, use Neo4J Aura Free, Neo4J Sandbox ou uma máquina projetada pelo professor.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+         FASE 4: PRIMEIRO GRAFO SOCIAL
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 4: Primeiro grafo social</h2>
+          <p style="color: #6272a4;">Vamos criar pessoas, posts, relações de seguir e relações de curtida.</p>
+          <div class="mermaid" data-id="social-schema" style="width:720px; margin:auto;">
+            <pre>
+graph LR
+  Pessoa1(("Pessoa")) -->|SEGUE| Pessoa2(("Pessoa"))
+  Pessoa1 -->|CURTIU| Post["Post"]
+  Post -->|tema| Tema["tema"]
+  style Pessoa1 fill:#ff79c6,color:#282a36
+  style Pessoa2 fill:#8be9fd,color:#282a36
+  style Post fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Criar os dados</h2>
+          <code-block lang="cypher" data-trim><textarea>
+CREATE
+  (ana:Pessoa {nome: 'Ana', turma: '2INFO'}),
+  (bruno:Pessoa {nome: 'Bruno', turma: '2INFO'}),
+  (carla:Pessoa {nome: 'Carla', turma: '2INFO'}),
+  (diego:Pessoa {nome: 'Diego', turma: '3INFO'}),
+  (elisa:Pessoa {nome: 'Elisa', turma: '3INFO'}),
+  (p1:Post {id: 1, texto: 'Aprendendo banco de dados grafos', tema: 'banco de dados'}),
+  (p2:Post {id: 2, texto: 'Dicas de Python para iniciantes', tema: 'programacao'}),
+  (p3:Post {id: 3, texto: 'Como estudar para prova de redes', tema: 'redes'}),
+  (p4:Post {id: 4, texto: 'Review de jogo indie', tema: 'games'}),
+  (ana)-[:SEGUE]->(bruno),
+  (ana)-[:SEGUE]->(diego),
+  (bruno)-[:SEGUE]->(carla),
+  (diego)-[:SEGUE]->(carla),
+  (carla)-[:SEGUE]->(elisa),
+  (ana)-[:CURTIU]->(p1),
+  (ana)-[:CURTIU]->(p2),
+  (bruno)-[:CURTIU]->(p2),
+  (bruno)-[:CURTIU]->(p3),
+  (carla)-[:CURTIU]->(p3),
+  (diego)-[:CURTIU]->(p4),
+  (elisa)-[:CURTIU]->(p1),
+  (elisa)-[:CURTIU]->(p3);
+</textarea></code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Ler o grafo</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <h3>Pessoas</h3>
+              <code-block lang="cypher" data-trim><textarea>
+MATCH (p:Pessoa)
+RETURN p;
+</textarea></code-block>
+            </div>
+            <div style="flex: 1;">
+              <h3>Quem segue quem</h3>
+              <code-block lang="cypher" data-trim><textarea>
+MATCH (p:Pessoa)-[:SEGUE]->(outro:Pessoa)
+RETURN p.nome, outro.nome;
+</textarea></code-block>
+            </div>
+          </multi-col>
+          <div class="green-box fragment">
+            <p>O padrão <span class="mini-code">(p)-[:SEGUE]->(outro)</span> descreve o caminho que queremos encontrar.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Ana curtiu o quê?</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (p:Pessoa {nome: 'Ana'})-[:CURTIU]->(post:Post)
+RETURN post.texto, post.tema;
+</textarea></code-block>
+          <div class="info-box">
+            <p><span class="mini-code">p</span> é variável · <span class="mini-code">Pessoa</span> é label · <span class="mini-code">nome</span> é propriedade · <span class="mini-code">CURTIU</span> é relacionamento · <span class="mini-code">-&gt;</span> é direção.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+         FASE 5: RECOMENDAÇÃO DE PESSOAS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 5: Sugestão de pessoas</h2>
+          <p style="color: #6272a4;">Problema: sugerir pessoas que Ana talvez conheça.</p>
+          <div class="mermaid" data-id="suggestion-pattern" style="width:700px; margin:auto;">
+            <pre>
+graph LR
+  Ana(("Ana")) -->|SEGUE| Inter(("intermediário"))
+  Inter -->|SEGUE| Sug(("sugestão"))
+  Ana -. ainda não segue .-> Sug
+  style Ana fill:#ff79c6,color:#282a36
+  style Sug fill:#50fa7b,color:#282a36
+            </pre>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Amigos de amigos</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (ana:Pessoa {nome: 'Ana'})-[:SEGUE]->(:Pessoa)-[:SEGUE]->(sugestao:Pessoa)
+WHERE NOT (ana)-[:SEGUE]->(sugestao)
+  AND ana <> sugestao
+RETURN sugestao.nome AS sugestao;
+</textarea></code-block>
+          <div class="yellow-box fragment">
+            <p>A consulta procura alguém a dois passos de Ana e remove quem ela já segue.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Melhorar pela quantidade de conexões</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (ana:Pessoa {nome: 'Ana'})-[:SEGUE]->(intermediario:Pessoa)-[:SEGUE]->(sugestao:Pessoa)
+WHERE NOT (ana)-[:SEGUE]->(sugestao)
+  AND ana <> sugestao
+RETURN sugestao.nome AS sugestao,
+       count(intermediario) AS conexoes_em_comum
+ORDER BY conexoes_em_comum DESC;
+</textarea></code-block>
+          <div class="green-box">
+            <p>Este é o primeiro momento “recomendação”: a sugestão aparece porque existe um padrão de relações no grafo.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- ============================================================
+         FASE 6: RECOMENDAÇÃO DE CONTEÚDO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 6: Recomendação de conteúdo</h2>
+          <p style="color: #6272a4;">Agora a pergunta muda: quais posts Ana poderia gostar?</p>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Tipo</th><th>Lógica</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Colaborativa</td><td>recomenda com base em pessoas com comportamento parecido</td></tr>
+              <tr><td>Baseada em conteúdo</td><td>recomenda com base nas propriedades dos itens</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Recomendação colaborativa</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (ana:Pessoa {nome: 'Ana'})-[:CURTIU]->(post:Post)<-[:CURTIU]-(parecido:Pessoa)
+MATCH (parecido)-[:CURTIU]->(recomendado:Post)
+WHERE NOT (ana)-[:CURTIU]->(recomendado)
+RETURN recomendado.texto AS post_recomendado,
+       recomendado.tema AS tema,
+       count(parecido) AS usuarios_parecidos
+ORDER BY usuarios_parecidos DESC;
+</textarea></code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que essa consulta está dizendo?</h2>
+          <ls-u>
+            <li>Ana curtiu um post</li>
+            <li>Outra pessoa também curtiu esse post</li>
+            <li>Essa outra pessoa curtiu outros posts</li>
+            <li>Esses outros posts podem ser recomendados para Ana</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Recomendação por tema</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (ana:Pessoa {nome: 'Ana'})-[:CURTIU]->(post:Post)
+WITH ana, collect(DISTINCT post.tema) AS temas
+MATCH (recomendado:Post)
+WHERE recomendado.tema IN temas
+  AND NOT (ana)-[:CURTIU]->(recomendado)
+RETURN recomendado.texto AS post_recomendado,
+       recomendado.tema AS tema;
+</textarea></code-block>
+          <div class="purple-box fragment">
+            <p>Aqui a recomendação não depende de usuários parecidos: depende do tema dos posts que Ana já curtiu.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+      <!-- ============================================================
+         FASE 7: CAMINHOS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 7: Caminhos e graus de separação</h2>
+          <p style="color: #6272a4;">Outra força de grafos é responder perguntas sobre caminhos.</p>
+          <div class="info-box">
+            <p>Quantas conexões existem entre Ana e Elisa?</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Menor caminho</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH path = shortestPath(
+  (:Pessoa {nome: 'Ana'})-[:SEGUE*]-(:Pessoa {nome: 'Elisa'})
+)
+RETURN path;
+</textarea></code-block>
+          <div class="green-box">
+            <p>O <span class="mini-code">*</span> indica um caminho com quantidade variável de relações <span class="mini-code">SEGUE</span>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Onde isso aparece?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>LinkedIn: conexões de 2º ou 3º grau</li>
+                <li>Instagram/TikTok: rede de seguidores</li>
+                <li>Jogos: amigos de amigos</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <ul>
+                <li>Segurança: caminho até contas suspeitas</li>
+                <li>Escola: alunos, projetos, assuntos e habilidades</li>
+                <li>Produtos: usuários, compras, categorias e avaliações</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 7 -->
+
+      <!-- ============================================================
+         FASE 8: MODELAGEM
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 8: Atividade de modelagem</h2>
+          <p style="color: #6272a4;">Em grupos, escolham um cenário e modelem um grafo.</p>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="graph-card"><p>Rede social escolar</p></div>
+              <div class="graph-card"><p>Spotify, YouTube ou TikTok</p></div>
+            </div>
+            <div style="flex: 1;">
+              <div class="graph-card"><p>Loja online</p></div>
+              <div class="graph-card"><p>Sistema acadêmico</p></div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O grupo deve responder</h2>
+          <ls-u>
+            <li>Quais são os nós?</li>
+            <li>Quais são os relacionamentos?</li>
+            <li>Quais propriedades aparecem em nós e relações?</li>
+            <li>Que pergunta interessante o grafo consegue responder?</li>
+            <li>Qual consulta Cypher responderia essa pergunta?</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exemplo: sistema acadêmico</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="graph-card">
+                <p><strong>Nós:</strong> Aluno, Disciplina, Assunto</p>
+                <p><strong>Relações:</strong> CURSA, ENSINA, TEM_DIFICULDADE_EM, PRE_REQUISITO_DE</p>
+              </div>
+              <div class="yellow-box">
+                <p>Que assuntos Ana deveria revisar antes de estudar um novo assunto?</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <code-block lang="cypher" data-trim><textarea>
+MATCH (:Aluno {nome: 'Ana'})-[:TEM_DIFICULDADE_EM]->(a:Assunto)-[:PRE_REQUISITO_DE]->(novo:Assunto)
+RETURN novo.nome AS assunto_novo,
+       a.nome AS revisar_antes;
+</textarea></code-block>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 8 -->
+
+      <!-- ============================================================
+         FASE 9: COMPARAÇÃO FINAL
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 9: Quando usar Neo4J?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Pergunta</th><th>Relacional</th><th>Grafo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Quais posts Ana curtiu?</td><td>junção simples</td><td>travessia simples</td></tr>
+              <tr><td>Quem são amigos de amigos?</td><td>self-join</td><td>caminho natural</td></tr>
+              <tr><td>Qual o menor caminho entre duas pessoas?</td><td>consulta recursiva</td><td>travessia de grafo</td></tr>
+              <tr><td>Como recomendar pessoas ou conteúdo?</td><td>muitas junções e regras</td><td>casamento de padrões</td></tr>
+              <tr><td>Listar usuários por cidade</td><td>muito bom</td><td>não é especial</td></tr>
+            </tbody>
+          </table>
+          <div class="red-box fragment">
+            <p>Neo4J não é “melhor que PostgreSQL”. Ele é melhor quando a relação é o centro do problema.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Privacidade e ética</h2>
+          <ls-u>
+            <li>Por que o sistema recomendou essa pessoa?</li>
+            <li>É correto inferir amizades ou interesses a partir de curtidas?</li>
+            <li>Recomendações podem criar bolhas?</li>
+            <li>O desenho do banco influencia o que a plataforma mostra?</li>
+          </ls-u>
+        </section>
+
+      </section><!-- fim Fase 9 -->
+
+      <!-- SLIDE: Exercício Final -->
+      <section data-auto-animate>
+        <h2>Exercício Final</h2>
+        <div class="green-box">
+          <p><strong>Objetivo:</strong> implementar um mini sistema de recomendação em Neo4J.</p>
+        </div>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <h3>Seu grafo deve ter</h3>
+            <ls-u>
+              <li>6 pessoas</li>
+              <li>6 posts, vídeos ou músicas</li>
+              <li>3 temas, categorias ou gêneros</li>
+            </ls-u>
+          </div>
+          <div style="flex: 1;">
+            <h3>Suas consultas devem</h3>
+            <ls-u>
+              <li>mostrar quem segue quem</li>
+              <li>sugerir novas pessoas para seguir</li>
+              <li>recomendar conteúdo por curtidas</li>
+              <li>mostrar o menor caminho entre dois usuários</li>
+              <li>explicar por que uma recomendação apareceu</li>
+            </ls-u>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE: Síntese -->
+      <section data-auto-animate>
+        <h2>Síntese</h2>
+        <ls-u>
+          <li>Grafos modelam entidades conectadas por relações</li>
+          <li>Cypher descreve padrões de caminhos no grafo</li>
+          <li>Recomendações podem surgir de caminhos entre pessoas e conteúdos</li>
+          <li>Neo4J é forte quando a pergunta depende das conexões</li>
+          <li>A parte técnica e a parte ética precisam ser discutidas juntas</li>
+        </ls-u>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
