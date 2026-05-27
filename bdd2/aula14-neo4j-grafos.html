@@ -312,10 +312,12 @@ CREATE
   (p2:Post {id: 2, texto: 'Dicas de Python para iniciantes', tema: 'programacao'}),
   (p3:Post {id: 3, texto: 'Como estudar para prova de redes', tema: 'redes'}),
   (p4:Post {id: 4, texto: 'Review de jogo indie', tema: 'games'}),
+  (p5:Post {id: 5, texto: 'Modelagem de grafos na prática', tema: 'banco de dados'}),
   (ana)-[:PUBLICA]->(p1),
   (bruno)-[:PUBLICA]->(p2),
   (carla)-[:PUBLICA]->(p3),
   (diego)-[:PUBLICA]->(p4),
+  (elisa)-[:PUBLICA]->(p5),
   (ana)-[:SEGUE]->(bruno),
   (ana)-[:SEGUE]->(diego),
   (bruno)-[:SEGUE]->(carla),
@@ -530,7 +532,10 @@ RETURN recomendado.texto AS post_recomendado,
 </textarea></code-block>
           <div class="qr">
             <div class="qr-label">&#9654; Resultado:</div>
-            <p style="color:#6272a4;margin:2px 0;">(nenhum resultado — nenhum post novo com temas que Ana já curtiu)</p>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><th>post_recomendado</th><th>tema</th></tr>
+              <tr><td>Modelagem de grafos na prática</td><td>banco de dados</td></tr>
+            </table>
           </div>
           <div class="purple-box fragment">
             <p>Aqui a recomendação não depende de usuários parecidos: depende do tema dos posts que Ana já curtiu.</p>
