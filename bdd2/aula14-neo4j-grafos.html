@@ -67,8 +67,8 @@
         <div class="fragment" data-fragment-index="1">
           <highlight-box instant style="font-size:0.8em;width:100%;">Pergunta-guia: como uma plataforma recomenda pessoas, posts ou vídeos?</highlight-box>
           <div style="min-width:300px; display:flex; justify-content:space-around; align-items:center;">
-            <img src="https://i.imgur.com/2ZkQEdB.png" alt="" srcset="" width="300">
-            <img src="https://i.imgur.com/v3ZGaYG.png" alt="" srcset="" width="300">
+            <img src="https://i.imgur.com/2ZkQEdB.png" alt="Ícone de rede social representando recomendações de pessoas" srcset="" width="300">
+            <img src="https://i.imgur.com/v3ZGaYG.png" alt="Ícone de vídeo representando recomendações de conteúdo" srcset="" width="300">
           </div>
         </div>
       </section>
@@ -224,11 +224,34 @@ curtidas(usuario_id, post_id)
         </section>
 
         <section data-auto-animate>
+          <h2>Ubuntu Linux: instalação local</h2>
+          <p style="color: #6272a4;">No Ubuntu, podemos usar o pacote oficial compactado, sem Docker.</p>
+          <code-block lang="bash" data-trim><textarea>
+sudo apt update
+sudo apt install -y openjdk-21-jre curl
+
+mkdir -p ~/neo4j-bdd2
+cd ~/neo4j-bdd2
+
+curl -L -O https://dist.neo4j.org/neo4j-community-2026.04.0-unix.tar.gz
+tar -xzf neo4j-community-2026.04.0-unix.tar.gz
+cd neo4j-community-2026.04.0
+
+bin/neo4j-admin dbms set-initial-password senhabdd2
+bin/neo4j start
+</textarea></code-block>
+          <div class="green-box">
+            <p>Depois abra <span class="mini-code">http://localhost:7474</span> e entre com usuário <span class="mini-code">neo4j</span> e senha <span class="mini-code">senhabdd2</span>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
           <h2>Resetar o ambiente</h2>
           <ol style="text-align:left; color:#f8f8f2; font-size:0.9em; line-height:1.55;">
             <li>Feche o banco no Neo4j Desktop.</li>
             <li>Apague o <strong>Local DBMS</strong> criado para a aula.</li>
-            <li>Se quiser recomeçar do zero, crie outro DBMS com a mesma senha.</li>
+            <li>No Ubuntu, pare o serviço com <span class="mini-code">bin/neo4j stop</span> e apague a pasta <span class="mini-code">~/neo4j-bdd2</span>.</li>
+            <li>Se quiser recomeçar do zero, crie outro DBMS ou baixe novamente a pasta local.</li>
           </ol>
           <div class="yellow-box">
             <p>Opções alternativas: <strong>Docker</strong>, <strong>Neo4j Aura Free</strong> ou <strong>Neo4j Sandbox</strong>.</p>
