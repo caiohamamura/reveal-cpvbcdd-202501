@@ -218,9 +218,12 @@ curtidas(usuario_id, post_id)
         <section data-auto-animate>
           <h2>Subir o Neo4j Desktop</h2>
           <ol style="text-align:left; color:#f8f8f2; font-size:0.9em; line-height:1.55;">
-            <li>Baixe e instale o <strong>Neo4j Desktop</strong> no computador.</li>
+            <li><code>winget install Neo4j.Neo4jDesktop</code></li>
+            <li>Abra o Neo4J Desktop.</li>
+            <li>Selecione o local para salvar os bancos de dados.</li>
+            <li>Dê skip no registro.</li>
             <li>Crie um novo <strong>Local DBMS</strong>.</li>
-            <li>Defina a senha inicial como <span class="mini-code">senhabdd2</span>.</li>
+            <li>Defina a senha inicial como <span class="mini-code">ifsp1234</span>.</li>
             <li>Inicie o banco e abra o <strong>Neo4j Browser</strong>.</li>
             <li>Acesse <span class="mini-code">http://localhost:7474</span> e autentique com o usuário <span class="mini-code">neo4j</span>.</li>
           </ol>
@@ -243,11 +246,11 @@ curl -L -O https://dist.neo4j.org/neo4j-community-2026.04.0-unix.tar.gz
 tar -xzf neo4j-community-2026.04.0-unix.tar.gz
 cd neo4j-community-2026.04.0
 
-bin/neo4j-admin dbms set-initial-password senhabdd2
+bin/neo4j-admin dbms set-initial-password ifsp1234
 bin/neo4j start
 </textarea></code-block>
           <div class="green-box">
-            <p>Depois abra <span class="mini-code">http://localhost:7474</span> e entre com usuário <span class="mini-code">neo4j</span> e senha <span class="mini-code">senhabdd2</span>.</p>
+            <p>Depois abra <span class="mini-code">http://localhost:7474</span> e entre com usuário <span class="mini-code">neo4j</span> e senha <span class="mini-code">ifsp1234</span>.</p>
           </div>
         </section>
 
@@ -273,7 +276,7 @@ docker run \
   --restart unless-stopped \
   -p 7474:7474 \
   -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/senhabdd2 \
+  -e NEO4J_AUTH=neo4j/ifsp1234 \
   -v neo4j_bdd2_data:/data \
   neo4j:2026.04.0
 </textarea></code-block>
