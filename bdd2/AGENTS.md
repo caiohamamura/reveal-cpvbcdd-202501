@@ -29,6 +29,8 @@ Prefer existing Vue components such as `<header1>`, `<multi-col>`, `<ls-u>`, `<c
 
 Name new decks with descriptive lowercase filenames, using hyphens or underscores consistently with nearby files, for example `materialized_views.html` or `jsonb-nosql.html`.
 
+Keep visible slide text personal and direct. Avoid course codes, institutional labels, and other internal meta references in student-facing instructions; prefer phrasing like "aqui", "neste caso", and generic placeholders such as `local` or `ifsp`.
+
 ## Testing Guidelines
 
 Before opening a pull request, run the HTML parse check and manually open changed decks through a local static server. Verify navigation, fragments, code highlighting, Vue components, images, and SQL snippets. Every `<img>` must include meaningful `alt` text and should reference valid local assets or attributed external sources.
