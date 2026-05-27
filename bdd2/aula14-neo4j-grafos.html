@@ -48,29 +48,11 @@
       <section data-auto-animate>
         <header1 aula="14" curso="Banco de Dados 2" title-size="24"
                  title="Neo4J: Grafos, Redes e Recomendações">
-          <div class="mermaid" data-id="cover-neo4j" style="width:540px">
-            <pre>
----
-displayMode: compact
-config:
-  theme: dracula
-  themeVariables:
-    primary: '#50fa7b'
-    lineColor: '#8be9fd'
-    fontSize: 42px
----
-graph LR
-  Ana(("Ana")) -->|SEGUE| Bruno(("Bruno"))
-  Bruno -->|SEGUE| Carla(("Carla"))
-  Ana -->|CURTIU| Post1["Post BD"]
-  Carla -->|CURTIU| Post2["Post Redes"]
-  Post1 -->|TEM_TAG| BD["banco de dados"]
-  Post2 -->|TEM_TAG| Redes["redes"]
-  style Ana fill:#ff79c6,color:#282a36
-  style Bruno fill:#8be9fd,color:#282a36
-  style Carla fill:#50fa7b,color:#282a36
-            </pre>
-          </div>
+          <img
+            src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
+            alt="Grafo de recomendações em Neo4j com Ana, Bruno, Carla e relações SEGUE, CURTIU e TEM_TAG"
+            style="width:540px; max-width:100%; max-height:260px; object-fit:contain;"
+          />
         </header1>
       </section>
 
@@ -112,16 +94,11 @@ graph LR
               </div>
             </div>
             <div style="flex: 1;">
-              <div class="mermaid" data-id="ana-bruno-carla">
-                <pre>
-graph LR
-  Ana(("Ana")) -->|SEGUE| Bruno(("Bruno"))
-  Bruno -->|SEGUE| Carla(("Carla"))
-  Ana -. sugestão .-> Carla
-  style Ana fill:#ff79c6,color:#282a36
-  style Carla fill:#50fa7b,color:#282a36
-                </pre>
-              </div>
+              <img
+                src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
+                alt="Grafo de recomendações em Neo4j com destaque para Ana, Bruno e Carla"
+                style="width:100%; max-width:540px; display:block; margin:0 auto; object-fit:contain;"
+              />
             </div>
           </multi-col>
         </section>
@@ -266,17 +243,11 @@ docker volume rm neo4j_bdd2_data
         <section data-auto-animate>
           <h2 style="color: #50fa7b;">Fase 4: Primeiro grafo social</h2>
           <p style="color: #6272a4;">Vamos criar pessoas, posts, relações de seguir e relações de curtida.</p>
-          <div class="mermaid" data-id="social-schema" style="width:720px; margin:auto;">
-            <pre>
-graph LR
-  Pessoa1(("Pessoa")) -->|SEGUE| Pessoa2(("Pessoa"))
-  Pessoa1 -->|CURTIU| Post["Post"]
-  Post -->|tema| Tema["tema"]
-  style Pessoa1 fill:#ff79c6,color:#282a36
-  style Pessoa2 fill:#8be9fd,color:#282a36
-  style Post fill:#50fa7b,color:#282a36
-            </pre>
-          </div>
+          <img
+            src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
+            alt="Grafo social em Neo4j com pessoas, posts e tags"
+            style="width:720px; max-width:100%; display:block; margin:0 auto; object-fit:contain;"
+          />
         </section>
 
         <section data-auto-animate>
@@ -352,16 +323,11 @@ RETURN post.texto, post.tema;
         <section data-auto-animate>
           <h2 style="color: #ff79c6;">Fase 5: Sugestão de pessoas</h2>
           <p style="color: #6272a4;">Problema: sugerir pessoas que Ana talvez conheça.</p>
-          <div class="mermaid" data-id="suggestion-pattern" style="width:700px; margin:auto;">
-            <pre>
-graph LR
-  Ana(("Ana")) -->|SEGUE| Inter(("intermediário"))
-  Inter -->|SEGUE| Sug(("sugestão"))
-  Ana -. ainda não segue .-> Sug
-  style Ana fill:#ff79c6,color:#282a36
-  style Sug fill:#50fa7b,color:#282a36
-            </pre>
-          </div>
+          <img
+            src="planos/aula14_neo4j_grafos_assets/neo4j-recommendation-graph.png"
+            alt="Grafo de recomendação em Neo4j destacando Ana, Bruno e Carla"
+            style="width:700px; max-width:100%; display:block; margin:0 auto; object-fit:contain;"
+          />
         </section>
 
         <section data-auto-animate>
@@ -643,7 +609,8 @@ RETURN novo.nome AS assunto_novo,
   <script src="../plugin/markdown/markdown.js"></script>
   <script src="../plugin/highlight/highlight.js"></script>
   <script src="../plugin/zoom/zoom.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  
   <script src="../plugin/leader-line.min.js"></script>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
