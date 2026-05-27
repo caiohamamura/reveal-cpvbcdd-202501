@@ -489,7 +489,6 @@ REMOVE p:Origem, p:Intermediario, p:Sugestao;
 
         <section data-auto-animate>
           <h2>Recomendação colaborativa</h2>
-          <p>Posts que outras pessoas curtiram, mas que Ana ainda não curtiu.</p>
           <code-block lang="cypher" data-trim><textarea>
 MATCH (ana:Pessoa {nome: 'Ana'})-[:CURTIU]->(post:Post)<-[:CURTIU]-(parecido:Pessoa)
 MATCH (parecido)-[:CURTIU]->(recomendado:Post)
