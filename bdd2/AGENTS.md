@@ -8,6 +8,7 @@ This directory contains Banco de Dados II course materials for the shared Reveal
 - `planos/*.md`: lesson plans, practice scripts, and instructor/student guides.
 - `planos/*.sql`: SQL datasets and classroom exercises used by the decks.
 - `planos/*.png`: local diagrams and images used by lesson materials.
+- For graph-heavy visuals reused in headers or multiple slides, generate a notebook-rendered PNG/SVG under `planos/<aula>_..._assets/` and embed that asset instead of inline Mermaid. Keep the notebook next to the asset so the visual is reproducible.
 - Shared framework files live one level up: `../dist/`, `../plugin/`, `../components/`, `../slides_template/`, and `../img/`.
 
 Keep new BDD2-specific assets inside `bdd2/planos/` unless they are reused across courses.
