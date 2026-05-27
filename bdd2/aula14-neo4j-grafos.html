@@ -341,35 +341,18 @@ CREATE
 MATCH (p:Pessoa)
 RETURN p;
 </textarea></code-block>
-              <div class="qr">
-                <div class="qr-label">&#9654; Resultado:</div>
-                <table style="width:100%;border-collapse:collapse;">
-                  <tr><th>p</th></tr>
-                  <tr><td>(:Pessoa {nome: 'Ana', turma: '2INFO'})</td></tr>
-                  <tr><td>(:Pessoa {nome: 'Bruno', turma: '2INFO'})</td></tr>
-                  <tr><td>(:Pessoa {nome: 'Carla', turma: '2INFO'})</td></tr>
-                  <tr><td>(:Pessoa {nome: 'Diego', turma: '3INFO'})</td></tr>
-                  <tr><td>(:Pessoa {nome: 'Elisa', turma: '3INFO'})</td></tr>
-                </table>
+              
+                <img src="aula14/image.png" alt="" width="300">
               </div>
-            </div>
             <div style="flex: 1;">
               <h3>Quem segue quem</h3>
               <code-block lang="cypher" data-trim><textarea>
 MATCH (p:Pessoa)-[:SEGUE]->(outro:Pessoa)
-RETURN p.nome, outro.nome;
+RETURN p, outro;
 </textarea></code-block>
-              <div class="qr">
-                <div class="qr-label">&#9654; Resultado:</div>
-                <table style="width:100%;border-collapse:collapse;">
-                  <tr><th>p.nome</th><th>outro.nome</th></tr>
-                  <tr><td>Ana</td><td>Bruno</td></tr>
-                  <tr><td>Ana</td><td>Diego</td></tr>
-                  <tr><td>Bruno</td><td>Carla</td></tr>
-                  <tr><td>Diego</td><td>Carla</td></tr>
-                  <tr><td>Carla</td><td>Elisa</td></tr>
-                </table>
-              </div>
+              <div>
+                  <img src="aula14/image2.png" alt="" srcset="">
+            </div>
             </div>
           </multi-col>
           <div class="green-box fragment">
@@ -455,6 +438,34 @@ ORDER BY conexoes_em_comum DESC;
           </div>
         </section>
 
+
+        <section data-auto-animate>
+          <h2>Amigos de amigos: visualização bonita</h2>
+          <h4 style="color:#f1fa8c">Criamos um Label para cada grupo (origem, intermediario, sugestao): Neo4J colore baseado no label</h4>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (ana:Pessoa {nome: 'Ana'})-[:SEGUE]->(intermediario:Pessoa)-[:SEGUE]->(sugestao:Pessoa)
+WHERE NOT (ana)-[:SEGUE]->(sugestao)
+  AND ana <> sugestao
+SET ana:Origem, sugestao:Sugestao, intermediario:Intermediario
+RETURN ana, intermediario, sugestao;
+</textarea></code-block>
+          <div class="center">
+            <img src="aula14/image3.png" alt="" srcset="" height="250">
+          </div>
+          <div class="yellow-box fragment">
+            <p>A consulta procura alguém a dois passos de Ana e remove quem ela já segue.</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>Limpar os labels</h2>
+          <code-block lang="cypher" data-trim><textarea>
+MATCH (p:Pessoa)
+REMOVE p:Origem, p:Intermediario, p:Sugestao;
+</textarea></code-block>
+<p>O set, configura o label de um nó no banco de dados de forma persistente! Precisamos limpar depois.</p>
+        </section>
+
       </section><!-- fim Fase 5 -->
 
       <!-- ============================================================
@@ -478,6 +489,7 @@ ORDER BY conexoes_em_comum DESC;
 
         <section data-auto-animate>
           <h2>Recomendação colaborativa</h2>
+          <p>Posts que outras pessoas curtiram, mas que Ana ainda não curtiu.</p>
           <code-block lang="cypher" data-trim><textarea>
 MATCH (ana:Pessoa {nome: 'Ana'})-[:CURTIU]->(post:Post)<-[:CURTIU]-(parecido:Pessoa)
 MATCH (parecido)-[:CURTIU]->(recomendado:Post)
