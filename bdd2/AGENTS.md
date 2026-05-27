@@ -27,6 +27,8 @@ Use 4-space indentation inside `<div class="slides">`. Write all slide content i
 
 Prefer existing Vue components such as `<header1>`, `<multi-col>`, `<ls-u>`, `<code-block>`, `<highlight-box>`, and `<leader-line></leader-line>`. Use inline `style=""` for one-off slide adjustments and keep the Dracula palette consistent with existing decks.
 
+Keep `../slides_template/header1.js` loaded in each deck even when the cover no longer uses `<header1>`. `mountSlideApp()` expects `initializeHeader` to exist during startup.
+
 Name new decks with descriptive lowercase filenames, using hyphens or underscores consistently with nearby files, for example `materialized_views.html` or `jsonb-nosql.html`.
 
 Keep visible slide text personal and direct. Avoid course codes, institutional labels, and other internal meta references in student-facing instructions; prefer phrasing like "aqui", "neste caso", and generic placeholders such as `local` or `ifsp`.
