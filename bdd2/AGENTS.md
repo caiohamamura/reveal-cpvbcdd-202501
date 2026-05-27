@@ -29,6 +29,8 @@ Prefer existing Vue components such as `<header1>`, `<multi-col>`, `<ls-u>`, `<c
 
 Keep `../slides_template/header1.js` loaded in each deck even when the cover no longer uses `<header1>`. `mountSlideApp()` expects `initializeHeader` to exist during startup.
 
+Prefer local image assets in student-facing slides. Remote images can be blocked by the browser in local file/server previews and break the slide visually.
+
 Name new decks with descriptive lowercase filenames, using hyphens or underscores consistently with nearby files, for example `materialized_views.html` or `jsonb-nosql.html`.
 
 Keep visible slide text personal and direct. Avoid course codes, institutional labels, and other internal meta references in student-facing instructions; prefer phrasing like "aqui", "neste caso", and generic placeholders such as `local` or `ifsp`.
