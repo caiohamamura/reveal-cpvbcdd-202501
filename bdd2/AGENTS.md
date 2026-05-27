@@ -29,6 +29,8 @@ Prefer existing Vue components such as `<header1>`, `<multi-col>`, `<ls-u>`, `<c
 
 Name new decks with descriptive lowercase filenames, using hyphens or underscores consistently with nearby files, for example `materialized_views.html` or `jsonb-nosql.html`.
 
+For `aula14-neo4j-grafos.html`, keep the author-to-post relationship in Portuguese as `Pessoa-[:PUBLICA]->Post`; do not rename it to `POSTS`.
+
 ## Testing Guidelines
 
 Before opening a pull request, run the HTML parse check and manually open changed decks through a local static server. Verify navigation, fragments, code highlighting, Vue components, images, and SQL snippets. Every `<img>` must include meaningful `alt` text and should reference valid local assets or attributed external sources.
