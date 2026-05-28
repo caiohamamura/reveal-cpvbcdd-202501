@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Aula 15 - DuckDB: SQL para Analise Colunar</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2 { text-transform: none; }
+    .reveal h3 { text-transform: none; color: #8be9fd; }
+    .reveal .slides section p { font-size: 0.72em; line-height: 1.35; margin: 6px 0; }
+    .reveal .slides section li { font-size: 0.82em; line-height: 1.28; margin: 4px 0; }
+    .reveal .slides section code-block { font-size: 0.78em; }
+    .box { background: rgba(68, 71, 90, 0.72); border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.14); border-left: 4px solid #50fa7b; padding: 10px 14px; border-radius: 0 8px 8px 0; }
+    .cyan-box { background: rgba(139, 233, 253, 0.13); border-left: 4px solid #8be9fd; padding: 10px 14px; border-radius: 0 8px 8px 0; }
+    .pink-box { background: rgba(255, 121, 198, 0.14); border-left: 4px solid #ff79c6; padding: 10px 14px; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.14); border-left: 4px solid #f1fa8c; padding: 10px 14px; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.58em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 6px 8px; text-align: left; color: #8be9fd; }
+    .comparison-table td { padding: 5px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); vertical-align: top; }
+    .mini-table { width: 100%; font-size: 0.7em; }
+    .mini-table th { color: #8be9fd; border-bottom: 1px solid #6272a4; padding: 4px 8px; }
+    .mini-table td { padding: 4px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 8px; font-size: 0.62em; font-weight: bold; margin-right: 6px; }
+    .terminal { font-family: monospace; background: #191a21; border: 1px solid #6272a4; border-radius: 8px; padding: 10px 14px; color: #f8f8f2; font-size: 0.62em; white-space: pre-wrap; text-align: left; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="15" curso="Banco de Dados 2" title-size="24"
+                 title="DuckDB: SQL para analise de dados colunares">
+          <div class="mermaid" data-id="cover-duckdb" style="width:560px">
+            <pre>
+graph LR
+  CSV["CSV"] --> D["DuckDB SQL"]
+  PQ["Parquet"] --> D
+  DF["DataFrame"] --> D
+  D --> R["Resumo"]
+  D --> G["Grafico"]
+  D --> OUT["CSV / Parquet"]
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE: Revisao -->
+      <section data-auto-animate>
+        <h2>Revisao: varios bancos, varios problemas</h2>
+        <table class="comparison-table">
+          <thead>
+            <tr><th>Tecnologia</th><th>Modelo mental</th><th>Uso tipico</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>PostgreSQL</td><td>Relacional servidor</td><td>Aplicacoes, transacoes, restricoes</td></tr>
+            <tr><td>Redis</td><td>Estruturas em memoria</td><td>Cache, sessoes, filas, rankings</td></tr>
+            <tr><td>MongoDB</td><td>Documentos JSON</td><td>Documentos flexiveis</td></tr>
+            <tr><td>Neo4j</td><td>Grafos</td><td>Redes, caminhos, recomendacoes</td></tr>
+          </tbody>
+        </table>
+        <div class="fragment green-box">
+          <p>Hoje: e quando os dados estao em arquivos ou DataFrames e queremos analisar rapidamente com SQL?</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+         FASE 1: MOTIVACAO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 1: Analise nao e cadastro</h2>
+          <div class="pink-box">
+            <p>Temos um CSV grande com vendas, logs, sensores, notas ou dados publicos.</p>
+            <p>Precisamos criar um servidor PostgreSQL, importar tudo e configurar tabelas antes de perguntar algo simples?</p>
+          </div>
+          <div class="fragment cyan-box">
+            <p>DuckDB entra como uma ponte: SQL conhecido, mas aplicado diretamente sobre arquivos e DataFrames.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>OLTP: trabalho transacional</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Exemplos</h3>
+              <ul>
+                <li>Cadastro de usuarios</li>
+                <li>Registro de pedidos</li>
+                <li>Atualizacao de estoque</li>
+                <li>Login e sessoes</li>
+              </ul>
+            </div>
+            <div style="flex:1">
+              <h3>Caracteristica</h3>
+              <div class="box">
+                <p>Muitas operacoes pequenas, frequentes, concorrentes e com cuidado forte de integridade.</p>
+              </div>
+              <p><span class="pill">Exemplo</span> PostgreSQL atendendo uma aplicacao web.</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>OLAP: trabalho analitico</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Perguntas comuns</h3>
+              <ul>
+                <li>Total de vendas por mes</li>
+                <li>Media de notas por turma</li>
+                <li>Acessos por cidade</li>
+                <li>Comparacao entre categorias</li>
+              </ul>
+            </div>
+            <div style="flex:1.2">
+              <code-block lang="sql" data-trim>
+SELECT produto, SUM(valor) AS total
+FROM vendas
+GROUP BY produto
+ORDER BY total DESC;
+</code-block>
+              <div class="green-box">
+                <p>A consulta percorre muitos registros e devolve um resumo.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+         FASE 2: LINHAS E COLUNAS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 2: Como os dados ficam guardados?</h2>
+          <table class="mini-table">
+            <thead>
+              <tr><th>id</th><th>aluno</th><th>curso</th><th>nota</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Ana</td><td>Info</td><td>8.5</td></tr>
+              <tr><td>2</td><td>Bruno</td><td>Info</td><td>7.0</td></tr>
+              <tr><td>3</td><td>Carla</td><td>Adm</td><td>9.0</td></tr>
+            </tbody>
+          </table>
+          <div class="cyan-box fragment">
+            <p>A tabela e a mesma. O jeito de armazenar e acessar pode mudar bastante.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Orientado a linhas</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <div class="terminal">1, Ana, Info, 8.5
+2, Bruno, Info, 7.0
+3, Carla, Adm, 9.0</div>
+            </div>
+            <div style="flex:1">
+              <div class="box">
+                <p>Bom quando a aplicacao trabalha com registros completos.</p>
+                <p>Exemplo: buscar o cadastro inteiro de um aluno.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Orientado a colunas</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <div class="terminal">id:    1, 2, 3
+aluno: Ana, Bruno, Carla
+curso: Info, Info, Adm
+nota:  8.5, 7.0, 9.0</div>
+            </div>
+            <div style="flex:1">
+              <code-block lang="sql" data-trim>
+SELECT AVG(nota)
+FROM alunos;
+</code-block>
+              <div class="green-box">
+                <p>Se a consulta so precisa de <code>nota</code>, por que ler <code>id</code>, <code>aluno</code> e <code>curso</code>?</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>CSV e Parquet</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>CSV</th><th>Parquet</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Texto simples</td><td>Binario e colunar</td></tr>
+              <tr><td>Facil de abrir manualmente</td><td>Mais eficiente para analise</td></tr>
+              <tr><td>Tipagem fraca</td><td>Guarda esquema e tipos</td></tr>
+              <tr><td>Bom para arquivos pequenos e troca simples</td><td>Comum em data lakes e pipelines analiticos</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: PRIMEIRO CONTATO COM DUCKDB
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 3: SQL sem servidor</h2>
+          <div class="green-box">
+            <p>DuckDB e um motor SQL analitico embarcado: roda dentro do processo da sua aplicacao ou notebook.</p>
+          </div>
+          <ul>
+            <li>nao precisa criar servidor</li>
+            <li>nao precisa usuario, senha e porta</li>
+            <li>consulta arquivos e DataFrames diretamente</li>
+            <li>usa SQL, filtros, agrupamentos e funcoes conhecidas</li>
+          </ul>
+        </section>
+
+        <section data-auto-animate>
+          <h2>SQL sobre DataFrame</h2>
+          <code-block lang="python" data-trim>
+import duckdb
+import pandas as pd
+
+df = pd.DataFrame({
+    "produto": ["Mouse", "Teclado", "Mouse", "Monitor"],
+    "categoria": ["Periferico", "Periferico", "Periferico", "Video"],
+    "valor": [50, 120, 70, 900],
+})
+
+resultado = duckdb.sql("""
+SELECT produto, SUM(valor) AS total
+FROM df
+GROUP BY produto
+ORDER BY total DESC
+""").df()
+
+resultado
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Resultado esperado</h2>
+          <table class="mini-table">
+            <thead>
+              <tr><th></th><th>produto</th><th>total</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>Monitor</td><td>900.0</td></tr>
+              <tr><td>1</td><td>Mouse</td><td>120.0</td></tr>
+              <tr><td>2</td><td>Teclado</td><td>120.0</td></tr>
+            </tbody>
+          </table>
+          <div class="cyan-box">
+            <p>O ponto didatico: a turma ja sabe SQL. Agora o SQL tambem conversa com DataFrames.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+         FASE 4: ARQUIVOS COMO TABELAS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 4: Arquivos como tabelas</h2>
+          <p>DuckDB permite consultar arquivos diretamente, sem etapa obrigatoria de importacao permanente.</p>
+          <code-block lang="sql" data-trim>
+SELECT *
+FROM read_csv_auto('vendas.csv')
+LIMIT 10;
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Agregando um CSV</h2>
+          <code-block lang="sql" data-trim>
+SELECT categoria, COUNT(*) AS qtd, SUM(valor) AS total
+FROM read_csv_auto('vendas.csv')
+GROUP BY categoria
+ORDER BY total DESC;
+</code-block>
+          <table class="mini-table">
+            <thead>
+              <tr><th>categoria</th><th>qtd</th><th>total</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Periferico</td><td>3</td><td>240.0</td></tr>
+              <tr><td>Video</td><td>1</td><td>900.0</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Consultando Parquet</h2>
+          <code-block lang="sql" data-trim>
+SELECT categoria, COUNT(*) AS qtd, SUM(valor) AS total
+FROM read_parquet('vendas.parquet')
+WHERE data >= DATE '2026-01-01'
+GROUP BY categoria
+ORDER BY total DESC;
+</code-block>
+          <div class="yellow-box">
+            <p>Parquet combina muito bem com consultas que leem muitas linhas, mas poucas colunas.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+         FASE 5: PIPELINE ANALITICO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Fase 5: Pipeline analitico</h2>
+          <div class="mermaid" data-id="pipeline-duckdb">
+            <pre>
+flowchart LR
+  A["CSV / Parquet"] --> B["DuckDB"]
+  C["DataFrame"] --> B
+  B --> D["Filtro"]
+  D --> E["Agrupamento"]
+  E --> F["Resumo"]
+  F --> G["CSV / Parquet"]
+            </pre>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>1. Criar tabela a partir do arquivo</h2>
+          <code-block lang="python" data-trim>
+import duckdb
+
+con = duckdb.connect()
+
+con.sql("""
+CREATE TABLE vendas AS
+SELECT *
+FROM read_csv_auto('vendas.csv')
+""")
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>2. Inspecionar</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <code-block lang="sql" data-trim>
+DESCRIBE vendas;
+
+SELECT COUNT(*) AS total_linhas
+FROM vendas;
+
+SELECT *
+FROM vendas
+LIMIT 10;
+</code-block>
+            </div>
+            <div style="flex:1">
+              <div class="box">
+                <p>Antes de responder perguntas, precisamos saber:</p>
+                <ul>
+                  <li>quais colunas existem</li>
+                  <li>quais tipos foram detectados</li>
+                  <li>quantas linhas temos</li>
+                  <li>se os dados parecem coerentes</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>3. Agregar</h2>
+          <code-block lang="sql" data-trim>
+SELECT categoria, AVG(valor) AS media, SUM(valor) AS total
+FROM vendas
+GROUP BY categoria
+ORDER BY total DESC;
+</code-block>
+          <code-block lang="sql" data-trim>
+SELECT produto, COUNT(*) AS quantidade
+FROM vendas
+GROUP BY produto
+ORDER BY quantidade DESC;
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>4. Analisar no tempo</h2>
+          <code-block lang="sql" data-trim>
+SELECT
+    DATE_TRUNC('month', data) AS mes,
+    SUM(valor) AS total
+FROM vendas
+GROUP BY mes
+ORDER BY mes;
+</code-block>
+          <div class="cyan-box">
+            <p>Datas transformam registros soltos em serie historica: mes a mes, semana a semana, dia a dia.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>5. Exportar resultado</h2>
+          <code-block lang="sql" data-trim>
+COPY (
+    SELECT categoria, SUM(valor) AS total
+    FROM vendas
+    GROUP BY categoria
+) TO 'resumo_categorias.csv' (HEADER, DELIMITER ',');
+</code-block>
+          <code-block lang="sql" data-trim>
+COPY (
+    SELECT categoria, SUM(valor) AS total
+    FROM vendas
+    GROUP BY categoria
+) TO 'resumo_categorias.parquet' (FORMAT PARQUET);
+</code-block>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- ============================================================
+         FASE 6: PRATICA
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 6: Atividade pratica</h2>
+          <div class="green-box">
+            <p><strong>Objetivo:</strong> usar DuckDB para explorar, resumir e exportar um conjunto de dados tabular.</p>
+          </div>
+          <ls-u>
+            <li>Carregar um CSV ou Parquet</li>
+            <li>Inspecionar colunas, tipos e quantidade de linhas</li>
+            <li>Escrever pelo menos 5 consultas SQL</li>
+            <li>Usar pelo menos 2 consultas com <code>GROUP BY</code></li>
+            <li>Usar pelo menos 1 filtro com <code>WHERE</code></li>
+            <li>Exportar um resultado para CSV ou Parquet</li>
+          </ls-u>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Base minima para testar</h2>
+          <code-block lang="python" data-trim>
+import pandas as pd
+
+vendas = pd.DataFrame({
+    "data": pd.to_datetime([
+        "2026-02-03", "2026-02-10", "2026-03-02",
+        "2026-03-08", "2026-03-20", "2026-04-04"
+    ]),
+    "produto": ["Mouse", "Teclado", "Mouse", "Monitor", "Cabo HDMI", "Monitor"],
+    "categoria": ["Periferico", "Periferico", "Periferico", "Video", "Acessorio", "Video"],
+    "cidade": ["Capivari", "Elias Fausto", "Capivari", "Rafard", "Capivari", "Rafard"],
+    "valor": [50, 120, 70, 900, 35, 850],
+})
+
+vendas.to_csv("vendas.csv", index=False)
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Consultas esperadas</h2>
+          <code-block lang="sql" data-trim>
+SELECT COUNT(*) AS total_linhas
+FROM vendas;
+
+SELECT categoria, COUNT(*) AS qtd
+FROM vendas
+GROUP BY categoria
+ORDER BY qtd DESC;
+
+SELECT cidade, AVG(valor) AS media
+FROM vendas
+GROUP BY cidade
+HAVING COUNT(*) >= 2
+ORDER BY media DESC;
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Entrega</h2>
+          <div class="yellow-box">
+            <p>Entregar um notebook ou arquivo com codigo e pequenas respostas em texto.</p>
+          </div>
+          <ol>
+            <li>Descricao breve do conjunto de dados</li>
+            <li>Comando de leitura com DuckDB</li>
+            <li>Consultas SQL e resultados</li>
+            <li>Exportacao de um resumo</li>
+            <li>Resposta: por que DuckDB foi util neste caso?</li>
+          </ol>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+      <!-- ============================================================
+         FASE 7: FECHAMENTO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 7: Quando usar DuckDB?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Pergunta</th><th>PostgreSQL</th><th>DuckDB</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Aplicacao web com muitos usuarios escrevendo?</td><td>Sim</td><td>Normalmente nao</td></tr>
+              <tr><td>Analise local de CSV e Parquet?</td><td>Sim, com mais configuracao</td><td>Sim, muito bem</td></tr>
+              <tr><td>Precisa de servidor?</td><td>Normalmente sim</td><td>Nao</td></tr>
+              <tr><td>Transacoes, permissoes e restricoes?</td><td>Forte</td><td>Nao e o foco</td></tr>
+              <tr><td>Exploracao com agregacoes?</td><td>Sim</td><td>Sim, especialmente em arquivos</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Mapa mental da disciplina</h2>
+          <ul>
+            <li><strong>PostgreSQL:</strong> banco relacional completo para aplicacoes</li>
+            <li><strong>Redis:</strong> suporte operacional rapido em memoria</li>
+            <li><strong>MongoDB:</strong> documentos flexiveis semelhantes a JSON</li>
+            <li><strong>Neo4j:</strong> relacoes, caminhos e grafos</li>
+            <li><strong>DuckDB:</strong> motor SQL analitico local para arquivos e DataFrames</li>
+          </ul>
+          <div class="green-box fragment">
+            <p>A mesma linguagem SQL pode participar de sistemas transacionais e de analises locais. O contexto muda a ferramenta.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 7 -->
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
