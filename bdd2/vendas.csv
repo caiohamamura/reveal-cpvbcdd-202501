@@ -1,0 +1,13 @@
+data,produto,categoria,cidade,valor
+2026-01-05,Mouse,Periferico,Capivari,50.0
+2026-01-12,Teclado,Periferico,Elias Fausto,120.0
+2026-01-20,Monitor,Video,Rafard,900.0
+2026-02-03,Mouse,Periferico,Capivari,70.0
+2026-02-10,Webcam,Periferico,Rafard,180.0
+2026-02-18,Cabo HDMI,Acessorio,Capivari,35.0
+2026-03-02,Monitor,Video,Rafard,850.0
+2026-03-08,SSD 1TB,Armazenamento,Capivari,420.0
+2026-03-20,Teclado,Periferico,Elias Fausto,130.0
+2026-04-04,Notebook,Computador,Capivari,3200.0
+2026-04-12,Mouse,Periferico,Rafard,65.0
+2026-04-22,Hub USB,Acessorio,Elias Fausto,95.0

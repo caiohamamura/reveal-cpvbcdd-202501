@@ -443,8 +443,11 @@ ORDER BY total DESC;
               <tr><th>categoria</th><th>qtd</th><th>total</th></tr>
             </thead>
             <tbody>
-              <tr><td>Periferico</td><td>3</td><td>240.0</td></tr>
-              <tr><td>Video</td><td>1</td><td>900.0</td></tr>
+              <tr><td>Computador</td><td>1</td><td>3200.0</td></tr>
+              <tr><td>Video</td><td>2</td><td>1750.0</td></tr>
+              <tr><td>Periferico</td><td>6</td><td>615.0</td></tr>
+              <tr><td>Armazenamento</td><td>1</td><td>420.0</td></tr>
+              <tr><td>Acessorio</td><td>2</td><td>130.0</td></tr>
             </tbody>
           </table>
         </section>
@@ -487,7 +490,7 @@ SELECT cidade,
        SUM(valor) AS total
 FROM read_parquet('dados/vendas/ano=2026/mes=*/vendas_*.parquet')
 WHERE categoria = 'Periferico'
-GROUP BY cidade, mes
+GROUP BY cidade, DATE_TRUNC('month', data)
 ORDER BY mes, total DESC;
 </code-block>
           <div class="cyan-box">
@@ -741,22 +744,12 @@ TO 'saida/vendas_limpas.parquet' (FORMAT PARQUET);
 
         <section data-auto-animate>
           <h2>Base minima para testar</h2>
-          <code-block lang="python" data-trim>
-import pandas as pd
-
-vendas = pd.DataFrame({
-    "data": pd.to_datetime([
-        "2026-02-03", "2026-02-10", "2026-03-02",
-        "2026-03-08", "2026-03-20", "2026-04-04"
-    ]),
-    "produto": ["Mouse", "Teclado", "Mouse", "Monitor", "Cabo HDMI", "Monitor"],
-    "categoria": ["Periferico", "Periferico", "Periferico", "Video", "Acessorio", "Video"],
-    "cidade": ["Capivari", "Elias Fausto", "Capivari", "Rafard", "Capivari", "Rafard"],
-    "valor": [50, 120, 70, 900, 35, 850],
-})
-
-vendas.to_csv("vendas.csv", index=False)
+          <code-block lang="bash" data-trim>
+python planos/aula15_duckdb_assets/gerar_dados_vendas.py
 </code-block>
+          <div class="cyan-box">
+            <p>O script cria <code>vendas.csv</code>, <code>vendas.parquet</code>, CSV particionado e Parquet particionado em formato Hive.</p>
+          </div>
         </section>
 
         <section data-auto-animate>
