@@ -469,10 +469,10 @@ ORDER BY total DESC;
           <code-block lang="text" data-trim>
 dados/
   vendas/
-    ano=2026/
-      mes=01/vendas_01.parquet
-      mes=02/vendas_02.parquet
-      mes=03/vendas_03.parquet
+    ano_2026/
+      mes_01/vendas_01.parquet
+      mes_02/vendas_02.parquet
+      mes_03/vendas_03.parquet
 </code-block>
           <div class="green-box">
             <p>DuckDB consegue consultar varios arquivos como se fossem uma tabela unica.</p>
@@ -485,7 +485,7 @@ dados/
 SELECT cidade,
        DATE_TRUNC('month', data) AS mes,
        SUM(valor) AS total
-FROM read_parquet('dados/vendas/ano=2026/mes=*/vendas_*.parquet')
+FROM read_parquet('dados/vendas/ano_2026/mes_*/vendas_*.parquet')
 WHERE categoria = 'Periferico'
 GROUP BY cidade, mes
 ORDER BY mes, total DESC;
@@ -510,6 +510,17 @@ ORDER BY mes, total DESC;
           </table>
           <div class="yellow-box">
             <p>DuckDB nao substitui um cluster, mas traz a mesma logica de analise para dados que cabem numa maquina.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Nota: pastas com <code>=</code></h2>
+          <p>Em data lakes aparece muito a convencao Hive:</p>
+          <code-block lang="text" data-trim>
+dados/vendas/ano=2026/mes=01/arquivo.parquet
+</code-block>
+          <div class="cyan-box">
+            <p>O sinal <code>=</code> aqui nao e operador. Ele faz parte do nome da pasta para registrar a particao. Para a primeira aula, vamos usar nomes mais comuns: <code>ano_2026/mes_01</code>.</p>
           </div>
         </section>
 
