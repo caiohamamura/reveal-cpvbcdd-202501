@@ -513,6 +513,57 @@ ORDER BY mes, total DESC;
           </div>
         </section>
 
+        <section data-auto-animate>
+          <h2>Hive partitioning</h2>
+          <p>Em data lakes, o valor de algumas colunas aparece no proprio caminho do arquivo.</p>
+          <code-block lang="text" data-trim>
+dados/vendas/
+  ano=2026/
+    mes=01/
+      part-000.parquet
+    mes=02/
+      part-001.parquet
+</code-block>
+          <div class="cyan-box">
+            <p>As pastas <code>ano=2026</code> e <code>mes=01</code> representam colunas virtuais extraidas do caminho.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Lendo particoes Hive com DuckDB</h2>
+          <code-block lang="sql" data-trim>
+SELECT ano, mes, cidade, SUM(valor) AS total
+FROM read_parquet(
+    'dados/vendas/ano=*/mes=*/*.parquet',
+    hive_partitioning = true
+)
+WHERE ano = 2026
+GROUP BY ano, mes, cidade
+ORDER BY mes, total DESC;
+</code-block>
+          <div class="green-box">
+            <p>DuckDB cria as colunas <code>ano</code> e <code>mes</code> a partir dos nomes das pastas.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Tambem funciona com CSV</h2>
+          <code-block lang="sql" data-trim>
+SELECT ano, mes, categoria, COUNT(*) AS qtd
+FROM read_csv(
+    'dados/vendas_csv/ano=*/mes=*/*.csv',
+    header = true,
+    hive_partitioning = true
+)
+WHERE categoria = 'Periferico'
+GROUP BY ano, mes, categoria
+ORDER BY ano, mes;
+</code-block>
+          <div class="yellow-box">
+            <p>Mesmo quando a origem ainda e CSV, o padrao de pastas ja aproxima a organizacao de um data lake.</p>
+          </div>
+        </section>
+
       </section><!-- fim Fase 4 -->
 
       <!-- ============================================================
