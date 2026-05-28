@@ -97,6 +97,9 @@ graph LR
 
         <section data-auto-animate>
           <h2>OLTP: trabalho transacional</h2>
+          <div class="cyan-box">
+            <p><strong>OLTP</strong> vem de <em>Online Transaction Processing</em>: processamento de transacoes online.</p>
+          </div>
           <multi-col style="gap:15px">
             <div style="flex:1">
               <h3>Exemplos</h3>
@@ -119,6 +122,9 @@ graph LR
 
         <section data-auto-animate>
           <h2>OLAP: trabalho analitico</h2>
+          <div class="cyan-box">
+            <p><strong>OLAP</strong> vem de <em>Online Analytical Processing</em>: processamento analitico online.</p>
+          </div>
           <multi-col style="gap:15px">
             <div style="flex:1">
               <h3>Perguntas comuns</h3>
@@ -141,6 +147,22 @@ ORDER BY total DESC;
               </div>
             </div>
           </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>A diferenca esta na pergunta</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Tipo</th><th>Pergunta</th><th>Operacao dominante</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>OLTP</td><td>Este pedido foi pago? Este usuario pode entrar?</td><td>Ler ou alterar poucas linhas com consistencia</td></tr>
+              <tr><td>OLAP</td><td>Quanto vendemos por mes, categoria e cidade?</td><td>Filtrar, agrupar e resumir muitas linhas</td></tr>
+            </tbody>
+          </table>
+          <div class="yellow-box">
+            <p>DuckDB foi desenhado principalmente para o segundo tipo de pergunta.</p>
+          </div>
         </section>
 
       </section><!-- fim Fase 1 -->
@@ -220,6 +242,33 @@ FROM alunos;
           </table>
         </section>
 
+        <section data-auto-animate>
+          <h2>Performance: texto contra colunas</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>CSV</h3>
+              <ul>
+                <li>precisa interpretar texto a cada leitura</li>
+                <li>normalmente lê a linha inteira</li>
+                <li>não guarda tipos fortes</li>
+                <li>compressão depende de arquivo externo</li>
+              </ul>
+            </div>
+            <div style="flex:1">
+              <h3>Parquet</h3>
+              <ul>
+                <li>guarda dados por coluna</li>
+                <li>permite ler só colunas usadas</li>
+                <li>guarda tipos e metadados</li>
+                <li>usa compressão eficiente por coluna</li>
+              </ul>
+            </div>
+          </multi-col>
+          <div class="green-box">
+            <p>Em consultas analiticas, Parquet costuma reduzir leitura de disco, conversao de tipos e memoria movimentada.</p>
+          </div>
+        </section>
+
       </section><!-- fim Fase 2 -->
 
       <!-- ============================================================
@@ -280,6 +329,90 @@ resultado
           </div>
         </section>
 
+        <section data-auto-animate>
+          <h2>Por que SQL aqui ajuda?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Com pandas</h3>
+              <code-block lang="python" data-trim>
+filtrado = df[df["valor"] >= 100]
+por_categoria = (
+    filtrado
+    .groupby("categoria")
+    .agg(qtd=("produto", "count"), total=("valor", "sum"))
+    .reset_index()
+)
+resultado = por_categoria[por_categoria["qtd"] >= 2]
+</code-block>
+            </div>
+            <div style="flex:1">
+              <h3>Com SQL</h3>
+              <code-block lang="sql" data-trim>
+SELECT categoria,
+       COUNT(*) AS qtd,
+       SUM(valor) AS total
+FROM df
+WHERE valor >= 100
+GROUP BY categoria
+HAVING COUNT(*) >= 2
+ORDER BY total DESC;
+</code-block>
+            </div>
+          </multi-col>
+          <div class="green-box">
+            <p>Filtro, agrupamento, agregacao, criterio sobre grupo e ordenacao ficam juntos na mesma frase.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Um caso que fica imperativo em pandas</h2>
+          <p>Queremos comparar cada venda com a media da sua categoria e manter apenas vendas acima dessa media.</p>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>pandas</h3>
+              <code-block lang="python" data-trim>
+medias = (
+    df.groupby("categoria")["valor"]
+      .mean()
+      .reset_index(name="media_categoria")
+)
+
+com_media = df.merge(medias, on="categoria")
+resultado = com_media[
+    com_media["valor"] > com_media["media_categoria"]
+]
+</code-block>
+            </div>
+            <div style="flex:1">
+              <h3>SQL</h3>
+              <code-block lang="sql" data-trim>
+SELECT produto, categoria, valor,
+       AVG(valor) OVER (
+           PARTITION BY categoria
+       ) AS media_categoria
+FROM df
+QUALIFY valor > media_categoria;
+</code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Legibilidade em consultas analiticas</h2>
+          <div class="yellow-box">
+            <p>pandas e excelente, mas muitas analises viram sequencias de passos: filtra, agrupa, reseta indice, junta, filtra de novo.</p>
+          </div>
+          <div class="cyan-box">
+            <p>SQL deixa a intencao mais declarativa: quais linhas entram, como agrupar, quais metricas calcular e quais grupos manter.</p>
+          </div>
+          <ls-u>
+            <li><code>WHERE</code>: filtra linhas antes do agrupamento</li>
+            <li><code>GROUP BY</code>: define o nivel do resumo</li>
+            <li><code>HAVING</code>: filtra grupos depois da agregacao</li>
+            <li><code>WINDOW</code>: compara cada linha com estatisticas do seu grupo</li>
+          </ls-u>
+        </section>
+
       </section><!-- fim Fase 3 -->
 
       <!-- ============================================================
@@ -327,6 +460,56 @@ ORDER BY total DESC;
 </code-block>
           <div class="yellow-box">
             <p>Parquet combina muito bem com consultas que leem muitas linhas, mas poucas colunas.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Arquivos reais raramente vem sozinhos</h2>
+          <p>Em pipelines de dados, e comum receber um arquivo por mes, por dia, por cidade ou por sistema.</p>
+          <code-block lang="text" data-trim>
+dados/
+  vendas/
+    ano=2026/
+      mes=01/vendas_01.parquet
+      mes=02/vendas_02.parquet
+      mes=03/vendas_03.parquet
+</code-block>
+          <div class="green-box">
+            <p>DuckDB consegue consultar varios arquivos como se fossem uma tabela unica.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Glob: muitos arquivos, uma consulta</h2>
+          <code-block lang="sql" data-trim>
+SELECT cidade,
+       DATE_TRUNC('month', data) AS mes,
+       SUM(valor) AS total
+FROM read_parquet('dados/vendas/ano=2026/mes=*/vendas_*.parquet')
+WHERE categoria = 'Periferico'
+GROUP BY cidade, mes
+ORDER BY mes, total DESC;
+</code-block>
+          <div class="cyan-box">
+            <p>O padrao <code>*</code> permite abrir muitos arquivos sem escrever um loop em Python.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Paralelo com big data</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Ideia</th><th>Big data distribuido</th><th>DuckDB local</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Dados particionados</td><td>Pastas por ano, mes, cidade</td><td>Ler glob de muitos arquivos</td></tr>
+              <tr><td>Formato colunar</td><td>Parquet em data lake</td><td><code>read_parquet()</code></td></tr>
+              <tr><td>Consulta declarativa</td><td>SQL em engines como Spark/Trino</td><td>SQL local no notebook</td></tr>
+              <tr><td>Escala</td><td>Cluster</td><td>Uma maquina, sem servidor</td></tr>
+            </tbody>
+          </table>
+          <div class="yellow-box">
+            <p>DuckDB nao substitui um cluster, mas traz a mesma logica de analise para dados que cabem numa maquina.</p>
           </div>
         </section>
 
@@ -443,6 +626,44 @@ COPY (
     GROUP BY categoria
 ) TO 'resumo_categorias.parquet' (FORMAT PARQUET);
 </code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>DuckDB como ponte para PostgreSQL</h2>
+          <p>Um uso pratico: limpar e consolidar arquivos locais antes de inserir num DBMS ja existente.</p>
+          <div class="mermaid" data-id="duckdb-postgres-bridge">
+            <pre>
+flowchart LR
+  A["CSV / JSON / Parquet"] --> B["DuckDB"]
+  B --> C["limpeza + filtros + agregacoes"]
+  C --> D["PostgreSQL"]
+            </pre>
+          </div>
+          <div class="green-box">
+            <p>DuckDB fica no meio: entende arquivos, executa SQL analitico e entrega uma tabela pronta para ingestao.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Exemplo: preparar carga para PostgreSQL</h2>
+          <code-block lang="sql" data-trim>
+CREATE TABLE vendas_limpas AS
+SELECT
+    CAST(data AS DATE) AS data,
+    cidade,
+    categoria,
+    produto,
+    CAST(valor AS DECIMAL(10, 2)) AS valor
+FROM read_csv_auto('entrada/vendas_*.csv')
+WHERE valor IS NOT NULL
+  AND data >= DATE '2026-01-01';
+
+COPY vendas_limpas
+TO 'saida/vendas_limpas.parquet' (FORMAT PARQUET);
+</code-block>
+          <div class="cyan-box">
+            <p>Depois, o arquivo limpo pode ser carregado no PostgreSQL por ferramenta de ETL, script Python ou comando de carga.</p>
+          </div>
         </section>
 
       </section><!-- fim Fase 5 -->
