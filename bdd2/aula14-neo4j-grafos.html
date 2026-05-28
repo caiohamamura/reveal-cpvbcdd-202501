@@ -289,42 +289,6 @@ docker run \
 </textarea></code-block>
         </section>
 
-        <section data-auto-animate>
-          <h2>Python como backend</h2>
-          <p style="color: #6272a4;">Uma aplicação pode consultar o Neo4j pelo driver oficial e transformar o resultado em API.</p>
-          <code-block lang="python" data-trim style="font-size:0.58em;"><textarea>
-from neo4j import GraphDatabase
-
-URI = "neo4j://localhost:7687"
-AUTH = ("neo4j", "ifsp1234")
-
-driver = GraphDatabase.driver(URI, auth=AUTH)
-
-with driver.session() as session:
-    session.run("MATCH (n) DETACH DELETE n")
-    session.run("""
-    CREATE (p:Person {name: 'Keanu Reeves'})
-      -[:ACTED_AS]->(c:Character {name: 'Neo'})
-      -[:ACTED_IN]->(m:Movie {title: 'The Matrix'})
-    """)
-    session.run("""
-    CREATE (:Person {name: 'Carrie-Anne Moss'})
-      -[:ACTED_AS]->(trinity:Character {name: 'Trinity'})
-    WITH trinity
-    MATCH (m:Movie {title: 'The Matrix'})
-    MERGE (trinity)-[:ACTED_IN]->(m)
-    """)
-
-    res = session.run("""
-    MATCH (p:Person)-[:ACTED_AS]->(c:Character)-[:ACTED_IN]->(m:Movie)
-    RETURN p.name AS ator, c.name AS personagem, m.title AS filme
-    """).data()
-
-    print(res)
-
-driver.close()
-</textarea></code-block>
-        </section>
 
       </section><!-- fim Parte 3 -->
 
@@ -639,6 +603,43 @@ RETURN path, length(path) AS saltos;
         </section>
 
       </section><!-- fim Parte 7 -->
+
+      <section data-auto-animate>
+          <h2>Python como backend</h2>
+          <p style="color: #6272a4;">Uma aplicação pode consultar o Neo4j pelo driver oficial e transformar o resultado em API.</p>
+          <code-block lang="python" data-trim style="font-size:0.58em;"><textarea>
+from neo4j import GraphDatabase
+
+URI = "neo4j://localhost:7687"
+AUTH = ("neo4j", "ifsp1234")
+
+driver = GraphDatabase.driver(URI, auth=AUTH)
+
+with driver.session() as session:
+    session.run("MATCH (n) DETACH DELETE n")
+    session.run("""
+    CREATE (p:Person {name: 'Keanu Reeves'})
+      -[:ACTED_AS]->(c:Character {name: 'Neo'})
+      -[:ACTED_IN]->(m:Movie {title: 'The Matrix'})
+    """)
+    session.run("""
+    CREATE (:Person {name: 'Carrie-Anne Moss'})
+      -[:ACTED_AS]->(trinity:Character {name: 'Trinity'})
+    WITH trinity
+    MATCH (m:Movie {title: 'The Matrix'})
+    MERGE (trinity)-[:ACTED_IN]->(m)
+    """)
+
+    res = session.run("""
+    MATCH (p:Person)-[:ACTED_AS]->(c:Character)-[:ACTED_IN]->(m:Movie)
+    RETURN p.name AS ator, c.name AS personagem, m.title AS filme
+    """).data()
+
+    print(res)
+
+driver.close()
+</textarea></code-block>
+        </section>
 
       <!-- ============================================================
          Parte 8: MODELAGEM
