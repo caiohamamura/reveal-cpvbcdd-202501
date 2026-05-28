@@ -416,6 +416,9 @@ Technical details:
 - Use `<textarea>` inside `<code-block>` only when the code actually contains `<` or `>` that would be parsed as HTML, such as `#include <Arduino.h>`.
 - In Python examples that index a SciPy sparse matrix with a pandas boolean mask, convert the mask first: `X[mask.to_numpy()]`. Recent pandas/scipy combinations can fail on `X[mask]`.
 - For SQL/Cypher/Mongo examples that show a result table, include enough seed data earlier in the deck so the query actually returns the displayed rows.
+- When introducing acronyms such as OLTP/OLAP, expand the English term and explain the origin before using the acronym as shorthand.
+- For lessons comparing SQL with DataFrame tools, include a non-trivial side-by-side example where SQL combines `WHERE`, `GROUP BY`, aggregate functions, `HAVING`, window functions, or joins in one readable query, and contrast that with the more imperative multi-step pandas version.
+- For DuckDB/file analytics decks, include real-file workflows beyond a single CSV: CSV vs Parquet performance tradeoffs, `read_parquet()`/`read_csv_auto()` with glob patterns over many files, data-lake/big-data parallels, and DuckDB as a staging/cleaning bridge before loading into PostgreSQL or another DBMS.
 - Do not use one of the student task options as the fully worked example in the same lesson; choose a separate domain so the example does not solve a proposed activity.
 
 #### Converting Google Slides with gogcli
