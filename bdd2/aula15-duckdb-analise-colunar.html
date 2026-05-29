@@ -716,7 +716,8 @@
       vendas_02.parquet</pre>
           <div class="cyan-box">
             <p>O <strong>DuckDB</strong> le este padrao nativamente. As pastas <code>ano=2026</code> e
-              <code>mes=01</code> viram colunas virtuais na consulta.</p>
+              <code>mes=01</code> viram colunas virtuais na consulta.
+            </p>
           </div>
         </section>
 
@@ -844,7 +845,8 @@
                       style="color: #8be9fd; width: 24px;"></i> <strong>Volume:</strong> quantas linhas temos no total?
                   </li>
                   <li style="margin-bottom: 12px;"><i class="fa-solid fa-eye" style="color: #8be9fd; width: 24px;"></i>
-                    <strong>Coerência:</strong> os dados fazem sentido visualmente?</li>
+                    <strong>Coerência:</strong> os dados fazem sentido visualmente?
+                  </li>
                 </ul>
               </div>
             </div>
@@ -1104,18 +1106,19 @@
           <h2>ETL direto entre fontes</h2>
           <div class="flow-row" style="margin-bottom: 15px;">
             <div class="flow-node">
-              <img src="../img/parquet_logo.svg" alt="Parquet" style="height: 40px; margin-bottom: 10px;" />
+              <img src="../img/parquet_logo.svg" alt="Parquet" style="height: 40px;margin:auto;margin-bottom:10px;" />
               <strong style="color: #f8f8f2;">Parquet / CSV</strong>
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-node duckdb-node">
               <img src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg" alt="DuckDB"
-                style="height: 40px; margin-bottom: 10px;" />
+                style="height: 40px;margin:auto;margin-bottom:10px;" />
               <strong style="color: #fff100;">Agrega (Em Memoria)</strong>
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-node" style="border-color: #336791;">
-              <img src="../img/postgres_logo.svg" alt="PostgreSQL" style="height: 40px; margin-bottom: 10px;" />
+              <img src="../img/postgres_logo.svg" alt="PostgreSQL"
+                style="height: 40px;margin:auto;margin-bottom:10px;" />
               <strong style="color: #8be9fd;">PostgreSQL</strong>
             </div>
           </div>
@@ -1288,31 +1291,30 @@
 
         <section data-auto-animate>
           <h2>Mapa mental da disciplina</h2>
-          <div class="artifact-grid"
-            style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 15px;">
-            <div class="artifact-card" style="border-top: 4px solid #336791; text-align: center;">
-              <img src="../img/postgres_logo.svg" alt="PostgreSQL" style="height: 40px; margin-bottom: 5px;" />
+          <div class="artifact-grid" style="display:flex;flex-flow:row wrap;justify-content: center;">
+            <div class="artifact-card" style="border-top: 4px solid #336791; text-align: center;max-width:280px">
+              <img src="../img/postgres_logo.svg" alt="PostgreSQL" style="height: 80px; margin-bottom: 5px;" />
               <h3 style="color: #8be9fd; font-size: 0.6em;">PostgreSQL</h3>
               <p style="font-size: 0.5em; margin:0;">Relacional / Transacional. A fonte da verdade para apps.</p>
             </div>
-            <div class="artifact-card" style="border-top: 4px solid #ff5555; text-align: center;">
-              <i class="fa-solid fa-server fa-3x" style="color: #ff5555; margin-bottom: 5px;"></i>
+            <div class="artifact-card" style="border-top: 4px solid #ff5555; text-align: center;;max-width:280px">
+              <i class="fa-solid fa-server" style="color: #ff5555; margin: 15px;font-size:80px;"></i>
               <h3 style="color: #ff5555; font-size: 0.6em;">Redis</h3>
               <p style="font-size: 0.5em; margin:0;">Chave-Valor na memória. Cache e fila de alta velocidade.</p>
             </div>
-            <div class="artifact-card" style="border-top: 4px solid #50fa7b; text-align: center;">
-              <i class="fa-solid fa-leaf fa-3x" style="color: #50fa7b; margin-bottom: 5px;"></i>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b; text-align: center;;max-width:280px">
+              <i class="fa-solid fa-leaf fa" style="color: #50fa7b; margin: 10px; font-size:80px"></i>
               <h3 style="color: #50fa7b; font-size: 0.6em;">MongoDB</h3>
               <p style="font-size: 0.5em; margin:0;">Documentos flexíveis JSON. Catálogos e dados aninhados.</p>
             </div>
-            <div class="artifact-card" style="border-top: 4px solid #bd93f9; text-align: center;">
-              <i class="fa-solid fa-circle-nodes fa-3x" style="color: #bd93f9; margin-bottom: 5px;"></i>
+            <div class="artifact-card" style="border-top: 4px solid #bd93f9; text-align: center;max-width:280px">
+              <i class="fa-solid fa-circle-nodes" style="color: #bd93f9; margin: 15px;font-size:80px;"></i>
               <h3 style="color: #bd93f9; font-size: 0.6em;">Neo4j</h3>
               <p style="font-size: 0.5em; margin:0;">Grafos e Relacionamentos. Redes sociais e recomendações.</p>
             </div>
-            <div class="artifact-card" style="border-top: 4px solid #f1fa8c; text-align: center; grid-column: span 2;">
+            <div class="artifact-card" style="border-top: 4px solid #f1fa8c; text-align: center;max-width:280px;">
               <img src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg" alt="DuckDB"
-                style="height: 40px; margin-bottom: 5px;" />
+                style="height: 80px; margin-bottom: 5px;" />
               <h3 style="color: #f1fa8c; font-size: 0.6em;">DuckDB</h3>
               <p style="font-size: 0.5em; margin:0;">Analítico local (OLAP). Ponte SQL entre DataFrames, arquivos
                 Parquet/CSV e bancos (ETL).</p>

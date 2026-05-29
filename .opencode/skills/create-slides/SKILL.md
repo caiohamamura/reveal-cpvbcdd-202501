@@ -599,6 +599,21 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
 - The global CSS rule `.reveal .slides section ul li, .reveal .slides section ol li` sets a fixed `font-size` (e.g. `0.52em`). When inline `style="font-size: X.em"` is added on a `<ul>` element, the nested `<li>` elements inherit from that scaled value, causing text to become too small or overflow unpredictably.
 - **Fix**: Adjust the global `ul li / ol li` font-size in the `<style>` block to a reasonable baseline (e.g. `0.82em`) rather than shrinking individual `<ul>` elements further. Typical working values: `ul li` at `0.82em`, `code-block` at `0.88em`, colored box `p` at `0.88em`, colored box `ul li` at `0.82em`.
 
+#### Centering uneven cards in artifact-grid
+- When using an `artifact-grid` with a set number of columns (e.g., `grid-template-columns: repeat(3, minmax(0, 1fr))`) and the last row has fewer items than columns, the grid will naturally left-align the orphans.
+- **Fix**: Instead of relying on CSS grid or nested spans, override the grid to use a flex row wrap layout. Apply `style="display: flex; flex-flow: row wrap; justify-content: center;"` to the container and set a explicit `max-width` on the cards (e.g., `max-width: 280px`).
+  ```html
+  <div class="artifact-grid" style="display: flex; flex-flow: row wrap; justify-content: center; gap: 10px;">
+    <div class="artifact-card" style="max-width: 280px;">...</div>
+    <div class="artifact-card" style="max-width: 280px;">...</div>
+    <div class="artifact-card" style="max-width: 280px;">...</div>
+  </div>
+  ```
+
+#### Aligning images and icons inside cards and flow-nodes
+- `<img src="...">` and FontAwesome `<i>` tags inside `artifact-card` or `flow-node` often fail to center align horizontally just by parent text-alignment.
+- **Fix**: Explicitly apply `margin: auto; margin-bottom: 10px;` to the `<img>` or `<i>` element. For explicit scaling, prefer `font-size: 80px;` over FA classes like `fa-3x` to guarantee exact height matching with adjacent `<img>` tags (e.g., `height: 80px;`).
+
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)
 - Use `enableInsecureFallback()` for simpler teaching code (not full BearSSL cert validation)
