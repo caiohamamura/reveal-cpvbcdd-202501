@@ -14,6 +14,8 @@ You will be given a topic and course context. Generate a complete `.html` slide 
 
 > **Fonte de consulta:** Consulte `docs/ECOSSISTEMA.md` para documentação completa do ecossistema — componentes Vue (`<header1>`, `<code-block>`, `<multi-col>`, `<ls-u>`, `<md>`, `<poll-question>`, `<leader-line>`, `<copy-btn>`), plugins (chalkboard, chart, poll, seminar, customcontrols), convenções CSS (classes utilitárias, paleta Dracula, estilos de `<h2>`/`<h3>`/`<h4>`/`<li>`), arquitetura do projeto, e padrões de inicialização Vue + Reveal.js.
 
+> **Design visual:** Aplique também a skill local `.opencode/skills/slide-design/SKILL.md` ao criar ou revisar decks. Ela adapta princípios de frontend design para slides: direção visual intencional, uso de artefatos reais, layouts legíveis, assets locais, e validação visual.
+
 ### File location
 Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new folder as instructed.
 
@@ -102,7 +104,7 @@ ALL content inside `<div class="slides">` uses **4-space indentation**. Each nes
       <section data-auto-animate>
         <header1 aula="{NUM}" curso="{CURSO}" title-size="24"
                  title="{TITULO COMPLETO}">
-          <!-- Optional: mermaid diagram or image as slot content -->
+          <!-- Optional: prefer a real local image/logo/asset when it represents the topic better than a diagram -->
           <div class="mermaid" data-id="cover-diagram" style="width:450px">
             <pre>
 graph LR
@@ -388,6 +390,17 @@ Technical details:
 - ALL `<img>` tags MUST have concise `alt` text describing the image content
 - Use `width` or `height` to constrain size, not both
 - Center images with parent `style="text-align: center"` or `<center>`
+- Prefer local, versioned assets for course slides; official logos, real screenshots, generated outputs, file trees, and query results are usually better than generic decorative diagrams.
+- Mermaid should clarify a flow or structure, not be default cover decoration.
+
+### Slide Design Quality
+- Pick a visual direction from the lesson purpose and audience before building slides.
+- Keep one dominant visual idea per slide: a diagram, code+output, table, screenshot, image, or exercise prompt.
+- Preserve the user's pedagogical sequence unless explicitly asked to redesign the narrative.
+- Fit content inside the Reveal logical slide canvas; avoid overlap with headers, footers, logos, and IFSP branding.
+- Use fragments only when they serve teaching: staged reasoning, code walkthroughs, or exercise steps.
+- Show actual executed output near teaching code when it helps students interpret formats/results.
+- Prefer practical, concrete examples connected to students' reality over decorative visuals.
 
 ### Content Flow (per lesson)
 1. **Cover** — `<header1>` with title, course, lesson number
