@@ -34,7 +34,21 @@
     .mini-table td { padding: 4px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
     .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 8px; font-size: 0.62em; font-weight: bold; margin-right: 6px; }
     .terminal { font-family: monospace; background: #191a21; border: 1px solid #6272a4; border-radius: 8px; padding: 10px 14px; color: #f8f8f2; font-size: 0.62em; white-space: pre-wrap; text-align: left; }
-    .duckdb-cover-logo { width: 300px; max-width: 82%; height: auto; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.38)); }
+    .duckdb-cover-logo { width: 260px; max-width: 78%; height: auto; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.38)); }
+    .cover-artifact { display: grid; justify-items: center; gap: 10px; }
+    .cover-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 620px; }
+    .cover-tags span { display: inline-block; color: #282a36; background: #fff100; border-radius: 999px; padding: 4px 10px; font-size: 0.46em; font-weight: 700; }
+    .artifact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+    .artifact-card { background: rgba(40, 42, 54, 0.86); border: 1px solid rgba(139, 233, 253, 0.35); border-radius: 8px; padding: 12px 14px; text-align: left; min-height: 120px; }
+    .artifact-card h3 { margin-top: 0; font-size: 0.72em; color: #8be9fd; }
+    .artifact-card .terminal { font-size: 0.48em; padding: 8px 10px; margin-top: 6px; }
+    .file-tree { font-family: monospace; background: #191a21; border: 1px solid rgba(241, 250, 140, 0.45); border-radius: 8px; padding: 14px 18px; color: #f8f8f2; font-size: 0.62em; line-height: 1.35; text-align: left; white-space: pre; margin: 0; box-shadow: none; width: auto; }
+    .flow-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; margin: 18px 0; }
+    .flow-node { background: rgba(68, 71, 90, 0.9); border: 1px solid rgba(139, 233, 253, 0.42); border-radius: 8px; padding: 14px 10px; text-align: center; min-height: 76px; display: grid; align-content: center; }
+    .flow-node strong { color: #f1fa8c; font-size: 0.82em; }
+    .flow-node span { font-size: 0.54em; color: #f8f8f2; }
+    .flow-arrow { color: #ff79c6; font-size: 1.3em; font-weight: 800; }
+    .duckdb-node { border-color: #fff100; box-shadow: 0 0 0 2px rgba(255, 241, 0, 0.16); }
   </style>
 </head>
 
@@ -47,9 +61,17 @@
       <section data-auto-animate>
         <header1 aula="15" curso="Banco de Dados 2" title-size="24"
                  title="DuckDB: SQL para analise de dados colunares">
-          <img class="duckdb-cover-logo"
-               src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
-               alt="Logo oficial do DuckDB" />
+          <div class="cover-artifact">
+            <img class="duckdb-cover-logo"
+                 src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
+                 alt="Logo oficial do DuckDB" />
+            <div class="cover-tags" aria-label="Artefatos usados na aula">
+              <span>CSV real</span>
+              <span>Parquet</span>
+              <span>Hive partitioning</span>
+              <span>SQL local</span>
+            </div>
+          </div>
         </header1>
       </section>
 
@@ -222,17 +244,24 @@ FROM alunos;
 
         <section data-auto-animate>
           <h2>CSV e Parquet</h2>
-          <table class="comparison-table">
-            <thead>
-              <tr><th>CSV</th><th>Parquet</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Texto simples</td><td>Binario e colunar</td></tr>
-              <tr><td>Facil de abrir manualmente</td><td>Mais eficiente para analise</td></tr>
-              <tr><td>Tipagem fraca</td><td>Guarda esquema e tipos</td></tr>
-              <tr><td>Bom para arquivos pequenos e troca simples</td><td>Comum em data lakes e pipelines analiticos</td></tr>
-            </tbody>
-          </table>
+          <div class="artifact-grid">
+            <div class="artifact-card">
+              <h3>CSV: texto linha a linha</h3>
+              <div class="terminal">data,produto,categoria,cidade,valor
+2026-01-05,Mouse,Periferico,Capivari,50.0
+2026-01-12,Teclado,Periferico,Elias Fausto,120.0</div>
+              <p>Facil de abrir manualmente, mas precisa interpretar texto a cada leitura.</p>
+            </div>
+            <div class="artifact-card">
+              <h3>Parquet: arquivo colunar</h3>
+              <div class="terminal">schema:
+  data: DATE
+  produto: VARCHAR
+  categoria: VARCHAR
+  valor: DOUBLE</div>
+              <p>Guarda tipos e metadados; combina com consultas que leem poucas colunas.</p>
+            </div>
+          </div>
         </section>
 
         <section data-auto-animate>
@@ -427,11 +456,25 @@ QUALIFY valor > media_categoria;
         <section data-auto-animate>
           <h2 style="color: #f1fa8c;">Fase 4: Arquivos como tabelas</h2>
           <p>DuckDB permite consultar arquivos diretamente, sem etapa obrigatoria de importacao permanente.</p>
-          <code-block lang="sql" data-trim>
+          <multi-col style="gap:15px">
+            <div style="flex:1.1">
+              <code-block lang="sql" data-trim>
 SELECT *
 FROM read_csv_auto('vendas.csv')
 LIMIT 10;
 </code-block>
+            </div>
+            <div style="flex:0.9">
+              <pre class="file-tree">bdd2/
+  vendas.csv
+  vendas.parquet
+  dados/
+    vendas/
+      ano=2026/
+        mes=01/
+        mes=02/</pre>
+            </div>
+          </multi-col>
         </section>
 
         <section data-auto-animate>
@@ -473,14 +516,12 @@ ORDER BY total DESC;
         <section data-auto-animate>
           <h2>Arquivos reais raramente vem sozinhos</h2>
           <p>Em pipelines de dados, e comum receber um arquivo por mes, por dia, por cidade ou por sistema.</p>
-          <code-block lang="text" data-trim>
-dados/
-  vendas/
-    ano=2026/
-      mes=01/vendas_01.parquet
-      mes=02/vendas_02.parquet
-      mes=03/vendas_03.parquet
-</code-block>
+          <pre class="file-tree">dados/vendas/
+  ano=2026/
+    mes=01/vendas_01.parquet
+    mes=02/vendas_02.parquet
+    mes=03/vendas_03.parquet
+    mes=04/vendas_04.parquet</pre>
           <div class="green-box">
             <p>DuckDB consegue consultar varios arquivos como se fossem uma tabela unica.</p>
           </div>
@@ -523,14 +564,12 @@ ORDER BY mes, total DESC;
         <section data-auto-animate>
           <h2>Hive partitioning</h2>
           <p>Em data lakes, o valor de algumas colunas aparece no proprio caminho do arquivo.</p>
-          <code-block lang="text" data-trim>
-dados/vendas/
+          <pre class="file-tree">dados/vendas/
   ano=2026/
     mes=01/
-      part-000.parquet
+      vendas_01.parquet
     mes=02/
-      part-001.parquet
-</code-block>
+      vendas_02.parquet</pre>
           <div class="cyan-box">
             <p>As pastas <code>ano=2026</code> e <code>mes=01</code> representam colunas virtuais extraidas do caminho.</p>
           </div>
@@ -580,16 +619,24 @@ ORDER BY ano, mes;
 
         <section data-auto-animate>
           <h2 style="color: #bd93f9;">Fase 5: Pipeline analitico</h2>
-          <div class="mermaid" data-id="pipeline-duckdb">
-            <pre>
-flowchart LR
-  A["CSV / Parquet"] --> B["DuckDB"]
-  C["DataFrame"] --> B
-  B --> D["Filtro"]
-  D --> E["Agrupamento"]
-  E --> F["Resumo"]
-  F --> G["CSV / Parquet"]
-            </pre>
+          <div class="flow-row">
+            <div class="flow-node">
+              <strong>Entrada</strong>
+              <span>CSV, Parquet, DataFrame</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node duckdb-node">
+              <strong>DuckDB</strong>
+              <span>SQL local no notebook</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">
+              <strong>Saida</strong>
+              <span>resumo, CSV, Parquet</span>
+            </div>
+          </div>
+          <div class="green-box">
+            <p>O pipeline da aula usa os arquivos reais do repositorio: ler, inspecionar, agregar e exportar.</p>
           </div>
         </section>
 
@@ -689,13 +736,21 @@ COPY (
         <section data-auto-animate>
           <h2>DuckDB como ponte para PostgreSQL</h2>
           <p>Um uso pratico: limpar e consolidar arquivos locais antes de inserir num DBMS ja existente.</p>
-          <div class="mermaid" data-id="duckdb-postgres-bridge">
-            <pre>
-flowchart LR
-  A["CSV / JSON / Parquet"] --> B["DuckDB"]
-  B --> C["limpeza + filtros + agregacoes"]
-  C --> D["PostgreSQL"]
-            </pre>
+          <div class="flow-row">
+            <div class="flow-node">
+              <strong>Arquivos locais</strong>
+              <span>CSV, JSON, Parquet</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node duckdb-node">
+              <strong>DuckDB</strong>
+              <span>limpeza e consolidacao</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">
+              <strong>PostgreSQL</strong>
+              <span>carga final no DBMS</span>
+            </div>
           </div>
           <div class="green-box">
             <p>DuckDB fica no meio: entende arquivos, executa SQL analitico e entrega uma tabela pronta para ingestao.</p>
