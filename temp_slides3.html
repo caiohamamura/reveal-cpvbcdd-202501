@@ -1,0 +1,170 @@
+--- SLIDE ---
+<section data-auto-animate>
+        <header1 aula="15" curso="Banco de Dados 2" title-size="24" title="DuckDB: SQL para analise de dados colunares">
+          <div class="cover-artifact">
+            <img class="duckdb-cover-logo" src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
+              alt="Logo oficial do DuckDB" />
+            <div class="cover-tags" aria-label="Artefatos usados na aula">
+              <span>CSV real</span>
+              <span>Parquet</span>
+              <span>Hive partitioning</span>
+              <span>SQL local</span>
+            </div>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE: Revisao -->
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>OLTP: trabalho transacional</h2>
+          <div class="cyan-box">
+            <p><strong>OLTP</strong> vem de <em>Online Transaction Processing</em>: processamento de transacoes online.
+            </p>
+          </div>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Exemplos</h3>
+              <ul>
+                <li>Cadastro de usuarios</li>
+                <li>Registro de pedidos</li>
+                <li>Atualizacao de estoque</li>
+                <li>Login e sessoes</li>
+              </ul>
+            </div>
+            <div style="flex:1">
+              <h3>Caracteristica</h3>
+              <div class="box">
+                <p>Muitas operacoes pequenas, frequentes, concorrentes e com cuidado forte de integridade.</p>
+              </div>
+              <p><span class="pill">Exemplo</span> PostgreSQL atendendo uma aplicacao web.</p>
+            </div>
+          </multi-col>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>OLAP: trabalho analitico</h2>
+          <div class="cyan-box">
+            <p><strong>OLAP</strong> vem de <em>Online Analytical Processing</em>: processamento analitico online.</p>
+          </div>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Perguntas comuns</h3>
+              <ul>
+                <li>Total de vendas por mes</li>
+                <li>Media de notas por turma</li>
+                <li>Acessos por cidade</li>
+                <li>Comparacao entre categorias</li>
+              </ul>
+            </div>
+            <div style="flex:1.2">
+              <code-block lang="sql" data-trim>
+                SELECT produto, SUM(valor) AS total
+                FROM vendas
+                GROUP BY produto
+                ORDER BY total DESC;
+              </code-block>
+              <div class="green-box">
+                <p>A consulta percorre muitos registros e devolve um resumo.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>A diferenca esta na pergunta</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Pergunta</th>
+                <th>Operacao dominante</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>OLTP</td>
+                <td>Este pedido foi pago? Este usuario pode entrar?</td>
+                <td>Ler ou alterar poucas linhas com consistencia</td>
+              </tr>
+              <tr>
+                <td>OLAP</td>
+                <td>Quanto vendemos por mes, categoria e cidade?</td>
+                <td>Filtrar, agrupar e resumir muitas linhas</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="yellow-box">
+            <p>DuckDB foi desenhado principalmente para o segundo tipo de pergunta.</p>
+          </div>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>Hive partitioning</h2>
+          <p>Em data lakes, o valor de algumas colunas aparece no proprio caminho do arquivo.</p>
+          <pre class="file-tree">dados/vendas/
+  ano=2026/
+    mes=01/
+      vendas_01.parquet
+    mes=02/
+      vendas_02.parquet</pre>
+          <div class="cyan-box">
+            <p>As pastas <code>ano=2026</code> e <code>mes=01</code> representam colunas virtuais extraidas do caminho.
+            </p>
+          </div>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>Lendo particoes Hive com DuckDB</h2>
+          <code-block lang="sql" data-trim>
+            SELECT ano, mes, cidade, SUM(valor) AS total
+            FROM read_parquet(
+            'dados/vendas/ano=*/mes=*/*.parquet',
+            hive_partitioning = true
+            )
+            WHERE ano = 2026
+            GROUP BY ano, mes, cidade
+            ORDER BY mes, total DESC;
+          </code-block>
+          <div class="green-box">
+            <p>DuckDB cria as colunas <code>ano</code> e <code>mes</code> a partir dos nomes das pastas.</p>
+          </div>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>ETL direto entre fontes</h2>
+          <p>Podemos transferir dados do Postgres para o DuckDB (ou vice-versa) sem arquivos intermediarios.</p>
+          <code-block lang="sql" data-trim>
+            -- Copiar de CSV para Postgres
+            INSERT INTO pg.public.vendas
+            SELECT * FROM read_csv('novos_dados.csv');
+
+            -- Consolidar Parquet e salvar no Postgres
+            INSERT INTO pg.public.resumo_mensal
+            SELECT
+            DATE_TRUNC('month', data) AS mes,
+            categoria,
+            SUM(valor) AS total
+            FROM read_parquet('dados/**/*.parquet')
+            GROUP BY mes, categoria;
+          </code-block>
+          <div class="yellow-box">
+            <p>Um script DuckDB le arquivos locais, agrega e salva o resultado diretamente em uma tabela PostgreSQL —
+              sem arquivo intermediario.</p>
+          </div>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>Mapa mental da disciplina</h2>
+          <ul>
+            <li><strong>PostgreSQL:</strong> banco relacional completo para aplicacoes</li>
+            <li><strong>Redis:</strong> suporte operacional rapido em memoria</li>
+            <li><strong>MongoDB:</strong> documentos flexiveis semelhantes a JSON</li>
+            <li><strong>Neo4j:</strong> relacoes, caminhos e grafos</li>
+            <li><strong>DuckDB:</strong> motor SQL analitico local — arquivos, DataFrames e ponte para PostgreSQL</li>
+          </ul>
+          <div class="green-box fragment">
+            <p>A mesma linguagem SQL pode participar de sistemas transacionais, de analises locais e de integracao entre
+              ferramentas.</p>
+          </div>
+        </section>
