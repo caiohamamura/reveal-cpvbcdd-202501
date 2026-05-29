@@ -329,8 +329,18 @@ import duckdb
 import pandas as pd
 
 df = pd.DataFrame({
-    "produto": ["Mouse", "Teclado", "Mouse", "Monitor"],
-    "categoria": ["Periferico", "Periferico", "Periferico", "Video"],
+    "produto": [
+        "Mouse",
+        "Teclado",
+        "Mouse",
+        "Monitor",
+    ],
+    "categoria": [
+        "Periferico",
+        "Periferico",
+        "Periferico",
+        "Video",
+    ],
     "valor": [50, 120, 70, 900],
 })
 
@@ -368,22 +378,30 @@ resultado
             <div style="flex:1">
               <h3>Com pandas</h3>
               <code-block lang="python" data-trim>
-filtrado = df[df["valor"] >= 100]
+filtrado = df[
+    df["valor"] >= 100
+]
 por_categoria = (
     filtrado
     .groupby("categoria")
-    .agg(qtd=("produto", "count"), total=("valor", "sum"))
+    .agg(
+        qtd=("produto", "count"),
+        total=("valor", "sum"),
+    )
     .reset_index()
 )
-resultado = por_categoria[por_categoria["qtd"] >= 2]
+resultado = por_categoria[
+    por_categoria["qtd"] >= 2
+]
 </code-block>
             </div>
             <div style="flex:1">
               <h3>Com SQL</h3>
               <code-block lang="sql" data-trim>
-SELECT categoria,
-       COUNT(*) AS qtd,
-       SUM(valor) AS total
+SELECT
+    categoria,
+    COUNT(*) AS qtd,
+    SUM(valor) AS total
 FROM df
 WHERE valor >= 100
 GROUP BY categoria
@@ -407,24 +425,31 @@ ORDER BY total DESC;
 medias = (
     df.groupby("categoria")["valor"]
       .mean()
-      .reset_index(name="media_categoria")
+      .reset_index(
+          name="media_categoria"
+      )
 )
 
 com_media = df.merge(medias, on="categoria")
 resultado = com_media[
-    com_media["valor"] > com_media["media_categoria"]
+    com_media["valor"]
+    > com_media["media_categoria"]
 ]
 </code-block>
             </div>
             <div style="flex:1">
               <h3>SQL</h3>
               <code-block lang="sql" data-trim>
-SELECT produto, categoria, valor,
-       AVG(valor) OVER (
-           PARTITION BY categoria
-       ) AS media_categoria
+SELECT
+    produto,
+    categoria,
+    valor,
+    AVG(valor) OVER (
+        PARTITION BY categoria
+    ) AS media_categoria
 FROM df
-QUALIFY valor > media_categoria;
+QUALIFY
+    valor > media_categoria;
 </code-block>
             </div>
           </multi-col>
@@ -480,7 +505,10 @@ LIMIT 10;
         <section data-auto-animate>
           <h2>Agregando um CSV</h2>
           <code-block lang="sql" data-trim>
-SELECT categoria, COUNT(*) AS qtd, SUM(valor) AS total
+SELECT
+    categoria,
+    COUNT(*) AS qtd,
+    SUM(valor) AS total
 FROM read_csv_auto('vendas.csv')
 GROUP BY categoria
 ORDER BY total DESC;
@@ -502,7 +530,10 @@ ORDER BY total DESC;
         <section data-auto-animate>
           <h2>Consultando Parquet</h2>
           <code-block lang="sql" data-trim>
-SELECT categoria, COUNT(*) AS qtd, SUM(valor) AS total
+SELECT
+    categoria,
+    COUNT(*) AS qtd,
+    SUM(valor) AS total
 FROM read_parquet('vendas.parquet')
 WHERE data >= DATE '2026-01-01'
 GROUP BY categoria
@@ -530,10 +561,13 @@ ORDER BY total DESC;
         <section data-auto-animate>
           <h2>Glob: muitos arquivos, uma consulta</h2>
           <code-block lang="sql" data-trim>
-SELECT cidade,
-       DATE_TRUNC('month', data) AS mes,
-       SUM(valor) AS total
-FROM read_parquet('dados/vendas/ano=2026/mes=*/vendas_*.parquet')
+SELECT
+    cidade,
+    DATE_TRUNC('month', data) AS mes,
+    SUM(valor) AS total
+FROM read_parquet(
+    'dados/vendas/ano=2026/mes=*/vendas_*.parquet'
+)
 WHERE categoria = 'Periferico'
 GROUP BY cidade, DATE_TRUNC('month', data)
 ORDER BY mes, total DESC;
@@ -687,7 +721,10 @@ LIMIT 10;
         <section data-auto-animate>
           <h2>3. Agregar</h2>
           <code-block lang="sql" data-trim>
-SELECT categoria, AVG(valor) AS media, SUM(valor) AS total
+SELECT
+    categoria,
+    AVG(valor) AS media,
+    SUM(valor) AS total
 FROM vendas
 GROUP BY categoria
 ORDER BY total DESC;
@@ -719,17 +756,23 @@ ORDER BY mes;
           <h2>5. Exportar resultado</h2>
           <code-block lang="sql" data-trim>
 COPY (
-    SELECT categoria, SUM(valor) AS total
+    SELECT
+        categoria,
+        SUM(valor) AS total
     FROM vendas
     GROUP BY categoria
-) TO 'resumo_categorias.csv' (HEADER, DELIMITER ',');
+) TO 'resumo_categorias.csv'
+    (HEADER, DELIMITER ',');
 </code-block>
           <code-block lang="sql" data-trim>
 COPY (
-    SELECT categoria, SUM(valor) AS total
+    SELECT
+        categoria,
+        SUM(valor) AS total
     FROM vendas
     GROUP BY categoria
-) TO 'resumo_categorias.parquet' (FORMAT PARQUET);
+) TO 'resumo_categorias.parquet'
+    (FORMAT PARQUET);
 </code-block>
         </section>
 
@@ -804,7 +847,8 @@ TO 'saida/vendas_limpas.parquet' (FORMAT PARQUET);
         <section data-auto-animate>
           <h2>Base minima para testar</h2>
           <code-block lang="bash" data-trim>
-python planos/aula15_duckdb_assets/gerar_dados_vendas.py
+python \
+planos/aula15_duckdb_assets/gerar_dados_vendas.py
 </code-block>
           <div class="cyan-box">
             <p>O script cria <code>vendas.csv</code>, <code>vendas.parquet</code>, CSV particionado e Parquet particionado em formato Hive.</p>

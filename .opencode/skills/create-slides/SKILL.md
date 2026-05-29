@@ -590,6 +590,11 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
   .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
   ```
 
+#### Side-by-side code comparisons need vertical formatting
+- When two `code-block`s share a `multi-col` row, even moderately long expressions can overflow or feel cramped.
+- Prefer one item per line for `SELECT` lists, dict/list literals, boolean filters, and long `COPY`/`FROM` paths.
+- If the comparison still feels tight, reduce the font size only on those two blocks instead of shrinking the whole deck.
+
 #### `ul > li` font-size inheritance causes compounding overflow
 - The global CSS rule `.reveal .slides section ul li, .reveal .slides section ol li` sets a fixed `font-size` (e.g. `0.52em`). When inline `style="font-size: X.em"` is added on a `<ul>` element, the nested `<li>` elements inherit from that scaled value, causing text to become too small or overflow unpredictably.
 - **Fix**: Adjust the global `ul li / ol li` font-size in the `<style>` block to a reasonable baseline (e.g. `0.82em`) rather than shrinking individual `<ul>` elements further. Typical working values: `ul li` at `0.82em`, `code-block` at `0.88em`, colored box `p` at `0.88em`, colored box `ul li` at `0.82em`.
