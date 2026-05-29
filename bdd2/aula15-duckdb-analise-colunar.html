@@ -324,22 +324,14 @@ python -m pip install duckdb pandas pyarrow
 
         <section data-auto-animate>
           <h2>SQL sobre DataFrame</h2>
-          <code-block lang="python" data-trim>
+          <code-block lang="python" style="max-height:550px">
 import duckdb
 import pandas as pd
 
 df = pd.DataFrame({
-    "produto": [
-        "Mouse",
-        "Teclado",
-        "Mouse",
-        "Monitor",
-    ],
+    "produto": ["Mouse", "Teclado", "Mouse", "Monitor"],
     "categoria": [
-        "Periferico",
-        "Periferico",
-        "Periferico",
-        "Video",
+        "Periferico", "Periferico", "Periferico", "Video"
     ],
     "valor": [50, 120, 70, 900],
 })
@@ -377,10 +369,11 @@ resultado
           <multi-col style="gap:15px">
             <div style="flex:1">
               <h3>Com pandas</h3>
-              <code-block lang="python" data-trim>
+              <code-block lang="python" data-trim style="font-size:0.9em;line-height:1.1;">
 filtrado = df[
     df["valor"] >= 100
 ]
+
 por_categoria = (
     filtrado
     .groupby("categoria")
@@ -390,6 +383,7 @@ por_categoria = (
     )
     .reset_index()
 )
+
 resultado = por_categoria[
     por_categoria["qtd"] >= 2
 ]
@@ -776,61 +770,145 @@ COPY (
 </code-block>
         </section>
 
-        <section data-auto-animate>
-          <h2>DuckDB como ponte para PostgreSQL</h2>
-          <p>Um uso pratico: limpar e consolidar arquivos locais antes de inserir num DBMS ja existente.</p>
-          <div class="flow-row">
-            <div class="flow-node">
-              <strong>Arquivos locais</strong>
-              <span>CSV, JSON, Parquet</span>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-node duckdb-node">
-              <strong>DuckDB</strong>
-              <span>limpeza e consolidacao</span>
-            </div>
-            <div class="flow-arrow">→</div>
-            <div class="flow-node">
-              <strong>PostgreSQL</strong>
-              <span>carga final no DBMS</span>
-            </div>
-          </div>
-          <div class="green-box">
-            <p>DuckDB fica no meio: entende arquivos, executa SQL analitico e entrega uma tabela pronta para ingestao.</p>
-          </div>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Exemplo: preparar carga para PostgreSQL</h2>
-          <code-block lang="sql" data-trim>
-CREATE TABLE vendas_limpas AS
-SELECT
-    CAST(data AS DATE) AS data,
-    cidade,
-    categoria,
-    produto,
-    CAST(valor AS DECIMAL(10, 2)) AS valor
-FROM read_csv_auto('entrada/vendas_*.csv')
-WHERE valor IS NOT NULL
-  AND data >= DATE '2026-01-01';
-
-COPY vendas_limpas
-TO 'saida/vendas_limpas.parquet' (FORMAT PARQUET);
-</code-block>
-          <div class="cyan-box">
-            <p>Depois, o arquivo limpo pode ser carregado no PostgreSQL por ferramenta de ETL, script Python ou comando de carga.</p>
-          </div>
-        </section>
-
       </section><!-- fim Fase 5 -->
 
       <!-- ============================================================
-         FASE 6: PRATICA
+         FASE 6: INTEGRACAO DIRETA (POSTGRES EXTENSION)
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Fase 6: Atividade pratica</h2>
+          <h2 style="color: #ffb86c;">Fase 6: Integracao direta (Postgres)</h2>
+          <p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL.</p>
+          <code-block lang="sql" data-trim>
+INSTALL postgres;
+LOAD postgres;
+
+ATTACH 'dbname=meu_banco user=postgres host=localhost'
+AS pg_db (TYPE postgres);
+
+-- Agora podemos consultar tabelas do Postgres diretamente
+SELECT * FROM pg_db.public.vendas LIMIT 5;
+</code-block>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Opcoes de conexao</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>String libpq</h3>
+              <code-block lang="sql" data-trim>
+-- Parametros basicos
+ATTACH 'dbname=vendas user=postgres
+  host=127.0.0.1 port=5432'
+AS pg (TYPE postgres);
+
+-- Somente leitura
+ATTACH 'dbname=vendas user=postgres'
+AS pg (TYPE postgres, READ_ONLY);
+</code-block>
+            </div>
+            <div style="flex:1">
+              <h3>URI PostgreSQL</h3>
+              <code-block lang="sql" data-trim>
+ATTACH 'postgresql://postgres@localhost/vendas'
+AS pg (TYPE postgres);
+
+-- Ver tabelas disponiveis
+SHOW ALL TABLES;
+DETACH pg;
+</code-block>
+            </div>
+          </multi-col>
+          <div class="cyan-box">
+            <p>A string de conexao segue o formato <code>libpq</code> do PostgreSQL: mesmos parametros usados em <code>psql</code> e <code>psycopg2</code>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Consultando tabelas do PostgreSQL</h2>
+          <p>Depois do <code>ATTACH</code>, as tabelas do Postgres ficam visiveis como tabelas DuckDB normais.</p>
+          <code-block lang="sql" data-trim>
+ATTACH 'dbname=vendas user=postgres' AS pg (TYPE postgres);
+
+-- Consulta direta — dados lidos do Postgres em tempo real
+SELECT categoria, SUM(valor) AS total
+FROM pg.public.vendas
+GROUP BY categoria
+ORDER BY total DESC;
+
+-- Copiar tabela do Postgres para DuckDB local
+CREATE TABLE vendas_local AS
+FROM pg.public.vendas;
+
+DETACH pg;
+</code-block>
+          <div class="green-box">
+            <p>O DuckDB age como cliente SQL do Postgres: so trafega os dados necessarios para responder a consulta.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>ETL direto entre fontes</h2>
+          <p>Podemos transferir dados do Postgres para o DuckDB (ou vice-versa) sem arquivos intermediarios.</p>
+          <code-block lang="sql" data-trim>
+-- Copiar de CSV para Postgres
+INSERT INTO pg.public.vendas
+SELECT * FROM read_csv('novos_dados.csv');
+
+-- Consolidar Parquet e salvar no Postgres
+INSERT INTO pg.public.resumo_mensal
+SELECT
+    DATE_TRUNC('month', data) AS mes,
+    categoria,
+    SUM(valor) AS total
+FROM read_parquet('dados/**/*.parquet')
+GROUP BY mes, categoria;
+</code-block>
+          <div class="yellow-box">
+            <p>Um script DuckDB le arquivos locais, agrega e salva o resultado diretamente em uma tabela PostgreSQL — sem arquivo intermediario.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>COPY entre DuckDB e PostgreSQL</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Postgres → Parquet</h3>
+              <code-block lang="sql" data-trim>
+ATTACH 'dbname=vendas'
+AS pg (TYPE postgres, READ_ONLY);
+
+COPY pg.public.vendas
+TO 'backup/vendas.parquet'
+(FORMAT PARQUET);
+</code-block>
+            </div>
+            <div style="flex:1">
+              <h3>Parquet → Postgres</h3>
+              <code-block lang="sql" data-trim>
+ATTACH 'dbname=vendas'
+AS pg (TYPE postgres);
+
+COPY pg.public.vendas
+FROM 'dados/vendas_novas.parquet';
+</code-block>
+            </div>
+          </multi-col>
+          <div class="green-box">
+            <p><code>COPY</code> usa o protocolo binario do PostgreSQL — mais rapido que <code>INSERT</code> linha a linha para grandes volumes.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+      <!-- ============================================================
+         FASE 7: PRATICA
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 7: Atividade pratica</h2>
           <div class="green-box">
             <p><strong>Objetivo:</strong> usar DuckDB para explorar, resumir e exportar um conjunto de dados tabular.</p>
           </div>
@@ -888,15 +966,15 @@ ORDER BY media DESC;
           </ol>
         </section>
 
-      </section><!-- fim Fase 6 -->
+      </section><!-- fim Fase 7 -->
 
       <!-- ============================================================
-         FASE 7: FECHAMENTO
+         FASE 8: FECHAMENTO
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase 7: Quando usar DuckDB?</h2>
+          <h2 style="color: #8be9fd;">Fase 8: Quando usar DuckDB?</h2>
           <table class="comparison-table">
             <thead>
               <tr><th>Pergunta</th><th>PostgreSQL</th><th>DuckDB</th></tr>
@@ -907,6 +985,7 @@ ORDER BY media DESC;
               <tr><td>Precisa de servidor?</td><td>Normalmente sim</td><td>Nao</td></tr>
               <tr><td>Transacoes, permissoes e restricoes?</td><td>Forte</td><td>Nao e o foco</td></tr>
               <tr><td>Exploracao com agregacoes?</td><td>Sim</td><td>Sim, especialmente em arquivos</td></tr>
+              <tr><td>Conectar diretamente ao PostgreSQL?</td><td>Nao aplicavel</td><td>Sim, com extensao <code>postgres</code></td></tr>
             </tbody>
           </table>
         </section>
@@ -918,14 +997,14 @@ ORDER BY media DESC;
             <li><strong>Redis:</strong> suporte operacional rapido em memoria</li>
             <li><strong>MongoDB:</strong> documentos flexiveis semelhantes a JSON</li>
             <li><strong>Neo4j:</strong> relacoes, caminhos e grafos</li>
-            <li><strong>DuckDB:</strong> motor SQL analitico local para arquivos e DataFrames</li>
+            <li><strong>DuckDB:</strong> motor SQL analitico local — arquivos, DataFrames e ponte para PostgreSQL</li>
           </ul>
           <div class="green-box fragment">
-            <p>A mesma linguagem SQL pode participar de sistemas transacionais e de analises locais. O contexto muda a ferramenta.</p>
+            <p>A mesma linguagem SQL pode participar de sistemas transacionais, de analises locais e de integracao entre ferramentas.</p>
           </div>
         </section>
 
-      </section><!-- fim Fase 7 -->
+      </section><!-- fim Fase 8 -->
 
     </div>
   </div>
