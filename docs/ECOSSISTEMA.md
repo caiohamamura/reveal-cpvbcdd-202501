@@ -499,10 +499,16 @@ Otimizado para mostrar mudanças graduais em código SQL.
 | `.red-box` | Fundo vermelho com borda esquerda |
 | `.green-box` | Fundo verde com borda esquerda |
 | `.yellow-box` | Fundo amarelo com borda esquerda |
+| `.cyan-box` | Fundo ciano com borda esquerda |
+| `.pink-box` | Fundo rosa com borda esquerda |
 | `.big-number` | Número grande verde (2.5em) |
 | `.red-number` | Número grande vermelho (2.5em) |
-| `.comparison-table` | Tabela estilizada |
+| `.comparison-table` | Tabela estilizada para comparações |
+| `.mini-table` | Tabela compacta para pequenos dados |
 | `.step-number` | Número em círculo roxo |
+| `.terminal` | Estilo de console com fonte monospace |
+| `.pill` | Badge/tag arredondada colorida |
+| `.multi-col > *` / `div:has(> pre.code-wrapper)` | Fix global de overflow e min-width (scroll horizontal) para o `code-block` dentro de colunas |
 
 ### Temas Disponíveis
 Os 12 temas do Reveal.js estão em `dist/theme/`:

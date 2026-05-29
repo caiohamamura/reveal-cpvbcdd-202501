@@ -40,16 +40,6 @@ Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new fol
   <link rel="stylesheet" href="../plugin/poll/style.css" />
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
   <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
-  <style>
-    /* Prevent code-block from overflowing grid/flex containers */
-    .multi-col > * {
-      min-width: 0;
-    }
-    .reveal .slides section code-block > div {
-      max-width: 100%;
-      overflow-x: auto;
-    }
-  </style>
 </head>
 
 <body>
@@ -595,14 +585,10 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
 #### Long code lines overflow inside `multi-col` or slide width
 - The `code-block` component renders a wrapper `<div style="width: min-content">` with a `<pre style="min-width: max-content">`. This means the code block always sizes itself to the longest line.
 - Inside `<multi-col>` (CSS Grid), grid items have `min-width: auto` by default — so a long line like `'postgresql://postgres@localhost/vendas'` forces the grid cell past 50%, pushing the other column off-screen or overflowing the slide.
-- **Fix (two rules in the deck's `<style>` block)**:
-  1. `min-width: 0` on grid children so they can shrink below content width
-  2. `overflow-x: auto; max-width: 100%` on the code-block wrapper div so content scrolls
-  ```css
-  .multi-col > * { min-width: 0; }
-  .reveal .slides section code-block > div { max-width: 100%; overflow-x: auto; }
-  ```
-- These rules are already included in the boilerplate `<style>` block above. Add them to existing decks that predate this fix.
+- **Fix (handled globally in `custom.css`)**:
+  1. `min-width: 0` on `.multi-col > *` so grid children can shrink below content width.
+  2. `overflow-x: auto; max-width: 100%` on `div:has(> pre.code-wrapper)` so the code block wrapper scrolls.
+  *(These rules are automatically applied to all decks via `custom.css`, so you no longer need inline workarounds like `style="max-width:420px"`)*
 
 #### Side-by-side code comparisons need vertical formatting
 - When two `code-block`s share a `multi-col` row, even moderately long expressions can overflow or feel cramped.
