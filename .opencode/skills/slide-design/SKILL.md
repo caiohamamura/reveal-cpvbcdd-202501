@@ -37,6 +37,7 @@ Before editing a deck, choose a concrete visual direction from the lesson itself
 - Do not place UI cards inside other cards. Use callout boxes sparingly and only for emphasis.
 - Tables must be scannable: short labels, enough padding, and no more columns than can fit comfortably.
 - Code slides should show runnable code plus nearby output/result when it helps interpretation.
+- **Comparison Cards**: When analyzing multiple different approaches, build visual "comparison cards" (using `artifact-card` in a grid or flex layout) with appropriate accent colors and icons, instead of using boring two-column bullet lists.
 
 ## Visual Asset Rules
 

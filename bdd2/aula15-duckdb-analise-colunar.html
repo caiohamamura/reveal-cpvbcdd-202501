@@ -285,26 +285,30 @@
 
         <section data-auto-animate>
           <h2>Performance: texto contra colunas</h2>
-          <multi-col style="gap:15px">
-            <div style="flex:1">
-              <h3>CSV</h3>
-              <ul>
-                <li>precisa interpretar texto a cada leitura</li>
-                <li>normalmente lê a linha inteira</li>
-                <li>não guarda tipos fortes</li>
-                <li>compressão depende de arquivo externo</li>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-file-csv"></i> CSV
+              </h3>
+              <ul style="list-style-type: none; padding: 0; margin: 10px 0 0 0;">
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 24px;"></i> precisa interpretar texto a cada leitura</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 24px;"></i> lê a linha inteira</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 24px;"></i> não guarda tipos fortes</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 24px;"></i> compressão depende de arquivo externo</li>
               </ul>
             </div>
-            <div style="flex:1">
-              <h3>Parquet</h3>
-              <ul>
-                <li>guarda dados por coluna</li>
-                <li>permite ler só colunas usadas</li>
-                <li>guarda tipos e metadados</li>
-                <li>usa compressão eficiente por coluna</li>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-database"></i> Parquet
+              </h3>
+              <ul style="list-style-type: none; padding: 0; margin: 10px 0 0 0;">
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 24px;"></i> guarda dados por coluna</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 24px;"></i> permite ler só colunas usadas</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 24px;"></i> guarda tipos e metadados</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 24px;"></i> usa compressão eficiente por coluna</li>
               </ul>
             </div>
-          </multi-col>
+          </div>
           <div class="green-box">
             <p>Em consultas analiticas, Parquet costuma reduzir leitura de disco, conversao de tipos e memoria
               movimentada.</p>
