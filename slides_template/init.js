@@ -76,7 +76,14 @@ function injectSeminarPanel() {
 }
 
 function initializeReveal() {
-  const plugins = [RevealMarkdown, RevealNotes, RevealZoom, RevealHighlight, RevealMath.KaTeX, RevealMermaid];
+  const plugins = [];
+
+  if (window.RevealMarkdown) plugins.push(RevealMarkdown);
+  if (window.RevealNotes) plugins.push(RevealNotes);
+  if (window.RevealZoom) plugins.push(RevealZoom);
+  if (window.RevealHighlight) plugins.push(RevealHighlight);
+  if (window.RevealMath?.KaTeX) plugins.push(RevealMath.KaTeX);
+  if (window.RevealMermaid) plugins.push(RevealMermaid);
 
   // Auto-detect optional plugins
   if (window.RevealSeminar) plugins.push(RevealSeminar);
