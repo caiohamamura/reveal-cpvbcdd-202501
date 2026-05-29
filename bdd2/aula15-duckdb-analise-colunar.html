@@ -793,6 +793,41 @@ SELECT * FROM pg_db.public.vendas LIMIT 5;
         </section>
 
         <section data-auto-animate>
+          <h2>Autenticacao no PostgreSQL</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Na string de conexao</h3>
+              <code-block lang="sql" data-trim>
+-- Senha inline (evitar em scripts versionados!)
+ATTACH 'dbname=vendas user=postgres
+  host=localhost password=minha_senha'
+AS pg (TYPE postgres);
+</code-block>
+              <div class="pink-box" style="margin-top:8px">
+                <p>Nunca versione senhas em arquivos de codigo.</p>
+              </div>
+            </div>
+            <div style="flex:1">
+              <h3>Variaveis de ambiente</h3>
+              <code-block lang="bash" data-trim>
+# Mesmas variaveis do psql e psycopg2
+export PGHOST=localhost
+export PGPORT=5432
+export PGDATABASE=vendas
+export PGUSER=postgres
+export PGPASSWORD=minha_senha
+</code-block>
+              <div class="green-box" style="margin-top:8px">
+                <p>Com as variaveis definidas, basta <code>ATTACH '' AS pg (TYPE postgres)</code>.</p>
+              </div>
+            </div>
+          </multi-col>
+          <div class="cyan-box">
+            <p>A extensao usa <code>libpq</code> internamente — todas as variaveis de ambiente padrao do PostgreSQL sao suportadas, incluindo o arquivo <code>~/.pgpass</code>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
           <h2>Opcoes de conexao</h2>
           <multi-col style="gap:15px">
             <div style="flex:1">
