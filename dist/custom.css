@@ -21,6 +21,18 @@
     z-index: 999;
 }
 
+:root {
+    --main-color: var(--r-heading-color, #bd93f9);
+    --secondary-color: var(--r-link-color, #ff79c6);
+    --accent-color: #8be9fd;
+    --success-color: #50fa7b;
+    --warning-color: #f1fa8c;
+    --danger-color: #ff5555;
+    --surface-color: #44475a;
+    --surface-muted-color: #343746;
+    --border-color: #6272a4;
+}
+
 h1,
 h2,
 h3,
@@ -31,32 +43,52 @@ h5 {
 
 
 .reveal section h2 {
-    font-size: 38pt;
-    font-family:  Oswald, 'Arial Narrow Bold', sans-serif;
+    font-size: 42pt;
+    font-family: var(--r-heading-font, "League Gothic", Impact, sans-serif);
+    color: var(--r-heading-color, #bd93f9);
+    font-weight: var(--r-heading-font-weight, normal);
+    line-height: var(--r-heading-line-height, 1.2);
+    letter-spacing: var(--r-heading-letter-spacing, normal);
+    text-shadow: none;
 }
 
 .edgeLabel > p {
-    color: black !important;
+    color: #282a36 !important;
 }
 
 .reveal section h3 {
-    font-size: 32pt;
-    color: #359830;
-    text-shadow: 0px 0px 2px white;
+    font-size: 30pt;
+    font-family: var(--r-heading-font, "League Gothic", Impact, sans-serif);
+    color: var(--accent-color);
+    font-weight: var(--r-heading-font-weight, normal);
+    line-height: 1.15;
+    letter-spacing: normal;
+    text-shadow: none;
+    margin: 10px 0 8px;
 }
 
 .reveal section h4 {
     font-size: 24pt;
+    color: var(--warning-color);
+    font-family: var(--r-main-font);
+    font-weight: 700;
     margin: 10px 0;
 }
 
-p,
-ul>li,
-ol>li,
-li {
+.reveal p,
+.reveal ul > li,
+.reveal ol > li,
+.reveal li {
     font-size: 22pt;
+    line-height: 1.28;
+    color: var(--r-main-color, #f8f8f2);
     text-align: left;
-    margin: 5px 40px;
+    margin: 5px 0;
+}
+
+.reveal ul,
+.reveal ol {
+    margin-left: 1.1em;
 }
 
 svg * {
@@ -96,7 +128,7 @@ table {
 }
 
 table td {
-    border-color: #333;
+    border-color: rgba(98, 114, 164, 0.55);
     /* Cor da borda da célula */
     border-style: solid;
     border-width: 1px;
@@ -104,22 +136,22 @@ table td {
     overflow: hidden;
     padding: 10px 5px;
     word-break: normal;
-    color: #eee;
+    color: var(--r-main-color, #f8f8f2);
     /* Cor do texto da célula */
 }
 
 table th {
-    border-color: #333;
+    border-color: rgba(98, 114, 164, 0.72);
     /* Cor da borda do cabeçalho */
     border-style: solid;
     border-width: 1px;
-    font-weight: normal;
+    font-weight: 700;
     overflow: hidden;
     padding: 10px 5px;
     word-break: normal;
-    color: #fff;
+    color: var(--accent-color);
     /* Cor do texto do cabeçalho */
-    background-color: #555;
+    background-color: rgba(68, 71, 90, 0.92);
     /* Cor de fundo do cabeçalho */
 }
 
@@ -140,7 +172,10 @@ table .tg-bf9e {
 }
 
 .attribute {
-    background-color: cyan;
+    background-color: rgba(139, 233, 253, 0.18);
+    color: var(--accent-color);
+    border-radius: 4px;
+    padding: 0 0.2em;
 }
 
 .reveal pre {
@@ -212,12 +247,6 @@ section {
     transition: all 0.3s ease;
 }
 
-:root {
-    --main-color: #bd93f9;
-    --secondary-color: #ff79c6;
-    --accent-color: #50fa7b;
-}
-
 /* Estilização de tabelas */
 .styled-table {
     width: 100%;
@@ -232,7 +261,7 @@ section {
 
 .styled-table thead tr {
     background-color: var(--main-color);
-    color: #ffffff;
+    color: #282a36;
     text-align: left;
 }
 
@@ -246,7 +275,7 @@ section {
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-    background-color: #343746;
+    background-color: var(--surface-muted-color);
 }
 
 .styled-table tbody tr:last-of-type {
@@ -254,7 +283,7 @@ section {
 }
 
 .styled-table tbody tr.active-row {
-    color: var(--accent-color);
+    color: var(--success-color);
     font-weight: bold;
 }
 
@@ -273,8 +302,9 @@ section {
 
 /* Diagramas Mermaid */
 .mermaid-container {
-    background: #ccced1;
-    border-radius: 10px;
+    background: rgba(68, 71, 90, 0.62);
+    border: 1px solid rgba(98, 114, 164, 0.55);
+    border-radius: 8px;
     padding: 10px;
 }
 
@@ -293,7 +323,9 @@ section {
 }
 
 .architecture-box {
-    background: #44475a;
+    background: var(--surface-color);
+    color: var(--r-main-color, #f8f8f2);
+    border: 1px solid rgba(139, 233, 253, 0.35);
     font-size: 24pt;
     padding: 10px;
     border-radius: 8px;
@@ -345,7 +377,11 @@ div {
 }
 
 .edgeLabel p {
-    background-color: #66bb6a !important;
+    background-color: var(--surface-color) !important;
+    color: var(--r-main-color, #f8f8f2) !important;
+    border: 1px solid rgba(139, 233, 253, 0.45);
+    border-radius: 4px;
+    padding: 2px 6px;
 }
 
 .node rect,
@@ -353,33 +389,32 @@ div {
 .node polygon,
 .node path {
     stroke-width: 4px !important;
-    fill: #2f9e44 !important;
-    stroke: #1b5e20 !important;
+    fill: var(--surface-color) !important;
+    stroke: var(--main-color) !important;
 }
 
 .flowchart-link {
-    stroke: #fff !important;
+    stroke: var(--secondary-color) !important;
     stroke-width: 4px !important;
     fill: none !important;
 }
 
 .nodeLabel,
 .edgeLabel {
-    color: white !important;
+    color: var(--r-main-color, #f8f8f2) !important;
 }
 
 .reveal a {
-    color: #d1fae5;
-    /* soft mint (fits green palette) */
+    color: var(--r-link-color, #ff79c6);
     font-size: 18pt;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    border-bottom: 1px solid rgba(255, 121, 198, 0.45);
     transition: all 0.2s ease;
 }
 
 .reveal a:hover {
-    color: #ffffff;
-    border-bottom: 1px solid #ffffff;
+    color: var(--r-link-color-hover, #8be9fd);
+    border-bottom: 1px solid var(--r-link-color-hover, #8be9fd);
 }
 
 .reveal a:active {
