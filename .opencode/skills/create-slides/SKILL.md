@@ -356,7 +356,8 @@ Each question is a **separate slide** wrapped in a parent `<section>`:
 - Body text, `<li>`: `22pt`, left-aligned, `margin: 5px 40px`
 - Code font size: default `20pt` (overridable via `size` prop)
 - All text is LEFT-aligned (not centered)
-- Dracula color palette accents: `#ff79c6` (pink), `#8be9fd` (cyan), `#ff5555` (red), `#50fa7b` (green), `#f1fa8c` (yellow), `#44475a` (dark bg), `#6272a4` (muted)
+- Dracula color palette accents: `#ff79c6` (pink), `#8be9fd` (cyan), `#ff5555` (red), `#50fa7b` (green), `#f1fa8c` (yellow), `#ffb86c` (orange), `#44475a` (dark bg), `#6272a4` (muted)
+- **Colorblind Accessibility**: Avoid using red (`#ff5555`) for important structural elements (like framework flow nodes or key recommendations) on dark backgrounds, as it has poor contrast for colorblind viewers. Use orange (`#ffb86c`) or other high-contrast colors instead. Red should only be used for explicit error/wrong indicators.
 - Use inline `style=""` for one-off styling, not CSS classes
 - Background images: `data-background-image="..." data-background-opacity="0.3"`
 - Emojis are welcome in slide content (titles, diagrams, emphasis)

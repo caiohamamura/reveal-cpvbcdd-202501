@@ -15,7 +15,6 @@
 </head>
 
 <body>
-
   <div id="app" class="reveal">
     <div class="slides">
 
@@ -25,10 +24,9 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="09" curso="Banco de Dados 2" title-size="22"
-                 title="Blocks, Functions e Procedures">
+        <header1 aula="09" curso="Banco de Dados 2" title-size="22" title="Blocks, Functions e Procedures">
           <div class="mermaid" data-id="cover-overview" style="width:500px">
-            <pre> 
+            <pre>
 graph LR
   B["⚡ Function"] --> A["📝 DO Block"]
   C["📦 Procedure"] --> A
@@ -77,17 +75,18 @@ graph TB
       <section data-auto-animate>
         <h2>Roteiro</h2>
         <multi-col>
-        <ul>
-          <li>DO Blocks — blocos anônimos</li>
-          <li class="transparent">Stored Procedures — procedimentos armazenados</li>
-          <li class="transparent">Functions — funções escalares e tabelares</li>
-          <li class="transparent">Comparação e quando usar cada um</li>
-          <li class="transparent">Prática hands-on</li>
-        </ul>
-        <div style="align-self: flex-start; max-width: 45%;">
-          <p style="color: #8be9fd; font-weight: bold;">📝 DO Blocks</p>
-          <p style="font-size: 18pt;">Blocos de código <b>descartáveis</b> — executam uma vez e somem. Ideais para migrações e testes rápidos.</p>
-        </div>
+          <ul>
+            <li>DO Blocks — blocos anônimos</li>
+            <li class="transparent">Stored Procedures — procedimentos armazenados</li>
+            <li class="transparent">Functions — funções escalares e tabelares</li>
+            <li class="transparent">Comparação e quando usar cada um</li>
+            <li class="transparent">Prática hands-on</li>
+          </ul>
+          <div style="align-self: flex-start; max-width: 45%;">
+            <p style="color: #8be9fd; font-weight: bold;">📝 DO Blocks</p>
+            <p style="font-size: 18pt;">Blocos de código <b>descartáveis</b> — executam uma vez e somem. Ideais para
+              migrações e testes rápidos.</p>
+          </div>
         </multi-col>
       </section>
 
@@ -95,17 +94,18 @@ graph TB
       <section data-auto-animate>
         <h2>Roteiro</h2>
         <multi-col>
-        <ul>
-          <li class="semi-out">DO Blocks — blocos anônimos</li>
-          <li>Stored Procedures — procedimentos armazenados</li>
-          <li class="transparent">Functions — funções escalares e tabelares</li>
-          <li class="transparent">Comparação e quando usar cada um</li>
-          <li class="transparent">Prática hands-on</li>
-        </ul>
-        <div style="align-self: flex-start; max-width: 45%;">
-          <p style="color: #ff79c6; font-weight: bold;">📦 Procedures</p>
-          <p style="font-size: 18pt;">Procedimentos que <b>mutam dados</b> e controlam transações. Chamados via <code>CALL</code>.</p>
-        </div>
+          <ul>
+            <li class="semi-out">DO Blocks — blocos anônimos</li>
+            <li>Stored Procedures — procedimentos armazenados</li>
+            <li class="transparent">Functions — funções escalares e tabelares</li>
+            <li class="transparent">Comparação e quando usar cada um</li>
+            <li class="transparent">Prática hands-on</li>
+          </ul>
+          <div style="align-self: flex-start; max-width: 45%;">
+            <p style="color: #ff79c6; font-weight: bold;">📦 Procedures</p>
+            <p style="font-size: 18pt;">Procedimentos que <b>mutam dados</b> e controlam transações. Chamados via
+              <code>CALL</code>.</p>
+          </div>
         </multi-col>
       </section>
 
@@ -113,17 +113,18 @@ graph TB
       <section data-auto-animate>
         <h2>Roteiro</h2>
         <multi-col>
-        <ul>
-          <li class="semi-out">DO Blocks — blocos anônimos</li>
-          <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
-          <li>Functions — funções escalares e tabelares</li>
-          <li class="transparent">Comparação e quando usar cada um</li>
-          <li class="transparent">Prática hands-on</li>
-        </ul>
-        <div style="align-self: flex-start; max-width: 45%;">
-          <p style="color: #50fa7b; font-weight: bold;">⚡ Functions</p>
-          <p style="font-size: 18pt;">Funções armazenadas que <b>retornam valores</b> e podem ser usadas em <code>SELECT</code>, <code>WHERE</code> e constraints.</p>
-        </div>
+          <ul>
+            <li class="semi-out">DO Blocks — blocos anônimos</li>
+            <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
+            <li>Functions — funções escalares e tabelares</li>
+            <li class="transparent">Comparação e quando usar cada um</li>
+            <li class="transparent">Prática hands-on</li>
+          </ul>
+          <div style="align-self: flex-start; max-width: 45%;">
+            <p style="color: #50fa7b; font-weight: bold;">⚡ Functions</p>
+            <p style="font-size: 18pt;">Funções armazenadas que <b>retornam valores</b> e podem ser usadas em
+              <code>SELECT</code>, <code>WHERE</code> e constraints.</p>
+          </div>
         </multi-col>
       </section>
 
@@ -131,17 +132,18 @@ graph TB
       <section data-auto-animate>
         <h2>Roteiro</h2>
         <multi-col>
-        <ul>
-          <li class="semi-out">DO Blocks — blocos anônimos</li>
-          <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
-          <li class="semi-out">Functions — funções escalares e tabelares</li>
-          <li>Comparação e quando usar cada um</li>
-          <li class="transparent">Prática hands-on</li>
-        </ul>
-        <div style="align-self: flex-start; max-width: 45%;">
-          <p style="color: #f1fa8c; font-weight: bold;">⚖️ Comparação</p>
-          <p style="font-size: 18pt;">Fluxo de decisão: preciso reutilizar? Retornar valor? Mutar estado? Vamos montar um guia prático.</p>
-        </div>
+          <ul>
+            <li class="semi-out">DO Blocks — blocos anônimos</li>
+            <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
+            <li class="semi-out">Functions — funções escalares e tabelares</li>
+            <li>Comparação e quando usar cada um</li>
+            <li class="transparent">Prática hands-on</li>
+          </ul>
+          <div style="align-self: flex-start; max-width: 45%;">
+            <p style="color: #f1fa8c; font-weight: bold;">⚖️ Comparação</p>
+            <p style="font-size: 18pt;">Fluxo de decisão: preciso reutilizar? Retornar valor? Mutar estado? Vamos montar
+              um guia prático.</p>
+          </div>
         </multi-col>
       </section>
 
@@ -149,17 +151,17 @@ graph TB
       <section data-auto-animate>
         <h2>Roteiro</h2>
         <multi-col>
-        <ul>
-          <li class="semi-out">DO Blocks — blocos anônimos</li>
-          <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
-          <li class="semi-out">Functions — funções escalares e tabelares</li>
-          <li class="semi-out">Comparação e quando usar cada um</li>
-          <li>Prática hands-on</li>
-        </ul>
-        <div style="align-self: flex-start; max-width: 45%;">
-          <p style="color: #ffb86c; font-weight: bold;">🔧 Prática</p>
-          <p style="font-size: 18pt;">Mão na massa!</p>
-        </div>
+          <ul>
+            <li class="semi-out">DO Blocks — blocos anônimos</li>
+            <li class="semi-out">Stored Procedures — procedimentos armazenados</li>
+            <li class="semi-out">Functions — funções escalares e tabelares</li>
+            <li class="semi-out">Comparação e quando usar cada um</li>
+            <li>Prática hands-on</li>
+          </ul>
+          <div style="align-self: flex-start; max-width: 45%;">
+            <p style="color: #ffb86c; font-weight: bold;">🔧 Prática</p>
+            <p style="font-size: 18pt;">Mão na massa!</p>
+          </div>
         </multi-col>
       </section>
 
@@ -181,9 +183,9 @@ graph TB
             </ul>
           </div>
           <div style="flex: 1; text-align: center;">
-            
-              <span style="color: #8be9fd;">Estrutura:</span>
-              <pre>
+
+            <span style="color: #8be9fd;">Estrutura:</span>
+            <pre>
                 <code class="lang-sql code-wrapper" data-line-numbers data-trim>DO $$
 DECLARE
   -- variáveis
@@ -198,7 +200,7 @@ END $$;</code></pre>
       <!-- SLIDE: Dollar Quoting -->
       <section data-auto-animate>
         <h2>O que são os <code style="color:#ff79c6">$$</code> ?</h2>
-        <multi-col style="display:flex;gap:15px"> 
+        <multi-col style="display:flex;gap:15px">
           <div style="flex: 1;">
             <ul>
               <li><b>Dollar quoting</b> — alternativa a aspas simples para strings</li>
@@ -210,16 +212,19 @@ END $$;</code></pre>
           <div style="flex: .5;">
             <div style="background: #282a36; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
               <p style="color: #ff5555; font-size: 16pt; margin: 0;">Sem dollar quoting:</p>
-              <pre style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT 'It''s a ''test''';</code></pre>
+              <pre
+                style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT 'It''s a ''test''';</code></pre>
             </div>
             <div style="background: #282a36; border-radius: 8px; padding: 15px;">
               <p style="color: #50fa7b; font-size: 16pt; margin: 0;">Com dollar quoting:</p>
-              <pre style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT $$It's a 'test'$$;</code></pre>
+              <pre
+                style="margin:5px 0 0 0; font-size: 14pt;"><code class="lang-pgsql">SELECT $$It's a 'test'$$;</code></pre>
             </div>
           </div>
         </multi-col>
         <div style="text-align: center; margin-top: 15px;">
-          <p style="font-size: 20pt; color: #6272a4;">Em DO blocks e functions, <code style="color:#ff79c6">$$</code> delimita o corpo do código PL/pgSQL</p>
+          <p style="font-size: 20pt; color: #6272a4;">Em DO blocks e functions, <code style="color:#ff79c6">$$</code>
+            delimita o corpo do código PL/pgSQL</p>
         </div>
       </section>
 
@@ -227,10 +232,10 @@ END $$;</code></pre>
       <section data-auto-animate>
         <h2>DO Block — Olá, PostgreSQL!</h2>
         <code-block lang="pgsql" data-line-numbers>
-DO $$
-BEGIN
-    RAISE NOTICE 'Olá, Banco de Dados II!';
-END $$;
+          DO $$
+          BEGIN
+          RAISE NOTICE 'Olá, Banco de Dados II!';
+          END $$;
         </code-block>
         <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px; margin-top: 15px;">
           <p style="font-size: 18pt; color: #8be9fd; margin: 0;">Resultado:</p>
@@ -242,41 +247,43 @@ END $$;
       <section data-auto-animate>
         <h2>DO Block — Variáveis e Lógica</h2>
         <code-block lang="pgsql" data-line-numbers>
-DO $$
-DECLARE
-    nome_aluno VARCHAR(50) := 'ADS 3º';
-    total_clientes INTEGER;
-BEGIN
-    SELECT COUNT(*) INTO total_clientes FROM clientes;
+          DO $$
+          DECLARE
+          nome_aluno VARCHAR(50) := 'ADS 3º';
+          total_clientes INTEGER;
+          BEGIN
+          SELECT COUNT(*) INTO total_clientes FROM clientes;
 
-    IF total_clientes > 10 THEN
-        RAISE NOTICE 'Turma % tem % clientes!', nome_aluno, total_clientes;
-    ELSE
-        RAISE NOTICE 'Turma % — poucos clientes ainda', nome_aluno;
-    END IF;
-END $$;
+          IF total_clientes > 10 THEN
+          RAISE NOTICE 'Turma % tem % clientes!', nome_aluno, total_clientes;
+          ELSE
+          RAISE NOTICE 'Turma % — poucos clientes ainda', nome_aluno;
+          END IF;
+          END $$;
         </code-block>
       </section>
 
       <!-- SLIDE 7: DO Block - Migração prática -->
       <section data-auto-animate>
         <h2>DO Block — Exemplo Prático</h2>
-        <p style="font-size: 20pt; color: #6272a4; margin-bottom: 10px;">Migrar emails para minúsculo e contar atualizações</p>
+        <p style="font-size: 20pt; color: #6272a4; margin-bottom: 10px;">Migrar emails para minúsculo e contar
+          atualizações</p>
         <code-block lang="pgsql">
-DO $$
-DECLARE
-    count_updated INTEGER;
-BEGIN
-    UPDATE clientes
-    SET email = LOWER(email)
-    WHERE email != LOWER(email);
+          DO $$
+          DECLARE
+          count_updated INTEGER;
+          BEGIN
+          UPDATE clientes
+          SET email = LOWER(email)
+          WHERE email != LOWER(email);
 
-    GET DIAGNOSTICS count_updated = ROW_COUNT;
-    RAISE NOTICE 'E-mails normalizados: %', count_updated;
-END $$;
+          GET DIAGNOSTICS count_updated = ROW_COUNT;
+          RAISE NOTICE 'E-mails normalizados: %', count_updated;
+          END $$;
         </code-block>
         <div style="text-align: center; margin-top: 15px;">
-          <p style="font-size: 20pt; color: #ff79c6;"><b>DO block = execução imediata, sem reuso, sem parâmetros de saída</b></p>
+          <p style="font-size: 20pt; color: #ff79c6;"><b>DO block = execução imediata, sem reuso, sem parâmetros de
+              saída</b></p>
         </div>
       </section>
 
@@ -327,22 +334,23 @@ CALL nome(1, 2);</code></pre>
       <section data-auto-animate>
         <h2>Procedure — Inserir Cliente</h2>
         <code-block lang="sql">
-CREATE OR REPLACE PROCEDURE sp_novo_cliente(
-    p_nome   VARCHAR,
-    p_email  VARCHAR,
-    p_cidade VARCHAR,
-    p_limite DECIMAL(10,2)
-) AS $$
-BEGIN
-    INSERT INTO clientes (nome, email, cidade, limite_credito)
-    VALUES (p_nome, p_email, p_cidade, p_limite);
+          CREATE OR REPLACE PROCEDURE sp_novo_cliente(
+          p_nome VARCHAR,
+          p_email VARCHAR,
+          p_cidade VARCHAR,
+          p_limite DECIMAL(10,2)
+          ) AS $$
+          BEGIN
+          INSERT INTO clientes (nome, email, cidade, limite_credito)
+          VALUES (p_nome, p_email, p_cidade, p_limite);
 
-    RAISE NOTICE 'Cliente % inserido com sucesso!', p_nome;
-END;
-$$ LANGUAGE plpgsql;
+          RAISE NOTICE 'Cliente % inserido com sucesso!', p_nome;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
         <div style="margin-top: 10px;">
-          <pre style="font-size: 16pt;"><code class="sql">CALL sp_novo_cliente('Eduardo Lima', 'eduardo@email.com', 'São Paulo', 4500);</code></pre>
+          <pre
+            style="font-size: 16pt;"><code class="sql">CALL sp_novo_cliente('Eduardo Lima', 'eduardo@email.com', 'São Paulo', 4500);</code></pre>
         </div>
       </section>
 
@@ -350,23 +358,23 @@ $$ LANGUAGE plpgsql;
       <section data-auto-animate>
         <h2>Procedure — Validação e Exceção</h2>
         <code-block lang="sql">
-CREATE OR REPLACE PROCEDURE sp_atualizar_status(
-    p_pedido_id    INTEGER,
-    p_novo_status  VARCHAR
-) AS $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pedidos WHERE id = p_pedido_id
-    ) THEN
-        RAISE EXCEPTION 'Pedido #% não encontrado!', p_pedido_id;
-    END IF;
+          CREATE OR REPLACE PROCEDURE sp_atualizar_status(
+          p_pedido_id INTEGER,
+          p_novo_status VARCHAR
+          ) AS $$
+          BEGIN
+          IF NOT EXISTS (
+          SELECT 1 FROM pedidos WHERE id = p_pedido_id
+          ) THEN
+          RAISE EXCEPTION 'Pedido #% não encontrado!', p_pedido_id;
+          END IF;
 
-    UPDATE pedidos SET status = p_novo_status
-    WHERE id = p_pedido_id;
+          UPDATE pedidos SET status = p_novo_status
+          WHERE id = p_pedido_id;
 
-    RAISE NOTICE 'Pedido #% → %', p_pedido_id, p_novo_status;
-END;
-$$ LANGUAGE plpgsql;
+          RAISE NOTICE 'Pedido #% → %', p_pedido_id, p_novo_status;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
       </section>
 
@@ -374,28 +382,21 @@ $$ LANGUAGE plpgsql;
       <section data-auto-animate>
         <h2>Procedure — Transferência de Estoque</h2>
         <code-block lang="sql">
-CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
-    p_origem    INTEGER,
-    p_destino   INTEGER,
-    p_qtd       INTEGER
-) AS $$
-DECLARE
-    v_estoque INTEGER;
-BEGIN
-    SELECT estoque INTO v_estoque
-    FROM produtos WHERE id = p_origem;
+          CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
+          p_origem INTEGER,
+          p_destino INTEGER,
+          p_qtd INTEGER
+          ) AS $$
+          DECLARE
+          v_estoque INTEGER;
+          BEGIN
+          SELECT estoque INTO v_estoque
+          FROM produtos WHERE id = p_origem;
 
-    IF v_estoque < p_qtd THEN
-        RAISE EXCEPTION 'Estoque insuficiente! Disponível: %', v_estoque;
-    END IF;
-
-    UPDATE produtos SET estoque = estoque - p_qtd WHERE id = p_origem;
-    UPDATE produtos SET estoque = estoque + p_qtd WHERE id = p_destino;
-
-    RAISE NOTICE 'Transferidos % itens: #% → #%', p_qtd, p_origem, p_destino;
-END;
-$$ LANGUAGE plpgsql;
-        </code-block>
+          IF v_estoque < p_qtd THEN RAISE EXCEPTION 'Estoque insuficiente! Disponível: %' , v_estoque; END IF; UPDATE
+            produtos SET estoque=estoque - p_qtd WHERE id=p_origem; UPDATE produtos SET estoque=estoque + p_qtd WHERE
+            id=p_destino; RAISE NOTICE 'Transferidos % itens: #% → #%' , p_qtd, p_origem, p_destino; END; $$ LANGUAGE
+            plpgsql; </code-block>
       </section>
 
       <!-- SLIDE 21: Quando usar Procedures -->
@@ -444,13 +445,13 @@ $$ LANGUAGE plpgsql;</code></pre>
       <section data-auto-animate>
         <h2>Function Escalar — Soma</h2>
         <code-block lang="sql">
-CREATE OR REPLACE FUNCTION somar(
-    a INTEGER, b INTEGER
-) RETURNS INTEGER AS $$
-BEGIN
-    RETURN a + b;
-END;
-$$ LANGUAGE plpgsql;
+          CREATE OR REPLACE FUNCTION somar(
+          a INTEGER, b INTEGER
+          ) RETURNS INTEGER AS $$
+          BEGIN
+          RETURN a + b;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
         <div style="margin-top: 15px;">
           <pre style="font-size: 16pt;"><code class="sql">SELECT somar(3, 5);  -- resultado: 8</code></pre>
@@ -461,21 +462,16 @@ $$ LANGUAGE plpgsql;
       <section data-auto-animate>
         <h2>Function — Calculadora de Comissão</h2>
         <code-block lang="sql">
-CREATE OR REPLACE FUNCTION calcular_comissao(
-    p_venda  NUMERIC(10,2),
-    p_taxa   NUMERIC(3,2) DEFAULT 0.05
-) RETURNS NUMERIC(10,2) AS $$
-BEGIN
-    IF p_venda < 0 THEN
-        RAISE EXCEPTION 'Venda não pode ser negativa: %', p_venda;
-    END IF;
-    RETURN p_venda * p_taxa;
-END;
-$$ LANGUAGE plpgsql STRICT;
-        </code-block>
-        <div style="margin-top: 15px;">
-          <pre style="font-size: 16pt;"><code class="sql">SELECT calcular_comissao(1000.00);  -- 50.00</code></pre>
-        </div>
+          CREATE OR REPLACE FUNCTION calcular_comissao(
+          p_venda NUMERIC(10,2),
+          p_taxa NUMERIC(3,2) DEFAULT 0.05
+          ) RETURNS NUMERIC(10,2) AS $$
+          BEGIN
+          IF p_venda < 0 THEN RAISE EXCEPTION 'Venda não pode ser negativa: %' , p_venda; END IF; RETURN p_venda *
+            p_taxa; END; $$ LANGUAGE plpgsql STRICT; </code-block>
+            <div style="margin-top: 15px;">
+              <pre style="font-size: 16pt;"><code class="sql">SELECT calcular_comissao(1000.00);  -- 50.00</code></pre>
+            </div>
       </section>
 
       <!-- SLIDE 12: Tipos de Retorno -->
@@ -483,12 +479,28 @@ $$ LANGUAGE plpgsql STRICT;
         <h2>Tipos de Retorno</h2>
         <table>
           <thead>
-            <tr><th>Tipo</th><th>Descrição</th><th>Exemplo de uso</th></tr>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Exemplo de uso</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><code>RETURNS tipo</code></td><td>Escalar</td><td>INTEGER, TEXT, BOOLEAN</td></tr>
-            <tr><td><code>RETURNS TABLE(...)</code></td><td>Tabela virtual</td><td>Relatórios, filtros</td></tr>
-            <tr><td><code>RETURNS SETOF tabela</code></td><td>Conjunto de linhas</td><td>Listagens</td></tr>
+            <tr>
+              <td><code>RETURNS tipo</code></td>
+              <td>Escalar</td>
+              <td>INTEGER, TEXT, BOOLEAN</td>
+            </tr>
+            <tr>
+              <td><code>RETURNS TABLE(...)</code></td>
+              <td>Tabela virtual</td>
+              <td>Relatórios, filtros</td>
+            </tr>
+            <tr>
+              <td><code>RETURNS SETOF tabela</code></td>
+              <td>Conjunto de linhas</td>
+              <td>Listagens</td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -497,23 +509,24 @@ $$ LANGUAGE plpgsql STRICT;
       <section data-auto-animate>
         <h2>Function que Retorna Tabela</h2>
         <code-block lang="sql">
-CREATE OR REPLACE FUNCTION fn_produtos_por_categoria(
-    p_categoria VARCHAR
-) RETURNS TABLE(
-    id    INTEGER,
-    nome  VARCHAR,
-    preco DECIMAL(10,2)
-) AS $$
-BEGIN
-    RETURN QUERY
-    SELECT pro.id, pro.nome, pro.preco
-    FROM produtos pro
-    WHERE pro.categoria = p_categoria;
-END;
-$$ LANGUAGE plpgsql;
+          CREATE OR REPLACE FUNCTION fn_produtos_por_categoria(
+          p_categoria VARCHAR
+          ) RETURNS TABLE(
+          id INTEGER,
+          nome VARCHAR,
+          preco DECIMAL(10,2)
+          ) AS $$
+          BEGIN
+          RETURN QUERY
+          SELECT pro.id, pro.nome, pro.preco
+          FROM produtos pro
+          WHERE pro.categoria = p_categoria;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
         <div style="margin-top: 15px;">
-          <pre style="font-size: 16pt;"><code class="sql">SELECT * FROM fn_produtos_por_categoria('Eletrônicos');</code></pre>
+          <pre
+            style="font-size: 16pt;"><code class="sql">SELECT * FROM fn_produtos_por_categoria('Eletrônicos');</code></pre>
         </div>
       </section>
 
@@ -531,17 +544,17 @@ $$ LANGUAGE plpgsql;
           </div>
           <div style="flex: 1;">
             <code-block lang="pgsql" data-line-numbers="1-11|3|4-5|1-11" data-fragment-index="1">
--- OUT: retorna sem RETURN
-CREATE FUNCTION dividir(
-    a NUMERIC, b NUMERIC,
-    OUT resultado NUMERIC,
-    OUT resto NUMERIC
-) AS $$
-BEGIN
-    resultado := a / b;
-    resto     := a % b;
-END;
-$$ LANGUAGE plpgsql;
+              -- OUT: retorna sem RETURN
+              CREATE FUNCTION dividir(
+              a NUMERIC, b NUMERIC,
+              OUT resultado NUMERIC,
+              OUT resto NUMERIC
+              ) AS $$
+              BEGIN
+              resultado := a / b;
+              resto := a % b;
+              END;
+              $$ LANGUAGE plpgsql;
             </code-block>
           </div>
         </multi-col>
@@ -550,26 +563,26 @@ $$ LANGUAGE plpgsql;
       <!-- SLIDE 15: Function com OUT -->
       <section data-auto-animate>
         <h2>Function — Estatísticas com OUT</h2>
-        <code-block style="min-height: min-content;" lang="sql" data-line-numbers="1-19|1-19|3,4,9|5,14"> 
-CREATE OR REPLACE FUNCTION fn_estatisticas_cliente(
-    p_cliente_id INTEGER,
-    OUT total_pedidos INTEGER,
-    OUT valor_gasto   DECIMAL(10,2),
-    OUT total_itens   INTEGER
-) AS $$
-BEGIN
-    SELECT COUNT(*), COALESCE(SUM(valor_total), 0)
-    INTO total_pedidos, valor_gasto
-    FROM pedidos
-    WHERE cliente_id = p_cliente_id;
+        <code-block style="min-height: min-content;" lang="sql" data-line-numbers="1-19|1-19|3,4,9|5,14">
+          CREATE OR REPLACE FUNCTION fn_estatisticas_cliente(
+          p_cliente_id INTEGER,
+          OUT total_pedidos INTEGER,
+          OUT valor_gasto DECIMAL(10,2),
+          OUT total_itens INTEGER
+          ) AS $$
+          BEGIN
+          SELECT COUNT(*), COALESCE(SUM(valor_total), 0)
+          INTO total_pedidos, valor_gasto
+          FROM pedidos
+          WHERE cliente_id = p_cliente_id;
 
-    SELECT COALESCE(SUM(pi.quantidade), 0)
-    INTO total_itens
-    FROM pedidos p
-    JOIN pedidos_itens pi ON p.id = pi.pedido_id
-    WHERE p.cliente_id = p_cliente_id;
-END;
-$$ LANGUAGE plpgsql;
+          SELECT COALESCE(SUM(pi.quantidade), 0)
+          INTO total_itens
+          FROM pedidos p
+          JOIN pedidos_itens pi ON p.id = pi.pedido_id
+          WHERE p.cliente_id = p_cliente_id;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
         <div style="margin-top: 10px;">
           <pre style="font-size: 16pt;"><code class="sql">SELECT * FROM fn_estatisticas_cliente(1);</code></pre>
@@ -580,14 +593,14 @@ $$ LANGUAGE plpgsql;
       <section data-auto-animate>
         <h2>INOUT — Entrada e Saída</h2>
         <code-block lang="pgsql">
--- INOUT: recebe, modifica e retorna
-CREATE FUNCTION dobro_inout(
-    INOUT valor NUMERIC
-) AS $$
-BEGIN
-    valor := valor * 2;
-END;
-$$ LANGUAGE plpgsql;
+          -- INOUT: recebe, modifica e retorna
+          CREATE FUNCTION dobro_inout(
+          INOUT valor NUMERIC
+          ) AS $$
+          BEGIN
+          valor := valor * 2;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
         <div style="margin-top: 10px;">
           <pre style="font-size: 16pt;"><code class="sql">SELECT dobro_inout(5);  -- resultado: 10</code></pre>
@@ -598,22 +611,23 @@ $$ LANGUAGE plpgsql;
       <section data-auto-animate>
         <h2>VARIADIC — Múltiplos Argumentos</h2>
         <code-block lang="pgsql">
--- VARIADIC: número variável de argumentos
-CREATE FUNCTION somar_varios(
-    VARIADIC nums NUMERIC[]
-) RETURNS NUMERIC AS $$
-DECLARE
-    total NUMERIC := 0;
-BEGIN
-    FOR i IN 1..array_length(nums, 1) LOOP
-        total := total + nums[i];
-    END LOOP;
-    RETURN total;
-END;
-$$ LANGUAGE plpgsql;
+          -- VARIADIC: número variável de argumentos
+          CREATE FUNCTION somar_varios(
+          VARIADIC nums NUMERIC[]
+          ) RETURNS NUMERIC AS $$
+          DECLARE
+          total NUMERIC := 0;
+          BEGIN
+          FOR i IN 1..array_length(nums, 1) LOOP
+          total := total + nums[i];
+          END LOOP;
+          RETURN total;
+          END;
+          $$ LANGUAGE plpgsql;
         </code-block>
         <div style="margin-top: 10px;">
-          <pre style="font-size: 16pt;"><code class="sql">SELECT somar_varios(1, 2, 3, 4, 5);  -- resultado: 15</code></pre>
+          <pre
+            style="font-size: 16pt;"><code class="sql">SELECT somar_varios(1, 2, 3, 4, 5);  -- resultado: 15</code></pre>
         </div>
       </section>
 
@@ -634,14 +648,38 @@ $$ LANGUAGE plpgsql;
         <h2>Functions vs Procedures</h2>
         <table>
           <thead>
-            <tr><th>Característica</th><th style="color:#50fa7b">Function</th><th style="color:#ff79c6">Procedure</th></tr>
+            <tr>
+              <th>Característica</th>
+              <th style="color:#50fa7b">Function</th>
+              <th style="color:#ff79c6">Procedure</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td>Retorno</td><td>Obrigatório</td><td>Não retorna</td></tr>
-            <tr><td>Chamada</td><td><code>SELECT fn()</code></td><td><code>CALL sp()</code></td></tr>
-            <tr><td>Transação</td><td>Não pode COMMIT/ROLLBACK</td><td>Pode COMMIT/ROLLBACK</td></tr>
-            <tr><td>Uso em SQL</td><td>Em expressions</td><td>Só CALL</td></tr>
-            <tr><td>Melhor para</td><td>Cálculos, validações</td><td>Mutações, batch</td></tr>
+            <tr>
+              <td>Retorno</td>
+              <td>Obrigatório</td>
+              <td>Não retorna</td>
+            </tr>
+            <tr>
+              <td>Chamada</td>
+              <td><code>SELECT fn()</code></td>
+              <td><code>CALL sp()</code></td>
+            </tr>
+            <tr>
+              <td>Transação</td>
+              <td>Não pode COMMIT/ROLLBACK</td>
+              <td>Pode COMMIT/ROLLBACK</td>
+            </tr>
+            <tr>
+              <td>Uso em SQL</td>
+              <td>Em expressions</td>
+              <td>Só CALL</td>
+            </tr>
+            <tr>
+              <td>Melhor para</td>
+              <td>Cálculos, validações</td>
+              <td>Mutações, batch</td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -673,7 +711,8 @@ graph TD
       <!-- SLIDE 26: Setup -->
       <section data-auto-animate>
         <h2>Exercícios — Setup</h2>
-        <p style="font-size: 20pt; margin-bottom: 10px;">Execute o script de setup do roteiro de prática para criar o schema <b>e-commerce</b>:</p>
+        <p style="font-size: 20pt; margin-bottom: 10px;">Execute o script de setup do roteiro de prática para criar o
+          schema <b>e-commerce</b>:</p>
         <multi-col style="gap:15px">
           <div style="flex: 1;">
             <ls-u>
@@ -698,17 +737,17 @@ graph TD
           </ul>
 
           <div>
-          <code-block>
--- Criar bloco DO
+            <code-block>
+              -- Criar bloco DO
 
--- Fazer consulta com INSERT INTO para 
--- contar produtos e calcular média
+              -- Fazer consulta com INSERT INTO para
+              -- contar produtos e calcular média
 
-RAISE NOTICE '% produtos cadastrados', contagem;
-RAISE NOTICE 'Média preços R$%', media;
+              RAISE NOTICE '% produtos cadastrados', contagem;
+              RAISE NOTICE 'Média preços R$%', media;
 
--- Finalizar bloco DO
-</code-block>
+              -- Finalizar bloco DO
+            </code-block>
           </div>
         </div>
       </section>
@@ -726,13 +765,13 @@ RAISE NOTICE 'Média preços R$%', media;
         </div>
         <div>
           <code-block lang="sql">
-CREATE OR REPLACE FUNCTION fn_estatisticas_categoria(
-    -- parâmetros de entrada e saída (OUT)
-) AS $$
-BEGIN
-    -- sua lógica aqui
-END;
-$$ LANGUAGE plpgsql;
+            CREATE OR REPLACE FUNCTION fn_estatisticas_categoria(
+            -- parâmetros de entrada e saída (OUT)
+            ) AS $$
+            BEGIN
+            -- sua lógica aqui
+            END;
+            $$ LANGUAGE plpgsql;
           </code-block>
         </div>
       </section>
@@ -752,67 +791,68 @@ $$ LANGUAGE plpgsql;
         </div>
         <div>
           <code-block lang="sql">
-CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
-    -- parâmetros de entrada
-) AS $$
-BEGIN
-    -- sua lógica aqui
-END;
-$$ LANGUAGE plpgsql;
+            CREATE OR REPLACE PROCEDURE sp_transferir_estoque(
+            -- parâmetros de entrada
+            ) AS $$
+            BEGIN
+            -- sua lógica aqui
+            END;
+            $$ LANGUAGE plpgsql;
           </code-block>
         </div>
       </section>
 
       <!-- SLIDE 30: Desafio -->
       <section data-auto-animate style="transform:scale(0.7) translateY(-20%)">
-  <h2>Exercício 4 — Função de Resumo de Clientes</h2>
-  <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 20px;">
-    <multi-col>
-      <div style="align-self:start">
-    <p><strong>Objetivo:</strong> Crie a função <code>resumo_clientes</code> que retorne uma tabela contendo:</p>
-    <ul>
-      <li><code>cliente_id</code></li>
-      <li><code>nome_cliente</code></li>
-      <li><code>cidade</code></li>
-      <li><code>total_pedidos</code> (não pendentes)</li>
-      <li><code>total_gasto</code></li>
-      <li><code>ticket_medio</code></li>
-      <li><code>produto_mais_comprado</code> (em qde)</li>
-    </ul>
-    </div>
-    <div style="align-self:start"> 
-    <p><strong>Regras:</strong></p>
-    <ul>
-      <li>Utilize dados de múltiplas tabelas</li>
-      <li>Ignore pedidos com status <code>'PENDENTE'</code></li>
-      <li>Considere o produto mais comprado pela soma das quantidades</li>
-      <li>Em caso de empate, pode retornar qualquer produto</li>
-    </ul>
-    </div>
-    </multi-col>
-  </div>
-  <div>
-    <center>
-    <code-block lang="sql" style="max-height:200px;">
-CREATE OR REPLACE FUNCTION resumo_clientes()
-RETURNS TABLE (
-    cliente_id INTEGER,
-    nome_cliente VARCHAR,
-    cidade VARCHAR,
-    total_pedidos INTEGER,
-    total_gasto DECIMAL,
-    produto_mais_comprado VARCHAR
-) AS $$
-BEGIN
-    RETURN QUERY
-    -- sua query aqui
-    ;
-END;
-$$ LANGUAGE plpgsql;
-    </code-block>
-    </center>
-  </div>
-</section>
+        <h2>Exercício 4 — Função de Resumo de Clientes</h2>
+        <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 20px;">
+          <multi-col>
+            <div style="align-self:start">
+              <p><strong>Objetivo:</strong> Crie a função <code>resumo_clientes</code> que retorne uma tabela contendo:
+              </p>
+              <ul>
+                <li><code>cliente_id</code></li>
+                <li><code>nome_cliente</code></li>
+                <li><code>cidade</code></li>
+                <li><code>total_pedidos</code> (não pendentes)</li>
+                <li><code>total_gasto</code></li>
+                <li><code>ticket_medio</code></li>
+                <li><code>produto_mais_comprado</code> (em qde)</li>
+              </ul>
+            </div>
+            <div style="align-self:start">
+              <p><strong>Regras:</strong></p>
+              <ul>
+                <li>Utilize dados de múltiplas tabelas</li>
+                <li>Ignore pedidos com status <code>'PENDENTE'</code></li>
+                <li>Considere o produto mais comprado pela soma das quantidades</li>
+                <li>Em caso de empate, pode retornar qualquer produto</li>
+              </ul>
+            </div>
+          </multi-col>
+        </div>
+        <div>
+          <center>
+            <code-block lang="sql" style="max-height:200px;">
+              CREATE OR REPLACE FUNCTION resumo_clientes()
+              RETURNS TABLE (
+              cliente_id INTEGER,
+              nome_cliente VARCHAR,
+              cidade VARCHAR,
+              total_pedidos INTEGER,
+              total_gasto DECIMAL,
+              produto_mais_comprado VARCHAR
+              ) AS $$
+              BEGIN
+              RETURN QUERY
+              -- sua query aqui
+              ;
+              END;
+              $$ LANGUAGE plpgsql;
+            </code-block>
+          </center>
+        </div>
+      </section>
 
 
       <!-- ============================================================
@@ -834,9 +874,12 @@ $$ LANGUAGE plpgsql;
       <section data-auto-animate>
         <h2>Referências</h2>
         <ul style="font-size: 18pt;">
-          <li><a href="https://www.postgresql.org/docs/current/plpgsql.html" target="_blank">PostgreSQL PL/pgSQL Documentation</a></li>
-          <li><a href="https://www.postgresql.org/docs/current/sql-createfunction.html" target="_blank">CREATE FUNCTION</a></li>
-          <li><a href="https://www.postgresql.org/docs/current/sql-createprocedure.html" target="_blank">CREATE PROCEDURE</a></li>
+          <li><a href="https://www.postgresql.org/docs/current/plpgsql.html" target="_blank">PostgreSQL PL/pgSQL
+              Documentation</a></li>
+          <li><a href="https://www.postgresql.org/docs/current/sql-createfunction.html" target="_blank">CREATE
+              FUNCTION</a></li>
+          <li><a href="https://www.postgresql.org/docs/current/sql-createprocedure.html" target="_blank">CREATE
+              PROCEDURE</a></li>
         </ul>
       </section>
 
@@ -871,10 +914,10 @@ $$ LANGUAGE plpgsql;
     function initializeReveal() {
       const hljs = RevealHighlight().hljs;
       hljs.configure({
-        languages: ['pgsql'], 
-        cssSelector: 'code' 
-      }); 
-      
+        languages: ['pgsql'],
+        cssSelector: 'code'
+      });
+
       const deck1 = new Reveal(document.querySelector(".reveal"), {
         controls: true,
         controlsLayout: 'edges',
@@ -896,7 +939,7 @@ $$ LANGUAGE plpgsql;
           }, i * 300);
         });
       });
-    } 
+    }
 
     app.mount("#app");
   </script>
