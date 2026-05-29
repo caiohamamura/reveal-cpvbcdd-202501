@@ -82,3 +82,5 @@ python ../.opencode/skills/export-plots/scripts/export_reveald3_plotly.py plot_s
 - Set `uid` on traces when creating states manually.
 - Use visible slide fragments with explanatory labels; avoid invisible empty fragments.
 - Keep student-facing slides free of internal commands, paths, and environment details.
+
+- **X-axis labels hidden under slide components**: Plotly's default bottom margin (=80) might be too tight if the iframe (<reveald3-plot>) height is small (e.g., 350px-400px) and there are banners/components underneath. Set margin=dict(t=50, b=90) (or higher) in ig.update_layout to ensure categorical X-axis labels are not cut off.

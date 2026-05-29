@@ -77,3 +77,6 @@ python3 .opencode/skills/run-notebook/run_notebook.py \
 - **Git stash + notebook = data loss risk**: If a user stashes changes to a notebook and then commits other work, the stash can contain only the *previous* state — not the latest edits. Always commit notebooks before major refactors, or warn the user.
 - **Notebook size after execution**: `jupyter nbconvert --execute --to notebook` replaces the file in-place with the executed version (including embedded images). Use `--output executed.ipynb` to preserve the original.
 - **Wisconsin Cancer dataset**: `load_breast_cancer()` uses 0=malignant, 1=benign. For novelty detection, **malignant IS the anomaly** (the rare/important case). Train with benign (y=1), test against malignant (y=0). Always document class semantics explicitly in notebook headers.
+
+- **Plotly in Jupyter Notebooks exported to VS Code / GitHub**: When executing notebooks with Plotly using 
+bconvert --execute, the default output is pplication/vnd.plotly.v1+json, which fails to render in VS Code without an extension. To fix this, install kaleido and add import plotly.io as pio; pio.renderers.default = 'svg' (or 'png') to the notebook so it exports static images embedded directly in the .ipynb file.
