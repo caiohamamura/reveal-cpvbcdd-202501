@@ -284,21 +284,10 @@ FROM alunos;
 
         <section data-auto-animate>
           <h2>Preparar o ambiente</h2>
-          <p>Para executar os exemplos em Python, instale o DuckDB no mesmo ambiente do notebook ou do terminal.</p>
-          <multi-col style="gap:15px">
-            <div style="flex:1">
-              <h3>Com pip</h3>
-              <code-block lang="bash" data-trim>
+          <p>Para executar os exemplos em Python, instale o DuckDB no mesmo ambiente usado pelo notebook ou pelo VS Code.</p>
+          <code-block lang="bash" data-trim>
 python -m pip install duckdb pandas pyarrow
 </code-block>
-            </div>
-            <div style="flex:1">
-              <h3>Com conda/micromamba</h3>
-              <code-block lang="bash" data-trim>
-micromamba install -c conda-forge duckdb pandas pyarrow
-</code-block>
-            </div>
-          </multi-col>
           <div class="cyan-box">
             <p><code>pandas</code> cria DataFrames para os exemplos e <code>pyarrow</code> ajuda na leitura/escrita de Parquet.</p>
           </div>
