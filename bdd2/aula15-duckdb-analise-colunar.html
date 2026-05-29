@@ -34,6 +34,7 @@
     .mini-table td { padding: 4px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
     .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 8px; font-size: 0.62em; font-weight: bold; margin-right: 6px; }
     .terminal { font-family: monospace; background: #191a21; border: 1px solid #6272a4; border-radius: 8px; padding: 10px 14px; color: #f8f8f2; font-size: 0.62em; white-space: pre-wrap; text-align: left; }
+    .duckdb-cover-logo { width: 300px; max-width: 82%; height: auto; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.38)); }
   </style>
 </head>
 
@@ -46,17 +47,9 @@
       <section data-auto-animate>
         <header1 aula="15" curso="Banco de Dados 2" title-size="24"
                  title="DuckDB: SQL para analise de dados colunares">
-          <div class="mermaid" data-id="cover-duckdb" style="width:560px">
-            <pre>
-graph LR
-  CSV["CSV"] --> D["DuckDB SQL"]
-  PQ["Parquet"] --> D
-  DF["DataFrame"] --> D
-  D --> R["Resumo"]
-  D --> G["Grafico"]
-  D --> OUT["CSV / Parquet"]
-            </pre>
-          </div>
+          <img class="duckdb-cover-logo"
+               src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
+               alt="Logo oficial do DuckDB" />
         </header1>
       </section>
 
