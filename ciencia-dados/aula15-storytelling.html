@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Ciência de Dados - Storytelling na Ciência de Dados</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .narrative-flow .flow-node {
+      min-width: 110px;
+    }
+
+    .narrative-flow .flow-node span {
+      font-size: 0.45em;
+    }
+
+    .notebook-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .notebook-cell {
+      background: #282a36;
+      border: 1px solid #6272a4;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.5em;
+    }
+
+    .notebook-cell .cell-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      border-radius: 50%;
+      background: #8be9fd;
+      color: #282a36;
+      font-weight: bold;
+      font-size: 0.9em;
+      margin-right: 6px;
+      text-align: center;
+    }
+
+    .notebook-cell strong {
+      color: #8be9fd;
+    }
+
+    .notebook-cell p {
+      margin: 3px 0 0;
+      font-size: 0.9em;
+    }
+
+    .notebook-cell.span-2 {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="15" curso="Ciência de Dados" title-size="24"
+          title="Storytelling na Ciência de Dados: da análise à decisão">
+          <div class="cover-artifact">
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <i class="fa-solid fa-chart-line" style="font-size: 60px; color: #8be9fd;"></i>
+              <i class="fa-solid fa-arrow-right" style="font-size: 30px; color: #6272a4;"></i>
+              <i class="fa-solid fa-book-open" style="font-size: 60px; color: #ff79c6;"></i>
+              <i class="fa-solid fa-arrow-right" style="font-size: 30px; color: #6272a4;"></i>
+              <i class="fa-solid fa-bullseye" style="font-size: 60px; color: #50fa7b;"></i>
+            </div>
+            <div class="cover-tags" aria-label="Temas da aula">
+              <span>Framework narrativo</span>
+              <span>Caderno de análises</span>
+              <span>Apresentação oral</span>
+              <span>Trabalho final</span>
+            </div>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: Revisão -->
+      <section data-auto-animate>
+        <h2>Revisão: o que já temos na caixa de ferramentas</h2>
+        <div class="artifact-grid" style="display:flex;flex-flow:row wrap;justify-content:center;gap:10px;">
+          <div class="artifact-card" style="border-top: 4px solid #8be9fd; text-align: center; max-width:240px">
+            <i class="fa-solid fa-magnifying-glass-chart"
+              style="font-size:40px;color:#8be9fd;margin:auto;margin-bottom:8px;"></i>
+            <h3 style="color: #8be9fd; font-size: 0.55em;">EDA + Estatística</h3>
+            <p style="font-size:0.45em;margin:0;">Gráficos, testes de hipótese, intervalos de confiança</p>
+          </div>
+          <div class="artifact-card" style="border-top: 4px solid #50fa7b; text-align: center; max-width:240px">
+            <i class="fa-solid fa-brain" style="font-size:40px;color:#50fa7b;margin:auto;margin-bottom:8px;"></i>
+            <h3 style="color: #50fa7b; font-size: 0.55em;">Supervisonado</h3>
+            <p style="font-size:0.45em;margin:0;">KNN, árvores, Random Forest, regressão</p>
+          </div>
+          <div class="artifact-card" style="border-top: 4px solid #bd93f9; text-align: center; max-width:240px">
+            <i class="fa-solid fa-object-group" style="font-size:40px;color:#bd93f9;margin:auto;margin-bottom:8px;"></i>
+            <h3 style="color: #bd93f9; font-size: 0.55em;">Não supervisonado</h3>
+            <p style="font-size:0.45em;margin:0;">K-Means, DBSCAN, PCA, anomalias</p>
+          </div>
+          <div class="artifact-card" style="border-top: 4px solid #f1fa8c; text-align: center; max-width:240px">
+            <i class="fa-solid fa-timeline" style="font-size:40px;color:#f1fa8c;margin:auto;margin-bottom:8px;"></i>
+            <h3 style="color: #f1fa8c; font-size: 0.55em;">Dados especiais</h3>
+            <p style="font-size:0.45em;margin:0;">Séries temporais, PLN, questionários</p>
+          </div>
+        </div>
+        <div class="green-box fragment">
+          <p>Hoje: como transformar tudo isso em histórias que geram decisões reais.</p>
+        </div>
+      </section>
+
+      <!-- SLIDE 3: Motivação -->
+      <section data-auto-animate>
+        <h2>Trabalho final: vocês vão apresentar para stakeholders</h2>
+        <div class="flow-row" style="margin-bottom: 18px;">
+          <div class="flow-node">
+            <i class="fa-solid fa-database fa-2x" style="color: #8be9fd; margin: auto; margin-bottom: 10px;"></i>
+            <strong style="color: #f8f8f2;">Dados Reais</strong>
+            <span>Cedidos por professores</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">
+            <i class="fa-solid fa-flask fa-2x" style="color: #bd93f9; margin: auto; margin-bottom: 10px;"></i>
+            <strong style="color: #f8f8f2;">Sua Análise</strong>
+            <span>Métodos do curso</span>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node">
+            <i class="fa-solid fa-users fa-2x" style="color: #50fa7b; margin: auto; margin-bottom: 10px;"></i>
+            <strong style="color: #f8f8f2;">Apresentação</strong>
+            <span>Para stakeholders</span>
+          </div>
+        </div>
+        <div class="yellow-box">
+          <p>Os dados foram cedidos por professores e servidores reais. Eles querem <strong>respostas úteis</strong>,
+            não relatórios técnicos.</p>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           FASE 1: POR QUE STORYTELLING IMPORTA
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 1: por que storytelling importa</h2>
+          <div style="text-align: center; margin-top: 30px;">
+            <i class="fa-solid fa-comments" style="font-size: 80px; color: #ff79c6; margin-bottom: 15px;"></i>
+            <p style="font-size: 30pt; color: #f1fa8c;">
+              O stakeholder não quer ver código.<br>Ele quer saber o que fazer.
+            </p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Dados sem narrativa são apenas números</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-xmark"></i> Relatório técnico
+              </h3>
+              <p style="font-size: 0.6em;">"O modelo Random Forest obteve accuracy de 0.87 com 100 estimadores e
+                max_depth=10."</p>
+              <p style="font-size: 0.6em;">"O p-valor do teste t foi 0.03."</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-check"></i> História com dados
+              </h3>
+              <p style="font-size: 0.6em;">"Alunos com frequência abaixo de 70% têm 3x mais chance de reprovar."</p>
+              <p style="font-size: 0.6em;">"A diferença entre os turnos é real e não explicada pelo acaso."</p>
+            </div>
+          </div>
+          <div class="cyan-box">
+            <p>A análise técnica é o meio. A narrativa é a entrega.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que muda com storytelling</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th><i class="fa-solid fa-xmark" style="color: #ff5555;"></i> Sem storytelling</th>
+                <th><i class="fa-solid fa-check" style="color: #50fa7b;"></i> Com storytelling</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Público</td>
+                <td>outro cientista de dados</td>
+                <td>quem vai tomar a decisão</td>
+              </tr>
+              <tr>
+                <td>Linguagem</td>
+                <td>jargão técnico</td>
+                <td>linguagem do problema</td>
+              </tr>
+              <tr>
+                <td>Foco</td>
+                <td>método e métricas</td>
+                <td>pergunta e resposta</td>
+              </tr>
+              <tr>
+                <td>Conclusão</td>
+                <td>"o modelo deu 87%"</td>
+                <td>"recomendamos monitoria no noturno"</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Análise vs apresentação</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #bd93f9;">
+              <h3 style="color: #bd93f9; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-flask"></i> A análise
+              </h3>
+              <ul style="list-style-type: none; padding: 0; margin: 10px 0 0 0;">
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-shuffle" style="color: #bd93f9; width: 24px;"></i>
+                  É exploratória e não linear</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-rotate-left"
+                    style="color: #bd93f9; width: 24px;"></i> Testa hipóteses, volta atrás, muda de rumo</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-eraser" style="color: #bd93f9; width: 24px;"></i>
+                  Tem tentativas que não deram certo</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-pencil" style="color: #bd93f9; width: 24px;"></i>
+                  É o <strong>rascunho</strong></li>
+              </ul>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #ff79c6;">
+              <h3 style="color: #ff79c6; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-presentation-screen"></i> A apresentação
+              </h3>
+              <ul style="list-style-type: none; padding: 0; margin: 10px 0 0 0;">
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-arrow-right"
+                    style="color: #ff79c6; width: 24px;"></i> É sequencial e lógica</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-filter" style="color: #ff79c6; width: 24px;"></i>
+                  Mostra apenas o caminho que funciona</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-stairs" style="color: #ff79c6; width: 24px;"></i>
+                  Cada passo prepara o próximo</li>
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-file-lines"
+                    style="color: #ff79c6; width: 24px;"></i> É o <strong>texto final editado</strong></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+           FASE 2: ESTRUTURA NARRATIVA
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 2: estrutura de uma narrativa com dados</h2>
+          <div style="text-align: center; margin-top: 30px;">
+            <i class="fa-solid fa-route" style="font-size: 80px; color: #f1fa8c; margin-bottom: 15px;"></i>
+            <p style="font-size: 28pt; color: #f1fa8c;">
+              Seis passos que transformam dados em história.
+            </p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O framework narrativo</h2>
+          <div class="flow-row narrative-flow" style="margin-bottom: 18px;">
+            <div class="flow-node" style="border-color: #8be9fd; background: rgba(139, 233, 253, 0.1);">
+              <i class="fa-solid fa-map-pin fa-2x" style="color: #8be9fd; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #8be9fd;">1. Contexto</strong>
+              <span>Situar o público</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="border-color: #ff79c6; background: rgba(255, 121, 198, 0.1);">
+              <i class="fa-solid fa-circle-question fa-2x"
+                style="color: #ff79c6; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #ff79c6;">2. Pergunta</strong>
+              <span>O que descobrir</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="border-color: #bd93f9; background: rgba(189, 147, 249, 0.1);">
+              <i class="fa-solid fa-gears fa-2x" style="color: #bd93f9; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #bd93f9;">3. Método</strong>
+              <span>Como investigar</span>
+            </div>
+          </div>
+          <div class="flow-row narrative-flow">
+            <div class="flow-node" style="border-color: #f1fa8c; background: rgba(241, 250, 140, 0.1);">
+              <i class="fa-solid fa-chart-column fa-2x" style="color: #f1fa8c; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #f1fa8c;">4. Evidência</strong>
+              <span>O que os dados dizem</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="border-color: #50fa7b; background: rgba(80, 250, 123, 0.1);">
+              <i class="fa-solid fa-lightbulb fa-2x" style="color: #50fa7b; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #50fa7b;">5. Conclusão</strong>
+              <span>O que significa</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="border-color: #ff5555; background: rgba(255, 85, 85, 0.1);">
+              <i class="fa-solid fa-bullseye fa-2x" style="color: #ff5555; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #ff5555;">6. Recomendação</strong>
+              <span>O que fazer</span>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Detalhando cada passo</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Passo</th>
+                <th>Propósito</th>
+                <th>Exemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: #8be9fd;"><i class="fa-solid fa-map-pin"></i> Contexto</td>
+                <td>situar o público no problema</td>
+                <td>"A biblioteca atende 800 alunos por semana"</td>
+              </tr>
+              <tr>
+                <td style="color: #ff79c6;"><i class="fa-solid fa-circle-question"></i> Pergunta</td>
+                <td>o que queremos descobrir</td>
+                <td>"Quais semanas têm picos de demanda?"</td>
+              </tr>
+              <tr>
+                <td style="color: #bd93f9;"><i class="fa-solid fa-gears"></i> Método</td>
+                <td>como investigamos (breve)</td>
+                <td>"Usamos média móvel e decomposição"</td>
+              </tr>
+              <tr>
+                <td style="color: #f1fa8c;"><i class="fa-solid fa-chart-column"></i> Evidência</td>
+                <td>o que os dados mostram</td>
+                <td>gráfico + números-chave</td>
+              </tr>
+              <tr>
+                <td style="color: #50fa7b;"><i class="fa-solid fa-lightbulb"></i> Conclusão</td>
+                <td>o que isso significa</td>
+                <td>"Provas elevam a demanda em 55%"</td>
+              </tr>
+              <tr>
+                <td style="color: #ff5555;"><i class="fa-solid fa-bullseye"></i> Recomendação</td>
+                <td>o que fazer com isso</td>
+                <td>"Reforçar atendimento antes de provas"</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>A ordem da análise ≠ ordem da apresentação</h2>
+          <multi-col style="gap: 22px;">
+            <div class="artifact-card" style="border-top: 4px solid #bd93f9;">
+              <h3 style="color: #bd93f9; display: flex; align-items: center; gap: 8px; font-size: 0.6em;">
+                <i class="fa-solid fa-flask"></i> Ordem real da análise
+              </h3>
+              <ol style="font-size: 0.55em; margin: 8px 0 0 16px;">
+                <li>Carreguei os dados</li>
+                <li>Tentei regressão — não funcionou</li>
+                <li>Voltei para EDA</li>
+                <li>Descobri sazonalidade</li>
+                <li>Tentei decomposição</li>
+                <li>Achei padrão de provas</li>
+                <li>Refiz o gráfico 3 vezes</li>
+              </ol>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #ff79c6;">
+              <h3 style="color: #ff79c6; display: flex; align-items: center; gap: 8px; font-size: 0.6em;">
+                <i class="fa-solid fa-file-lines"></i> Ordem da apresentação
+              </h3>
+              <ol style="font-size: 0.55em; margin: 8px 0 0 16px;">
+                <li>Contexto do problema</li>
+                <li>Pergunta principal</li>
+                <li>Dados e método</li>
+                <li>Gráfico com interpretação</li>
+                <li>Conclusão</li>
+                <li>Recomendação para ação</li>
+              </ol>
+            </div>
+          </multi-col>
+          <div class="pink-box">
+            <p>Ninguém precisa saber que você tentou 5 coisas antes de achar a resposta.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+           FASE 3: MINI-CASO BIBLIOTECA
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 3: storytelling aplicado</h2>
+          <div style="text-align: center; margin-top: 20px;">
+            <i class="fa-solid fa-book" style="font-size: 80px; color: #50fa7b; margin-bottom: 15px;"></i>
+            <p style="font-size: 28pt; color: #f1fa8c;">
+              Mini-caso: empréstimos da biblioteca
+            </p>
+            <p style="font-size: 20pt; color: #6272a4;">
+              Construindo a narrativa completa com os dados da aula passada.
+            </p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Narrativa ruim vs narrativa boa</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-xmark"></i> Como NÃO apresentar
+              </h3>
+              <p style="font-size: 0.6em;">"Fizemos um seasonal_decompose com period=4 e o forecast deu 80, 83, 86, 89."
+              </p>
+              <p style="font-size: 0.6em;">"Usamos pandas e statsmodels."</p>
+              <p style="font-size: 0.6em;">"O gráfico está aí."</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-check"></i> Como apresentar
+              </h3>
+              <p style="font-size: 0.6em;">"A biblioteca tem picos de demanda em semanas de prova e quedas no recesso."
+              </p>
+              <p style="font-size: 0.6em;">"A tendência é de alta: esperamos 80 empréstimos na próxima semana."</p>
+              <p style="font-size: 0.6em;">"Sugerimos reforçar atendimento antes das provas."</p>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2><i class="fa-solid fa-map-pin" style="color: #8be9fd;"></i> Passo 1: contexto</h2>
+          <div class="artifact-card" style="border-top: 4px solid #8be9fd;">
+            <h3 style="color: #8be9fd; font-size: 0.6em;"><i class="fa-solid fa-quote-left"></i> O que dizer</h3>
+            <p style="font-size: 0.65em;">"A biblioteca do campus empresta livros, apostilas e notebooks para
+              aproximadamente 800 alunos. O responsável pela biblioteca quer planejar a escala de atendentes para as
+              próximas semanas."</p>
+          </div>
+          <div class="green-box">
+            <p>O contexto estabelece <strong>quem</strong> precisa da informação e <strong>por que</strong> ela importa.
+              Sem contexto, nenhum gráfico tem significado.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2><i class="fa-solid fa-circle-question" style="color: #ff79c6;"></i> Passo 2: pergunta</h2>
+          <div class="artifact-card" style="border-top: 4px solid #ff79c6;">
+            <h3 style="color: #ff79c6; font-size: 0.6em;"><i class="fa-solid fa-quote-left"></i> O que dizer</h3>
+            <p style="font-size: 0.65em;">"Quais semanas do semestre têm maior e menor demanda por empréstimos? A
+              demanda está crescendo ou caindo? Podemos prever as próximas semanas?"</p>
+          </div>
+          <div class="yellow-box">
+            <p>A pergunta guia toda a análise. Se ela não estiver clara, o stakeholder não sabe <strong>o que
+                esperar</strong> como resposta.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2><i class="fa-solid fa-chart-column" style="color: #f1fa8c;"></i> Passo 4: evidência</h2>
+          <reveald3-plot file="aulas/aula15-emprestimos-por-periodo.html" width="780px" height="400px"></reveald3-plot>
+          <div class="green-box" style="margin-top: 8px;">
+            <p><strong>Números-chave:</strong> Prova = 85 emp/semana (+55%). Recesso = 25 emp/semana (−55%). Semana
+              normal = 55 emp/semana.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Passos 5 e 6: conclusão e recomendação</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-lightbulb"></i> Conclusão
+              </h3>
+              <p style="font-size: 0.6em;">"A demanda por empréstimos segue o calendário acadêmico: sobe em semanas de
+                prova e cai em recessos."</p>
+              <p style="font-size: 0.6em;">"A tendência geral do semestre é de alta, com previsão de 80 empréstimos para
+                a próxima semana."</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-bullseye"></i> Recomendação
+              </h3>
+              <p style="font-size: 0.6em;">"Reforçar a equipe de atendimento nas duas semanas antes de cada prova
+                bimestral."</p>
+              <p style="font-size: 0.6em;">"Reduzir horário de funcionamento durante o recesso de julho."</p>
+            </div>
+          </div>
+          <div class="cyan-box">
+            <p>A conclusão diz <strong>o que os dados mostram</strong>. A recomendação diz <strong>o que fazer</strong>.
+            </p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+           FASE 4: MINI-CASO QUESTIONÁRIO
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Fase 4: storytelling aplicado</h2>
+          <div style="text-align: center; margin-top: 20px;">
+            <i class="fa-solid fa-file-lines" style="font-size: 80px; color: #bd93f9; margin-bottom: 15px;"></i>
+            <p style="font-size: 28pt; color: #f1fa8c;">
+              Mini-caso: respostas do questionário sobre evasão
+            </p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Narrativa completa: questionário</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Passo</th>
+                <th>O que dizer neste caso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: #8be9fd;"><i class="fa-solid fa-map-pin"></i> Contexto</td>
+                <td>"A coordenação precisa entender por que alunos abandonam o curso."</td>
+              </tr>
+              <tr>
+                <td style="color: #ff79c6;"><i class="fa-solid fa-circle-question"></i> Pergunta</td>
+                <td>"Quais são os principais motivos de dificuldade relatados?"</td>
+              </tr>
+              <tr>
+                <td style="color: #bd93f9;"><i class="fa-solid fa-gears"></i> Método</td>
+                <td>"Agrupamos 16 respostas abertas por similaridade de texto."</td>
+              </tr>
+              <tr>
+                <td style="color: #f1fa8c;"><i class="fa-solid fa-chart-column"></i> Evidência</td>
+                <td>Clusters de texto + termos fortes por grupo.</td>
+              </tr>
+              <tr>
+                <td style="color: #50fa7b;"><i class="fa-solid fa-lightbulb"></i> Conclusão</td>
+                <td>"Quatro temas: transporte, trabalho, apoio e infraestrutura."</td>
+              </tr>
+              <tr>
+                <td style="color: #ff5555;"><i class="fa-solid fa-bullseye"></i> Recomendação</td>
+                <td>"Priorizar convênio de transporte e monitoria noturna."</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Evidência: satisfação por curso</h2>
+          <reveald3-plot file="aulas/aula15-satisfacao-por-curso.html" width="780px" height="400px"></reveald3-plot>
+          <div class="yellow-box" style="margin-top: 8px;">
+            <p><strong>Interpretação:</strong> Infraestrutura é o item mais fraco em ambos os cursos. Administração
+              avalia pior em todas as dimensões.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comparando narrativas</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-xmark"></i> Narrativa técnica
+              </h3>
+              <p style="font-size: 0.55em;">"Aplicamos TF-IDF com stop_words customizadas e KMeans com k=4 e
+                random_state=42."</p>
+              <p style="font-size: 0.55em;">"O cluster 0 tem termos: trabalho, cansaco, emprego."</p>
+              <p style="font-size: 0.55em;">"O TruncatedSVD reduziu para 2 componentes."</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-check"></i> Narrativa para o coordenador
+              </h3>
+              <p style="font-size: 0.55em;">"Agrupamos as respostas por similaridade e encontramos 4 temas recorrentes."
+              </p>
+              <p style="font-size: 0.55em;">"O tema mais forte é transporte: alunos relatam dificuldade com ônibus e
+                distância."</p>
+              <p style="font-size: 0.55em;">"Sugerimos que o primeiro investimento seja em convênio de transporte."</p>
+            </div>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+           FASE 5: CADERNO DE ANÁLISES
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 5: o caderno de análises</h2>
+          <div style="text-align: center; margin-top: 20px;">
+            <i class="fa-solid fa-book-open" style="font-size: 80px; color: #f1fa8c; margin-bottom: 15px;"></i>
+            <p style="font-size: 28pt; color: #8be9fd;">
+              A entrega escrita que acompanha a apresentação.
+            </p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Estrutura do caderno</h2>
+          <div class="notebook-grid">
+            <div class="notebook-cell">
+              <span class="cell-num">1</span>
+              <strong>Introdução</strong>
+              <p>Contexto do problema e por que importa.</p>
+            </div>
+            <div class="notebook-cell">
+              <span class="cell-num">2</span>
+              <strong>Perguntas e hipóteses</strong>
+              <p>O que queremos descobrir. Hipóteses testáveis.</p>
+            </div>
+            <div class="notebook-cell">
+              <span class="cell-num">3</span>
+              <strong>Descrição dos dados</strong>
+              <p>Linhas, colunas, tipos, faltantes.</p>
+            </div>
+            <div class="notebook-cell">
+              <span class="cell-num">4</span>
+              <strong>Análise exploratória</strong>
+              <p>Gráficos + interpretação de cada um.</p>
+            </div>
+            <div class="notebook-cell">
+              <span class="cell-num">5</span>
+              <strong>Modelagem</strong>
+              <p>Se aplicável: método e avaliação.</p>
+            </div>
+            <div class="notebook-cell">
+              <span class="cell-num">6</span>
+              <strong>Resultados</strong>
+              <p>Números-chave e achados principais.</p>
+            </div>
+            <div class="notebook-cell span-2">
+              <span class="cell-num" style="background: #50fa7b;">7</span>
+              <strong style="color: #50fa7b;">Conclusões e recomendações</strong>
+              <p>O que os dados respondem e o que sugerimos ao stakeholder.</p>
+            </div>
+          </div>
+          <div class="cyan-box" style="margin-top: 8px;">
+            <p>Um caderno de exemplo está disponível: <code>notebooks/aula15-storytelling-exemplo.ipynb</code></p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Regra de ouro do caderno</h2>
+          <div style="text-align: center; margin: 20px 0 15px;">
+            <p style="font-size: 28pt; color: #50fa7b;">
+              Todo gráfico precisa de três coisas:
+            </p>
+          </div>
+          <div class="artifact-grid" style="display:flex;flex-flow:row wrap;justify-content:center;gap:10px;">
+            <div class="artifact-card" style="border-top: 4px solid #8be9fd; text-align: center; max-width: 240px;">
+              <i class="fa-solid fa-heading" style="font-size:40px;color:#8be9fd;margin:auto;margin-bottom:8px;"></i>
+              <h3 style="color: #8be9fd; font-size: 0.6em;">Título</h3>
+              <p style="font-size: 0.5em; margin:0;">que diz o que estou vendo</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #ff79c6; text-align: center; max-width: 240px;">
+              <i class="fa-solid fa-tags" style="font-size:40px;color:#ff79c6;margin:auto;margin-bottom:8px;"></i>
+              <h3 style="color: #ff79c6; font-size: 0.6em;">Legenda</h3>
+              <p style="font-size: 0.5em; margin:0;">que identifica cores e séries</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b; text-align: center; max-width: 240px;">
+              <i class="fa-solid fa-comment-dots"
+                style="font-size:40px;color:#50fa7b;margin:auto;margin-bottom:8px;"></i>
+              <h3 style="color: #50fa7b; font-size: 0.6em;">Interpretação</h3>
+              <p style="font-size: 0.5em; margin:0;">uma frase dizendo o que significa</p>
+            </div>
+          </div>
+          <div class="pink-box fragment">
+            <p>Se o gráfico não tem interpretação, ele está incompleto.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Seção bem escrita vs mal escrita</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px; font-size: 0.6em;">
+                <i class="fa-solid fa-xmark"></i> Seção de resultados
+              </h3>
+              <ul style="list-style: none; padding: 0; margin: 6px 0 0 0; font-size: 0.5em;">
+                <li><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i> "O gráfico abaixo mostra os
+                  dados."</li>
+                <li><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i> "A acurácia foi 0.87."</li>
+                <li><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i> "Usamos a função
+                  fit_predict."</li>
+              </ul>
+              <p style="font-size: 0.45em; color: #6272a4; margin-top: 6px;">Não diz o que o gráfico mostra, não
+                interpreta, foca no código.</p>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px; font-size: 0.6em;">
+                <i class="fa-solid fa-check"></i> Seção de resultados
+              </h3>
+              <ul style="list-style: none; padding: 0; margin: 6px 0 0 0; font-size: 0.5em;">
+                <li><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i> "Noturno tem frequência 15%
+                  menor."</li>
+                <li><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i> "O modelo identifica 87% dos
+                  alunos em risco."</li>
+                <li><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i> "O custo de não identificar é
+                  maior que falso alarme."</li>
+              </ul>
+              <p style="font-size: 0.45em; color: #6272a4; margin-top: 6px;">Interpreta, contextualiza e conecta com o
+                problema real.</p>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Checklist do caderno</h2>
+          <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+            <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px; font-size: 0.65em;">
+              <i class="fa-solid fa-clipboard-check"></i> Antes de entregar, verifique:
+            </h3>
+            <ul style="list-style-type: none; padding: 0; margin: 10px 0 0 0;">
+              <li style="margin-bottom: 6px; font-size: 0.55em;"><i class="fa-solid fa-square-check"
+                  style="color: #50fa7b; width: 22px;"></i> A introdução situa o leitor sem exigir conhecimento técnico?
+              </li>
+              <li style="margin-bottom: 6px; font-size: 0.55em;"><i class="fa-solid fa-square-check"
+                  style="color: #50fa7b; width: 22px;"></i> As perguntas estão explícitas antes de qualquer análise?
+              </li>
+              <li style="margin-bottom: 6px; font-size: 0.55em;"><i class="fa-solid fa-square-check"
+                  style="color: #50fa7b; width: 22px;"></i> Cada gráfico tem título, legenda e frase de interpretação?
+              </li>
+              <li style="margin-bottom: 6px; font-size: 0.55em;"><i class="fa-solid fa-square-check"
+                  style="color: #50fa7b; width: 22px;"></i> O método foi justificado pela pergunta, não pelo algoritmo?
+              </li>
+              <li style="margin-bottom: 6px; font-size: 0.55em;"><i class="fa-solid fa-square-check"
+                  style="color: #50fa7b; width: 22px;"></i> As conclusões respondem às perguntas da seção 2?</li>
+              <li style="margin-bottom: 6px; font-size: 0.55em;"><i class="fa-solid fa-square-check"
+                  style="color: #50fa7b; width: 22px;"></i> Há pelo menos uma recomendação prática?</li>
+            </ul>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- ============================================================
+           FASE 6: APRESENTAÇÃO ORAL
+           ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff5555;">Fase 6: a apresentação oral</h2>
+          <div style="text-align: center; margin-top: 20px;">
+            <i class="fa-solid fa-person-chalkboard" style="font-size: 80px; color: #ff5555; margin-bottom: 15px;"></i>
+            <p style="font-size: 28pt; color: #f1fa8c;">
+              10-15 minutos para convencer quem toma decisões.
+            </p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Estrutura da apresentação</h2>
+          <div class="flow-row" style="margin-bottom: 18px;">
+            <div class="flow-node" style="border-color: #8be9fd; background: rgba(139, 233, 253, 0.1);">
+              <i class="fa-solid fa-door-open fa-2x" style="color: #8be9fd; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #8be9fd;">Abertura</strong>
+              <span>1-2 slides</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="border-color: #ff79c6; background: rgba(255, 121, 198, 0.1);">
+              <i class="fa-solid fa-chart-line fa-2x" style="color: #ff79c6; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #ff79c6;">Desenvolvimento</strong>
+              <span>3-6 slides</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="border-color: #50fa7b; background: rgba(80, 250, 123, 0.1);">
+              <i class="fa-solid fa-flag-checkered fa-2x" style="color: #50fa7b; margin: auto; margin-bottom: 8px;"></i>
+              <strong style="color: #50fa7b;">Fechamento</strong>
+              <span>1-2 slides</span>
+            </div>
+          </div>
+          <div class="cyan-box">
+            <p><strong>Máximo 8-10 slides.</strong> Menos é mais. Cada slide deve ter uma ideia central.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que o stakeholder quer ouvir</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th><i class="fa-solid fa-xmark" style="color: #ff5555;"></i> Cientista de dados diz</th>
+                <th><i class="fa-solid fa-check" style="color: #50fa7b;"></i> Stakeholder quer ouvir</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>"Usei Random Forest com 100 estimadores"</td>
+                <td>"Conseguimos prever quem tem risco de evasão"</td>
+              </tr>
+              <tr>
+                <td>"O p-valor foi 0.03"</td>
+                <td>"A diferença entre os turnos é real"</td>
+              </tr>
+              <tr>
+                <td>"A acurácia foi 87%"</td>
+                <td>"Acertamos 87 de cada 100 previsões"</td>
+              </tr>
+              <tr>
+                <td>"Fiz TF-IDF com K-Means"</td>
+                <td>"Agrupamos as respostas em 4 temas"</td>
+              </tr>
+              <tr>
+                <td>"O RMSE foi 12.3"</td>
+                <td>"A previsão erra em média 12 unidades"</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Erros comuns na apresentação</h2>
+          <div class="artifact-grid">
+            <div class="artifact-card" style="border-top: 4px solid #ff5555;">
+              <h3 style="color: #ff5555; display: flex; align-items: center; gap: 8px; font-size: 0.6em;">
+                <i class="fa-solid fa-triangle-exclamation"></i> Evite
+              </h3>
+              <ul style="list-style-type: none; padding: 0; margin: 8px 0 0 0; font-size: 0.5em;">
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i>
+                  Mostrar código para o stakeholder</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i>
+                  Ler o texto do slide em voz alta</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i>
+                  Slides com mais de 6 linhas de texto</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i>
+                  Gráfico sem título e sem interpretação</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color: #ff5555; width: 20px;"></i>
+                  Falar sobre o algoritmo por 5 minutos</li>
+              </ul>
+            </div>
+            <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
+              <h3 style="color: #50fa7b; display: flex; align-items: center; gap: 8px; font-size: 0.6em;">
+                <i class="fa-solid fa-thumbs-up"></i> Prefira
+              </h3>
+              <ul style="list-style-type: none; padding: 0; margin: 8px 0 0 0; font-size: 0.5em;">
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i>
+                  Gráficos interpretados e tabelas resumo</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i>
+                  Falar complementando o slide</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i>
+                  Um gráfico grande por slide</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i>
+                  Títulos que já dizem o achado</li>
+                <li style="margin-bottom: 6px;"><i class="fa-solid fa-check" style="color: #50fa7b; width: 20px;"></i>
+                  Dedicar tempo à recomendação</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Título de slide que conta a história</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th><i class="fa-solid fa-xmark" style="color: #ff5555;"></i> Título genérico</th>
+                <th><i class="fa-solid fa-check" style="color: #50fa7b;"></i> Título narrativo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>"Gráfico de barras"</td>
+                <td>"Cantina vende 3x mais no turno da manhã"</td>
+              </tr>
+              <tr>
+                <td>"Resultados do modelo"</td>
+                <td>"87% dos alunos em risco são identificados"</td>
+              </tr>
+              <tr>
+                <td>"Tabela de clusters"</td>
+                <td>"Transporte é o principal motivo de evasão"</td>
+              </tr>
+              <tr>
+                <td>"Série temporal"</td>
+                <td>"Empréstimos sobem antes de provas"</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="green-box">
+            <p>O título do slide já deve dizer o achado. O gráfico é a prova.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+
+
+      <!-- SLIDE: Encerramento -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u>
+          <li>Storytelling transforma análise técnica em narrativa para decisão.</li>
+          <li>Framework: Contexto → Pergunta → Método → Evidência → Conclusão → Recomendação.</li>
+          <li>A ordem da apresentação é diferente da ordem da análise.</li>
+          <li>Cada gráfico precisa de título, legenda e interpretação.</li>
+          <li>Fale para o stakeholder, não para o algoritmo.</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 24pt;">Próxima aula: <strong>orientação dos projetos e início do trabalho final</strong>
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="../plugin/reveald3/reveald3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    window.reveald3Config = {
+      disableCheckFile: true,
+      onSlideChangedDelay: 150
+    };
+  </script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+
+</html>
