@@ -1,0 +1,86 @@
+--- SLIDE ---
+<section data-auto-animate>
+          <h2 style="color: #bd93f9;">Fase 5: Pipeline analitico</h2>
+          <div class="flow-row">
+            <div class="flow-node">
+              <strong>Entrada</strong>
+              <span>CSV, Parquet, DataFrame</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node duckdb-node">
+              <strong>DuckDB</strong>
+              <span>SQL local no notebook</span>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node">
+              <strong>Saida</strong>
+              <span>resumo, CSV, Parquet</span>
+            </div>
+          </div>
+          <div class="green-box">
+            <p>O pipeline da aula usa os arquivos reais do repositorio: ler, inspecionar, agregar e exportar.</p>
+          </div>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>1. Criar tabela a partir do arquivo</h2>
+          <code-block lang="python" data-trim>
+            import duckdb
+
+            con = duckdb.connect()
+
+            con.sql("""
+            CREATE TABLE vendas AS
+            SELECT *
+            FROM read_csv_auto('vendas.csv')
+            """)
+          </code-block>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>2. Inspecionar</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <code-block lang="sql" data-trim>
+                DESCRIBE vendas;
+
+                SELECT COUNT(*) AS total_linhas
+                FROM vendas;
+
+                SELECT *
+                FROM vendas
+                LIMIT 10;
+              </code-block>
+            </div>
+            <div style="flex:1">
+              <div class="box">
+                <p>Antes de responder perguntas, precisamos saber:</p>
+                <ul>
+                  <li>quais colunas existem</li>
+                  <li>quais tipos foram detectados</li>
+                  <li>quantas linhas temos</li>
+                  <li>se os dados parecem coerentes</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>3. Agregar</h2>
+          <code-block lang="sql" data-trim>
+            SELECT
+            categoria,
+            AVG(valor) AS media,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY categoria
+            ORDER BY total DESC;
+          </code-block>
+          <code-block lang="sql" data-trim>
+            SELECT produto, COUNT(*) AS quantidade
+            FROM vendas
+            GROUP BY produto
+            ORDER BY quantidade DESC;
+          </code-block>
+        </section>

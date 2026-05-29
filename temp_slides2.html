@@ -1,0 +1,90 @@
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>4. Analisar no tempo</h2>
+          <code-block lang="sql" data-trim>
+            SELECT
+            DATE_TRUNC('month', data) AS mes,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY mes
+            ORDER BY mes;
+          </code-block>
+          <div class="cyan-box">
+            <p>Datas transformam registros soltos em serie historica: mes a mes, semana a semana, dia a dia.</p>
+          </div>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>5. Exportar resultado</h2>
+          <code-block lang="sql" data-trim>
+            COPY (
+            SELECT
+            categoria,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY categoria
+            ) TO 'resumo_categorias.csv'
+            (HEADER, DELIMITER ',');
+          </code-block>
+          <code-block lang="sql" data-trim>
+            COPY (
+            SELECT
+            categoria,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY categoria
+            ) TO 'resumo_categorias.parquet'
+            (FORMAT PARQUET);
+          </code-block>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2 style="color: #ffb86c;">Fase 6: Integracao direta (Postgres)</h2>
+          <p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL.</p>
+          <code-block lang="sql" data-trim>
+            INSTALL postgres;
+            LOAD postgres;
+
+            ATTACH 'dbname=meu_banco user=postgres host=localhost'
+            AS pg_db (TYPE postgres);
+
+            -- Agora podemos consultar tabelas do Postgres diretamente
+            SELECT * FROM pg_db.public.vendas LIMIT 5;
+          </code-block>
+        </section>
+--- SLIDE ---
+<section data-auto-animate>
+          <h2>Autenticacao no PostgreSQL</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <h3>Na string de conexao</h3>
+              <code-block lang="sql" data-trim>
+                -- Senha inline
+                ATTACH 'dbname=vendas user=postgres
+                host=localhost password=minha_senha'
+                AS pg (TYPE postgres);
+              </code-block>
+              <div class="pink-box" style="margin-top:8px">
+                <p>Nunca versione senhas em arquivos de codigo.</p>
+              </div>
+            </div>
+            <div style="flex:1">
+              <h3>Variaveis de ambiente</h3>
+              <code-block lang="powershell" data-trim>
+                # Variáveis padrão PostgreSQL
+                $env:PGHOST="localhost"
+                $env:PGPORT="5432"
+                $env:PGDATABASE="vendas"
+                $env:PGUSER="postgres"
+                $env:PGPASSWORD="minha_senha"
+              </code-block>
+              <div class="green-box" style="margin-top:8px">
+                <p>Com as variaveis definidas, basta <code>ATTACH '' AS pg (TYPE postgres)</code>.</p>
+              </div>
+            </div>
+          </multi-col>
+          <div class="cyan-box" style="margin-top:8px">
+            <p>A extensao usa <code>libpq</code> internamente — todas as variaveis de ambiente padrao do PostgreSQL sao
+              suportadas, incluindo o arquivo <code>~/.pgpass</code>.</p>
+          </div>
+        </section>
