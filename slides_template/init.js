@@ -78,20 +78,20 @@ function injectSeminarPanel() {
 function initializeReveal() {
   const plugins = [];
 
-  if (window.RevealMarkdown) plugins.push(RevealMarkdown);
-  if (window.RevealNotes) plugins.push(RevealNotes);
-  if (window.RevealZoom) plugins.push(RevealZoom);
-  if (window.RevealHighlight) plugins.push(RevealHighlight);
-  if (window.RevealMath?.KaTeX) plugins.push(RevealMath.KaTeX);
-  if (window.RevealMermaid) plugins.push(RevealMermaid);
+  if (window.RevealMarkdown) plugins.push(window.RevealMarkdown);
+  if (window.RevealNotes) plugins.push(window.RevealNotes);
+  if (window.RevealZoom) plugins.push(window.RevealZoom);
+  if (window.RevealHighlight) plugins.push(window.RevealHighlight);
+  if (window.RevealMath && window.RevealMath.KaTeX) plugins.push(window.RevealMath.KaTeX);
+  if (window.RevealMermaid) plugins.push(window.RevealMermaid);
 
   // Auto-detect optional plugins
-  if (window.RevealSeminar) plugins.push(RevealSeminar);
-  if (window.RevealPoll) plugins.push(RevealPoll);
-  if (window.RevealChart) plugins.push(RevealChart);
-  if (window.RevealCustomControls) plugins.push(RevealCustomControls);
-  if (window.RevealChalkboard) plugins.push(RevealChalkboard);
-  if (window.Reveald3) plugins.push(Reveald3);
+  if (window.RevealSeminar) plugins.push(window.RevealSeminar);
+  if (window.RevealPoll) plugins.push(window.RevealPoll);
+  if (window.RevealChart) plugins.push(window.RevealChart);
+  if (window.RevealCustomControls) plugins.push(window.RevealCustomControls);
+  if (window.RevealChalkboard) plugins.push(window.RevealChalkboard);
+  if (window.Reveald3) plugins.push(window.Reveald3);
 
   const config = {
     controls: true,
