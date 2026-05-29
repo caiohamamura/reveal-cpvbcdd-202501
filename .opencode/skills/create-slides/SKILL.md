@@ -40,6 +40,16 @@ Place files in the appropriate subfolder: `iot/`, `bdd1/`, `bdd2/`, or a new fol
   <link rel="stylesheet" href="../plugin/poll/style.css" />
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
   <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    /* Prevent code-block from overflowing grid/flex containers */
+    .multi-col > * {
+      min-width: 0;
+    }
+    .reveal .slides section code-block > div {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+  </style>
 </head>
 
 <body>
@@ -582,13 +592,17 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
 #### Diagnosing layout overflow
 - Text descriptions of layout issues are often insufficient. **Ask the user for a screenshot** when a slide column or element is reported as overflowing or misaligned. Screenshots reveal exact overflow boundaries that descriptions miss.
 
-#### Long command lines in code blocks overflow slide width
-- Shell commands with long URLs or paths can exceed the code block width, hiding the copy button and cutting off content.
-- **Fix**: Add `overflow-x: auto; max-width: 100%` to `code-block` and `code-block pre` in the deck's `<style>` block. This enables horizontal scrolling instead of breaking lines or clipping content.
+#### Long code lines overflow inside `multi-col` or slide width
+- The `code-block` component renders a wrapper `<div style="width: min-content">` with a `<pre style="min-width: max-content">`. This means the code block always sizes itself to the longest line.
+- Inside `<multi-col>` (CSS Grid), grid items have `min-width: auto` by default — so a long line like `'postgresql://postgres@localhost/vendas'` forces the grid cell past 50%, pushing the other column off-screen or overflowing the slide.
+- **Fix (two rules in the deck's `<style>` block)**:
+  1. `min-width: 0` on grid children so they can shrink below content width
+  2. `overflow-x: auto; max-width: 100%` on the code-block wrapper div so content scrolls
   ```css
-  .reveal .slides section code-block { overflow-x: auto; max-width: 100%; }
-  .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
+  .multi-col > * { min-width: 0; }
+  .reveal .slides section code-block > div { max-width: 100%; overflow-x: auto; }
   ```
+- These rules are already included in the boilerplate `<style>` block above. Add them to existing decks that predate this fix.
 
 #### Side-by-side code comparisons need vertical formatting
 - When two `code-block`s share a `multi-col` row, even moderately long expressions can overflow or feel cramped.

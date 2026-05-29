@@ -16,39 +16,247 @@
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
   <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
   <style>
-    .reveal h2 { text-transform: none; }
-    .reveal h3 { text-transform: none; color: #8be9fd; }
-    .reveal .slides section p { font-size: 0.72em; line-height: 1.35; margin: 6px 0; }
-    .reveal .slides section li { font-size: 0.82em; line-height: 1.28; margin: 4px 0; }
-    .reveal .slides section code-block { font-size: 0.78em; }
-    .box { background: rgba(68, 71, 90, 0.72); border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
-    .green-box { background: rgba(80, 250, 123, 0.14); border-left: 4px solid #50fa7b; padding: 10px 14px; border-radius: 0 8px 8px 0; }
-    .cyan-box { background: rgba(139, 233, 253, 0.13); border-left: 4px solid #8be9fd; padding: 10px 14px; border-radius: 0 8px 8px 0; }
-    .pink-box { background: rgba(255, 121, 198, 0.14); border-left: 4px solid #ff79c6; padding: 10px 14px; border-radius: 0 8px 8px 0; }
-    .yellow-box { background: rgba(241, 250, 140, 0.14); border-left: 4px solid #f1fa8c; padding: 10px 14px; border-radius: 0 8px 8px 0; }
-    .comparison-table { width: 100%; font-size: 0.58em; }
-    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 6px 8px; text-align: left; color: #8be9fd; }
-    .comparison-table td { padding: 5px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); vertical-align: top; }
-    .mini-table { width: 100%; font-size: 0.7em; }
-    .mini-table th { color: #8be9fd; border-bottom: 1px solid #6272a4; padding: 4px 8px; }
-    .mini-table td { padding: 4px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
-    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 2px 8px; font-size: 0.62em; font-weight: bold; margin-right: 6px; }
-    .terminal { font-family: monospace; background: #191a21; border: 1px solid #6272a4; border-radius: 8px; padding: 10px 14px; color: #f8f8f2; font-size: 0.62em; white-space: pre-wrap; text-align: left; }
-    .duckdb-cover-logo { width: 260px; max-width: 78%; height: auto; filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.38)); }
-    .cover-artifact { display: grid; justify-items: center; gap: 10px; }
-    .cover-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 620px; }
-    .cover-tags span { display: inline-block; color: #282a36; background: #fff100; border-radius: 999px; padding: 4px 10px; font-size: 0.46em; font-weight: 700; }
-    .artifact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
-    .artifact-card { background: rgba(40, 42, 54, 0.86); border: 1px solid rgba(139, 233, 253, 0.35); border-radius: 8px; padding: 12px 14px; text-align: left; min-height: 120px; }
-    .artifact-card h3 { margin-top: 0; font-size: 0.72em; color: #8be9fd; }
-    .artifact-card .terminal { font-size: 0.48em; padding: 8px 10px; margin-top: 6px; }
-    .file-tree { font-family: monospace; background: #191a21; border: 1px solid rgba(241, 250, 140, 0.45); border-radius: 8px; padding: 14px 18px; color: #f8f8f2; font-size: 0.62em; line-height: 1.35; text-align: left; white-space: pre; margin: 0; box-shadow: none; width: auto; }
-    .flow-row { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 12px; align-items: center; margin: 18px 0; }
-    .flow-node { background: rgba(68, 71, 90, 0.9); border: 1px solid rgba(139, 233, 253, 0.42); border-radius: 8px; padding: 14px 10px; text-align: center; min-height: 76px; display: grid; align-content: center; }
-    .flow-node strong { color: #f1fa8c; font-size: 0.82em; }
-    .flow-node span { font-size: 0.54em; color: #f8f8f2; }
-    .flow-arrow { color: #ff79c6; font-size: 1.3em; font-weight: 800; }
-    .duckdb-node { border-color: #fff100; box-shadow: 0 0 0 2px rgba(255, 241, 0, 0.16); }
+    .reveal h2 {
+      text-transform: none;
+    }
+
+    .reveal h3 {
+      text-transform: none;
+      color: #8be9fd;
+    }
+
+    .reveal .slides section p {
+      font-size: 0.72em;
+      line-height: 1.35;
+      margin: 6px 0;
+    }
+
+    .reveal .slides section li {
+      font-size: 0.82em;
+      line-height: 1.28;
+      margin: 4px 0;
+    }
+
+    .reveal .slides section code-block {
+      font-size: 0.78em;
+    }
+
+    .box {
+      background: rgba(68, 71, 90, 0.72);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 8px 0;
+    }
+
+    .green-box {
+      background: rgba(80, 250, 123, 0.14);
+      border-left: 4px solid #50fa7b;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .cyan-box {
+      background: rgba(139, 233, 253, 0.13);
+      border-left: 4px solid #8be9fd;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .pink-box {
+      background: rgba(255, 121, 198, 0.14);
+      border-left: 4px solid #ff79c6;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .yellow-box {
+      background: rgba(241, 250, 140, 0.14);
+      border-left: 4px solid #f1fa8c;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .comparison-table {
+      width: 100%;
+      font-size: 0.58em;
+    }
+
+    .comparison-table th {
+      background: rgba(98, 114, 164, 0.45);
+      padding: 6px 8px;
+      text-align: left;
+      color: #8be9fd;
+    }
+
+    .comparison-table td {
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(98, 114, 164, 0.25);
+      vertical-align: top;
+    }
+
+    .mini-table {
+      width: 100%;
+      font-size: 0.7em;
+    }
+
+    .mini-table th {
+      color: #8be9fd;
+      border-bottom: 1px solid #6272a4;
+      padding: 4px 8px;
+    }
+
+    .mini-table td {
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(98, 114, 164, 0.25);
+    }
+
+    .pill {
+      display: inline-block;
+      color: #282a36;
+      background: #8be9fd;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 0.62em;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
+    .terminal {
+      font-family: monospace;
+      background: #191a21;
+      border: 1px solid #6272a4;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #f8f8f2;
+      font-size: 0.62em;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+
+    .duckdb-cover-logo {
+      width: 260px;
+      max-width: 78%;
+      height: auto;
+      filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.38));
+    }
+
+    .cover-artifact {
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+    }
+
+    .cover-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      max-width: 620px;
+    }
+
+    .cover-tags span {
+      display: inline-block;
+      color: #282a36;
+      background: #fff100;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.46em;
+      font-weight: 700;
+    }
+
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .artifact-card {
+      background: rgba(40, 42, 54, 0.86);
+      border: 1px solid rgba(139, 233, 253, 0.35);
+      border-radius: 8px;
+      padding: 12px 14px;
+      text-align: left;
+      min-height: 120px;
+    }
+
+    .artifact-card h3 {
+      margin-top: 0;
+      font-size: 0.72em;
+      color: #8be9fd;
+    }
+
+    .artifact-card .terminal {
+      font-size: 0.48em;
+      padding: 8px 10px;
+      margin-top: 6px;
+    }
+
+    .file-tree {
+      font-family: monospace;
+      background: #191a21;
+      border: 1px solid rgba(241, 250, 140, 0.45);
+      border-radius: 8px;
+      padding: 14px 18px;
+      color: #f8f8f2;
+      font-size: 0.62em;
+      line-height: 1.35;
+      text-align: left;
+      white-space: pre;
+      margin: 0;
+      box-shadow: none;
+      width: auto;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 18px 0;
+    }
+
+    .flow-node {
+      background: rgba(68, 71, 90, 0.9);
+      border: 1px solid rgba(139, 233, 253, 0.42);
+      border-radius: 8px;
+      padding: 14px 10px;
+      text-align: center;
+      min-height: 76px;
+      display: grid;
+      align-content: center;
+    }
+
+    .flow-node strong {
+      color: #f1fa8c;
+      font-size: 0.82em;
+    }
+
+    .flow-node span {
+      font-size: 0.54em;
+      color: #f8f8f2;
+    }
+
+    .flow-arrow {
+      color: #ff79c6;
+      font-size: 1.3em;
+      font-weight: 800;
+    }
+
+    .duckdb-node {
+      border-color: #fff100;
+      box-shadow: 0 0 0 2px rgba(255, 241, 0, 0.16);
+    }
+
+    /* Prevent code-block from overflowing grid/flex containers */
+    .multi-col > * {
+      min-width: 0;
+    }
+
+    .reveal .slides section code-block > div {
+      max-width: 100%;
+      overflow-x: auto;
+    }
   </style>
 </head>
 
@@ -59,12 +267,10 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="15" curso="Banco de Dados 2" title-size="24"
-                 title="DuckDB: SQL para analise de dados colunares">
+        <header1 aula="15" curso="Banco de Dados 2" title-size="24" title="DuckDB: SQL para analise de dados colunares">
           <div class="cover-artifact">
-            <img class="duckdb-cover-logo"
-                 src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
-                 alt="Logo oficial do DuckDB" />
+            <img class="duckdb-cover-logo" src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
+              alt="Logo oficial do DuckDB" />
             <div class="cover-tags" aria-label="Artefatos usados na aula">
               <span>CSV real</span>
               <span>Parquet</span>
@@ -80,13 +286,33 @@
         <h2>Revisao: varios bancos, varios problemas</h2>
         <table class="comparison-table">
           <thead>
-            <tr><th>Tecnologia</th><th>Modelo mental</th><th>Uso tipico</th></tr>
+            <tr>
+              <th>Tecnologia</th>
+              <th>Modelo mental</th>
+              <th>Uso tipico</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td>PostgreSQL</td><td>Relacional servidor</td><td>Aplicacoes, transacoes, restricoes</td></tr>
-            <tr><td>Redis</td><td>Estruturas em memoria</td><td>Cache, sessoes, filas, rankings</td></tr>
-            <tr><td>MongoDB</td><td>Documentos JSON</td><td>Documentos flexiveis</td></tr>
-            <tr><td>Neo4j</td><td>Grafos</td><td>Redes, caminhos, recomendacoes</td></tr>
+            <tr>
+              <td>PostgreSQL</td>
+              <td>Relacional servidor</td>
+              <td>Aplicacoes, transacoes, restricoes</td>
+            </tr>
+            <tr>
+              <td>Redis</td>
+              <td>Estruturas em memoria</td>
+              <td>Cache, sessoes, filas, rankings</td>
+            </tr>
+            <tr>
+              <td>MongoDB</td>
+              <td>Documentos JSON</td>
+              <td>Documentos flexiveis</td>
+            </tr>
+            <tr>
+              <td>Neo4j</td>
+              <td>Grafos</td>
+              <td>Redes, caminhos, recomendacoes</td>
+            </tr>
           </tbody>
         </table>
         <div class="fragment green-box">
@@ -103,7 +329,8 @@
           <h2 style="color: #ff79c6;">Fase 1: Analise nao e cadastro</h2>
           <div class="pink-box">
             <p>Temos um CSV grande com vendas, logs, sensores, notas ou dados publicos.</p>
-            <p>Precisamos criar um servidor PostgreSQL, importar tudo e configurar tabelas antes de perguntar algo simples?</p>
+            <p>Precisamos criar um servidor PostgreSQL, importar tudo e configurar tabelas antes de perguntar algo
+              simples?</p>
           </div>
           <div class="fragment cyan-box">
             <p>DuckDB entra como uma ponte: SQL conhecido, mas aplicado diretamente sobre arquivos e DataFrames.</p>
@@ -113,7 +340,8 @@
         <section data-auto-animate>
           <h2>OLTP: trabalho transacional</h2>
           <div class="cyan-box">
-            <p><strong>OLTP</strong> vem de <em>Online Transaction Processing</em>: processamento de transacoes online.</p>
+            <p><strong>OLTP</strong> vem de <em>Online Transaction Processing</em>: processamento de transacoes online.
+            </p>
           </div>
           <multi-col style="gap:15px">
             <div style="flex:1">
@@ -152,11 +380,11 @@
             </div>
             <div style="flex:1.2">
               <code-block lang="sql" data-trim>
-SELECT produto, SUM(valor) AS total
-FROM vendas
-GROUP BY produto
-ORDER BY total DESC;
-</code-block>
+                SELECT produto, SUM(valor) AS total
+                FROM vendas
+                GROUP BY produto
+                ORDER BY total DESC;
+              </code-block>
               <div class="green-box">
                 <p>A consulta percorre muitos registros e devolve um resumo.</p>
               </div>
@@ -168,11 +396,23 @@ ORDER BY total DESC;
           <h2>A diferenca esta na pergunta</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Tipo</th><th>Pergunta</th><th>Operacao dominante</th></tr>
+              <tr>
+                <th>Tipo</th>
+                <th>Pergunta</th>
+                <th>Operacao dominante</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>OLTP</td><td>Este pedido foi pago? Este usuario pode entrar?</td><td>Ler ou alterar poucas linhas com consistencia</td></tr>
-              <tr><td>OLAP</td><td>Quanto vendemos por mes, categoria e cidade?</td><td>Filtrar, agrupar e resumir muitas linhas</td></tr>
+              <tr>
+                <td>OLTP</td>
+                <td>Este pedido foi pago? Este usuario pode entrar?</td>
+                <td>Ler ou alterar poucas linhas com consistencia</td>
+              </tr>
+              <tr>
+                <td>OLAP</td>
+                <td>Quanto vendemos por mes, categoria e cidade?</td>
+                <td>Filtrar, agrupar e resumir muitas linhas</td>
+              </tr>
             </tbody>
           </table>
           <div class="yellow-box">
@@ -191,12 +431,32 @@ ORDER BY total DESC;
           <h2 style="color: #8be9fd;">Fase 2: Como os dados ficam guardados?</h2>
           <table class="mini-table">
             <thead>
-              <tr><th>id</th><th>aluno</th><th>curso</th><th>nota</th></tr>
+              <tr>
+                <th>id</th>
+                <th>aluno</th>
+                <th>curso</th>
+                <th>nota</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>1</td><td>Ana</td><td>Info</td><td>8.5</td></tr>
-              <tr><td>2</td><td>Bruno</td><td>Info</td><td>7.0</td></tr>
-              <tr><td>3</td><td>Carla</td><td>Adm</td><td>9.0</td></tr>
+              <tr>
+                <td>1</td>
+                <td>Ana</td>
+                <td>Info</td>
+                <td>8.5</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Bruno</td>
+                <td>Info</td>
+                <td>7.0</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Carla</td>
+                <td>Adm</td>
+                <td>9.0</td>
+              </tr>
             </tbody>
           </table>
           <div class="cyan-box fragment">
@@ -209,8 +469,8 @@ ORDER BY total DESC;
           <multi-col style="gap:15px">
             <div style="flex:1">
               <div class="terminal">1, Ana, Info, 8.5
-2, Bruno, Info, 7.0
-3, Carla, Adm, 9.0</div>
+                2, Bruno, Info, 7.0
+                3, Carla, Adm, 9.0</div>
             </div>
             <div style="flex:1">
               <div class="box">
@@ -225,18 +485,20 @@ ORDER BY total DESC;
           <h2>Orientado a colunas</h2>
           <multi-col style="gap:15px">
             <div style="flex:1">
-              <div class="terminal">id:    1, 2, 3
-aluno: Ana, Bruno, Carla
-curso: Info, Info, Adm
-nota:  8.5, 7.0, 9.0</div>
+              <div class="terminal">id: 1, 2, 3
+                aluno: Ana, Bruno, Carla
+                curso: Info, Info, Adm
+                nota: 8.5, 7.0, 9.0</div>
             </div>
             <div style="flex:1">
               <code-block lang="sql" data-trim>
-SELECT AVG(nota)
-FROM alunos;
-</code-block>
+                SELECT AVG(nota)
+                FROM alunos;
+              </code-block>
               <div class="green-box">
-                <p>Se a consulta so precisa de <code>nota</code>, por que ler <code>id</code>, <code>aluno</code> e <code>curso</code>?</p>
+                <p>Se a consulta so precisa de <code>nota</code>, por que ler <code>id</code>, <code>aluno</code> e
+                  <code>curso</code>?
+                </p>
               </div>
             </div>
           </multi-col>
@@ -248,17 +510,17 @@ FROM alunos;
             <div class="artifact-card">
               <h3>CSV: texto linha a linha</h3>
               <div class="terminal">data,produto,categoria,cidade,valor
-2026-01-05,Mouse,Periferico,Capivari,50.0
-2026-01-12,Teclado,Periferico,Elias Fausto,120.0</div>
+                2026-01-05,Mouse,Periferico,Capivari,50.0
+                2026-01-12,Teclado,Periferico,Elias Fausto,120.0</div>
               <p>Facil de abrir manualmente, mas precisa interpretar texto a cada leitura.</p>
             </div>
             <div class="artifact-card">
               <h3>Parquet: arquivo colunar</h3>
               <div class="terminal">schema:
-  data: DATE
-  produto: VARCHAR
-  categoria: VARCHAR
-  valor: DOUBLE</div>
+                data: DATE
+                produto: VARCHAR
+                categoria: VARCHAR
+                valor: DOUBLE</div>
               <p>Guarda tipos e metadados; combina com consultas que leem poucas colunas.</p>
             </div>
           </div>
@@ -287,7 +549,8 @@ FROM alunos;
             </div>
           </multi-col>
           <div class="green-box">
-            <p>Em consultas analiticas, Parquet costuma reduzir leitura de disco, conversao de tipos e memoria movimentada.</p>
+            <p>Em consultas analiticas, Parquet costuma reduzir leitura de disco, conversao de tipos e memoria
+              movimentada.</p>
           </div>
         </section>
 
@@ -313,50 +576,68 @@ FROM alunos;
 
         <section data-auto-animate>
           <h2>Preparar o ambiente</h2>
-          <p>Para executar os exemplos em Python, instale o DuckDB no mesmo ambiente usado pelo notebook ou pelo VS Code.</p>
+          <p>Para executar os exemplos em Python, instale o DuckDB no mesmo ambiente usado pelo notebook ou pelo VS
+            Code.</p>
           <code-block lang="bash" data-trim>
-python -m pip install duckdb pandas pyarrow
-</code-block>
+            python -m pip install duckdb pandas pyarrow
+          </code-block>
           <div class="cyan-box">
-            <p><code>pandas</code> cria DataFrames para os exemplos e <code>pyarrow</code> ajuda na leitura/escrita de Parquet.</p>
+            <p><code>pandas</code> cria DataFrames para os exemplos e <code>pyarrow</code> ajuda na leitura/escrita de
+              Parquet.</p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>SQL sobre DataFrame</h2>
           <code-block lang="python" style="max-height:550px">
-import duckdb
-import pandas as pd
+            import duckdb
+            import pandas as pd
 
-df = pd.DataFrame({
-    "produto": ["Mouse", "Teclado", "Mouse", "Monitor"],
-    "categoria": [
-        "Periferico", "Periferico", "Periferico", "Video"
-    ],
-    "valor": [50, 120, 70, 900],
-})
+            df = pd.DataFrame({
+            "produto": ["Mouse", "Teclado", "Mouse", "Monitor"],
+            "categoria": [
+            "Periferico", "Periferico", "Periferico", "Video"
+            ],
+            "valor": [50, 120, 70, 900],
+            })
 
-resultado = duckdb.sql("""
-SELECT produto, SUM(valor) AS total
-FROM df
-GROUP BY produto
-ORDER BY total DESC
-""").df()
+            resultado = duckdb.sql("""
+            SELECT produto, SUM(valor) AS total
+            FROM df
+            GROUP BY produto
+            ORDER BY total DESC
+            """).df()
 
-resultado
-</code-block>
+            resultado
+          </code-block>
         </section>
 
         <section data-auto-animate>
           <h2>Resultado esperado</h2>
           <table class="mini-table">
             <thead>
-              <tr><th></th><th>produto</th><th>total</th></tr>
+              <tr>
+                <th></th>
+                <th>produto</th>
+                <th>total</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>0</td><td>Monitor</td><td>900.0</td></tr>
-              <tr><td>1</td><td>Mouse</td><td>120.0</td></tr>
-              <tr><td>2</td><td>Teclado</td><td>120.0</td></tr>
+              <tr>
+                <td>0</td>
+                <td>Monitor</td>
+                <td>900.0</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>Mouse</td>
+                <td>120.0</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Teclado</td>
+                <td>120.0</td>
+              </tr>
             </tbody>
           </table>
           <div class="cyan-box">
@@ -370,38 +651,38 @@ resultado
             <div style="flex:1">
               <h3>Com pandas</h3>
               <code-block lang="python" data-trim style="font-size:0.9em;line-height:1.1;">
-filtrado = df[
-    df["valor"] >= 100
-]
+                filtrado = df[
+                df["valor"] >= 100
+                ]
 
-por_categoria = (
-    filtrado
-    .groupby("categoria")
-    .agg(
-        qtd=("produto", "count"),
-        total=("valor", "sum"),
-    )
-    .reset_index()
-)
+                por_categoria = (
+                filtrado
+                .groupby("categoria")
+                .agg(
+                qtd=("produto", "count"),
+                total=("valor", "sum"),
+                )
+                .reset_index()
+                )
 
-resultado = por_categoria[
-    por_categoria["qtd"] >= 2
-]
-</code-block>
+                resultado = por_categoria[
+                por_categoria["qtd"] >= 2
+                ]
+              </code-block>
             </div>
             <div style="flex:1">
               <h3>Com SQL</h3>
               <code-block lang="sql" data-trim>
-SELECT
-    categoria,
-    COUNT(*) AS qtd,
-    SUM(valor) AS total
-FROM df
-WHERE valor >= 100
-GROUP BY categoria
-HAVING COUNT(*) >= 2
-ORDER BY total DESC;
-</code-block>
+                SELECT
+                categoria,
+                COUNT(*) AS qtd,
+                SUM(valor) AS total
+                FROM df
+                WHERE valor >= 100
+                GROUP BY categoria
+                HAVING COUNT(*) >= 2
+                ORDER BY total DESC;
+              </code-block>
             </div>
           </multi-col>
           <div class="green-box">
@@ -416,35 +697,35 @@ ORDER BY total DESC;
             <div style="flex:1">
               <h3>pandas</h3>
               <code-block lang="python" data-trim>
-medias = (
-    df.groupby("categoria")["valor"]
-      .mean()
-      .reset_index(
-          name="media_categoria"
-      )
-)
+                medias = (
+                df.groupby("categoria")["valor"]
+                .mean()
+                .reset_index(
+                name="media_categoria"
+                )
+                )
 
-com_media = df.merge(medias, on="categoria")
-resultado = com_media[
-    com_media["valor"]
-    > com_media["media_categoria"]
-]
-</code-block>
+                com_media = df.merge(medias, on="categoria")
+                resultado = com_media[
+                com_media["valor"]
+                > com_media["media_categoria"]
+                ]
+              </code-block>
             </div>
             <div style="flex:1">
               <h3>SQL</h3>
               <code-block lang="sql" data-trim>
-SELECT
-    produto,
-    categoria,
-    valor,
-    AVG(valor) OVER (
-        PARTITION BY categoria
-    ) AS media_categoria
-FROM df
-QUALIFY
-    valor > media_categoria;
-</code-block>
+                SELECT
+                produto,
+                categoria,
+                valor,
+                AVG(valor) OVER (
+                PARTITION BY categoria
+                ) AS media_categoria
+                FROM df
+                QUALIFY
+                valor > media_categoria;
+              </code-block>
             </div>
           </multi-col>
         </section>
@@ -452,10 +733,12 @@ QUALIFY
         <section data-auto-animate>
           <h2>Legibilidade em consultas analiticas</h2>
           <div class="yellow-box">
-            <p>pandas e excelente, mas muitas analises viram sequencias de passos: filtra, agrupa, reseta indice, junta, filtra de novo.</p>
+            <p>pandas e excelente, mas muitas analises viram sequencias de passos: filtra, agrupa, reseta indice, junta,
+              filtra de novo.</p>
           </div>
           <div class="cyan-box">
-            <p>SQL deixa a intencao mais declarativa: quais linhas entram, como agrupar, quais metricas calcular e quais grupos manter.</p>
+            <p>SQL deixa a intencao mais declarativa: quais linhas entram, como agrupar, quais metricas calcular e quais
+              grupos manter.</p>
           </div>
           <ls-u>
             <li><code>WHERE</code>: filtra linhas antes do agrupamento</li>
@@ -478,10 +761,10 @@ QUALIFY
           <multi-col style="gap:15px">
             <div style="flex:1.1">
               <code-block lang="sql" data-trim>
-SELECT *
-FROM read_csv_auto('vendas.csv')
-LIMIT 10;
-</code-block>
+                SELECT *
+                FROM read_csv_auto('vendas.csv')
+                LIMIT 10;
+              </code-block>
             </div>
             <div style="flex:0.9">
               <pre class="file-tree">bdd2/
@@ -499,24 +782,48 @@ LIMIT 10;
         <section data-auto-animate>
           <h2>Agregando um CSV</h2>
           <code-block lang="sql" data-trim>
-SELECT
-    categoria,
-    COUNT(*) AS qtd,
-    SUM(valor) AS total
-FROM read_csv_auto('vendas.csv')
-GROUP BY categoria
-ORDER BY total DESC;
-</code-block>
+            SELECT
+            categoria,
+            COUNT(*) AS qtd,
+            SUM(valor) AS total
+            FROM read_csv_auto('vendas.csv')
+            GROUP BY categoria
+            ORDER BY total DESC;
+          </code-block>
           <table class="mini-table">
             <thead>
-              <tr><th>categoria</th><th>qtd</th><th>total</th></tr>
+              <tr>
+                <th>categoria</th>
+                <th>qtd</th>
+                <th>total</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Computador</td><td>1</td><td>3200.0</td></tr>
-              <tr><td>Video</td><td>2</td><td>1750.0</td></tr>
-              <tr><td>Periferico</td><td>6</td><td>615.0</td></tr>
-              <tr><td>Armazenamento</td><td>1</td><td>420.0</td></tr>
-              <tr><td>Acessorio</td><td>2</td><td>130.0</td></tr>
+              <tr>
+                <td>Computador</td>
+                <td>1</td>
+                <td>3200.0</td>
+              </tr>
+              <tr>
+                <td>Video</td>
+                <td>2</td>
+                <td>1750.0</td>
+              </tr>
+              <tr>
+                <td>Periferico</td>
+                <td>6</td>
+                <td>615.0</td>
+              </tr>
+              <tr>
+                <td>Armazenamento</td>
+                <td>1</td>
+                <td>420.0</td>
+              </tr>
+              <tr>
+                <td>Acessorio</td>
+                <td>2</td>
+                <td>130.0</td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -524,15 +831,15 @@ ORDER BY total DESC;
         <section data-auto-animate>
           <h2>Consultando Parquet</h2>
           <code-block lang="sql" data-trim>
-SELECT
-    categoria,
-    COUNT(*) AS qtd,
-    SUM(valor) AS total
-FROM read_parquet('vendas.parquet')
-WHERE data >= DATE '2026-01-01'
-GROUP BY categoria
-ORDER BY total DESC;
-</code-block>
+            SELECT
+            categoria,
+            COUNT(*) AS qtd,
+            SUM(valor) AS total
+            FROM read_parquet('vendas.parquet')
+            WHERE data >= DATE '2026-01-01'
+            GROUP BY categoria
+            ORDER BY total DESC;
+          </code-block>
           <div class="yellow-box">
             <p>Parquet combina muito bem com consultas que leem muitas linhas, mas poucas colunas.</p>
           </div>
@@ -555,17 +862,17 @@ ORDER BY total DESC;
         <section data-auto-animate>
           <h2>Glob: muitos arquivos, uma consulta</h2>
           <code-block lang="sql" data-trim>
-SELECT
-    cidade,
-    DATE_TRUNC('month', data) AS mes,
-    SUM(valor) AS total
-FROM read_parquet(
-    'dados/vendas/ano=2026/mes=*/vendas_*.parquet'
-)
-WHERE categoria = 'Periferico'
-GROUP BY cidade, DATE_TRUNC('month', data)
-ORDER BY mes, total DESC;
-</code-block>
+            SELECT
+            cidade,
+            DATE_TRUNC('month', data) AS mes,
+            SUM(valor) AS total
+            FROM read_parquet(
+            'dados/vendas/ano=2026/mes=*/vendas_*.parquet'
+            )
+            WHERE categoria = 'Periferico'
+            GROUP BY cidade, DATE_TRUNC('month', data)
+            ORDER BY mes, total DESC;
+          </code-block>
           <div class="cyan-box">
             <p>O padrao <code>*</code> permite abrir muitos arquivos sem escrever um loop em Python.</p>
           </div>
@@ -575,17 +882,38 @@ ORDER BY mes, total DESC;
           <h2>Paralelo com big data</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Ideia</th><th>Big data distribuido</th><th>DuckDB local</th></tr>
+              <tr>
+                <th>Ideia</th>
+                <th>Big data distribuido</th>
+                <th>DuckDB local</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Dados particionados</td><td>Pastas por ano, mes, cidade</td><td>Ler glob de muitos arquivos</td></tr>
-              <tr><td>Formato colunar</td><td>Parquet em data lake</td><td><code>read_parquet()</code></td></tr>
-              <tr><td>Consulta declarativa</td><td>SQL em engines como Spark/Trino</td><td>SQL local no notebook</td></tr>
-              <tr><td>Escala</td><td>Cluster</td><td>Uma maquina, sem servidor</td></tr>
+              <tr>
+                <td>Dados particionados</td>
+                <td>Pastas por ano, mes, cidade</td>
+                <td>Ler glob de muitos arquivos</td>
+              </tr>
+              <tr>
+                <td>Formato colunar</td>
+                <td>Parquet em data lake</td>
+                <td><code>read_parquet()</code></td>
+              </tr>
+              <tr>
+                <td>Consulta declarativa</td>
+                <td>SQL em engines como Spark/Trino</td>
+                <td>SQL local no notebook</td>
+              </tr>
+              <tr>
+                <td>Escala</td>
+                <td>Cluster</td>
+                <td>Uma maquina, sem servidor</td>
+              </tr>
             </tbody>
           </table>
           <div class="yellow-box">
-            <p>DuckDB nao substitui um cluster, mas traz a mesma logica de analise para dados que cabem numa maquina.</p>
+            <p>DuckDB nao substitui um cluster, mas traz a mesma logica de analise para dados que cabem numa maquina.
+            </p>
           </div>
         </section>
 
@@ -599,22 +927,23 @@ ORDER BY mes, total DESC;
     mes=02/
       vendas_02.parquet</pre>
           <div class="cyan-box">
-            <p>As pastas <code>ano=2026</code> e <code>mes=01</code> representam colunas virtuais extraidas do caminho.</p>
+            <p>As pastas <code>ano=2026</code> e <code>mes=01</code> representam colunas virtuais extraidas do caminho.
+            </p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>Lendo particoes Hive com DuckDB</h2>
           <code-block lang="sql" data-trim>
-SELECT ano, mes, cidade, SUM(valor) AS total
-FROM read_parquet(
-    'dados/vendas/ano=*/mes=*/*.parquet',
-    hive_partitioning = true
-)
-WHERE ano = 2026
-GROUP BY ano, mes, cidade
-ORDER BY mes, total DESC;
-</code-block>
+            SELECT ano, mes, cidade, SUM(valor) AS total
+            FROM read_parquet(
+            'dados/vendas/ano=*/mes=*/*.parquet',
+            hive_partitioning = true
+            )
+            WHERE ano = 2026
+            GROUP BY ano, mes, cidade
+            ORDER BY mes, total DESC;
+          </code-block>
           <div class="green-box">
             <p>DuckDB cria as colunas <code>ano</code> e <code>mes</code> a partir dos nomes das pastas.</p>
           </div>
@@ -623,16 +952,16 @@ ORDER BY mes, total DESC;
         <section data-auto-animate>
           <h2>Tambem funciona com CSV</h2>
           <code-block lang="sql" data-trim>
-SELECT ano, mes, categoria, COUNT(*) AS qtd
-FROM read_csv(
-    'dados/vendas_csv/ano=*/mes=*/*.csv',
-    header = true,
-    hive_partitioning = true
-)
-WHERE categoria = 'Periferico'
-GROUP BY ano, mes, categoria
-ORDER BY ano, mes;
-</code-block>
+            SELECT ano, mes, categoria, COUNT(*) AS qtd
+            FROM read_csv(
+            'dados/vendas_csv/ano=*/mes=*/*.csv',
+            header = true,
+            hive_partitioning = true
+            )
+            WHERE categoria = 'Periferico'
+            GROUP BY ano, mes, categoria
+            ORDER BY ano, mes;
+          </code-block>
           <div class="yellow-box">
             <p>Mesmo quando a origem ainda e CSV, o padrao de pastas ja aproxima a organizacao de um data lake.</p>
           </div>
@@ -671,16 +1000,16 @@ ORDER BY ano, mes;
         <section data-auto-animate>
           <h2>1. Criar tabela a partir do arquivo</h2>
           <code-block lang="python" data-trim>
-import duckdb
+            import duckdb
 
-con = duckdb.connect()
+            con = duckdb.connect()
 
-con.sql("""
-CREATE TABLE vendas AS
-SELECT *
-FROM read_csv_auto('vendas.csv')
-""")
-</code-block>
+            con.sql("""
+            CREATE TABLE vendas AS
+            SELECT *
+            FROM read_csv_auto('vendas.csv')
+            """)
+          </code-block>
         </section>
 
         <section data-auto-animate>
@@ -688,15 +1017,15 @@ FROM read_csv_auto('vendas.csv')
           <multi-col style="gap:15px">
             <div style="flex:1">
               <code-block lang="sql" data-trim>
-DESCRIBE vendas;
+                DESCRIBE vendas;
 
-SELECT COUNT(*) AS total_linhas
-FROM vendas;
+                SELECT COUNT(*) AS total_linhas
+                FROM vendas;
 
-SELECT *
-FROM vendas
-LIMIT 10;
-</code-block>
+                SELECT *
+                FROM vendas
+                LIMIT 10;
+              </code-block>
             </div>
             <div style="flex:1">
               <div class="box">
@@ -715,32 +1044,32 @@ LIMIT 10;
         <section data-auto-animate>
           <h2>3. Agregar</h2>
           <code-block lang="sql" data-trim>
-SELECT
-    categoria,
-    AVG(valor) AS media,
-    SUM(valor) AS total
-FROM vendas
-GROUP BY categoria
-ORDER BY total DESC;
-</code-block>
+            SELECT
+            categoria,
+            AVG(valor) AS media,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY categoria
+            ORDER BY total DESC;
+          </code-block>
           <code-block lang="sql" data-trim>
-SELECT produto, COUNT(*) AS quantidade
-FROM vendas
-GROUP BY produto
-ORDER BY quantidade DESC;
-</code-block>
+            SELECT produto, COUNT(*) AS quantidade
+            FROM vendas
+            GROUP BY produto
+            ORDER BY quantidade DESC;
+          </code-block>
         </section>
 
         <section data-auto-animate>
           <h2>4. Analisar no tempo</h2>
           <code-block lang="sql" data-trim>
-SELECT
-    DATE_TRUNC('month', data) AS mes,
-    SUM(valor) AS total
-FROM vendas
-GROUP BY mes
-ORDER BY mes;
-</code-block>
+            SELECT
+            DATE_TRUNC('month', data) AS mes,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY mes
+            ORDER BY mes;
+          </code-block>
           <div class="cyan-box">
             <p>Datas transformam registros soltos em serie historica: mes a mes, semana a semana, dia a dia.</p>
           </div>
@@ -749,25 +1078,25 @@ ORDER BY mes;
         <section data-auto-animate>
           <h2>5. Exportar resultado</h2>
           <code-block lang="sql" data-trim>
-COPY (
-    SELECT
-        categoria,
-        SUM(valor) AS total
-    FROM vendas
-    GROUP BY categoria
-) TO 'resumo_categorias.csv'
-    (HEADER, DELIMITER ',');
-</code-block>
+            COPY (
+            SELECT
+            categoria,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY categoria
+            ) TO 'resumo_categorias.csv'
+            (HEADER, DELIMITER ',');
+          </code-block>
           <code-block lang="sql" data-trim>
-COPY (
-    SELECT
-        categoria,
-        SUM(valor) AS total
-    FROM vendas
-    GROUP BY categoria
-) TO 'resumo_categorias.parquet'
-    (FORMAT PARQUET);
-</code-block>
+            COPY (
+            SELECT
+            categoria,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY categoria
+            ) TO 'resumo_categorias.parquet'
+            (FORMAT PARQUET);
+          </code-block>
         </section>
 
       </section><!-- fim Fase 5 -->
@@ -781,15 +1110,15 @@ COPY (
           <h2 style="color: #ffb86c;">Fase 6: Integracao direta (Postgres)</h2>
           <p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL.</p>
           <code-block lang="sql" data-trim>
-INSTALL postgres;
-LOAD postgres;
+            INSTALL postgres;
+            LOAD postgres;
 
-ATTACH 'dbname=meu_banco user=postgres host=localhost'
-AS pg_db (TYPE postgres);
+            ATTACH 'dbname=meu_banco user=postgres host=localhost'
+            AS pg_db (TYPE postgres);
 
--- Agora podemos consultar tabelas do Postgres diretamente
-SELECT * FROM pg_db.public.vendas LIMIT 5;
-</code-block>
+            -- Agora podemos consultar tabelas do Postgres diretamente
+            SELECT * FROM pg_db.public.vendas LIMIT 5;
+          </code-block>
         </section>
 
         <section data-auto-animate>
@@ -798,32 +1127,33 @@ SELECT * FROM pg_db.public.vendas LIMIT 5;
             <div style="flex:1">
               <h3>Na string de conexao</h3>
               <code-block lang="sql" data-trim>
--- Senha inline (evitar em scripts versionados!)
-ATTACH 'dbname=vendas user=postgres
-  host=localhost password=minha_senha'
-AS pg (TYPE postgres);
-</code-block>
+                -- Senha inline
+                ATTACH 'dbname=vendas user=postgres
+                host=localhost password=minha_senha'
+                AS pg (TYPE postgres);
+              </code-block>
               <div class="pink-box" style="margin-top:8px">
                 <p>Nunca versione senhas em arquivos de codigo.</p>
               </div>
             </div>
             <div style="flex:1">
               <h3>Variaveis de ambiente</h3>
-              <code-block lang="bash" data-trim>
-# Mesmas variaveis do psql e psycopg2
-export PGHOST=localhost
-export PGPORT=5432
-export PGDATABASE=vendas
-export PGUSER=postgres
-export PGPASSWORD=minha_senha
-</code-block>
+              <code-block lang="powershell" data-trim>
+                # Variáveis padrão PostgreSQL
+                $env:PGHOST="localhost"
+                $env:PGPORT="5432"
+                $env:PGDATABASE="vendas"
+                $env:PGUSER="postgres"
+                $env:PGPASSWORD="minha_senha"
+              </code-block>
               <div class="green-box" style="margin-top:8px">
                 <p>Com as variaveis definidas, basta <code>ATTACH '' AS pg (TYPE postgres)</code>.</p>
               </div>
             </div>
           </multi-col>
-          <div class="cyan-box">
-            <p>A extensao usa <code>libpq</code> internamente — todas as variaveis de ambiente padrao do PostgreSQL sao suportadas, incluindo o arquivo <code>~/.pgpass</code>.</p>
+          <div class="cyan-box" style="margin-top:8px">
+            <p>A extensao usa <code>libpq</code> internamente — todas as variaveis de ambiente padrao do PostgreSQL sao
+              suportadas, incluindo o arquivo <code>~/.pgpass</code>.</p>
           </div>
         </section>
 
@@ -833,30 +1163,32 @@ export PGPASSWORD=minha_senha
             <div style="flex:1">
               <h3>String libpq</h3>
               <code-block lang="sql" data-trim>
--- Parametros basicos
-ATTACH 'dbname=vendas user=postgres
-  host=127.0.0.1 port=5432'
-AS pg (TYPE postgres);
+                -- Parametros basicos
+                ATTACH 'dbname=vendas user=postgres
+                host=127.0.0.1 port=5432'
+                AS pg (TYPE postgres);
 
--- Somente leitura
-ATTACH 'dbname=vendas user=postgres'
-AS pg (TYPE postgres, READ_ONLY);
-</code-block>
+                -- Somente leitura
+                ATTACH 'dbname=vendas user=postgres'
+                AS pg (TYPE postgres, READ_ONLY);
+              </code-block>
             </div>
             <div style="flex:1">
               <h3>URI PostgreSQL</h3>
               <code-block lang="sql" data-trim>
-ATTACH 'postgresql://postgres@localhost/vendas'
-AS pg (TYPE postgres);
+                ATTACH 'postgresql://postgres@localhost/vendas'
+                AS pg (TYPE postgres);
 
--- Ver tabelas disponiveis
-SHOW ALL TABLES;
-DETACH pg;
-</code-block>
+                -- Ver tabelas disponiveis
+                SHOW ALL TABLES;
+                DETACH pg;
+              </code-block>
             </div>
           </multi-col>
           <div class="cyan-box">
-            <p>A string de conexao segue o formato <code>libpq</code> do PostgreSQL: mesmos parametros usados em <code>psql</code> e <code>psycopg2</code>.</p>
+            <p>A string de conexao segue o formato <code>libpq</code> do PostgreSQL: mesmos parametros usados em
+              <code>psql</code> e <code>psycopg2</code>.
+            </p>
           </div>
         </section>
 
@@ -864,20 +1196,20 @@ DETACH pg;
           <h2>Consultando tabelas do PostgreSQL</h2>
           <p>Depois do <code>ATTACH</code>, as tabelas do Postgres ficam visiveis como tabelas DuckDB normais.</p>
           <code-block lang="sql" data-trim>
-ATTACH 'dbname=vendas user=postgres' AS pg (TYPE postgres);
+            ATTACH 'dbname=vendas user=postgres' AS pg (TYPE postgres);
 
--- Consulta direta — dados lidos do Postgres em tempo real
-SELECT categoria, SUM(valor) AS total
-FROM pg.public.vendas
-GROUP BY categoria
-ORDER BY total DESC;
+            -- Consulta direta — dados lidos do Postgres em tempo real
+            SELECT categoria, SUM(valor) AS total
+            FROM pg.public.vendas
+            GROUP BY categoria
+            ORDER BY total DESC;
 
--- Copiar tabela do Postgres para DuckDB local
-CREATE TABLE vendas_local AS
-FROM pg.public.vendas;
+            -- Copiar tabela do Postgres para DuckDB local
+            CREATE TABLE vendas_local AS
+            FROM pg.public.vendas;
 
-DETACH pg;
-</code-block>
+            DETACH pg;
+          </code-block>
           <div class="green-box">
             <p>O DuckDB age como cliente SQL do Postgres: so trafega os dados necessarios para responder a consulta.</p>
           </div>
@@ -887,21 +1219,22 @@ DETACH pg;
           <h2>ETL direto entre fontes</h2>
           <p>Podemos transferir dados do Postgres para o DuckDB (ou vice-versa) sem arquivos intermediarios.</p>
           <code-block lang="sql" data-trim>
--- Copiar de CSV para Postgres
-INSERT INTO pg.public.vendas
-SELECT * FROM read_csv('novos_dados.csv');
+            -- Copiar de CSV para Postgres
+            INSERT INTO pg.public.vendas
+            SELECT * FROM read_csv('novos_dados.csv');
 
--- Consolidar Parquet e salvar no Postgres
-INSERT INTO pg.public.resumo_mensal
-SELECT
-    DATE_TRUNC('month', data) AS mes,
-    categoria,
-    SUM(valor) AS total
-FROM read_parquet('dados/**/*.parquet')
-GROUP BY mes, categoria;
-</code-block>
+            -- Consolidar Parquet e salvar no Postgres
+            INSERT INTO pg.public.resumo_mensal
+            SELECT
+            DATE_TRUNC('month', data) AS mes,
+            categoria,
+            SUM(valor) AS total
+            FROM read_parquet('dados/**/*.parquet')
+            GROUP BY mes, categoria;
+          </code-block>
           <div class="yellow-box">
-            <p>Um script DuckDB le arquivos locais, agrega e salva o resultado diretamente em uma tabela PostgreSQL — sem arquivo intermediario.</p>
+            <p>Um script DuckDB le arquivos locais, agrega e salva o resultado diretamente em uma tabela PostgreSQL —
+              sem arquivo intermediario.</p>
           </div>
         </section>
 
@@ -911,27 +1244,28 @@ GROUP BY mes, categoria;
             <div style="flex:1">
               <h3>Postgres → Parquet</h3>
               <code-block lang="sql" data-trim>
-ATTACH 'dbname=vendas'
-AS pg (TYPE postgres, READ_ONLY);
+                ATTACH 'dbname=vendas'
+                AS pg (TYPE postgres, READ_ONLY);
 
-COPY pg.public.vendas
-TO 'backup/vendas.parquet'
-(FORMAT PARQUET);
-</code-block>
+                COPY pg.public.vendas
+                TO 'backup/vendas.parquet'
+                (FORMAT PARQUET);
+              </code-block>
             </div>
             <div style="flex:1">
               <h3>Parquet → Postgres</h3>
               <code-block lang="sql" data-trim>
-ATTACH 'dbname=vendas'
-AS pg (TYPE postgres);
+                ATTACH 'dbname=vendas'
+                AS pg (TYPE postgres);
 
-COPY pg.public.vendas
-FROM 'dados/vendas_novas.parquet';
-</code-block>
+                COPY pg.public.vendas
+                FROM 'dados/vendas_novas.parquet';
+              </code-block>
             </div>
           </multi-col>
           <div class="green-box">
-            <p><code>COPY</code> usa o protocolo binario do PostgreSQL — mais rapido que <code>INSERT</code> linha a linha para grandes volumes.</p>
+            <p><code>COPY</code> usa o protocolo binario do PostgreSQL — mais rapido que <code>INSERT</code> linha a
+              linha para grandes volumes.</p>
           </div>
         </section>
 
@@ -945,7 +1279,8 @@ FROM 'dados/vendas_novas.parquet';
         <section data-auto-animate>
           <h2 style="color: #ff79c6;">Fase 7: Atividade pratica</h2>
           <div class="green-box">
-            <p><strong>Objetivo:</strong> usar DuckDB para explorar, resumir e exportar um conjunto de dados tabular.</p>
+            <p><strong>Objetivo:</strong> usar DuckDB para explorar, resumir e exportar um conjunto de dados tabular.
+            </p>
           </div>
           <ls-u>
             <li>Carregar um CSV ou Parquet</li>
@@ -960,31 +1295,32 @@ FROM 'dados/vendas_novas.parquet';
         <section data-auto-animate>
           <h2>Base minima para testar</h2>
           <code-block lang="bash" data-trim>
-python \
-planos/aula15_duckdb_assets/gerar_dados_vendas.py
-</code-block>
+            python \
+            planos/aula15_duckdb_assets/gerar_dados_vendas.py
+          </code-block>
           <div class="cyan-box">
-            <p>O script cria <code>vendas.csv</code>, <code>vendas.parquet</code>, CSV particionado e Parquet particionado em formato Hive.</p>
+            <p>O script cria <code>vendas.csv</code>, <code>vendas.parquet</code>, CSV particionado e Parquet
+              particionado em formato Hive.</p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>Consultas esperadas</h2>
           <code-block lang="sql" data-trim>
-SELECT COUNT(*) AS total_linhas
-FROM vendas;
+            SELECT COUNT(*) AS total_linhas
+            FROM vendas;
 
-SELECT categoria, COUNT(*) AS qtd
-FROM vendas
-GROUP BY categoria
-ORDER BY qtd DESC;
+            SELECT categoria, COUNT(*) AS qtd
+            FROM vendas
+            GROUP BY categoria
+            ORDER BY qtd DESC;
 
-SELECT cidade, AVG(valor) AS media
-FROM vendas
-GROUP BY cidade
-HAVING COUNT(*) >= 2
-ORDER BY media DESC;
-</code-block>
+            SELECT cidade, AVG(valor) AS media
+            FROM vendas
+            GROUP BY cidade
+            HAVING COUNT(*) >= 2
+            ORDER BY media DESC;
+          </code-block>
         </section>
 
         <section data-auto-animate>
@@ -1012,15 +1348,43 @@ ORDER BY media DESC;
           <h2 style="color: #8be9fd;">Fase 8: Quando usar DuckDB?</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Pergunta</th><th>PostgreSQL</th><th>DuckDB</th></tr>
+              <tr>
+                <th>Pergunta</th>
+                <th>PostgreSQL</th>
+                <th>DuckDB</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Aplicacao web com muitos usuarios escrevendo?</td><td>Sim</td><td>Normalmente nao</td></tr>
-              <tr><td>Analise local de CSV e Parquet?</td><td>Sim, com mais configuracao</td><td>Sim, muito bem</td></tr>
-              <tr><td>Precisa de servidor?</td><td>Normalmente sim</td><td>Nao</td></tr>
-              <tr><td>Transacoes, permissoes e restricoes?</td><td>Forte</td><td>Nao e o foco</td></tr>
-              <tr><td>Exploracao com agregacoes?</td><td>Sim</td><td>Sim, especialmente em arquivos</td></tr>
-              <tr><td>Conectar diretamente ao PostgreSQL?</td><td>Nao aplicavel</td><td>Sim, com extensao <code>postgres</code></td></tr>
+              <tr>
+                <td>Aplicacao web com muitos usuarios escrevendo?</td>
+                <td>Sim</td>
+                <td>Normalmente nao</td>
+              </tr>
+              <tr>
+                <td>Analise local de CSV e Parquet?</td>
+                <td>Sim, com mais configuracao</td>
+                <td>Sim, muito bem</td>
+              </tr>
+              <tr>
+                <td>Precisa de servidor?</td>
+                <td>Normalmente sim</td>
+                <td>Nao</td>
+              </tr>
+              <tr>
+                <td>Transacoes, permissoes e restricoes?</td>
+                <td>Forte</td>
+                <td>Nao e o foco</td>
+              </tr>
+              <tr>
+                <td>Exploracao com agregacoes?</td>
+                <td>Sim</td>
+                <td>Sim, especialmente em arquivos</td>
+              </tr>
+              <tr>
+                <td>Conectar diretamente ao PostgreSQL?</td>
+                <td>Nao aplicavel</td>
+                <td>Sim, com extensao <code>postgres</code></td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -1035,7 +1399,8 @@ ORDER BY media DESC;
             <li><strong>DuckDB:</strong> motor SQL analitico local — arquivos, DataFrames e ponte para PostgreSQL</li>
           </ul>
           <div class="green-box fragment">
-            <p>A mesma linguagem SQL pode participar de sistemas transacionais, de analises locais e de integracao entre ferramentas.</p>
+            <p>A mesma linguagem SQL pode participar de sistemas transacionais, de analises locais e de integracao entre
+              ferramentas.</p>
           </div>
         </section>
 
@@ -1067,4 +1432,5 @@ ORDER BY media DESC;
   </script>
 
 </body>
+
 </html>
