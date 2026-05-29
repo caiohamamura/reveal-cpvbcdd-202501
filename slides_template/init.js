@@ -19,9 +19,9 @@ window.inTransition = false;
 // Override window.seminarConfig BEFORE calling mountSlideApp() to customize room
 window.seminarConfig = {
   server: 'https://seminar.hamacorps.work/',
-  room: window.seminarConfig?.room || location.pathname,
+  room: (window.seminarConfig && window.seminarConfig.room) || location.pathname,
   hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
-  autoJoin: true,
+  autoJoin: Boolean(window.seminarConfig && window.seminarConfig.autoJoin),
 };
 window.pollConfig = window.pollConfig || {};
 
