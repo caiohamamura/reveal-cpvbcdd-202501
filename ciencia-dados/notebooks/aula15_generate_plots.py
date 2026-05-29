@@ -51,7 +51,7 @@ fig.update_layout(
         range=[0, 100],
         tickfont=dict(size=14),
     ),
-    margin=dict(l=60, r=30, t=60, b=60),
+    margin=dict(l=60, r=30, t=50, b=90),
     showlegend=False,
     bargap=0.35,
 )
@@ -134,7 +134,7 @@ fig2.update_layout(
     barmode="group",
     bargap=0.25,
     bargroupgap=0.1,
-    margin=dict(l=60, r=30, t=60, b=60),
+    margin=dict(l=60, r=30, t=50, b=90),
     legend=dict(
         orientation="h",
         yanchor="bottom",
