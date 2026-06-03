@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-  <title>Banco de Dados 2 - Aula 15 - DuckDB: SQL para Analise Colunar</title>
+  <title>Banco de Dados 2 - Aula 15 - DuckDB: SQL para Análise Colunar</title>
 
   <link rel="stylesheet" href="../dist/reset.css" />
   <link rel="stylesheet" href="../dist/reveal.css" />
@@ -24,7 +24,7 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="15" curso="Banco de Dados 2" title-size="24" title="DuckDB: SQL para analise de dados colunares">
+        <header1 aula="15" curso="Banco de Dados 2" title-size="24" title="DuckDB: SQL para análise de dados colunares">
           <div class="cover-artifact">
             <img class="duckdb-cover-logo" src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg"
               alt="Logo oficial do DuckDB" />
@@ -40,40 +40,40 @@
 
       <!-- SLIDE: Revisao -->
       <section data-auto-animate>
-        <h2>Revisao: varios bancos, varios problemas</h2>
+        <h2>Revisão: vários bancos, vários problemas</h2>
         <table class="comparison-table">
           <thead>
             <tr>
               <th>Tecnologia</th>
               <th>Modelo mental</th>
-              <th>Uso tipico</th>
+              <th>Uso típico</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>PostgreSQL</td>
               <td>Relacional servidor</td>
-              <td>Aplicacoes, transacoes, restricoes</td>
+              <td>Aplicações, transações, restrições</td>
             </tr>
             <tr>
               <td>Redis</td>
-              <td>Estruturas em memoria</td>
-              <td>Cache, sessoes, filas, rankings</td>
+              <td>Estruturas em memória</td>
+              <td>Cache, sessões, filas, rankings</td>
             </tr>
             <tr>
               <td>MongoDB</td>
               <td>Documentos JSON</td>
-              <td>Documentos flexiveis</td>
+              <td>Documentos flexíveis</td>
             </tr>
             <tr>
               <td>Neo4j</td>
               <td>Grafos</td>
-              <td>Redes, caminhos, recomendacoes</td>
+              <td>Redes, caminhos, recomendações</td>
             </tr>
           </tbody>
         </table>
         <div class="fragment green-box">
-          <p>Hoje: e quando os dados estao em arquivos ou DataFrames e queremos analisar rapidamente com SQL?</p>
+          <p>Hoje: e quando os dados estão em arquivos ou DataFrames e queremos analisar rapidamente com SQL?</p>
         </div>
       </section>
 
@@ -83,9 +83,9 @@
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 1: Analise nao e cadastro</h2>
+          <h2 style="color: #ff79c6;">Parte 1: Análise não é cadastro</h2>
           <div class="pink-box">
-            <p>Temos um CSV grande com vendas, logs, sensores, notas ou dados publicos.</p>
+            <p>Temos um CSV grande com vendas, logs, sensores, notas ou dados públicos.</p>
             <p>Precisamos criar um servidor PostgreSQL, importar tudo e configurar tabelas antes de perguntar algo
               simples?</p>
           </div>
@@ -97,7 +97,7 @@
         <section data-auto-animate>
           <h2>OLTP: trabalho transacional</h2>
           <div class="cyan-box" style="margin-bottom: 20px;">
-            <p><strong>OLTP</strong> vem de <em>Online Transaction Processing</em>: processamento de transacoes online.
+            <p><strong>OLTP</strong> vem de <em>Online Transaction Processing</em>: processamento de transações online.
             </p>
           </div>
 
@@ -124,16 +124,16 @@
           </div>
 
           <div class="artifact-card" style="border-top: 4px solid #bd93f9;">
-            <h3 style="color: #bd93f9;"><i class="fa-solid fa-bolt"></i> Caracteristicas</h3>
-            <p style="font-size: 0.65em; margin:0;">Muitas operacoes pequenas, frequentes, concorrentes e com cuidado
+            <h3 style="color: #bd93f9;"><i class="fa-solid fa-bolt"></i> Características</h3>
+            <p style="font-size: 0.65em; margin:0;">Muitas operações pequenas, frequentes, concorrentes e com cuidado
               forte de integridade (Ex: Cadastro, Login, Compras).</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>OLAP: trabalho analitico</h2>
+          <h2>OLAP: trabalho analítico</h2>
           <div class="cyan-box" style="margin-bottom: 20px;">
-            <p><strong>OLAP</strong> vem de <em>Online Analytical Processing</em>: processamento analitico online.</p>
+            <p><strong>OLAP</strong> vem de <em>Online Analytical Processing</em>: processamento analítico online.</p>
           </div>
 
           <div class="flow-row" style="margin-bottom: 20px;">
@@ -141,48 +141,48 @@
               <img src="../img/parquet_logo.svg" alt="Apache Parquet"
                 style="height: 50px; margin: auto; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));" />
               <strong style="color: #50fa7b;">Data Lake / Arquivos</strong>
-              <span>(Milhoes de registros)</span>
+              <span>(Milhões de registros)</span>
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-node duckdb-node">
               <img src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg" alt="DuckDB"
                 style="height: 90px; margin: auto; margin-bottom: 10px;" />
-              <span>(Motor Analitico)</span>
+              <span>(Motor Analítico)</span>
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-node">
               <i class="fa-solid fa-chart-pie fa-2x" style="color: #ff79c6; margin: auto; margin-bottom: 10px;"></i>
               <strong style="color: #f8f8f2;">Dashboard / BI</strong>
-              <span>(Visao Resumida)</span>
+              <span>(Visão Resumida)</span>
             </div>
           </div>
 
           <div class="artifact-card" style="border-top: 4px solid #50fa7b;">
-            <h3 style="color: #50fa7b;"><i class="fa-solid fa-calculator"></i> Caracteristicas</h3>
+            <h3 style="color: #50fa7b;"><i class="fa-solid fa-calculator"></i> Características</h3>
             <p style="font-size: 0.65em; margin:0;">Percorre muitos registros filtrando e agrupando para devolver um
-              resumo (Ex: Total de vendas por mes, Media de notas).</p>
+              resumo (Ex: Total de vendas por mês, Média de notas).</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>A diferenca esta na pergunta</h2>
+          <h2>A diferença está na pergunta</h2>
           <table class="comparison-table">
             <thead>
               <tr>
                 <th>Tipo</th>
                 <th>Pergunta</th>
-                <th>Operacao dominante</th>
+                <th>Operação dominante</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>OLTP</td>
-                <td>Este pedido foi pago? Este usuario pode entrar?</td>
-                <td>Ler ou alterar poucas linhas com consistencia</td>
+                <td>Este pedido foi pago? Este usuário pode entrar?</td>
+                <td>Ler ou alterar poucas linhas com consistência</td>
               </tr>
               <tr>
                 <td>OLAP</td>
-                <td>Quanto vendemos por mes, categoria e cidade?</td>
+                <td>Quanto vendemos por mês, categoria e cidade?</td>
                 <td>Filtrar, agrupar e resumir muitas linhas</td>
               </tr>
             </tbody>
@@ -232,7 +232,7 @@
             </tbody>
           </table>
           <div class="cyan-box fragment">
-            <p>A tabela e a mesma. O jeito de armazenar e acessar pode mudar bastante.</p>
+            <p>A tabela é a mesma. O jeito de armazenar e acessar pode mudar bastante.</p>
           </div>
         </section>
 
@@ -246,7 +246,7 @@
             </div>
             <div style="flex:1">
               <div class="box">
-                <p>Bom quando a aplicacao trabalha com registros completos.</p>
+                <p>Bom quando a aplicação trabalha com registros completos.</p>
                 <p>Exemplo: buscar o cadastro inteiro de um aluno.</p>
               </div>
             </div>
@@ -268,7 +268,7 @@
                 FROM alunos;
               </code-block>
               <div class="green-box">
-                <p>Se a consulta so precisa de <code>nota</code>, por que ler <code>id</code>, <code>aluno</code> e
+                <p>Se a consulta só precisa de <code>nota</code>, por que ler <code>id</code>, <code>aluno</code> e
                   <code>curso</code>?
                 </p>
               </div>
@@ -284,7 +284,7 @@
               <div class="terminal">data,produto,categoria,cidade,valor
                 2026-01-05,Mouse,Periferico,Capivari,50.0
                 2026-01-12,Teclado,Periferico,Elias Fausto,120.0</div>
-              <p>Facil de abrir manualmente, mas precisa interpretar texto a cada leitura.</p>
+              <p>Fácil de abrir manualmente, mas precisa interpretar texto a cada leitura.</p>
             </div>
             <div class="artifact-card">
               <h3>Parquet: arquivo colunar</h3>
@@ -333,7 +333,7 @@
             </div>
           </div>
           <div class="green-box">
-            <p>Em consultas analiticas, Parquet costuma reduzir leitura de disco, conversao de tipos e memoria
+            <p>Em consultas analíticas, Parquet costuma reduzir leitura de disco, conversão de tipos e memória
               movimentada.</p>
           </div>
         </section>
@@ -348,13 +348,13 @@
         <section data-auto-animate>
           <h2 style="color: #50fa7b;">Parte 3: SQL sem servidor</h2>
           <div class="green-box">
-            <p>DuckDB e um motor SQL analitico embarcado: roda dentro do processo da sua aplicacao ou notebook.</p>
+            <p>DuckDB é um motor SQL analítico embarcado: roda dentro do processo da sua aplicação ou notebook.</p>
           </div>
           <ul>
-            <li>nao precisa criar servidor</li>
-            <li>nao precisa usuario, senha e porta</li>
+            <li>não precisa criar servidor</li>
+            <li>não precisa usuário, senha e porta</li>
             <li>consulta arquivos e DataFrames diretamente</li>
-            <li>usa SQL, filtros, agrupamentos e funcoes conhecidas</li>
+            <li>usa SQL, filtros, agrupamentos e funções conhecidas</li>
           </ul>
         </section>
 
@@ -425,7 +425,7 @@
             </tbody>
           </table>
           <div class="cyan-box">
-            <p>O ponto didatico: a turma ja sabe SQL. Agora o SQL tambem conversa com DataFrames.</p>
+            <p>O ponto didático: a turma já sabe SQL. Agora o SQL também conversa com DataFrames.</p>
           </div>
         </section>
 
@@ -470,13 +470,13 @@
             </div>
           </multi-col>
           <div class="green-box">
-            <p>Filtro, agrupamento, agregacao, criterio sobre grupo e ordenacao ficam juntos na mesma frase.</p>
+            <p>Filtro, agrupamento, agregação, critério sobre grupo e ordenação ficam juntos na mesma frase.</p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>Um caso que fica imperativo em pandas</h2>
-          <p>Queremos comparar cada venda com a media da sua categoria e manter apenas vendas acima dessa media.</p>
+          <p>Queremos comparar cada venda com a média da sua categoria e manter apenas vendas acima dessa média.</p>
           <multi-col style="gap:15px">
             <div style="flex:1">
               <h3>pandas</h3>
@@ -515,20 +515,20 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Legibilidade em consultas analiticas</h2>
+          <h2>Legibilidade em consultas analíticas</h2>
           <div class="yellow-box">
-            <p>pandas e excelente, mas muitas analises viram sequencias de passos: filtra, agrupa, reseta indice, junta,
+            <p>pandas é excelente, mas muitas análises viram sequências de passos: filtra, agrupa, reseta índice, junta,
               filtra de novo.</p>
           </div>
           <div class="cyan-box">
-            <p>SQL deixa a intencao mais declarativa: quais linhas entram, como agrupar, quais metricas calcular e quais
+            <p>SQL deixa a intenção mais declarativa: quais linhas entram, como agrupar, quais métricas calcular e quais
               grupos manter.</p>
           </div>
           <ls-u>
             <li><code>WHERE</code>: filtra linhas antes do agrupamento</li>
-            <li><code>GROUP BY</code>: define o nivel do resumo</li>
-            <li><code>HAVING</code>: filtra grupos depois da agregacao</li>
-            <li><code>WINDOW</code>: compara cada linha com estatisticas do seu grupo</li>
+            <li><code>GROUP BY</code>: define o nível do resumo</li>
+            <li><code>HAVING</code>: filtra grupos depois da agregação</li>
+            <li><code>WINDOW</code>: compara cada linha com estatísticas do seu grupo</li>
           </ls-u>
         </section>
 
@@ -541,7 +541,7 @@
 
         <section data-auto-animate>
           <h2 style="color: #f1fa8c;">Parte 4: Arquivos como tabelas</h2>
-          <p>DuckDB permite consultar arquivos diretamente, sem etapa obrigatoria de importacao permanente.</p>
+          <p>DuckDB permite consultar arquivos diretamente, sem etapa obrigatória de importação permanente.</p>
           <multi-col style="gap:15px">
             <div style="flex:1.1">
               <code-block lang="sql" data-trim>
@@ -630,8 +630,8 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Arquivos reais raramente vem sozinhos</h2>
-          <p>Em pipelines de dados, e comum receber um arquivo por mes, por dia, por cidade ou por sistema.</p>
+          <h2>Arquivos reais raramente vêm sozinhos</h2>
+          <p>Em pipelines de dados, é comum receber um arquivo por mês, por dia, por cidade ou por sistema.</p>
           <pre class="file-tree">dados/vendas/
   ano=2026/
     mes=01/vendas_01.parquet
@@ -639,7 +639,7 @@
     mes=03/vendas_03.parquet
     mes=04/vendas_04.parquet</pre>
           <div class="green-box">
-            <p>DuckDB consegue consultar varios arquivos como se fossem uma tabela unica.</p>
+            <p>DuckDB consegue consultar vários arquivos como se fossem uma tabela única.</p>
           </div>
         </section>
 
@@ -658,7 +658,7 @@
             ORDER BY mes, total DESC;
           </code-block>
           <div class="cyan-box">
-            <p>O padrao <code>*</code> permite abrir muitos arquivos sem escrever um loop em Python.</p>
+            <p>O padrão <code>*</code> permite abrir muitos arquivos sem escrever um loop em Python.</p>
           </div>
         </section>
 
@@ -691,12 +691,12 @@
               <tr>
                 <td>Escala</td>
                 <td>Cluster</td>
-                <td>Uma maquina, sem servidor</td>
+                <td>Uma máquina, sem servidor</td>
               </tr>
             </tbody>
           </table>
           <div class="yellow-box">
-            <p>DuckDB nao substitui um cluster, mas traz a mesma logica de analise para dados que cabem numa maquina.
+            <p>DuckDB não substitui um cluster, mas traz a mesma lógica de análise para dados que cabem numa máquina.
             </p>
           </div>
         </section>
@@ -707,7 +707,7 @@
             <img src="../img/hive_logo.svg" alt="Apache Hive"
               style="height: 80px; margin: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));" />
           </div>
-          <p>Esta convencao de pastas nasceu no Apache Hive (Hadoop) e virou padrao na industria.</p>
+          <p>Esta convenção de pastas nasceu no Apache Hive (Hadoop) e virou padrão na indústria.</p>
           <pre class="file-tree">dados/vendas/
   ano=2026/
     mes=01/
@@ -715,14 +715,14 @@
     mes=02/
       vendas_02.parquet</pre>
           <div class="cyan-box">
-            <p>O <strong>DuckDB</strong> le este padrao nativamente. As pastas <code>ano=2026</code> e
+            <p>O <strong>DuckDB</strong> lê este padrão nativamente. As pastas <code>ano=2026</code> e
               <code>mes=01</code> viram colunas virtuais na consulta.
             </p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Lendo particoes Hive com DuckDB</h2>
+          <h2>Lendo partições Hive com DuckDB</h2>
           <code-block lang="sql" data-trim>
             SELECT ano, mes, cidade, SUM(valor) AS total
             FROM read_parquet(
@@ -734,12 +734,12 @@
             ORDER BY mes, total DESC;
           </code-block>
           <div class="green-box">
-            <p>DuckDB cria as colunas <code>ano</code> e <code>mes</code> a partir dos nomes das pastas.</p>
+            <p>DuckDB cria as colunas <code>ano</code> e <code>mês</code> a partir dos nomes das pastas.</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Tambem funciona com CSV</h2>
+          <h2>Também funciona com CSV</h2>
           <code-block lang="sql" data-trim>
             SELECT ano, mes, categoria, COUNT(*) AS qtd
             FROM read_csv(
@@ -752,7 +752,7 @@
             ORDER BY ano, mes;
           </code-block>
           <div class="yellow-box">
-            <p>Mesmo quando a origem ainda e CSV, o padrao de pastas ja aproxima a organizacao de um data lake.</p>
+            <p>Mesmo quando a origem ainda é CSV, o padrão de pastas já aproxima a organização de um data lake.</p>
           </div>
         </section>
 
@@ -764,7 +764,7 @@
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #bd93f9;">Parte 5: Pipeline analitico</h2>
+          <h2 style="color: #bd93f9;">Parte 5: Pipeline analítico</h2>
           <div class="flow-row">
             <div class="flow-node">
               <strong>Entrada</strong>
@@ -777,12 +777,12 @@
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-node">
-              <strong>Saida</strong>
+              <strong>Saída</strong>
               <span>resumo, CSV, Parquet</span>
             </div>
           </div>
           <div class="green-box">
-            <p>O pipeline da aula usa os arquivos reais do repositorio: ler, inspecionar, agregar e exportar.</p>
+            <p>O pipeline da aula usa os arquivos reais do repositório: ler, inspecionar, agregar e exportar.</p>
           </div>
         </section>
 
@@ -883,7 +883,7 @@
                   <thead>
                     <tr>
                       <th style="text-align: left;">categoria</th>
-                      <th>media</th>
+                      <th>média</th>
                       <th>total</th>
                     </tr>
                   </thead>
@@ -927,7 +927,7 @@
             ORDER BY mes;
           </code-block>
           <div class="cyan-box">
-            <p>Datas transformam registros soltos em serie historica: mes a mes, semana a semana, dia a dia.</p>
+            <p>Datas transformam registros soltos em série histórica: mês a mês, semana a semana, dia a dia.</p>
           </div>
         </section>
 
@@ -975,8 +975,8 @@
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ffb86c;">Parte 6: Integracao direta (Postgres)</h2>
-          <p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL.</p>
+          <h2 style="color: #ffb86c;">Parte 6: Integração direta (Postgres)</h2>
+          <p>O DuckDB possui uma extensão nativa para ler e escrever diretamente em bancos PostgreSQL.</p>
           <div class="flow-row" style="margin: 15px 0;">
             <div class="flow-node">
               <i class="fa-solid fa-database fa-2x" style="color: #8be9fd; margin: auto; margin-bottom: 10px;"></i>
@@ -1003,7 +1003,7 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Autenticacao no PostgreSQL</h2>
+          <h2>Autenticação no PostgreSQL</h2>
           <multi-col style="gap:15px">
             <div style="flex:1">
               <div class="artifact-card" style="border-top: 4px solid #ff5555; height: 100%;">
@@ -1039,18 +1039,18 @@
             </div>
           </multi-col>
           <div class="cyan-box" style="margin-top:8px">
-            <p>A extensao usa <code>libpq</code> internamente — todas as variaveis de ambiente padrao do PostgreSQL sao
+            <p>A extensão usa <code>libpq</code> internamente — todas as variáveis de ambiente padrão do PostgreSQL são
               suportadas, incluindo o arquivo <code>~/.pgpass</code>.</p>
           </div>
         </section>
 
         <section data-auto-animate>
-          <h2>Opcoes de conexao</h2>
+          <h2>Opções de conexão</h2>
           <multi-col style="gap:15px">
             <div style="flex:1">
               <h3>String libpq</h3>
               <code-block lang="sql" data-trim>
-                -- Parametros basicos
+                -- Parâmetros básicos
                 ATTACH 'dbname=vendas user=postgres
                 host=127.0.0.1 port=5432'
                 AS pg (TYPE postgres);
@@ -1066,14 +1066,14 @@
                 ATTACH 'postgresql://postgres@localhost/vendas'
                 AS pg (TYPE postgres);
 
-                -- Ver tabelas disponiveis
+                -- Ver tabelas disponíveis
                 SHOW ALL TABLES;
                 DETACH pg;
               </code-block>
             </div>
           </multi-col>
           <div class="cyan-box">
-            <p>A string de conexao segue o formato <code>libpq</code> do PostgreSQL: mesmos parametros usados em
+            <p>A string de conexão segue o formato <code>libpq</code> do PostgreSQL: mesmos parâmetros usados em
               <code>psql</code> e <code>psycopg2</code>.
             </p>
           </div>
@@ -1081,7 +1081,7 @@
 
         <section data-auto-animate>
           <h2>Consultando tabelas do PostgreSQL</h2>
-          <p>Depois do <code>ATTACH</code>, as tabelas do Postgres ficam visiveis como tabelas DuckDB normais.</p>
+          <p>Depois do <code>ATTACH</code>, as tabelas do Postgres ficam visíveis como tabelas DuckDB normais.</p>
           <code-block lang="sql" data-trim>
             ATTACH 'dbname=vendas user=postgres' AS pg (TYPE postgres);
 
@@ -1098,7 +1098,7 @@
             DETACH pg;
           </code-block>
           <div class="green-box">
-            <p>O DuckDB age como cliente SQL do Postgres: so trafega os dados necessarios para responder a consulta.</p>
+            <p>O DuckDB age como cliente SQL do Postgres: só trafega os dados necessários para responder a consulta.</p>
           </div>
         </section>
 
@@ -1113,7 +1113,7 @@
             <div class="flow-node duckdb-node">
               <img src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg" alt="DuckDB"
                 style="height: 40px;margin:auto;margin-bottom:10px;" />
-              <strong style="color: #fff100;">Agrega (Em Memoria)</strong>
+              <strong style="color: #fff100;">Agrega (Em Memória)</strong>
             </div>
             <div class="flow-arrow">→</div>
             <div class="flow-node" style="border-color: #336791;">
@@ -1134,7 +1134,7 @@
           </code-block>
           <div class="yellow-box" style="margin-top: 5px;">
             <p>O DuckDB atua como motor ETL: processa arquivos e envia o resumo pronto ao banco transacional, sem gerar
-              arquivos temporarios.</p>
+              arquivos temporários.</p>
           </div>
         </section>
 
@@ -1164,7 +1164,7 @@
             </div>
           </multi-col>
           <div class="green-box">
-            <p><code>COPY</code> usa o protocolo binario do PostgreSQL — mais rapido que <code>INSERT</code> linha a
+            <p><code>COPY</code> usa o protocolo binário do PostgreSQL — mais rápido que <code>INSERT</code> linha a
               linha para grandes volumes.</p>
           </div>
         </section>
@@ -1177,7 +1177,7 @@
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 7: Atividade pratica</h2>
+          <h2 style="color: #ff79c6;">Parte 7: Atividade prática</h2>
           <div class="green-box">
             <p><strong>Objetivo:</strong> usar DuckDB para explorar, resumir e exportar um conjunto de dados tabular.
             </p>
@@ -1193,7 +1193,7 @@
         </section>
 
         <section data-auto-animate>
-          <h2>Base minima para testar</h2>
+          <h2>Base mínima para testar</h2>
           <code-block lang="bash" data-trim>
             python \
             planos/aula15_duckdb_assets/gerar_dados_vendas.py
@@ -1226,14 +1226,14 @@
         <section data-auto-animate>
           <h2>Entrega</h2>
           <div class="yellow-box">
-            <p>Entregar um notebook ou arquivo com codigo e pequenas respostas em texto.</p>
+            <p>Entregar um notebook ou arquivo com código e pequenas respostas em texto.</p>
           </div>
           <ol>
-            <li>Descricao breve do conjunto de dados</li>
+            <li>Descrição breve do conjunto de dados</li>
             <li>Comando de leitura com DuckDB</li>
             <li>Consultas SQL e resultados</li>
-            <li>Exportacao de um resumo</li>
-            <li>Resposta: por que DuckDB foi util neste caso?</li>
+            <li>Exportação de um resumo</li>
+            <li>Resposta: por que DuckDB foi útil neste caso?</li>
           </ol>
         </section>
 
@@ -1256,34 +1256,34 @@
             </thead>
             <tbody>
               <tr>
-                <td>Aplicacao web com muitos usuarios escrevendo?</td>
+                <td>Aplicação web com muitos usuários escrevendo?</td>
                 <td>Sim</td>
-                <td>Normalmente nao</td>
+                <td>Normalmente não</td>
               </tr>
               <tr>
-                <td>Analise local de CSV e Parquet?</td>
-                <td>Sim, com mais configuracao</td>
+                <td>Análise local de CSV e Parquet?</td>
+                <td>Sim, com mais configuração</td>
                 <td>Sim, muito bem</td>
               </tr>
               <tr>
                 <td>Precisa de servidor?</td>
                 <td>Normalmente sim</td>
-                <td>Nao</td>
+                <td>Não</td>
               </tr>
               <tr>
-                <td>Transacoes, permissoes e restricoes?</td>
+                <td>Transações, permissões e restrições?</td>
                 <td>Forte</td>
-                <td>Nao e o foco</td>
+                <td>Não é o foco</td>
               </tr>
               <tr>
-                <td>Exploracao com agregacoes?</td>
+                <td>Exploração com agregações?</td>
                 <td>Sim</td>
                 <td>Sim, especialmente em arquivos</td>
               </tr>
               <tr>
                 <td>Conectar diretamente ao PostgreSQL?</td>
-                <td>Nao aplicavel</td>
-                <td>Sim, com extensao <code>postgres</code></td>
+                <td>Não aplicável</td>
+                <td>Sim, com extensão <code>postgres</code></td>
               </tr>
             </tbody>
           </table>
