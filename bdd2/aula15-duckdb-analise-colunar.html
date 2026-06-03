@@ -526,6 +526,59 @@
         </section>
 
         <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Extensão VS Code: análise visual</h2>
+          <div class="green-box" style="margin-bottom: 20px;">
+            <p>Você pode analisar arquivos locais visualmente, sem precisar rodar scripts Python!</p>
+          </div>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex:1;">
+              <ul style="font-size: 0.85em; margin-left: 1.1em; line-height: 1.4;">
+                <li style="margin-bottom: 8px;">Extensão oficial no VS Code.</li>
+                <li style="margin-bottom: 8px;">Inspeciona <code>.csv</code> e <code>.parquet</code> com um clique.</li>
+                <li style="margin-bottom: 8px;">Executa arquivos <code>.sql</code> exibindo tabela interativa.</li>
+                <li>Exporta resultados para Excel, CSV ou JSON.</li>
+              </ul>
+            </div>
+            <div style="flex:1.5; text-align: center;">
+              <img src="imagens/vscode_duckdb.png" alt="Tela do VS Code mostrando a extensão DuckDB"
+                style="max-height: 350px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #6272a4;">
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Como Utilizar (Extensão)</h2>
+          <multi-col style="gap:15px">
+            <div style="flex:1">
+              <div class="pink-box" style="height: 100%;">
+                <h3 style="color: #ff79c6; margin: 0 0 10px 0; font-size: 0.9em;"><i class="fa-solid fa-eye"></i>
+                  Visualizar Arquivos</h3>
+                <ul style="font-size: 0.7em; margin-left: 1.1em; line-height: 1.4;">
+                  <li style="margin-bottom: 6px;">Abrir normalmente arquivos <code>.parquet</code> ou <code>.csv</code>.
+                  </li>
+                  <li>Uma grade interativa de dados (tabela) será aberta no próprio editor.</li>
+                </ul>
+              </div>
+            </div>
+            <div style="flex:1">
+              <div class="yellow-box" style="height: 100%;">
+                <h3 style="color: #f1fa8c; margin: 0 0 10px 0; font-size: 0.9em;"><i class="fa-solid fa-code"></i> Rodar
+                  Consultas SQL</h3>
+                <ul style="font-size: 0.7em; margin-left: 1.1em; line-height: 1.4;">
+                  <li style="margin-bottom: 6px;">Crie um arquivo com final <code>.sql</code>.</li>
+                  <li style="margin-bottom: 6px;">Escreva sua consulta lendo direto do arquivo (ex:
+                    <code>SELECT * FROM 'vendas.csv'</code>).</li>
+                  <li>Clique no atalho <strong>Run (▶)</strong> que aparece acima da sua query.</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+          <div class="green-box" style="margin-top: 15px;">
+            <p>Os resultados aparecem num painel inferior, com botões para salvar o resultado final!</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
           <h2>SQL sobre DataFrame</h2>
           <code-block lang="python" style="max-height:550px">
             import duckdb
