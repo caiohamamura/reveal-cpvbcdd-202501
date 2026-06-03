@@ -371,6 +371,7 @@ Each question is a **separate slide** wrapped in a parent `<section>`:
 3. **Exercise steps** — revealing task requirements one at a time
 
 **Do NOT use fragments for:**
+- **Section header slides** (the first slide of a super section). All content on these introductory slides must be shown at once to keep structural navigation clean and predictable.
 - Results/output of code examples (show immediately)
 - Informational lists (definitions, "when to use" bullet points)
 - "Quando usar X?" slides — these are reference lists, show all at once
@@ -402,6 +403,7 @@ Technical details:
 - Use fragments only when they serve teaching: staged reasoning, code walkthroughs, or exercise steps.
 - Show actual executed output near teaching code when it helps students interpret formats/results.
 - Prefer practical, concrete examples connected to students' reality over decorative visuals.
+- Avoid continuous paragraphs of text. Use schematic comparisons (e.g., side-by-side using `<multi-col>`) and structured lists.
 
 ### Content Flow (per lesson)
 1. **Cover** — `<header1>` with title, course, lesson number
@@ -415,6 +417,7 @@ Technical details:
 - All slides content in **Portuguese (Brazilian)** NEVER write Chinese letters!
 - Technical terms can stay in English (WiFi, Deep Sleep, MQTT, ...)
 - Code comments in pt-BR
+- **Direct to Students**: Write slide content addressing the students directly. Do NOT include meta-commentary directed at the teacher (e.g., "O ponto didático aqui é...") in the slides.
 
 
 ### Gotchas & Tips
@@ -446,6 +449,14 @@ Technical details:
 - If `FASE N` starts before `fim Fase N-1`, Reveal can mix the first slides of the next phase and render following slides blank.
 - Run `python .opencode/skills/validate-slides/scripts/validate_slide_deck.py <slide-file.html>` after edits to catch unclosed phase comments.
 - Quiz/references sections must be siblings of other super-sections, NOT nested inside them.
+
+#### Vue DOM template properties (camelCase vs kebab-case)
+- When passing props to Vue components in raw HTML files, the browser automatically converts camelCase attributes to lowercase (e.g., `startPlug` becomes `startplug`). This breaks the Vue prop mapping.
+- **Fix**: ALWAYS use kebab-case for props in DOM templates (e.g., `<leader-line start-plug="arrow1" middle-label="...">`).
+
+#### LeaderLine SVG styling on dark themes
+- `leader-line` labels are rendered as SVGs. The white outline is an SVG stroke, not CSS `text-shadow`.
+- If you need to override the white stroke for dark theme readability, it requires `stroke: none !important;` in the CSS applied to the label path. (Implemented in `dist/custom.css`, but remember standard CSS text properties won't affect it).
 
 #### mountSlideApp() override pattern (per-slide Vue reactive state)
 When a slide needs its own Vue reactive data (e.g. interactive demos, Plotly charts), override `mountSlideApp()` before calling it:
@@ -614,6 +625,19 @@ For existing inline step-by-step demos (K-Means, etc.), use Vue reactivity; for 
 #### Aligning images and icons inside cards and flow-nodes
 - `<img src="...">` and FontAwesome `<i>` tags inside `artifact-card` or `flow-node` often fail to center align horizontally just by parent text-alignment.
 - **Fix**: Explicitly apply `margin: auto; margin-bottom: 10px;` to the `<img>` or `<i>` element. For explicit scaling, prefer `font-size: 80px;` over FA classes like `fa-3x` to guarantee exact height matching with adjacent `<img>` tags (e.g., `height: 80px;`).
+
+#### Diagramas com Fluxo "Hero" em Destaque
+- Ao criar fluxos comparativos (ex: fluxo tradicional lento vs. fluxo moderno direto) usando `<leader-line>`, posicione a ferramenta principal ("Hero") no topo central e os demais nós na base usando CSS Grid.
+- Exemplo de layout:
+  ```html
+  <div style="display: grid; grid-template-columns: 260px 320px 260px; gap: 40px; margin-top: 30px; justify-items: center; align-items: center;">
+    <div id="node-hero" style="grid-column: 2; grid-row: 1;">...</div>
+    <div id="node-left" style="grid-column: 1; grid-row: 2;">...</div>
+    <div id="node-middle" style="grid-column: 2; grid-row: 2;">...</div>
+    <div id="node-right" style="grid-column: 3; grid-row: 2;">...</div>
+  </div>
+  ```
+- Use `startSocket` e `endSocket` apropriados (ex: `startSocket="top" endSocket="left"` e `startSocket="right" endSocket="top"`) para as setas fluírem por cima, destacando o fluxo "Hero" sem cruzar linhas.
 
 #### AsyncTelegram2 (IoT slides reference)
 - Library: `cotestatnt/AsyncTelegram2 @ ^2.3.4`, JSON: `bblanchon/ArduinoJson @ ^6.21.5` (v6, NOT v7)

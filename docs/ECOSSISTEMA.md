@@ -269,13 +269,13 @@ Cada questão é um slide separado dentro de uma `<section>`. Requer `<section>`
 <div id="el2">Elemento B</div>
 
 <!-- Sempre visível -->
-<leader-line from="el1" to="el2"></leader-line>
+<leader-line from="#el1" to="#el2"></leader-line>
 
 <!-- Aparece como fragment step -->
-<leader-line from="el1" to="el2" class="fragment"></leader-line>
+<leader-line from="#el1" to="#el2" class="fragment"></leader-line>
 
 <!-- Com índice de fragmento -->
-<leader-line from="el1" to="el2" class="fragment" data-fragment-index="3"></leader-line>
+<leader-line from="#el1" to="#el2" class="fragment" data-fragment-index="3"></leader-line>
 ```
 
 > **Importante:** Use tag com fechamento explícito `</leader-line>`. Tag auto-fechada `<leader-line />` causa problemas no parser HTML do browser (consome elementos subsequentes como filhos).
@@ -283,8 +283,8 @@ Cada questão é um slide separado dentro de uma `<section>`. Requer `<section>`
 **Props:**
 | Prop | Tipo | Default | Descrição |
 |------|------|---------|-----------|
-| `from` | String | *obrigatório* | ID do elemento de origem |
-| `to` | String | *obrigatório* | ID do elemento de destino |
+| `from` | String | *obrigatório* | Seletor CSS do elemento de origem (ex: `"#el1"`) |
+| `to` | String | *obrigatório* | Seletor CSS do elemento de destino (ex: `"#el2"`) |
 | `color` | String | `'#ff79c6'` | Cor da linha |
 | `size` | Number | `3` | Espessura da linha |
 | `path` | String | `'fluid'` | Tipo de caminho (`fluid`, `straight`, `arc`, `grid`, `magnet`) |
@@ -295,6 +295,11 @@ Cada questão é um slide separado dentro de uma `<section>`. Requer `<section>`
 | `endLabel` | String | — | Texto no fim da linha |
 | `dash` | Boolean | `false` | Linha tracejada |
 | `animated` | Boolean | `true` | Animação `draw` ao mostrar/esconder |
+| `startPlug` | String | auto | Tipo de ponteira inicial (ex: `"arrow1"`, `"disc"`, `"behind"`) |
+| `endPlug` | String | auto | Tipo de ponteira final (ex: `"arrow1"`, `"disc"`, `"behind"`) |
+
+> [!IMPORTANT]
+> **Convenção de Nomes no HTML (DOM Templates):** Como os slides são arquivos HTML processados diretamente pelo browser, atributos camelCase são automaticamente convertidos para minúsculas (ex: `startSocket` vira `startsocket`). Para que o Vue faça o mapeamento correto com as propriedades declaradas no componente JavaScript, **você deve usar kebab-case no HTML** (ex: `start-socket`, `end-socket`, `middle-label`, `start-plug`, `end-plug`).
 
 **Comportamento com Reveal.js Fragments:**
 - **Sem `class="fragment"`:** a linha aparece imediatamente quando a seção se torna `present`

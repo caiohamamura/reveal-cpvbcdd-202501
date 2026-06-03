@@ -233,6 +233,8 @@ const leaderLineComponent = {
     middleLabel: { type: String },
     dash: { type: Boolean, default: false },
     animated: { type: Boolean, default: true },
+    startPlug: { type: String },
+    endPlug: { type: String },
   },
   setup(props, { attrs }) {
     let animations = [];
@@ -252,7 +254,7 @@ const leaderLineComponent = {
     function makeLabel(text) {
       if (!text) return undefined;
       return typeof LeaderLine.captionLabel === 'function'
-        ? LeaderLine.captionLabel(text)
+        ? LeaderLine.captionLabel(text, { fontWeight: "bold" })
         : text;
     }
 
@@ -275,6 +277,8 @@ const leaderLineComponent = {
       if (props.endLabel) opts.endLabel = makeLabel(props.endLabel);
       if (props.middleLabel) opts.middleLabel = makeLabel(props.middleLabel);
       if (props.dash) opts.dash = true;
+      if (props.startPlug) opts.startPlug = props.startPlug;
+      if (props.endPlug) opts.endPlug = props.endPlug;
 
       line = new LeaderLine(startEl, endEl, opts);
       return line;
@@ -324,10 +328,10 @@ const leaderLineComponent = {
       // Watch this component's own element for .visible being added by Reveal
       observer = new MutationObserver(() => {
         for (animation of animations) {
-          clearTimeout(animation); 
+          clearTimeout(animation);
         }
         animations = [];
-        
+
         const section = root.value.closest("section");
 
         if (!section.classList.contains("present")) {
@@ -407,7 +411,7 @@ const pollQuestionComponent = {
 
     pollBarTracks.forEach(track => {
       setTimeout(() => {
-        track.style.height = pollEl.clientHeight - 40  + "px";
+        track.style.height = pollEl.clientHeight - 40 + "px";
       }, 50);
     });
 

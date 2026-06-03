@@ -84,14 +84,56 @@
 
         <section data-auto-animate>
           <h2 style="color: #ff79c6;">Parte 1: Análise não é cadastro</h2>
-          <div class="pink-box">
-            <p>Temos um CSV grande com vendas, logs, sensores, notas ou dados públicos.</p>
-            <p>Precisamos criar um servidor PostgreSQL, importar tudo e configurar tabelas antes de perguntar algo
-              simples?</p>
+
+          <div
+            style="display: grid; grid-template-columns: 260px 320px 260px; gap: 40px; margin-top: 30px; justify-items: center; align-items: center;">
+
+            <!-- Linha 1: DuckDB em Destaque no Topo (Coluna Central) -->
+            <div id="node-duckdb" class="flow-node"
+              style="border-color: #8be9fd; background: rgba(139, 233, 253, 0.15); width: 100%; min-height: 160px; grid-column: 2; grid-row: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;margin-bottom: 100px; box-shadow: 0 0 15px rgba(139, 233, 253, 0.3);">
+              <img src="planos/aula15_duckdb_assets/duckdb-logo-stacked.svg" alt="DuckDB"
+                style="height: 80px; margin-bottom: 10px;" />
+              <strong style="color: #8be9fd; font-size: 18pt;">DuckDB</strong>
+              <span style="font-size: 14pt; margin-top: 5px;">Consulta Direta e Instantânea</span>
+            </div>
+
+            <!-- Linha 2: Os demais na base -->
+            <!-- Entrada (Esquerda) -->
+            <div id="node-csv" class="flow-node"
+              style="border-color: #ff79c6; background: rgba(255, 121, 198, 0.1); width: 100%; min-height: 160px; grid-column: 1; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <i class="fa-solid fa-file-csv fa-2x" style="color: #ff79c6; margin-bottom: 10px;"></i>
+              <strong style="color: #f8f8f2; font-size: 18pt;">Arquivos CSV</strong>
+              <span style="font-size: 14pt; margin-top: 5px;">(Vendas, Logs, Sensores)</span>
+            </div>
+
+            <!-- SGBD Tradicional (Centro) -->
+            <div id="node-db" class="flow-node"
+              style="border-color: #ff5555; background: rgba(255, 85, 85, 0.1); width: 100%; min-height: 160px; grid-column: 2; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <i class="fa-solid fa-server fa-2x" style="color: #ff5555; margin-bottom: 10px;"></i>
+              <strong style="color: #f8f8f2; font-size: 18pt;">SGBD Tradicional</strong>
+              <span style="font-size: 14pt; margin-top: 5px;">(PostgreSQL, MySQL, etc.)</span>
+            </div>
+
+            <!-- Saída (Direita) -->
+            <div id="node-analise" class="flow-node"
+              style="border-color: #50fa7b; background: rgba(80, 250, 123, 0.1); width: 100%; min-height: 160px; grid-column: 3; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+              <i class="fa-solid fa-chart-line fa-2x" style="color: #50fa7b; margin-bottom: 10px;"></i>
+              <strong style="color: #f8f8f2; font-size: 18pt;">Análise SQL</strong>
+              <span style="font-size: 14pt; margin-top: 5px;">(Insights e Relatórios)</span>
+            </div>
+
           </div>
-          <div class="fragment cyan-box">
-            <p>DuckDB entra como uma ponte: SQL conhecido, mas aplicado diretamente sobre arquivos e DataFrames.</p>
-          </div>
+
+          <!-- Conexões das Fontes de Origem para o DuckDB (Ponte) -->
+          <leader-line from="#node-csv" to="#node-duckdb" color="#ff79c6" size="4" middle-label="Leitura/Escrita Direta"
+            path="fluid" start-socket="top" end-socket="left" start-plug="arrow1" end-plug="arrow1"></leader-line>
+          <leader-line from="#node-db" to="#node-duckdb" color="#ff5555" size="4" middle-label="Leitura/Escrita Externa"
+            path="fluid" start-socket="top" end-socket="bottom" start-plug="arrow1" end-plug="arrow1"></leader-line>
+
+          <!-- Conexão do DuckDB para a Saída Analítica -->
+          <leader-line from="#node-duckdb" to="#node-analise" color="#50fa7b" size="4" middle-label="Análise Rápida"
+            path="fluid" start-socket="right" end-socket="top" start-plug="arrow1" end-plug="arrow1"></leader-line>
+
         </section>
 
         <section data-auto-animate>
@@ -231,23 +273,69 @@
               </tr>
             </tbody>
           </table>
-          <div class="cyan-box fragment">
+          <div class="cyan-box">
             <p>A tabela é a mesma. O jeito de armazenar e acessar pode mudar bastante.</p>
           </div>
         </section>
 
         <section data-auto-animate>
           <h2>Orientado a linhas</h2>
-          <multi-col style="gap:15px">
-            <div style="flex:1">
-              <div class="terminal">1, Ana, Info, 8.5
-                2, Bruno, Info, 7.0
-                3, Carla, Adm, 9.0</div>
+          <multi-col style="gap:25px">
+            <div style="flex:1.2">
+              <div
+                style="display: flex; flex-direction: column; gap: 10px; background: #191a21; padding: 15px; border-radius: 8px; border: 1px solid #6272a4;">
+                <div style="font-family: monospace; font-size: 14pt; color: #ff79c6; margin-bottom: 5px;">Layout em
+                  Disco (Linha a Linha):</div>
+
+                <!-- Row 1 -->
+                <div
+                  style="display: flex; align-items: center; gap: 5px; border: 1px dashed rgba(255, 85, 85, 0.4); padding: 5px; border-radius: 6px; background: rgba(255, 85, 85, 0.05);">
+                  <span style="font-size: 11pt; color: #6272a4; min-width: 50px;">Linha 1:</span>
+                  <span
+                    style="background: rgba(255, 121, 198, 0.15); border: 1px solid #ff79c6; padding: 2px 6px; border-radius: 4px; color: #ff79c6; font-size: 13pt;">1</span>
+                  <span
+                    style="background: rgba(255, 121, 198, 0.15); border: 1px solid #ff79c6; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">Ana</span>
+                  <span
+                    style="background: rgba(255, 121, 198, 0.15); border: 1px solid #ff79c6; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">Info</span>
+                  <span
+                    style="background: rgba(255, 121, 198, 0.15); border: 1px solid #ff79c6; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">8.5</span>
+                </div>
+
+                <!-- Row 2 -->
+                <div
+                  style="display: flex; align-items: center; gap: 5px; border: 1px dashed rgba(255, 85, 85, 0.4); padding: 5px; border-radius: 6px; background: rgba(255, 85, 85, 0.05);">
+                  <span style="font-size: 11pt; color: #6272a4; min-width: 50px;">Linha 2:</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #bd93f9; font-size: 13pt;">2</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">Bruno</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">Info</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">7.0</span>
+                </div>
+
+                <!-- Row 3 -->
+                <div
+                  style="display: flex; align-items: center; gap: 5px; border: 1px dashed rgba(255, 85, 85, 0.4); padding: 5px; border-radius: 6px; background: rgba(255, 85, 85, 0.05);">
+                  <span style="font-size: 11pt; color: #6272a4; min-width: 50px;">Linha 3:</span>
+                  <span
+                    style="background: rgba(139, 233, 253, 0.15); border: 1px solid #8be9fd; padding: 2px 6px; border-radius: 4px; color: #8be9fd; font-size: 13pt;">3</span>
+                  <span
+                    style="background: rgba(139, 233, 253, 0.15); border: 1px solid #8be9fd; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">Carla</span>
+                  <span
+                    style="background: rgba(139, 233, 253, 0.15); border: 1px solid #8be9fd; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">Adm</span>
+                  <span
+                    style="background: rgba(139, 233, 253, 0.15); border: 1px solid #8be9fd; padding: 2px 6px; border-radius: 4px; color: #f8f8f2; font-size: 13pt;">9.0</span>
+                </div>
+              </div>
             </div>
             <div style="flex:1">
-              <div class="box">
-                <p>Bom quando a aplicação trabalha com registros completos.</p>
-                <p>Exemplo: buscar o cadastro inteiro de um aluno.</p>
+              <div class="pink-box">
+                <p><strong>OLTP (Transacional)</strong></p>
+                <p>Excelente para ler ou gravar registros inteiros de uma vez.</p>
+                <p style="font-size: 0.65em; margin-top: 10px;">Ex: buscar dados do perfil do "Bruno" (ID 2). Lemos a
+                  linha 2 completa do disco de forma contígua.</p>
               </div>
             </div>
           </multi-col>
@@ -255,22 +343,68 @@
 
         <section data-auto-animate>
           <h2>Orientado a colunas</h2>
-          <multi-col style="gap:15px">
-            <div style="flex:1">
-              <div class="terminal">id: 1, 2, 3
-                aluno: Ana, Bruno, Carla
-                curso: Info, Info, Adm
-                nota: 8.5, 7.0, 9.0</div>
+          <multi-col style="gap:25px">
+            <div style="flex:1.2">
+              <div
+                style="display: flex; flex-direction: column; gap: 10px; background: #191a21; padding: 15px; border-radius: 8px; border: 1px solid #6272a4;">
+                <div style="font-family: monospace; font-size: 14pt; color: #8be9fd; margin-bottom: 5px;">Layout em
+                  Disco (Por Coluna):</div>
+
+                <!-- Col 1 (id) -->
+                <div style="display: flex; align-items: center; gap: 5px; opacity: 0.4;">
+                  <span style="font-size: 11pt; color: #6272a4; min-width: 75px;">Col (id):</span>
+                  <span
+                    style="background: rgba(255, 85, 85, 0.15); border: 1px solid #ff5555; padding: 2px 6px; border-radius: 4px; color: #ff5555; font-size: 13pt;">1</span>
+                  <span
+                    style="background: rgba(255, 85, 85, 0.15); border: 1px solid #ff5555; padding: 2px 6px; border-radius: 4px; color: #ff5555; font-size: 13pt;">2</span>
+                  <span
+                    style="background: rgba(255, 85, 85, 0.15); border: 1px solid #ff5555; padding: 2px 6px; border-radius: 4px; color: #ff5555; font-size: 13pt;">3</span>
+                </div>
+
+                <!-- Col 2 (aluno) -->
+                <div style="display: flex; align-items: center; gap: 5px; opacity: 0.4;">
+                  <span style="font-size: 11pt; color: #6272a4; min-width: 75px;">Col (aluno):</span>
+                  <span
+                    style="background: rgba(241, 250, 140, 0.15); border: 1px solid #f1fa8c; padding: 2px 6px; border-radius: 4px; color: #f1fa8c; font-size: 13pt;">Ana</span>
+                  <span
+                    style="background: rgba(241, 250, 140, 0.15); border: 1px solid #f1fa8c; padding: 2px 6px; border-radius: 4px; color: #f1fa8c; font-size: 13pt;">Bruno</span>
+                  <span
+                    style="background: rgba(241, 250, 140, 0.15); border: 1px solid #f1fa8c; padding: 2px 6px; border-radius: 4px; color: #f1fa8c; font-size: 13pt;">Carla</span>
+                </div>
+
+                <!-- Col 3 (curso) -->
+                <div style="display: flex; align-items: center; gap: 5px; opacity: 0.4;">
+                  <span style="font-size: 11pt; color: #6272a4; min-width: 75px;">Col (curso):</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #bd93f9; font-size: 13pt;">Info</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #bd93f9; font-size: 13pt;">Info</span>
+                  <span
+                    style="background: rgba(189, 147, 249, 0.15); border: 1px solid #bd93f9; padding: 2px 6px; border-radius: 4px; color: #bd93f9; font-size: 13pt;">Adm</span>
+                </div>
+
+                <!-- Col 4 (nota) - Highlighted -->
+                <div
+                  style="display: flex; align-items: center; gap: 5px; border: 1px dashed #50fa7b; padding: 5px; border-radius: 6px; background: rgba(80, 250, 123, 0.05);">
+                  <span style="font-size: 11pt; color: #50fa7b; min-width: 75px; font-weight: bold;">Col (nota):</span>
+                  <span
+                    style="background: rgba(80, 250, 123, 0.3); border: 2px solid #50fa7b; padding: 2px 6px; border-radius: 4px; color: #50fa7b; font-size: 13pt; font-weight: bold; box-shadow: 0 0 8px rgba(80,250,123,0.3);">8.5</span>
+                  <span
+                    style="background: rgba(80, 250, 123, 0.3); border: 2px solid #50fa7b; padding: 2px 6px; border-radius: 4px; color: #50fa7b; font-size: 13pt; font-weight: bold; box-shadow: 0 0 8px rgba(80,250,123,0.3);">7.0</span>
+                  <span
+                    style="background: rgba(80, 250, 123, 0.3); border: 2px solid #50fa7b; padding: 2px 6px; border-radius: 4px; color: #50fa7b; font-size: 13pt; font-weight: bold; box-shadow: 0 0 8px rgba(80,250,123,0.3);">9.0</span>
+                  <span style="font-size: 10pt; color: #50fa7b; margin-left: 8px;">← Só esta coluna é lida!</span>
+                </div>
+              </div>
             </div>
             <div style="flex:1">
               <code-block lang="sql" data-trim>
                 SELECT AVG(nota)
                 FROM alunos;
               </code-block>
-              <div class="green-box">
-                <p>Se a consulta só precisa de <code>nota</code>, por que ler <code>id</code>, <code>aluno</code> e
-                  <code>curso</code>?
-                </p>
+              <div class="cyan-box" style="margin-top: 15px;">
+                <p><strong>OLAP (Analítico)</strong></p>
+                <p>Lê apenas as colunas requisitadas. Evita leitura de gigabytes de dados inúteis de outras colunas.</p>
               </div>
             </div>
           </multi-col>
@@ -360,15 +494,35 @@
 
         <section data-auto-animate>
           <h2>Preparar o ambiente</h2>
-          <p>Para executar os exemplos em Python, instale o DuckDB no mesmo ambiente usado pelo notebook ou pelo VS
-            Code.</p>
-          <code-block lang="bash" data-trim>
-            python -m pip install duckdb pandas pyarrow
-          </code-block>
-          <div class="cyan-box">
-            <p><code>pandas</code> cria DataFrames para os exemplos e <code>pyarrow</code> ajuda na leitura/escrita de
-              Parquet.</p>
-          </div>
+          <multi-col style="gap:25px">
+            <div style="flex:1">
+              <div class="box">
+                <h3 style="color: #8be9fd; font-size: 0.8em; margin: 0 0 10px 0;"><i
+                    class="fa-solid fa-arrows-spin"></i> O "SQLite3 da Análise"</h3>
+                <p style="font-size: 0.72em; line-height: 1.35; margin: 0;">Assim como o <strong>SQLite</strong> é o
+                  padrão para OLTP local, o <strong>DuckDB</strong> é o equivalente para OLAP (analítico).</p>
+              </div>
+              <div class="green-box" style="margin-top: 15px;">
+                <p><strong>Embarcado (In-Process)</strong></p>
+                <p style="font-size: 0.72em; line-height: 1.35; margin: 0;">Roda direto no processo do Python. Sem
+                  portas, sem usuários, sem servidores externos para gerenciar.</p>
+              </div>
+            </div>
+            <div style="flex:1">
+              <code-block lang="bash" data-trim>
+                # Instalação standalone (C++ nativo e auto-contido)
+                pip install duckdb
+
+                # Opcional (para DataFrames e Parquet)
+                pip install pandas pyarrow
+              </code-block>
+              <div class="yellow-box" style="margin-top: 15px;">
+                <p style="font-size: 0.72em; line-height: 1.35; margin: 0;"><strong>Zero Dependências Externas:</strong>
+                  A biblioteca do Python já traz todo o motor analítico DuckDB compilado dentro dela. Basta importar e
+                  usar.</p>
+              </div>
+            </div>
+          </multi-col>
         </section>
 
         <section data-auto-animate>
@@ -425,7 +579,8 @@
             </tbody>
           </table>
           <div class="cyan-box">
-            <p>O ponto didático: a turma já sabe SQL. Agora o SQL também conversa com DataFrames.</p>
+            <p>A grande vantagem: você pode usar a linguagem SQL que já conhece diretamente nos DataFrames do Python!
+            </p>
           </div>
         </section>
 
@@ -436,7 +591,7 @@
               <h3>Com pandas</h3>
               <code-block lang="python" data-trim style="font-size:0.9em;line-height:1.1;">
                 filtrado = df[
-                df["valor"] >= 100
+                df["valor"] >= 10
                 ]
 
                 por_categoria = (
@@ -462,7 +617,7 @@
                 COUNT(*) AS qtd,
                 SUM(valor) AS total
                 FROM df
-                WHERE valor >= 100
+                WHERE valor >= 10
                 GROUP BY categoria
                 HAVING COUNT(*) >= 2
                 ORDER BY total DESC;
@@ -516,20 +671,45 @@
 
         <section data-auto-animate>
           <h2>Legibilidade em consultas analíticas</h2>
-          <div class="yellow-box">
-            <p>pandas é excelente, mas muitas análises viram sequências de passos: filtra, agrupa, reseta índice, junta,
-              filtra de novo.</p>
-          </div>
-          <div class="cyan-box">
-            <p>SQL deixa a intenção mais declarativa: quais linhas entram, como agrupar, quais métricas calcular e quais
-              grupos manter.</p>
-          </div>
-          <ls-u>
-            <li><code>WHERE</code>: filtra linhas antes do agrupamento</li>
-            <li><code>GROUP BY</code>: define o nível do resumo</li>
-            <li><code>HAVING</code>: filtra grupos depois da agregação</li>
-            <li><code>WINDOW</code>: compara cada linha com estatísticas do seu grupo</li>
-          </ls-u>
+          <multi-col style="gap:25px">
+            <div style="flex:1">
+              <div class="pink-box" style="height: 100%;">
+                <h3 style="color: #ff79c6; font-size: 0.8em; margin: 0 0 10px 0;"><i class="fa-solid fa-code"></i>
+                  pandas</h3>
+                <p style="font-size: 0.72em; margin-bottom: 8px;"><strong>Imperativo</strong> (Como fazer passo a
+                  passo):</p>
+                <ul style="font-size: 0.7em; line-height: 1.35; margin-left: 1.1em;">
+                  <li>Análises viram sequências de passos:
+                    <ol style="margin-left: 1.1em; margin-top: 5px;">
+                      <li>Filtra</li>
+                      <li>Agrupa</li>
+                      <li>Reseta índice</li>
+                      <li>Junta (Merge/Join)</li>
+                      <li>Filtra novamente</li>
+                    </ol>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div style="flex:1">
+              <div class="cyan-box" style="height: 100%;">
+                <h3 style="color: #8be9fd; font-size: 0.8em; margin: 0 0 10px 0;"><i class="fa-solid fa-database"></i>
+                  SQL</h3>
+                <p style="font-size: 0.72em; margin-bottom: 8px;"><strong>Declarativo</strong> (O que obter de
+                  resultado):</p>
+                <ul style="font-size: 0.7em; line-height: 1.35; margin-left: 1.1em;">
+                  <li>Definição declarativa:
+                    <ul style="margin-left: 1.1em; margin-top: 5px;">
+                      <li><code>SELECT</code>: o que quero que apareça (colunas e métricas)</li>
+                      <li><code>WHERE</code>: o que quero filtrar antes de agrupar</li>
+                      <li><code>HAVING</code>: o que quero filtrar depois de agrupar</li>
+                      <li><code>WINDOW</code>: calcula estatísticas para cada registro conforme seu grupo</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
         </section>
 
       </section><!-- fim Parte 3 -->
@@ -967,6 +1147,28 @@
           </div>
         </section>
 
+        <section data-auto-animate>
+          <h2>Exportar particionado (Hive)</h2>
+          <div class="cyan-box" style="margin-bottom: 15px;">
+            <p>Você pode salvar os dados automaticamente organizados em pastas, particionando por colunas.</p>
+          </div>
+          <code-block lang="sql" data-trim>
+            COPY (
+            SELECT *
+            FROM vendas
+            )
+            TO 'dados/vendas_cidade'
+            (
+            FORMAT parquet,
+            PARTITION_BY (cidade)
+            );
+          </code-block>
+          <div class="green-box" style="margin-top: 15px;">
+            <p>O DuckDB criará automaticamente pastas como <code>cidade=Capivari/</code> e dividirá os arquivos de forma
+              eficiente!</p>
+          </div>
+        </section>
+
       </section><!-- fim Parte 5 -->
 
       <!-- ============================================================
@@ -1171,81 +1373,14 @@
 
       </section><!-- fim Parte 6 -->
 
+
       <!-- ============================================================
-         Parte 7: PRATICA
+         Parte 7: FECHAMENTO
          ============================================================ -->
       <section>
 
         <section data-auto-animate>
-          <h2 style="color: #ff79c6;">Parte 7: Atividade prática</h2>
-          <div class="green-box">
-            <p><strong>Objetivo:</strong> usar DuckDB para explorar, resumir e exportar um conjunto de dados tabular.
-            </p>
-          </div>
-          <ls-u>
-            <li>Carregar um CSV ou Parquet</li>
-            <li>Inspecionar colunas, tipos e quantidade de linhas</li>
-            <li>Escrever pelo menos 5 consultas SQL</li>
-            <li>Usar pelo menos 2 consultas com <code>GROUP BY</code></li>
-            <li>Usar pelo menos 1 filtro com <code>WHERE</code></li>
-            <li>Exportar um resultado para CSV ou Parquet</li>
-          </ls-u>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Base mínima para testar</h2>
-          <code-block lang="bash" data-trim>
-            python \
-            planos/aula15_duckdb_assets/gerar_dados_vendas.py
-          </code-block>
-          <div class="cyan-box">
-            <p>O script cria <code>vendas.csv</code>, <code>vendas.parquet</code>, CSV particionado e Parquet
-              particionado em formato Hive.</p>
-          </div>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Consultas esperadas</h2>
-          <code-block lang="sql" data-trim>
-            SELECT COUNT(*) AS total_linhas
-            FROM vendas;
-
-            SELECT categoria, COUNT(*) AS qtd
-            FROM vendas
-            GROUP BY categoria
-            ORDER BY qtd DESC;
-
-            SELECT cidade, AVG(valor) AS media
-            FROM vendas
-            GROUP BY cidade
-            HAVING COUNT(*) >= 2
-            ORDER BY media DESC;
-          </code-block>
-        </section>
-
-        <section data-auto-animate>
-          <h2>Entrega</h2>
-          <div class="yellow-box">
-            <p>Entregar um notebook ou arquivo com código e pequenas respostas em texto.</p>
-          </div>
-          <ol>
-            <li>Descrição breve do conjunto de dados</li>
-            <li>Comando de leitura com DuckDB</li>
-            <li>Consultas SQL e resultados</li>
-            <li>Exportação de um resumo</li>
-            <li>Resposta: por que DuckDB foi útil neste caso?</li>
-          </ol>
-        </section>
-
-      </section><!-- fim Parte 7 -->
-
-      <!-- ============================================================
-         Parte 8: FECHAMENTO
-         ============================================================ -->
-      <section>
-
-        <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Parte 8: Quando usar DuckDB?</h2>
+          <h2 style="color: #8be9fd;">Parte 7: Quando usar DuckDB?</h2>
           <table class="comparison-table">
             <thead>
               <tr>
@@ -1345,6 +1480,8 @@
   <script src="../plugin/leader-line.min.js"></script>
   <script src="../dist/vue.js"></script>
   <script src="../slides_template/header1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+
   <script src="../components/components.js"></script>
   <script src="../plugin/poll/plugin.js"></script>
   <script src="../plugin/customcontrols/plugin.js"></script>

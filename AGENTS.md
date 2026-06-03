@@ -90,6 +90,12 @@ python3 .opencode/skills/export-plots/export_plots.py notebook.ipynb --output-di
 - Use fragments SPARINGLY — only for step-by-step concept introduction, code walkthroughs, and exercise steps
 - Use `<ls-u>` (auto-fragment) only for: motivation slides, exercise steps, summaries
 - Use plain `<ul>` for: definitions, reference lists, informational content
+- Do NOT use fragments in section header slides (e.g., slides with "Parte X" titles).
+
+### Pedagogical Style
+
+- **Schematic Content**: Avoid continuous text. Use schematic comparisons (e.g., `multi-col` layouts) and structured lists with clear points instead of long paragraphs.
+- **Direct to Students**: Write slide content addressing the students directly. Do NOT include meta-commentary directed at the teacher (e.g., "O ponto didático aqui é...") in the slides.
 
 ### Content Flow (per lesson)
 
