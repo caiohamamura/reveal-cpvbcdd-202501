@@ -129,8 +129,8 @@ slide5_new = '''<h2>5. Exportar resultado</h2>
 content = re.sub(slide5_orig, slide5_new, content)
 
 # 6. Slide 6
-slide6_orig = r'<h2 style="color: #ffb86c;">Fase 6: Integracao direta \(Postgres\)</h2>\s*<p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL\.</p>\s*<code-block lang="sql" data-trim>'
-slide6_new = '''<h2 style="color: #ffb86c;">Fase 6: Integracao direta (Postgres)</h2>
+slide6_orig = r'<h2 style="color: #ffb86c;">Etapa 6: Integracao direta \(Postgres\)</h2>\s*<p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL\.</p>\s*<code-block lang="sql" data-trim>'
+slide6_new = '''<h2 style="color: #ffb86c;">Etapa 6: Integracao direta (Postgres)</h2>
           <p>O DuckDB possui uma extensao nativa para ler e escrever diretamente em bancos PostgreSQL.</p>
           <div class="flow-row" style="margin: 15px 0;">
             <div class="flow-node">

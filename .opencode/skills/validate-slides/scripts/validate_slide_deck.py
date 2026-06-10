@@ -19,8 +19,8 @@ CODE_BLOCK_SCRIPT_RE = re.compile(
     r"<code-block\b[^>]*>(?:(?!</code-block>).)*<script\b",
     re.IGNORECASE | re.DOTALL,
 )
-PHASE_START_RE = re.compile(r"FASE\s+(\d+)\s*:", re.IGNORECASE)
-PHASE_END_RE = re.compile(r"fim\s+Fase\s+(\d+)", re.IGNORECASE)
+PHASE_START_RE = re.compile(r"Etapa\s+(\d+)\s*:", re.IGNORECASE)
+PHASE_END_RE = re.compile(r"fim\s+Etapa\s+(\d+)", re.IGNORECASE)
 REMOTE_SCHEMES = {"http", "https", "mailto", "tel", "data", "javascript"}
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
 
@@ -155,7 +155,7 @@ def validate_file(path: Path) -> list[Finding]:
                     Finding(
                         "ERROR",
                         path,
-                        f"FASE {phase} começou em {line}:{col} antes do fim Fase {previous_phase} aberto em {previous_line}:{previous_col}",
+                        f"Etapa {phase} começou em {line}:{col} antes do fim Etapa {previous_phase} aberto em {previous_line}:{previous_col}",
                     )
                 )
             open_phase = (phase, line, col)
@@ -164,14 +164,14 @@ def validate_file(path: Path) -> list[Finding]:
             line, col = line_col(text, match.start())
             if open_phase is None:
                 findings.append(
-                    Finding("ERROR", path, f"fim Fase {phase} sem FASE correspondente em {line}:{col}")
+                    Finding("ERROR", path, f"fim Etapa {phase} sem Etapa correspondente em {line}:{col}")
                 )
             elif open_phase[0] != phase:
                 findings.append(
                     Finding(
                         "ERROR",
                         path,
-                        f"fim Fase {phase} em {line}:{col} não corresponde à FASE {open_phase[0]} aberta em {open_phase[1]}:{open_phase[2]}",
+                        f"fim Etapa {phase} em {line}:{col} não corresponde à Etapa {open_phase[0]} aberta em {open_phase[1]}:{open_phase[2]}",
                     )
                 )
                 open_phase = None
@@ -180,7 +180,7 @@ def validate_file(path: Path) -> list[Finding]:
     if open_phase is not None:
         phase, line, col = open_phase
         findings.append(
-            Finding("ERROR", path, f"FASE {phase} aberta em {line}:{col} sem comentário fim Fase {phase}")
+            Finding("ERROR", path, f"Etapa {phase} aberta em {line}:{col} sem comentário fim Etapa {phase}")
         )
 
     img_parser = ImgAltParser(path)

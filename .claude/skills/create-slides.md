@@ -108,19 +108,19 @@ Wrap each major topic/phase in a parent `<section>` element. This groups related
 
 ```html
       <!-- ============================================================
-         FASE N: {NOME DA SEÇÃO}
+         Etapa N: {NOME DA SEÇÃO}
          ============================================================ -->
       <section>
 
-        <!-- SLIDE: Fase N header -->
+        <!-- SLIDE: Etapa N header -->
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase N: {TÍTULO}</h2>
+          <h2 style="color: #8be9fd;">Etapa N: {TÍTULO}</h2>
           <!-- intro content for this section -->
         </section>
 
         <!-- More slides in this section... -->
 
-      </section><!-- fim Fase N -->
+      </section><!-- fim Etapa N -->
 ```
 
 Rules:

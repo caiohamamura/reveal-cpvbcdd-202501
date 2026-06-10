@@ -120,19 +120,19 @@ Wrap each major topic/phase in a parent `<section>` element. This groups related
 
 ```html
       <!-- ============================================================
-         FASE N: {NOME DA SEÇÃO}
+         Etapa N: {NOME DA SEÇÃO}
          ============================================================ -->
       <section>
 
-        <!-- SLIDE: Fase N header -->
+        <!-- SLIDE: Etapa N header -->
         <section data-auto-animate>
-          <h2 style="color: #8be9fd;">Fase N: {TÍTULO}</h2>
+          <h2 style="color: #8be9fd;">Etapa N: {TÍTULO}</h2>
           <!-- intro content for this section -->
         </section>
 
         <!-- More slides in this section... -->
 
-      </section><!-- fim Fase N -->
+      </section><!-- fim Etapa N -->
 ```
 
 Rules:
@@ -445,8 +445,8 @@ Technical details:
 
 #### HTML section nesting (Reveal.js)
 - Reveal.js uses nested `<section>` elements for vertical navigation. A misplaced closing `</section>` can cause slides to be nested incorrectly, making them invisible or out of order.
-- Use comment markers like `<!-- fim Fase N -->` to track section boundaries.
-- If `FASE N` starts before `fim Fase N-1`, Reveal can mix the first slides of the next phase and render following slides blank.
+- Use comment markers like `<!-- fim Etapa N -->` to track section boundaries.
+- If `Etapa N` starts before `fim Etapa N-1`, Reveal can mix the first slides of the next phase and render following slides blank.
 - Run `python .opencode/skills/validate-slides/scripts/validate_slide_deck.py <slide-file.html>` after edits to catch unclosed phase comments.
 - Quiz/references sections must be siblings of other super-sections, NOT nested inside them.
 
