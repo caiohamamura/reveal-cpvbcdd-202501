@@ -21,7 +21,7 @@ window.seminarConfig = {
   server: 'https://seminar.hamacorps.work/',
   room: (window.seminarConfig && window.seminarConfig.room) || location.pathname,
   hash: '$2b$10$03JZ.k23reA7h65I.CB8/.JUgmfuNiz8J9ltfxtV0HzRi1QnlHT0W',
-  autoJoin: Boolean(window.seminarConfig && window.seminarConfig.autoJoin),
+  autoJoin: true,
 };
 window.pollConfig = window.pollConfig || {};
 
