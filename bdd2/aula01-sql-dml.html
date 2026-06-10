@@ -197,10 +197,10 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="01" curso="Banco de Dados 2" title-size="24"
-                 title="SQL: Data Manipulation Language">
+        <header1 aula="01" curso="Banco de Dados 2" title-size="24" title="SQL: Data Manipulation Language">
           <div class="image-frame" style="width: 470px; margin: 12px auto 0; padding: 8px;">
-            <img src="planos/aula01_sql_dml_assets/dml-commands.png" alt="Diagrama dos comandos DML: INSERT, UPDATE, DELETE e SELECT" style="max-height: 235px;" />
+            <img src="planos/aula01_sql_dml_assets/dml-commands.png"
+              alt="Diagrama dos comandos DML: INSERT, UPDATE, DELETE e SELECT" style="max-height: 235px;" />
           </div>
         </header1>
       </section>
@@ -219,27 +219,30 @@
           </div>
           <div class="cream-card" style="flex: 1;">
             <h3>Hoje</h3>
-            <p>Vamos aprofundar a manipulação de dados: inserir, atualizar, remover e consultar registros com segurança.</p>
+            <p>Vamos aprofundar a manipulação de dados: inserir, atualizar, remover e consultar registros com segurança.
+            </p>
             <p><strong>Meta:</strong> sair do “rodei um comando” para “sei o efeito do comando”.</p>
           </div>
         </multi-col>
       </section>
 
       <!-- ============================================================
-         FASE 1: MAPA DA LINGUAGEM
+         Etapa 1: MAPA DA LINGUAGEM
          ============================================================ -->
       <section>
 
         <section data-auto-animate class="dml-bg">
-          <h2 style="color: var(--pink);">Fase 1: DDL ou DML?</h2>
-          <p style="color: #bd93f9;">SQL é uma linguagem declarativa: você descreve o que quer, e o SGBD decide como executar.</p>
+          <h2 style="color: var(--pink);">Etapa 1: DDL ou DML?</h2>
+          <p style="color: #bd93f9;">SQL é uma linguagem declarativa: você descreve o que quer, e o SGBD decide como
+            executar.</p>
           <multi-col style="gap: 22px;">
             <div class="soft-card" style="flex: 1;">
               <h3 style="color: var(--cyan);">DDL</h3>
               <p><strong>Data Definition Language</strong></p>
               <ls-u>
                 <li>Define bancos, tabelas, campos e restrições</li>
-                <li>Exemplos: <span class="mini-code">CREATE TABLE</span>, <span class="mini-code">ALTER TABLE</span></li>
+                <li>Exemplos: <span class="mini-code">CREATE TABLE</span>, <span class="mini-code">ALTER TABLE</span>
+                </li>
               </ls-u>
             </div>
             <div class="soft-card" style="flex: 1;">
@@ -270,29 +273,50 @@
           <h2>CRUD em SQL</h2>
           <table class="sql-table">
             <thead>
-              <tr><th>Operação</th><th>Verbo SQL</th><th>Pergunta prática</th></tr>
+              <tr>
+                <th>Operação</th>
+                <th>Verbo SQL</th>
+                <th>Pergunta prática</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Create</td><td><span class="mini-code">INSERT</span></td><td>Como adiciono novos registros?</td></tr>
-              <tr><td>Read</td><td><span class="mini-code">SELECT</span></td><td>Como recupero dados?</td></tr>
-              <tr><td>Update</td><td><span class="mini-code">UPDATE</span></td><td>Como corrijo ou recalculo valores?</td></tr>
-              <tr><td>Delete</td><td><span class="mini-code">DELETE</span></td><td>Como removo registros sem quebrar relações?</td></tr>
+              <tr>
+                <td>Create</td>
+                <td><span class="mini-code">INSERT</span></td>
+                <td>Como adiciono novos registros?</td>
+              </tr>
+              <tr>
+                <td>Read</td>
+                <td><span class="mini-code">SELECT</span></td>
+                <td>Como recupero dados?</td>
+              </tr>
+              <tr>
+                <td>Update</td>
+                <td><span class="mini-code">UPDATE</span></td>
+                <td>Como corrijo ou recalculo valores?</td>
+              </tr>
+              <tr>
+                <td>Delete</td>
+                <td><span class="mini-code">DELETE</span></td>
+                <td>Como removo registros sem quebrar relações?</td>
+              </tr>
             </tbody>
           </table>
           <div class="note-box fragment">
-            <p><strong>Ideia da aula:</strong> DML muda ou lê o estado da tabela. O risco quase sempre está no escopo: quais linhas serão afetadas?</p>
+            <p><strong>Ideia da aula:</strong> DML muda ou lê o estado da tabela. O risco quase sempre está no escopo:
+              quais linhas serão afetadas?</p>
           </div>
         </section>
 
-      </section><!-- fim Fase 1 -->
+      </section><!-- fim Etapa 1 -->
 
       <!-- ============================================================
-         FASE 2: INSERT
+         Etapa 2: INSERT
          ============================================================ -->
       <section>
 
         <section data-auto-animate class="dml-bg">
-          <h2 style="color: var(--green);">Fase 2: INSERT</h2>
+          <h2 style="color: var(--green);">Etapa 2: INSERT</h2>
           <p>O <span class="mini-code">INSERT</span> adiciona linhas novas em uma tabela.</p>
           <code-block lang="sql" data-trim><textarea>
 INSERT INTO nome_tabela (coluna1, coluna2, ...)
@@ -311,7 +335,8 @@ VALUES
   ('Caderno', 'Papelaria', 18.50);
           </textarea></code-block>
           <div class="ok-box fragment">
-            <p><strong>Boa prática:</strong> informe explicitamente as colunas. Isso deixa o comando legível e menos dependente da ordem física da tabela.</p>
+            <p><strong>Boa prática:</strong> informe explicitamente as colunas. Isso deixa o comando legível e menos
+              dependente da ordem física da tabela.</p>
           </div>
         </section>
 
@@ -346,7 +371,8 @@ VALUES ('Caio'), ('Outro');
           <p>Valores automáticos são ótimos para a aplicação, mas podem atrapalhar restauração manual.</p>
           <multi-col style="gap: 18px;">
             <div class="danger-box" style="flex: 1;">
-              <p><strong>Risco:</strong> executar duas vezes um <span class="mini-code">INSERT</span> sem informar o ID pode duplicar dados sem perceber.</p>
+              <p><strong>Risco:</strong> executar duas vezes um <span class="mini-code">INSERT</span> sem informar o ID
+                pode duplicar dados sem perceber.</p>
             </div>
             <div style="flex: 1.2;">
               <code-block lang="sql" data-trim><textarea>
@@ -358,19 +384,20 @@ VALUES
             </div>
           </multi-col>
           <div class="ok-box fragment">
-            <p>Ao informar a chave primária, a segunda execução falha por ID duplicado. Nesse caso, o erro protege a consistência.</p>
+            <p>Ao informar a chave primária, a segunda execução falha por ID duplicado. Nesse caso, o erro protege a
+              consistência.</p>
           </div>
         </section>
 
-      </section><!-- fim Fase 2 -->
+      </section><!-- fim Etapa 2 -->
 
       <!-- ============================================================
-         FASE 3: UPDATE E WHERE
+         Etapa 3: UPDATE E WHERE
          ============================================================ -->
       <section>
 
         <section data-auto-animate class="dml-bg">
-          <h2 style="color: var(--cyan);">Fase 3: UPDATE</h2>
+          <h2 style="color: var(--cyan);">Etapa 3: UPDATE</h2>
           <p>O <span class="mini-code">UPDATE</span> altera valores em linhas existentes.</p>
           <code-block lang="sql" data-trim><textarea>
 UPDATE nome_tabela
@@ -402,7 +429,8 @@ SET preco = preco * 1.1;
 
         <section data-auto-animate class="dml-bg">
           <h2>Quando atualizar várias linhas?</h2>
-          <p>Nem todo <span class="mini-code">UPDATE</span> precisa afetar apenas uma linha. O importante é a regra ser intencional.</p>
+          <p>Nem todo <span class="mini-code">UPDATE</span> precisa afetar apenas uma linha. O importante é a regra ser
+            intencional.</p>
           <code-block lang="sql" data-trim><textarea>
 UPDATE produto
 SET preco = preco * 1.1
@@ -437,7 +465,8 @@ WHERE categoria = 'Eletrônicos';
         <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
           <h2 style="color: var(--navy);">WHERE: operadores condicionais</h2>
           <div class="image-frame">
-            <img src="planos/aula01_sql_dml_assets/where-operadores-comparacao.png" alt="Tabela de operadores condicionais SQL" />
+            <img src="planos/aula01_sql_dml_assets/where-operadores-comparacao.png"
+              alt="Tabela de operadores condicionais SQL" />
           </div>
           <p class="tiny-caption">Use operadores para transformar uma intenção em uma condição precisa.</p>
         </section>
@@ -445,7 +474,8 @@ WHERE categoria = 'Eletrônicos';
         <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)">
           <h2 style="color: var(--navy);">WHERE: operadores booleanos</h2>
           <div class="image-frame">
-            <img src="planos/aula01_sql_dml_assets/where-operadores-booleanos.png" alt="Tabela de operadores booleanos SQL" />
+            <img src="planos/aula01_sql_dml_assets/where-operadores-booleanos.png"
+              alt="Tabela de operadores booleanos SQL" />
           </div>
         </section>
 
@@ -466,15 +496,15 @@ WHERE categoria = 'Eletrônicos';
           </textarea></code-block>
         </section>
 
-      </section><!-- fim Fase 3 -->
+      </section><!-- fim Etapa 3 -->
 
       <!-- ============================================================
-         FASE 4: DELETE E CHAVES ESTRANGEIRAS
+         Etapa 4: DELETE E CHAVES ESTRANGEIRAS
          ============================================================ -->
       <section>
 
         <section data-auto-animate class="dml-bg">
-          <h2 style="color: var(--red);">Fase 4: DELETE</h2>
+          <h2 style="color: var(--red);">Etapa 4: DELETE</h2>
           <p>O <span class="mini-code">DELETE</span> remove registros da tabela.</p>
           <code-block lang="sql" data-trim><textarea>
 DELETE FROM nome_tabela
@@ -489,11 +519,23 @@ WHERE condicao;
           <h2>DELETE não é TRUNCATE</h2>
           <table class="sql-table">
             <thead>
-              <tr><th>Comando</th><th>Uso típico</th><th>Cuidado</th></tr>
+              <tr>
+                <th>Comando</th>
+                <th>Uso típico</th>
+                <th>Cuidado</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td><span class="mini-code">DELETE</span></td><td>Remove linhas selecionadas</td><td>Depende de condição; pode esbarrar em FK</td></tr>
-              <tr><td><span class="mini-code">TRUNCATE</span></td><td>Esvazia a tabela inteira rapidamente</td><td>É uma decisão de administração de dados</td></tr>
+              <tr>
+                <td><span class="mini-code">DELETE</span></td>
+                <td>Remove linhas selecionadas</td>
+                <td>Depende de condição; pode esbarrar em FK</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">TRUNCATE</span></td>
+                <td>Esvazia a tabela inteira rapidamente</td>
+                <td>É uma decisão de administração de dados</td>
+              </tr>
             </tbody>
           </table>
           <div class="note-box fragment">
@@ -547,15 +589,15 @@ CREATE TABLE posts (
           </div>
         </section>
 
-      </section><!-- fim Fase 4 -->
+      </section><!-- fim Etapa 4 -->
 
       <!-- ============================================================
-         FASE 5: SELECT
+         Etapa 5: SELECT
          ============================================================ -->
       <section>
 
         <section data-auto-animate class="dml-bg">
-          <h2 style="color: var(--yellow);">Fase 5: SELECT</h2>
+          <h2 style="color: var(--yellow);">Etapa 5: SELECT</h2>
           <p>O <span class="mini-code">SELECT</span> recupera dados de uma ou mais tabelas.</p>
           <code-block lang="sql" data-trim><textarea>
 SELECT coluna1, coluna2
@@ -564,7 +606,8 @@ WHERE condicao
 ORDER BY coluna1 ASC;
           </textarea></code-block>
           <div class="ok-box fragment">
-            <p>Antes de alterar ou apagar, use <span class="mini-code">SELECT</span> para enxergar o conjunto de linhas que você está selecionando.</p>
+            <p>Antes de alterar ou apagar, use <span class="mini-code">SELECT</span> para enxergar o conjunto de linhas
+              que você está selecionando.</p>
           </div>
         </section>
 
@@ -594,23 +637,45 @@ WHERE categoria = 'Eletrônicos';
           <h2>O que vem depois?</h2>
           <table class="sql-table">
             <thead>
-              <tr><th>Recurso</th><th>Para que serve</th></tr>
+              <tr>
+                <th>Recurso</th>
+                <th>Para que serve</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td><span class="mini-code">ORDER BY</span></td><td>Ordenar resultados</td></tr>
-              <tr><td><span class="mini-code">GROUP BY</span></td><td>Agrupar linhas e resumir dados</td></tr>
-              <tr><td><span class="mini-code">COUNT, SUM, AVG</span></td><td>Calcular agregações</td></tr>
-              <tr><td><span class="mini-code">HAVING</span></td><td>Filtrar grupos</td></tr>
-              <tr><td><span class="mini-code">UNION</span></td><td>Combinar resultados</td></tr>
-              <tr><td><span class="mini-code">LIMIT</span></td><td>Restringir quantidade de linhas</td></tr>
+              <tr>
+                <td><span class="mini-code">ORDER BY</span></td>
+                <td>Ordenar resultados</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">GROUP BY</span></td>
+                <td>Agrupar linhas e resumir dados</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">COUNT, SUM, AVG</span></td>
+                <td>Calcular agregações</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">HAVING</span></td>
+                <td>Filtrar grupos</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">UNION</span></td>
+                <td>Combinar resultados</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">LIMIT</span></td>
+                <td>Restringir quantidade de linhas</td>
+              </tr>
             </tbody>
           </table>
         </section>
 
-      </section><!-- fim Fase 5 -->
+      </section><!-- fim Etapa 5 -->
 
       <!-- SLIDE: Fechamento -->
-      <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)" class="centered">
+      <section data-auto-animate data-background-gradient="linear-gradient(135deg, #f6eadc 0%, #dbeaf8 100%)"
+        class="centered">
         <h2 style="color: var(--navy);">DML: manipular dados com intenção</h2>
         <div class="verb-grid">
           <div class="verb-card">INSERT</div>
@@ -619,7 +684,8 @@ WHERE categoria = 'Eletrônicos';
           <div class="verb-card">SELECT</div>
         </div>
         <div class="cream-card fragment" style="margin-top: 28px;">
-          <p><strong>Regra de ouro:</strong> antes de alterar ou apagar, use um SELECT para confirmar quais linhas serão afetadas.</p>
+          <p><strong>Regra de ouro:</strong> antes de alterar ou apagar, use um SELECT para confirmar quais linhas serão
+            afetadas.</p>
         </div>
         <p style="color: var(--navy); margin-top: 26px;">Prof. Caio Hamamura</p>
       </section>
@@ -651,4 +717,5 @@ WHERE categoria = 'Eletrônicos';
   </script>
 
 </body>
+
 </html>
