@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Banco de Dados 2 - Revisão para a Prova Final</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal h2 { text-transform: none; }
+    .reveal h3 { text-transform: none; }
+    .info-box { background: rgba(98, 114, 164, 0.28); border-radius: 8px; padding: 10px 14px; margin: 6px 0; }
+    .green-box { background: rgba(80, 250, 123, 0.15); border-left: 4px solid #50fa7b; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .red-box { background: rgba(255, 85, 85, 0.18); border-left: 4px solid #ff5555; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .yellow-box { background: rgba(241, 250, 140, 0.15); border-left: 4px solid #f1fa8c; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .purple-box { background: rgba(189, 147, 249, 0.16); border-left: 4px solid #bd93f9; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .cyan-box { background: rgba(139, 233, 253, 0.12); border-left: 4px solid #8be9fd; padding: 8px 12px; margin: 6px 0; border-radius: 0 8px 8px 0; }
+    .comparison-table { width: 100%; font-size: 0.64em; }
+    .comparison-table th { background: rgba(98, 114, 164, 0.45); padding: 6px 8px; text-align: left; }
+    .comparison-table td { padding: 5px 8px; border-bottom: 1px solid rgba(98, 114, 164, 0.25); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .mini-code { font-family: monospace; color: #f1fa8c; background: rgba(40, 42, 54, 0.8); border-radius: 6px; padding: 1px 5px; font-size: 0.85em; }
+    .pill { display: inline-block; color: #282a36; background: #8be9fd; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .pill-green { display: inline-block; color: #282a36; background: #50fa7b; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .pill-pink { display: inline-block; color: #282a36; background: #ff79c6; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .pill-yellow { display: inline-block; color: #282a36; background: #f1fa8c; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .pill-purple { display: inline-block; color: #f8f8f2; background: #bd93f9; border-radius: 12px; padding: 1px 8px; font-size: 0.58em; font-weight: bold; margin: 2px 4px 2px 0; }
+    .topic-badge {
+      display: inline-block;
+      background: rgba(98,114,164,0.35);
+      border-radius: 6px;
+      padding: 6px 14px;
+      margin: 4px;
+      font-size: 0.62em;
+      font-weight: bold;
+      color: #f8f8f2;
+    }
+    .reveal .slides section ul li,
+    .reveal .slides section ol li { font-size: 0.82em; line-height: 1.35; margin: 3px 0; }
+    .reveal .slides section p { font-size: 0.72em; line-height: 1.35; margin: 4px 0; }
+    .reveal .slides section code-block { font-size: 0.86em; overflow-x: auto; max-width: 100%; }
+    .reveal .slides section code-block pre { overflow-x: auto; max-width: 100%; }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="16" curso="Banco de Dados 2" title-size="22"
+                 title="Revisão para a Prova Final">
+          <div class="mermaid" data-id="cover-revisao" style="width:500px">
+            <pre>
+graph LR
+  A["Procedures\nFunções"] --> Z["Prova"]
+  B["Triggers"] --> Z
+  C["Views\nMat. Views"] --> Z
+  D["NoSQL\nChave-valor\nDocumentos\nColunar\nGrafos"] --> Z
+  style Z fill:#ff79c6,color:#282a36
+  style A fill:#8be9fd,color:#282a36
+  style B fill:#50fa7b,color:#282a36
+  style C fill:#f1fa8c,color:#282a36
+  style D fill:#bd93f9,color:#f8f8f2
+            </pre>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE: O que cai na prova -->
+      <section data-auto-animate>
+        <h2>O que cai na prova?</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-top: 10px;">
+          <span class="topic-badge" style="border-left: 3px solid #8be9fd;">Procedures</span>
+          <span class="topic-badge" style="border-left: 3px solid #8be9fd;">Funções</span>
+          <span class="topic-badge" style="border-left: 3px solid #50fa7b;">Triggers</span>
+          <span class="topic-badge" style="border-left: 3px solid #f1fa8c;">Views</span>
+          <span class="topic-badge" style="border-left: 3px solid #f1fa8c;">Materialized Views</span>
+          <span class="topic-badge" style="border-left: 3px solid #bd93f9;">NoSQL — Geral</span>
+          <span class="topic-badge" style="border-left: 3px solid #ff79c6;">Chave-valor</span>
+          <span class="topic-badge" style="border-left: 3px solid #ff79c6;">Documentos</span>
+          <span class="topic-badge" style="border-left: 3px solid #ff5555;">Colunar</span>
+          <span class="topic-badge" style="border-left: 3px solid #ff5555;">Grafos</span>
+        </div>
+        <table class="comparison-table" style="margin-top: 16px;">
+          <thead>
+            <tr><th>Tema</th><th>Questões na prova</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Procedures e Funções</td><td>2</td></tr>
+            <tr><td>Triggers</td><td>2</td></tr>
+            <tr><td>Views</td><td>2</td></tr>
+            <tr><td>Materialized Views</td><td>2</td></tr>
+            <tr><td>NoSQL Geral</td><td>1</td></tr>
+            <tr><td>Chave-valor</td><td>2</td></tr>
+            <tr><td>Documentos</td><td>2</td></tr>
+            <tr><td>Colunar</td><td>1</td></tr>
+            <tr><td>Grafos</td><td>1</td></tr>
+            <tr><td style="font-weight:bold;color:#50fa7b;">Total</td><td style="font-weight:bold;color:#50fa7b;">15 questões</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============================================================
+         FASE 1: PROCEDURES E FUNÇÕES
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Fase 1: Procedures e Funções</h2>
+          <p style="color: #6272a4;">Dois recursos para centralizar lógica dentro do SGBD.</p>
+          <div class="cyan-box">
+            <p><strong>Ideia central:</strong> em vez de executar comandos um a um na aplicação, você empacota a lógica no banco.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que é uma Procedure?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Conjunto de comandos SQL armazenados no SGBD</li>
+                <li>Pode ter parâmetros de entrada e saída</li>
+                <li><strong>Não retorna valor diretamente</strong> — executa uma rotina</li>
+                <li>Ideal para: rotinas operacionais, fechamento de período, processamento em lote</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Vantagem:</strong> centraliza regras e rotinas executadas diretamente no banco</p>
+              </div>
+              <div class="red-box">
+                <p><strong>Risco:</strong> uso excessivo aumenta o acoplamento da aplicação ao SGBD</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que é uma Função?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong>Retorna um valor</strong> e pode ser usada em expressões SQL</li>
+                <li>Pode receber parâmetros</li>
+                <li>Exemplos: calcular idade a partir da data de nascimento, formatar CPF</li>
+                <li>Pode ser chamada no <span class="mini-code">SELECT</span>, <span class="mini-code">WHERE</span>, <span class="mini-code">ORDER BY</span></li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <div class="info-box">
+                <p>Uma função que recebe <span class="mini-code">data_nascimento</span> e retorna a idade é chamada de <strong>função definida pelo usuário (UDF)</strong>.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Procedure × Função</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Critério</th><th>Procedure</th><th>Função</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Retorno</td><td>Não retorna valor direto</td><td>Retorna um valor</td></tr>
+              <tr><td>Uso em SELECT</td><td>Não</td><td>Sim</td></tr>
+              <tr><td>Parâmetros</td><td>Sim</td><td>Sim</td></tr>
+              <tr><td>Caso típico</td><td>Rotinas e processamentos</td><td>Cálculos e transformações</td></tr>
+              <tr><td>Chamada</td><td><span class="mini-code">CALL proc()</span></td><td><span class="mini-code">SELECT fn()</span></td></tr>
+            </tbody>
+          </table>
+          <div class="yellow-box" style="margin-top: 10px;">
+            <p>Procedures e funções <strong>podem receber parâmetros</strong>. Afirmar que nunca podem é errado.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 1 -->
+
+      <!-- ============================================================
+         FASE 2: TRIGGERS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 2: Triggers</h2>
+          <p style="color: #6272a4;">Ações automáticas disparadas por eventos no banco.</p>
+          <div class="green-box">
+            <p><strong>Ideia central:</strong> uma trigger executa automaticamente em resposta a <span class="mini-code">INSERT</span>, <span class="mini-code">UPDATE</span> ou <span class="mini-code">DELETE</span>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Tipos de Trigger</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Tipo</th><th>Quando dispara</th><th>Uso típico</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="mini-code">BEFORE INSERT</span></td><td>Antes de gravar o registro</td><td>Validar ou transformar dado antes de inserir</td></tr>
+              <tr><td><span class="mini-code">AFTER INSERT</span></td><td>Depois de gravar</td><td>Log de novo registro</td></tr>
+              <tr><td><span class="mini-code">BEFORE UPDATE</span></td><td>Antes de alterar</td><td>Impedir alterações indevidas</td></tr>
+              <tr><td><span class="mini-code">AFTER UPDATE</span></td><td>Depois de alterar</td><td>Registrar alteração em tabela de auditoria</td></tr>
+              <tr><td><span class="mini-code">AFTER DELETE</span></td><td>Depois de excluir</td><td>Arquivar o registro removido</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Caso clássico: auditoria de preços</h2>
+          <div class="info-box">
+            <p>Tabela <span class="mini-code">produto</span> e tabela <span class="mini-code">historico_preco</span>.<br>
+            Sempre que o preço mudar, registrar: preço anterior, preço novo e data.</p>
+          </div>
+          <div class="green-box" style="margin-top: 8px;">
+            <p>Recurso mais adequado: <strong>Trigger AFTER UPDATE</strong></p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Cuidados com Triggers</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="red-box">
+                <p><strong>Risco 1 — Invisibilidade:</strong> regras de negócio escondidas em triggers ficam menos visíveis para quem mantém o sistema.</p>
+              </div>
+              <div class="red-box">
+                <p><strong>Risco 2 — Desempenho:</strong> triggers em operações muito frequentes podem degradar a performance.</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="red-box">
+                <p><strong>Risco 3 — Recursão:</strong> uma trigger que altera a mesma tabela que a disparou pode causar recursão ou comportamento inesperado.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 2 -->
+
+      <!-- ============================================================
+         FASE 3: VIEWS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 3: Views</h2>
+          <p style="color: #6272a4;">Consultas armazenadas que simplificam o acesso aos dados.</p>
+          <div class="yellow-box">
+            <p><strong>Ideia central:</strong> uma view é uma <em>consulta salva</em> que se comporta como tabela — ela <strong>não armazena fisicamente</strong> os dados (em geral).</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Para que serve uma View?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Finalidade</th><th>Exemplo</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Simplificar consultas complexas</td><td>Ocultar joins de 4 tabelas atrás de uma view <span class="mini-code">vw_relatorio</span></td></tr>
+              <tr><td>Segurança e controle de acesso</td><td>Expor apenas nome e setor do funcionário, ocultando CPF e salário</td></tr>
+              <tr><td>Camada de abstração</td><td>Renomear colunas ou transformar dados sem alterar a tabela base</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Limitação das Views</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="info-box">
+                <p>A view armazena a <strong>definição</strong> da consulta, não os dados.</p>
+                <p>A cada acesso, a consulta é executada novamente.</p>
+              </div>
+              <div class="red-box">
+                <p><strong>Limitação:</strong> algumas views <strong>não permitem UPDATE diretamente</strong>, especialmente se envolvem joins, agregações ou funções.</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Caso real:</strong> empresa tem tabela de funcionários com salário, CPF e setor.<br>
+                Usuário deve ver apenas nome e setor. → Criar uma view com apenas essas colunas.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Fase 3 -->
+
+      <!-- ============================================================
+         FASE 4: MATERIALIZED VIEWS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 4: Materialized Views</h2>
+          <p style="color: #6272a4;">Views que <em>guardam fisicamente</em> o resultado da consulta.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>View × Materialized View</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Critério</th><th>View comum</th><th>Materialized View</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Armazena dados?</td><td>Não (executa ao consultar)</td><td>Sim (resultado gravado em disco)</td></tr>
+              <tr><td>Atualização</td><td>Sempre atual (consulta ao vivo)</td><td>Pode ficar desatualizada</td></tr>
+              <tr><td>Desempenho</td><td>Depende da consulta</td><td>Mais rápida para consultas pesadas</td></tr>
+              <tr><td>Uso típico</td><td>Abstração e segurança</td><td>Relatórios e dashboards periódicos</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quando usar Materialized View?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Ideal quando:</strong> consulta pesada executada com frequência e os dados não precisam estar sempre em tempo real.</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="red-box">
+                <p><strong>Problema:</strong> se novas vendas forem inseridas após a última atualização, a materialized view pode apresentar <strong>valores desatualizados</strong>.</p>
+              </div>
+            </div>
+          </multi-col>
+          <div class="info-box" style="margin-top: 10px;">
+            <p>As três afirmações verdadeiras: views simplificam acesso, materialized views armazenam resultado, materialized views podem exigir atualização para refletir mudanças.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 4 -->
+
+      <!-- ============================================================
+         FASE 5: NOSQL — CONCEITOS GERAIS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Fase 5: NoSQL — Visão Geral</h2>
+          <p style="color: #6272a4;">Diferentes problemas pedem diferentes modelos de banco.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Por que NoSQL?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Maior flexibilidade de estrutura</li>
+                <li>Escalabilidade horizontal</li>
+                <li>Modelos diferentes do relacional</li>
+                <li>Casos de uso que SQL resolve mal</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <div class="purple-box">
+                <p><strong>Importante:</strong> a escolha entre modelos NoSQL deve considerar o <strong>tipo de consulta</strong> e a <strong>forma como os dados se relacionam</strong>, não o nome da ferramenta.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>As 4 categorias NoSQL</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Modelo</th><th>Dados como</th><th>Exemplo de ferramenta</th><th>Caso típico</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="pill-pink">Chave-valor</span></td><td>Pares chave → valor</td><td>Redis</td><td>Cache, sessões</td></tr>
+              <tr><td><span class="pill-green">Documentos</span></td><td>Documentos JSON/BSON</td><td>MongoDB</td><td>Catálogo de produtos</td></tr>
+              <tr><td><span class="pill-yellow">Colunar</span></td><td>Colunas agrupadas</td><td>Cassandra, DuckDB</td><td>Análise de grandes volumes</td></tr>
+              <tr><td><span class="pill-purple">Grafos</span></td><td>Nós e arestas</td><td>Neo4j</td><td>Redes sociais, rotas</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 5 -->
+
+      <!-- ============================================================
+         FASE 6: CHAVE-VALOR
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Fase 6: Chave-Valor</h2>
+          <p style="color: #6272a4;">O modelo mais simples e mais rápido do NoSQL.</p>
+          <div class="info-box">
+            <p>Dados armazenados como <strong>pares (chave, valor)</strong>. A recuperação acontece <strong>pela chave</strong>.</p>
+          </div>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quando usar Chave-Valor?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Cenário</th><th>Por quê funciona bem</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Cache de dados acessados com frequência</td><td>Acesso ultra-rápido por chave em memória</td></tr>
+              <tr><td>Sessões de usuário com expiração automática (TTL)</td><td>Redis tem suporte nativo a expiração de chaves</td></tr>
+              <tr><td>Contadores atômicos (visitas, likes)</td><td><span class="mini-code">INCR</span> é atômico — sem race condition</td></tr>
+              <tr><td>Fila de tarefas simples</td><td>Listas como <span class="mini-code">LPUSH / RPOP</span></td></tr>
+            </tbody>
+          </table>
+          <div class="red-box" style="margin-top: 8px;">
+            <p><strong>Não é adequado para:</strong> consultas complexas, joins, ou modelagem de relacionamentos.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Fase 6 -->
+
+      <!-- ============================================================
+         FASE 7: DOCUMENTOS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Fase 7: Banco de Documentos</h2>
+          <p style="color: #6272a4;">Dados semiestruturados em documentos JSON.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Características de Bancos de Documentos</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Armazenam dados como documentos (JSON, BSON)</li>
+                <li><strong>Flexibilidade de estrutura</strong> — documentos podem ter campos diferentes</li>
+                <li>Suportam dados aninhados (listas, subdocumentos)</li>
+                <li>Sem obrigatoriedade de schema rígido</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Ideal para:</strong> catálogo de produtos em que cada tipo tem atributos muito diferentes</p>
+              </div>
+              <div class="yellow-box">
+                <p><strong>Embedding:</strong> embutir dados relacionados no mesmo documento é vantajoso quando eles são <strong>frequentemente lidos juntos</strong>.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Embedding × Referência</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Estratégia</th><th>Quando usar</th><th>Desvantagem</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Embutir (embedding)</td><td>Dados lidos juntos com frequência</td><td>Redundância e dificuldade de atualização se repetido em muitos documentos</td></tr>
+              <tr><td>Referenciar</td><td>Dados reutilizados em muitos documentos</td><td>Múltiplas consultas para montar o dado</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 7 -->
+
+      <!-- ============================================================
+         FASE 8: COLUNAR
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #f1fa8c;">Fase 8: Banco Colunar</h2>
+          <p style="color: #6272a4;">Otimizado para leitura de grandes volumes analíticos.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Colunar × Orientado a Linhas</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="info-box">
+                <p><strong>Linhas (OLTP):</strong> eficiente para ler/gravar uma linha completa — adequado para transações do dia a dia.</p>
+              </div>
+              <div class="yellow-box">
+                <p><strong>Colunas (OLAP):</strong> armazena os valores de cada coluna juntos — eficiente para ler poucas colunas de <em>muitas</em> linhas.</p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Vantagem colunar:</strong> compressão eficiente (valores similares na mesma coluna) e leitura seletiva — só lê as colunas que a consulta pede.</p>
+              </div>
+              <div class="red-box">
+                <p><strong>Não é adequado para:</strong> transações linha a linha, operações OLTP comuns.</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Quando o colunar brilha?</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Cenário</th><th>Colunar?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Consulta analítica: <span class="mini-code">SELECT AVG(salario) FROM empregados</span> em 50 M de linhas</td><td style="color:#50fa7b;">✔ Sim</td></tr>
+              <tr><td>Armazenar sessão temporária de usuário com TTL</td><td style="color:#ff5555;">✘ Não (chave-valor)</td></tr>
+              <tr><td>Recomendação baseada em conexões entre pessoas</td><td style="color:#ff5555;">✘ Não (grafos)</td></tr>
+              <tr><td>Análise de grandes conjuntos de dados com muitas leituras agregadas</td><td style="color:#50fa7b;">✔ Sim</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 8 -->
+
+      <!-- ============================================================
+         FASE 9: GRAFOS
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #ff5555;">Fase 9: Banco de Grafos</h2>
+          <p style="color: #6272a4;">Modelo nativo para relacionamentos complexos.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>O que é um banco de grafos?</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <ul>
+                <li>Dados representados como <strong>nós, relacionamentos e propriedades</strong></li>
+                <li>Consultas exploram <strong>caminhos e conexões</strong></li>
+                <li>Travessia de relacionamentos é eficiente por design</li>
+              </ul>
+              <div class="red-box" style="margin-top: 8px;">
+                <p><strong>Não é tabela, não é JSON, não é chave-valor.</strong></p>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div class="mermaid" data-id="grafo-exemplo" style="max-width: 320px;">
+                <pre>
+graph LR
+  Ana --SEGUE--> Bruno
+  Ana --SEGUE--> Carla
+  Bruno --SEGUE--> Diego
+  style Ana fill:#ff79c6,color:#282a36
+  style Bruno fill:#8be9fd,color:#282a36
+  style Carla fill:#50fa7b,color:#282a36
+  style Diego fill:#f1fa8c,color:#282a36
+                </pre>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Casos de uso de Grafos</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Cenário</th><th>Grafo?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Recomendação de amigos em rede social</td><td style="color:#50fa7b;">✔ Ideal</td></tr>
+              <tr><td>Menor caminho entre duas pessoas</td><td style="color:#50fa7b;">✔ Ideal — travessia de relacionamentos</td></tr>
+              <tr><td>Rotas entre pontos (GPS)</td><td style="color:#50fa7b;">✔ Ideal</td></tr>
+              <tr><td>Análise de relacionamentos entre documentos</td><td style="color:#50fa7b;">✔ Adequado</td></tr>
+              <tr><td>Armazenar um código temporário acessado apenas por uma chave</td><td style="color:#ff5555;">✘ Não — use chave-valor</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Fase 9 -->
+
+      <!-- ============================================================
+         FASE 10: TABELA COMPARATIVA NOSQL
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Comparativo NoSQL</h2>
+          <p style="color: #6272a4;">Associe o cenário ao modelo certo — essa é a questão mais cobrada.</p>
+        </section>
+
+        <section data-auto-animate>
+          <h2>Mapa de Cenários × Modelos</h2>
+          <table class="comparison-table">
+            <thead>
+              <tr><th>Cenário</th><th>Modelo</th><th>Ferramenta</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Sessão de usuário com expiração</td><td><span class="pill-pink">Chave-valor</span></td><td>Redis</td></tr>
+              <tr><td>Catálogo com produtos de estruturas variadas</td><td><span class="pill-green">Documentos</span></td><td>MongoDB</td></tr>
+              <tr><td>Consulta analítica sobre grande volume</td><td><span class="pill-yellow">Colunar</span></td><td>Cassandra, DuckDB</td></tr>
+              <tr><td>Rede de relacionamentos entre pessoas</td><td><span class="pill-purple">Grafos</span></td><td>Neo4j</td></tr>
+            </tbody>
+          </table>
+          <div class="green-box" style="margin-top: 10px;">
+            <p>Gabarito Q50: <strong>B</strong> — I chave-valor; II documentos; III colunar; IV grafo</p>
+          </div>
+        </section>
+
+      </section><!-- fim Comparativo -->
+
+      <!-- ============================================================
+         QUIZ INTERATIVO
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2>Quiz: Revisão Final 🎯</h2>
+          <p>Conecte-se à sala e responda às questões da base de provas!</p>
+          <div class="info-box">
+            <p>São 10 questões cobrindo todos os temas. Boa sorte!</p>
+          </div>
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q01"
+            title="Q1 — Procedures"
+            question="Para centralizar uma rotina de fechamento mensal (calcular multas, atualizar saldos, registrar logs), o recurso mais adequado é:"
+            answer="c"
+            answer-text="Stored procedure — encapsula a sequência de comandos e roda diretamente no banco."
+            :options="[
+              { value: 'a', label: 'View' },
+              { value: 'b', label: 'Índice' },
+              { value: 'c', label: 'Stored procedure' },
+              { value: 'd', label: 'Chave estrangeira' },
+              { value: 'e', label: 'SELECT simples' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q02"
+            title="Q2 — Funções"
+            question="Uma função armazenada se diferencia de uma procedure principalmente porque:"
+            answer="c"
+            answer-text="Funções retornam um valor e podem ser usadas em expressões SQL, como no SELECT."
+            :options="[
+              { value: 'a', label: 'Nunca pode receber parâmetros' },
+              { value: 'b', label: 'É executada somente por triggers' },
+              { value: 'c', label: 'Retorna um valor e pode ser usada em expressões' },
+              { value: 'd', label: 'Não pode acessar dados do banco' },
+              { value: 'e', label: 'Serve apenas para criar tabelas' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q03"
+            title="Q3 — Triggers"
+            question="Um caso típico de uso de trigger é:"
+            answer="b"
+            answer-text="Registrar automaticamente em uma tabela de auditoria toda alteração feita em outra tabela."
+            :options="[
+              { value: 'a', label: 'Listar todos os produtos cadastrados' },
+              { value: 'b', label: 'Registrar automaticamente em tabela de auditoria toda alteração' },
+              { value: 'c', label: 'Criar uma interface gráfica para o usuário' },
+              { value: 'd', label: 'Armazenar sessões temporárias em memória' },
+              { value: 'e', label: 'Particionar arquivos CSV' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q04"
+            title="Q4 — Triggers"
+            question="Uma trigger BEFORE INSERT é executada:"
+            answer="b"
+            answer-text="BEFORE INSERT dispara antes que o registro seja gravado — permite validar ou modificar os dados."
+            :options="[
+              { value: 'a', label: 'Depois que o registro foi gravado' },
+              { value: 'b', label: 'Antes que o registro seja gravado' },
+              { value: 'c', label: 'Apenas quando o banco é iniciado' },
+              { value: 'd', label: 'Somente durante backup' },
+              { value: 'e', label: 'Somente em bancos NoSQL' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q05"
+            title="Q5 — Views"
+            question="Uma view pode ser usada como mecanismo de segurança porque:"
+            answer="a"
+            answer-text="A view pode expor apenas certas colunas ou linhas, ocultando dados sensíveis como CPF e salário."
+            :options="[
+              { value: 'a', label: 'Permite expor apenas determinadas colunas ou linhas aos usuários' },
+              { value: 'b', label: 'Criptografa automaticamente todos os arquivos' },
+              { value: 'c', label: 'Impede qualquer acesso ao banco' },
+              { value: 'd', label: 'Substitui senhas por índices' },
+              { value: 'e', label: 'Remove a necessidade de autenticação' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q06"
+            title="Q6 — Materialized Views"
+            question="A principal diferença entre uma view comum e uma materialized view é que a materialized view:"
+            answer="b"
+            answer-text="A materialized view armazena fisicamente o resultado da consulta — a view comum só guarda a definição."
+            :options="[
+              { value: 'a', label: 'Nunca usa SQL' },
+              { value: 'b', label: 'Armazena fisicamente o resultado da consulta' },
+              { value: 'c', label: 'Não pode ser consultada' },
+              { value: 'd', label: 'Só existe em bancos chave-valor' },
+              { value: 'e', label: 'É executada apenas por triggers' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q07"
+            title="Q7 — NoSQL"
+            question="Assinale a alternativa que apresenta apenas categorias de bancos NoSQL:"
+            answer="a"
+            answer-text="As quatro categorias NoSQL são: chave-valor, documentos, colunar e grafos."
+            :options="[
+              { value: 'a', label: 'Chave-valor, documentos, colunar e grafos' },
+              { value: 'b', label: 'Tabela, linha, coluna e chave primária' },
+              { value: 'c', label: 'Procedure, function, trigger e view' },
+              { value: 'd', label: 'SELECT, INSERT, UPDATE e DELETE' },
+              { value: 'e', label: 'Normalização, dependência funcional, entidade e relacionamento' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q08"
+            title="Q8 — Chave-Valor"
+            question="Uma aplicação precisa armazenar sessões de usuários com expiração automática. O modelo NoSQL mais adequado é:"
+            answer="b"
+            answer-text="Chave-valor (Redis) suporta TTL nativo — a chave expira automaticamente após o tempo definido."
+            :options="[
+              { value: 'a', label: 'Grafo' },
+              { value: 'b', label: 'Chave-valor' },
+              { value: 'c', label: 'Colunar analítico' },
+              { value: 'd', label: 'Relacional normalizado' },
+              { value: 'e', label: 'View materializada' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q09"
+            title="Q9 — Colunar"
+            question="Comparado ao armazenamento orientado a linhas, o colunar pode ser vantajoso quando:"
+            answer="a"
+            answer-text="Colunar lê apenas as colunas necessárias, sendo muito eficiente quando a consulta acessa poucas colunas de muitas linhas."
+            :options="[
+              { value: 'a', label: 'A consulta acessa poucas colunas de muitas linhas' },
+              { value: 'b', label: 'A consulta sempre precisa carregar todos os campos de uma linha' },
+              { value: 'c', label: 'Não há nenhuma consulta analítica' },
+              { value: 'd', label: 'Os dados são apenas pares chave-valor' },
+              { value: 'e', label: 'O objetivo principal é percorrer relacionamentos' },
+            ]" />
+        </section>
+
+        <section>
+          <poll-question
+            id="rev-q10"
+            title="Q10 — Comparativo NoSQL"
+            question="Associe corretamente: I. Sessão com expiração. II. Catálogo variado. III. Consulta analítica. IV. Rede social."
+            answer="b"
+            answer-text="I chave-valor, II documentos, III colunar, IV grafo — esta é a associação correta."
+            :options="[
+              { value: 'a', label: 'I documentos; II grafo; III chave-valor; IV colunar' },
+              { value: 'b', label: 'I chave-valor; II documentos; III colunar; IV grafo' },
+              { value: 'c', label: 'I grafo; II colunar; III documentos; IV chave-valor' },
+              { value: 'd', label: 'I colunar; II chave-valor; III grafo; IV documentos' },
+              { value: 'e', label: 'I view; II trigger; III procedure; IV function' },
+            ]" />
+        </section>
+
+      </section><!-- fim Quiz -->
+
+      <!-- SLIDE: Encerramento -->
+      <section data-auto-animate>
+        <h2>Resumo da Revisão</h2>
+        <ls-u>
+          <li><strong>Procedures</strong> encapsulam rotinas; <strong>funções</strong> retornam valores e podem ir no SELECT</li>
+          <li><strong>Triggers</strong> disparam automaticamente — cuidado com invisibilidade, desempenho e recursão</li>
+          <li><strong>Views</strong> armazenam consultas; <strong>Materialized Views</strong> armazenam resultados</li>
+          <li><strong>Chave-valor</strong> → cache e sessões; <strong>Documentos</strong> → estruturas variadas</li>
+          <li><strong>Colunar</strong> → análise de grandes volumes; <strong>Grafos</strong> → relacionamentos complexos</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 26pt; color: #50fa7b;">🎯 Boa prova a todos!</p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
