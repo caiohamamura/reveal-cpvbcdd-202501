@@ -214,8 +214,7 @@
 
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
-        <header1 aula="Revisão" curso="Banco de Dados 2" title-size="22"
-                 title="Revisão para Prova Final">
+        <header1 aula="Revisão" curso="Banco de Dados 2" title-size="22" title="Revisão para Prova Final">
           <div class="mermaid" data-id="cover-revisao" style="width:520px">
             <pre>
 ---
@@ -330,7 +329,8 @@ mindmap
           <multi-col style="gap:15px">
             <div style="flex: 1;">
               <div class="green-box">
-                <p><strong>O que é:</strong> rotina que <strong>retorna um valor</strong> e pode ser usada em expressões SQL</p>
+                <p><strong>O que é:</strong> rotina que <strong>retorna um valor</strong> e pode ser usada em expressões
+                  SQL</p>
               </div>
               <ul>
                 <li>Retorna um valor (diferente da procedure)</li>
@@ -340,11 +340,12 @@ mindmap
             </div>
             <div style="flex: 1;">
               <code-block lang="sql" data-trim>
-SELECT nome, calcular_idade(data_nasc)
-FROM funcionario;
+                SELECT nome, calcular_idade(data_nasc)
+                FROM funcionario;
               </code-block>
               <div class="info-box">
-                <p>A função <span class="mini-code">calcular_idade</span> recebe a data de nascimento e retorna a idade — exemplo de <strong>função definida pelo usuário</strong>.</p>
+                <p>A função <span class="mini-code">calcular_idade</span> recebe a data de nascimento e retorna a idade
+                  — exemplo de <strong>função definida pelo usuário</strong>.</p>
               </div>
             </div>
           </multi-col>
@@ -354,14 +355,38 @@ FROM funcionario;
           <h2>Procedure × Função</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Característica</th><th>Procedure</th><th>Função</th></tr>
+              <tr>
+                <th>Característica</th>
+                <th>Procedure</th>
+                <th>Função</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Retorna valor?</td><td>Não diretamente</td><td>Sim, obrigatoriamente</td></tr>
-              <tr><td>Usada em SELECT?</td><td>Não</td><td>Sim</td></tr>
-              <tr><td>Recebe parâmetros?</td><td>Sim</td><td>Sim</td></tr>
-              <tr><td>Finalidade típica</td><td>Automatizar rotinas</td><td>Calcular/transformar valores</td></tr>
-              <tr><td>Invocação</td><td><span class="mini-code">CALL nome()</span></td><td>Dentro de expressões SQL</td></tr>
+              <tr>
+                <td>Retorna valor?</td>
+                <td>Não diretamente</td>
+                <td>Sim, obrigatoriamente</td>
+              </tr>
+              <tr>
+                <td>Usada em SELECT?</td>
+                <td>Não</td>
+                <td>Sim</td>
+              </tr>
+              <tr>
+                <td>Recebe parâmetros?</td>
+                <td>Sim</td>
+                <td>Sim</td>
+              </tr>
+              <tr>
+                <td>Finalidade típica</td>
+                <td>Automatizar rotinas</td>
+                <td>Calcular/transformar valores</td>
+              </tr>
+              <tr>
+                <td>Invocação</td>
+                <td><span class="mini-code">CALL nome()</span></td>
+                <td>Dentro de expressões SQL</td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -381,27 +406,50 @@ FROM funcionario;
         <section data-auto-animate>
           <h2>O que é uma Trigger?</h2>
           <div class="green-box">
-            <p><strong>Definição:</strong> rotina executada <strong>automaticamente</strong> em resposta a eventos como INSERT, UPDATE ou DELETE</p>
+            <p><strong>Definição:</strong> rotina executada <strong>automaticamente</strong> em resposta a eventos como
+              INSERT, UPDATE ou DELETE</p>
           </div>
           <multi-col style="gap:15px">
             <div style="flex: 1;">
               <table class="comparison-table">
                 <thead>
-                  <tr><th>Tipo</th><th>Quando executa</th></tr>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Quando executa</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr><td><span class="mini-code">BEFORE INSERT</span></td><td>Antes de gravar o registro</td></tr>
-                  <tr><td><span class="mini-code">AFTER INSERT</span></td><td>Depois de gravar o registro</td></tr>
-                  <tr><td><span class="mini-code">BEFORE UPDATE</span></td><td>Antes da alteração</td></tr>
-                  <tr><td><span class="mini-code">AFTER UPDATE</span></td><td>Depois da alteração</td></tr>
-                  <tr><td><span class="mini-code">BEFORE DELETE</span></td><td>Antes da remoção</td></tr>
-                  <tr><td><span class="mini-code">AFTER DELETE</span></td><td>Depois da remoção</td></tr>
+                  <tr>
+                    <td style="width:41%"><span class="mini-code">BEFORE INSERT</span></td>
+                    <td>Antes de gravar o registro</td>
+                  </tr>
+                  <tr>
+                    <td><span class="mini-code">AFTER INSERT</span></td>
+                    <td>Depois de gravar o registro</td>
+                  </tr>
+                  <tr>
+                    <td><span class="mini-code">BEFORE UPDATE</span></td>
+                    <td>Antes da alteração</td>
+                  </tr>
+                  <tr>
+                    <td><span class="mini-code">AFTER UPDATE</span></td>
+                    <td>Depois da alteração</td>
+                  </tr>
+                  <tr>
+                    <td><span class="mini-code">BEFORE DELETE</span></td>
+                    <td>Antes da remoção</td>
+                  </tr>
+                  <tr>
+                    <td><span class="mini-code">AFTER DELETE</span></td>
+                    <td>Depois da remoção</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
             <div style="flex: 1;">
               <div class="yellow-box">
-                <p><strong>Caso clássico:</strong> registrar em <span class="mini-code">historico_preco</span> toda alteração de preço com OLD e NEW values</p>
+                <p><strong>Caso clássico:</strong> registrar em <span class="mini-code">historico_preco</span> toda
+                  alteração de preço com OLD e NEW values</p>
               </div>
             </div>
           </multi-col>
@@ -437,24 +485,24 @@ FROM funcionario;
         <section data-auto-animate>
           <h2>Exemplo: Trigger de Auditoria</h2>
           <code-block lang="sql" data-trim>
-CREATE OR REPLACE FUNCTION fn_audit_preco()
-RETURNS TRIGGER AS $$
-BEGIN
-    INSERT INTO historico_preco(
-        produto_id, preco_antigo,
-        preco_novo, data_alteracao
-    ) VALUES (
-        OLD.id, OLD.preco,
-        NEW.preco, NOW()
-    );
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+            CREATE OR REPLACE FUNCTION fn_audit_preco()
+            RETURNS TRIGGER AS $$
+            BEGIN
+            INSERT INTO historico_preco(
+            produto_id, preco_antigo,
+            preco_novo, data_alteracao
+            ) VALUES (
+            OLD.id, OLD.preco,
+            NEW.preco, NOW()
+            );
+            RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_audit_preco
-AFTER UPDATE OF preco ON produto
-FOR EACH ROW
-EXECUTE FUNCTION fn_audit_preco();
+            CREATE TRIGGER trg_audit_preco
+            AFTER UPDATE OF preco ON produto
+            FOR EACH ROW
+            EXECUTE FUNCTION fn_audit_preco();
           </code-block>
         </section>
 
@@ -488,9 +536,9 @@ EXECUTE FUNCTION fn_audit_preco();
                 <p><strong>Segurança:</strong> expõe apenas colunas/linhas autorizadas ao usuário</p>
               </div>
               <code-block lang="sql" data-trim>
-CREATE VIEW vw_funcionarios_publico AS
-SELECT nome, setor
-FROM funcionario;
+                CREATE VIEW vw_funcionarios_publico AS
+                SELECT nome, setor
+                FROM funcionario;
               </code-block>
               <div class="info-box">
                 <p>CPF e salário ficam ocultos para quem consulta a view</p>
@@ -507,7 +555,8 @@ FROM funcionario;
             <li>Não melhoram desempenho por si só (a consulta roda a cada vez)</li>
           </ul>
           <div class="yellow-box">
-            <p><strong>Pergunta comum na prova:</strong> view armazena dados? <strong>Não</strong> — armazena a definição da consulta.</p>
+            <p><strong>Pergunta comum na prova:</strong> view armazena dados? <strong>Não</strong> — armazena a
+              definição da consulta.</p>
           </div>
         </section>
 
@@ -527,14 +576,38 @@ FROM funcionario;
           <h2>View × Materialized View</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Característica</th><th>View comum</th><th>Materialized View</th></tr>
+              <tr>
+                <th>Característica</th>
+                <th>View comum</th>
+                <th>Materialized View</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Armazena dados?</td><td>Não — só a definição</td><td><strong>Sim</strong> — resultado físico</td></tr>
-              <tr><td>Desempenho</td><td>Executa a cada consulta</td><td>Resultado pré-calculado (rápido)</td></tr>
-              <tr><td>Dados atualizados?</td><td>Sempre em tempo real</td><td>Pode ficar <strong>defasada</strong></td></tr>
-              <tr><td>Ocupa espaço?</td><td>Não</td><td>Sim</td></tr>
-              <tr><td>Atualização</td><td>Automática</td><td>Manual (<span class="mini-code">REFRESH</span>)</td></tr>
+              <tr>
+                <td>Armazena dados?</td>
+                <td>Não — só a definição</td>
+                <td><strong>Sim</strong> — resultado físico</td>
+              </tr>
+              <tr>
+                <td>Desempenho</td>
+                <td>Executa a cada consulta</td>
+                <td>Resultado pré-calculado (rápido)</td>
+              </tr>
+              <tr>
+                <td>Dados atualizados?</td>
+                <td>Sempre em tempo real</td>
+                <td>Pode ficar <strong>defasada</strong></td>
+              </tr>
+              <tr>
+                <td>Ocupa espaço?</td>
+                <td>Não</td>
+                <td>Sim</td>
+              </tr>
+              <tr>
+                <td>Atualização</td>
+                <td>Automática</td>
+                <td>Manual (<span class="mini-code">REFRESH</span>)</td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -557,19 +630,20 @@ FROM funcionario;
                 <p><strong>⚠️ Problema principal:</strong></p>
               </div>
               <ul>
-                <li>Se novas vendas forem inseridas após o último <span class="mini-code">REFRESH</span>, os totais ficam desatualizados</li>
+                <li>Se novas vendas forem inseridas após o último <span class="mini-code">REFRESH</span>, os totais
+                  ficam desatualizados</li>
                 <li>Evita recalcular, mas exige estratégia de atualização</li>
               </ul>
             </div>
           </multi-col>
           <code-block lang="sql" data-trim>
-CREATE MATERIALIZED VIEW mv_vendas_mes AS
-SELECT DATE_TRUNC('month', data) AS mes,
-       SUM(valor) AS total
-FROM vendas
-GROUP BY 1;
+            CREATE MATERIALIZED VIEW mv_vendas_mes AS
+            SELECT DATE_TRUNC('month', data) AS mes,
+            SUM(valor) AS total
+            FROM vendas
+            GROUP BY 1;
 
-REFRESH MATERIALIZED VIEW mv_vendas_mes;
+            REFRESH MATERIALIZED VIEW mv_vendas_mes;
           </code-block>
         </section>
 
@@ -593,7 +667,8 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
             <li>Modelos diferentes do relacional para problemas diferentes</li>
           </ul>
           <div class="yellow-box">
-            <p><strong>A escolha do modelo depende</strong> do tipo de consulta e da forma como os dados se relacionam — não da "moda" do momento.</p>
+            <p><strong>A escolha do modelo depende</strong> do tipo de consulta e da forma como os dados se relacionam —
+              não da "moda" do momento.</p>
           </div>
         </section>
 
@@ -601,7 +676,12 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
           <h2>Os 4 modelos NoSQL</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Modelo</th><th>Ideia</th><th>Exemplo de uso</th><th>Ferramenta</th></tr>
+              <tr>
+                <th>Modelo</th>
+                <th>Ideia</th>
+                <th>Exemplo de uso</th>
+                <th>Ferramenta</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -634,16 +714,32 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
 
         <section data-auto-animate>
           <h2>Cenário → Modelo</h2>
-          <p style="font-size: 0.62em; color: #6272a4;">Questão clássica de prova: associar o cenário ao modelo mais adequado</p>
+          <p style="font-size: 0.62em; color: #6272a4;">Questão clássica de prova: associar o cenário ao modelo mais
+            adequado</p>
           <table class="comparison-table">
             <thead>
-              <tr><th>Cenário</th><th>Modelo</th></tr>
+              <tr>
+                <th>Cenário</th>
+                <th>Modelo</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Sessão de usuário com expiração</td><td><span class="pill-yellow">Chave-valor</span></td></tr>
-              <tr><td>Catálogo com produtos de estruturas variadas</td><td><span class="pill-purple">Documentos</span></td></tr>
-              <tr><td>Consulta analítica sobre grande volume de dados</td><td><span class="pill">Colunar</span></td></tr>
-              <tr><td>Rede de relacionamentos entre pessoas</td><td><span class="pill-pink">Grafos</span></td></tr>
+              <tr>
+                <td>Sessão de usuário com expiração</td>
+                <td><span class="pill-yellow">Chave-valor</span></td>
+              </tr>
+              <tr>
+                <td>Catálogo com produtos de estruturas variadas</td>
+                <td><span class="pill-purple">Documentos</span></td>
+              </tr>
+              <tr>
+                <td>Consulta analítica sobre grande volume de dados</td>
+                <td><span class="pill">Colunar</span></td>
+              </tr>
+              <tr>
+                <td>Rede de relacionamentos entre pessoas</td>
+                <td><span class="pill-pink">Grafos</span></td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -688,16 +784,48 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
           <h2>Comandos essenciais</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Comando</th><th>Ação</th><th>Estrutura</th></tr>
+              <tr>
+                <th>Comando</th>
+                <th>Ação</th>
+                <th>Estrutura</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td><span class="mini-code">SET / GET</span></td><td>Gravar / ler valor</td><td>String</td></tr>
-              <tr><td><span class="mini-code">EXPIRE / TTL</span></td><td>Definir / verificar expiração</td><td>Qualquer</td></tr>
-              <tr><td><span class="mini-code">INCR</span></td><td>Incremento atômico</td><td>String (número)</td></tr>
-              <tr><td><span class="mini-code">HSET / HGETALL</span></td><td>Campos de um objeto</td><td>Hash</td></tr>
-              <tr><td><span class="mini-code">LPUSH / RPOP</span></td><td>Fila (FIFO)</td><td>List</td></tr>
-              <tr><td><span class="mini-code">SADD / SMEMBERS</span></td><td>Conjunto sem repetição</td><td>Set</td></tr>
-              <tr><td><span class="mini-code">ZADD / ZREVRANGE</span></td><td>Ranking ordenado</td><td>Sorted Set</td></tr>
+              <tr>
+                <td><span class="mini-code">SET / GET</span></td>
+                <td>Gravar / ler valor</td>
+                <td>String</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">EXPIRE / TTL</span></td>
+                <td>Definir / verificar expiração</td>
+                <td>Qualquer</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">INCR</span></td>
+                <td>Incremento atômico</td>
+                <td>String (número)</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">HSET / HGETALL</span></td>
+                <td>Campos de um objeto</td>
+                <td>Hash</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">LPUSH / RPOP</span></td>
+                <td>Fila (FIFO)</td>
+                <td>List</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">SADD / SMEMBERS</span></td>
+                <td>Conjunto sem repetição</td>
+                <td>Set</td>
+              </tr>
+              <tr>
+                <td><span class="mini-code">ZADD / ZREVRANGE</span></td>
+                <td>Ranking ordenado</td>
+                <td>Sorted Set</td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -731,13 +859,28 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
             <div style="flex: 1;">
               <table class="comparison-table">
                 <thead>
-                  <tr><th>SQL</th><th>MongoDB</th></tr>
+                  <tr>
+                    <th>SQL</th>
+                    <th>MongoDB</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr><td>Tabela</td><td>Collection</td></tr>
-                  <tr><td>Linha</td><td>Documento</td></tr>
-                  <tr><td>Coluna</td><td>Campo</td></tr>
-                  <tr><td>JOIN</td><td>Embutir / $lookup</td></tr>
+                  <tr>
+                    <td>Tabela</td>
+                    <td>Collection</td>
+                  </tr>
+                  <tr>
+                    <td>Linha</td>
+                    <td>Documento</td>
+                  </tr>
+                  <tr>
+                    <td>Coluna</td>
+                    <td>Campo</td>
+                  </tr>
+                  <tr>
+                    <td>JOIN</td>
+                    <td>Embutir / $lookup</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -806,7 +949,8 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
                 <li>Agregações: SUM, AVG, COUNT, GROUP BY</li>
               </ul>
               <div class="info-box">
-                <p>Linhas × Colunar: se a consulta precisa de <strong>todas as colunas de uma linha</strong>, o armazenamento por linhas é mais eficiente</p>
+                <p>Linhas × Colunar: se a consulta precisa de <strong>todas as colunas de uma linha</strong>, o
+                  armazenamento por linhas é mais eficiente</p>
               </div>
             </div>
           </multi-col>
@@ -846,7 +990,8 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
                 <li>Detecção de fraudes</li>
               </ul>
               <div class="red-box">
-                <p><strong>Menos adequado:</strong> armazenar um código temporário acessado apenas por uma chave → chave-valor</p>
+                <p><strong>Menos adequado:</strong> armazenar um código temporário acessado apenas por uma chave →
+                  chave-valor</p>
               </div>
             </div>
           </multi-col>
@@ -855,12 +1000,12 @@ REFRESH MATERIALIZED VIEW mv_vendas_mes;
         <section data-auto-animate>
           <h2>Exemplo Cypher</h2>
           <code-block lang="cypher" data-trim>
-MATCH (p:Pessoa {nome: "Ana"})-[:SEGUE]->(amigo)
-RETURN amigo.nome
+            MATCH (p:Pessoa {nome: "Ana"})-[:SEGUE]->(amigo)
+            RETURN amigo.nome
 
-MATCH (a:Pessoa)-[:SEGUE*2]->(recomendacao)
-WHERE a.nome = "Ana"
-RETURN DISTINCT recomendacao.nome
+            MATCH (a:Pessoa)-[:SEGUE*2]->(recomendacao)
+            WHERE a.nome = "Ana"
+            RETURN DISTINCT recomendacao.nome
           </code-block>
           <div class="info-box">
             <p>Encontrar o menor caminho entre duas pessoas = <strong>travessia de relacionamentos</strong></p>
@@ -883,14 +1028,44 @@ RETURN DISTINCT recomendacao.nome
           <h2>Recursos SQL no Banco</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Recurso</th><th>O que faz</th><th>Retorna valor?</th><th>Execução</th></tr>
+              <tr>
+                <th>Recurso</th>
+                <th>O que faz</th>
+                <th>Retorna valor?</th>
+                <th>Execução</th>
+              </tr>
             </thead>
             <tbody>
-              <tr><td>Procedure</td><td>Encapsula rotinas</td><td>Não</td><td>Manual (CALL)</td></tr>
-              <tr><td>Função</td><td>Calcula/transforma</td><td>Sim</td><td>Em expressões SQL</td></tr>
-              <tr><td>Trigger</td><td>Reage a eventos</td><td>—</td><td>Automática</td></tr>
-              <tr><td>View</td><td>Simplifica consulta</td><td>Resultado</td><td>A cada acesso</td></tr>
-              <tr><td>Mat. View</td><td>Resultado físico</td><td>Resultado</td><td>Após REFRESH</td></tr>
+              <tr>
+                <td>Procedure</td>
+                <td>Encapsula rotinas</td>
+                <td>Não</td>
+                <td>Manual (CALL)</td>
+              </tr>
+              <tr>
+                <td>Função</td>
+                <td>Calcula/transforma</td>
+                <td>Sim</td>
+                <td>Em expressões SQL</td>
+              </tr>
+              <tr>
+                <td>Trigger</td>
+                <td>Reage a eventos</td>
+                <td>—</td>
+                <td>Automática</td>
+              </tr>
+              <tr>
+                <td>View</td>
+                <td>Simplifica consulta</td>
+                <td>Resultado</td>
+                <td>A cada acesso</td>
+              </tr>
+              <tr>
+                <td>Mat. View</td>
+                <td>Resultado físico</td>
+                <td>Resultado</td>
+                <td>Após REFRESH</td>
+              </tr>
             </tbody>
           </table>
         </section>
@@ -899,7 +1074,11 @@ RETURN DISTINCT recomendacao.nome
           <h2>Modelos NoSQL — quando usar?</h2>
           <table class="comparison-table">
             <thead>
-              <tr><th>Modelo</th><th>Use quando...</th><th>Não use quando...</th></tr>
+              <tr>
+                <th>Modelo</th>
+                <th>Use quando...</th>
+                <th>Não use quando...</th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -933,24 +1112,72 @@ RETURN DISTINCT recomendacao.nome
          ============================================================ -->
       <section>
 
+        <!-- SLIDE: Formato da prova -->
+        <section>
+          <h2>Formato da Prova 📋</h2>
+          <p>15 questões objetivas, distribuídas assim:</p>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Tema</th>
+                <th>Questões</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Procedures e funções</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Triggers</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Views</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Materialized views</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>NoSQL geral</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Chave-valor</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Documentos</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Colunar</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Grafos</td>
+                <td>1</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
         <!-- SLIDE: Instruções do quiz -->
         <section>
-          <h2>Quiz de Revisão 🎯</h2>
+          <h2>Simulado de Revisão 🎯</h2>
           <p>Conecte-se à sala e vote nas questões!</p>
           <div class="yellow-box">
-            <p>Teste seus conhecimentos antes da prova</p>
+            <p>15 questões na mesma distribuição da prova + 1 bônus</p>
           </div>
         </section>
 
-        <!-- Q1: Procedures -->
+        <!-- Q1: Procedures (base Q01) -->
         <section>
-          <poll-question
-            id="rev-q1"
-            title="Questão 1: Procedures"
-            question="Uma empresa precisa executar, ao final de cada mês, uma sequência de comandos no banco: calcular multas, atualizar saldos, registrar logs. O recurso mais adequado é:"
-            answer="c"
-            answer-text="Stored procedure centraliza rotinas com vários comandos dentro do SGBD."
-            :options="[
+          <poll-question id="rev-q1" title="Questão 1: Procedures"
+            question="Uma empresa precisa executar, ao final de cada mês, uma sequência de comandos no banco: calcular multas, atualizar saldos, registrar logs e marcar cobranças como processadas. Para centralizar essa rotina dentro do SGBD, o recurso mais adequado é:"
+            answer="c" answer-text="Stored procedure centraliza rotinas com vários comandos dentro do SGBD." :options="[
               { value: 'a', label: 'View' },
               { value: 'b', label: 'Índice' },
               { value: 'c', label: 'Stored procedure' },
@@ -959,15 +1186,11 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q2: Funções -->
+        <!-- Q2: Funções (base Q05) -->
         <section>
-          <poll-question
-            id="rev-q2"
-            title="Questão 2: Funções"
-            question="Uma função armazenada no banco se diferencia de uma procedure principalmente porque:"
-            answer="c"
-            answer-text="Funções retornam um valor e podem ser usadas dentro de expressões SQL."
-            :options="[
+          <poll-question id="rev-q2" title="Questão 2: Funções"
+            question="Uma função armazenada no banco se diferencia de uma procedure principalmente porque:" answer="c"
+            answer-text="Funções retornam um valor e podem ser usadas dentro de expressões SQL." :options="[
               { value: 'a', label: 'Nunca pode receber parâmetros' },
               { value: 'b', label: 'É executada somente por triggers' },
               { value: 'c', label: 'Retorna um valor e pode ser usada em expressões' },
@@ -976,13 +1199,24 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q3: Triggers -->
+        <!-- Q3: Triggers (base Q11) -->
         <section>
-          <poll-question
-            id="rev-q3"
-            title="Questão 3: Triggers"
-            question="Uma trigger que altera a mesma tabela que disparou sua execução pode causar:"
+          <poll-question id="rev-q3" title="Questão 3: Triggers" question="Uma trigger BEFORE INSERT é executada:"
             answer="b"
+            answer-text="BEFORE INSERT executa antes que o registro seja gravado — útil para validar ou ajustar dados."
+            :options="[
+              { value: 'a', label: 'Depois que o registro foi gravado' },
+              { value: 'b', label: 'Antes que o registro seja gravado' },
+              { value: 'c', label: 'Apenas quando o banco é iniciado' },
+              { value: 'd', label: 'Somente durante backup' },
+              { value: 'e', label: 'Somente em bancos NoSQL' },
+            ]" />
+        </section>
+
+        <!-- Q4: Triggers (base Q16) -->
+        <section>
+          <poll-question id="rev-q4" title="Questão 4: Triggers"
+            question="Uma trigger que altera a mesma tabela que disparou sua execução pode causar:" answer="b"
             answer-text="Recursão ou comportamento inesperado — cuidado com triggers que modificam a tabela de origem!"
             :options="[
               { value: 'a', label: 'Maior normalização dos dados' },
@@ -993,13 +1227,10 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q4: Views -->
+        <!-- Q5: Views (base Q19) -->
         <section>
-          <poll-question
-            id="rev-q4"
-            title="Questão 4: Views"
-            question="Uma view pode ser usada como mecanismo de segurança porque:"
-            answer="a"
+          <poll-question id="rev-q5" title="Questão 5: Views"
+            question="Uma view pode ser usada como mecanismo de segurança porque:" answer="a"
             answer-text="Views permitem expor apenas determinadas colunas ou linhas, escondendo dados sensíveis."
             :options="[
               { value: 'a', label: 'Permite expor apenas determinadas colunas ou linhas' },
@@ -1010,11 +1241,22 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q5: Materialized Views -->
+        <!-- Q6: Views (base Q20) -->
         <section>
-          <poll-question
-            id="rev-q5"
-            title="Questão 5: Materialized Views"
+          <poll-question id="rev-q6" title="Questão 6: Views" question="Uma view comum, em geral:" answer="b"
+            answer-text="View comum armazena a definição da consulta, não os dados — a consulta roda a cada acesso."
+            :options="[
+              { value: 'a', label: 'Armazena fisicamente todos os dados resultantes da consulta' },
+              { value: 'b', label: 'Armazena a definição da consulta, não necessariamente os dados' },
+              { value: 'c', label: 'Funciona apenas em bancos NoSQL' },
+              { value: 'd', label: 'É sempre mais rápida que uma tabela' },
+              { value: 'e', label: 'Não pode ser usada em consultas' },
+            ]" />
+        </section>
+
+        <!-- Q7: Materialized Views (base Q23) -->
+        <section>
+          <poll-question id="rev-q7" title="Questão 7: Materialized Views"
             question="A principal diferença entre uma view comum e uma materialized view é que a materialized view:"
             answer="b"
             answer-text="A materialized view armazena fisicamente o resultado da consulta, diferente da view comum que só guarda a definição."
@@ -1027,15 +1269,26 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q6: NoSQL categorias -->
+        <!-- Q8: Materialized Views (base Q27) -->
         <section>
-          <poll-question
-            id="rev-q6"
-            title="Questão 6: NoSQL"
-            question="Assinale a alternativa que apresenta apenas categorias de bancos NoSQL:"
+          <poll-question id="rev-q8" title="Questão 8: Materialized Views"
+            question="Se uma materialized view armazena o total de vendas por mês, mas novas vendas foram inseridas após sua última atualização, então:"
             answer="a"
-            answer-text="Os 4 modelos NoSQL: Chave-valor, Documentos, Colunar e Grafos."
+            answer-text="A materialized view fica defasada até o próximo REFRESH — esse é seu principal cuidado."
             :options="[
+              { value: 'a', label: 'A materialized view pode apresentar valores desatualizados' },
+              { value: 'b', label: 'A tabela original será apagada automaticamente' },
+              { value: 'c', label: 'O banco deixará de aceitar consultas' },
+              { value: 'd', label: 'A materialized view se transforma em trigger' },
+              { value: 'e', label: 'Os dados deixam de ser relacionais' },
+            ]" />
+        </section>
+
+        <!-- Q9: NoSQL geral (base Q30) -->
+        <section>
+          <poll-question id="rev-q9" title="Questão 9: NoSQL"
+            question="Assinale a alternativa que apresenta apenas categorias de bancos NoSQL:" answer="a"
+            answer-text="Os 4 modelos NoSQL: Chave-valor, Documentos, Colunar e Grafos." :options="[
               { value: 'a', label: 'Chave-valor, documentos, colunar e grafos' },
               { value: 'b', label: 'Tabela, linha, coluna e chave primária' },
               { value: 'c', label: 'Procedure, function, trigger e view' },
@@ -1044,14 +1297,24 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q7: Chave-valor -->
+        <!-- Q10: Chave-valor (base Q33) -->
         <section>
-          <poll-question
-            id="rev-q7"
-            title="Questão 7: Chave-valor"
+          <poll-question id="rev-q10" title="Questão 10: Chave-valor" question="Um uso comum de banco chave-valor é:"
+            answer="a" answer-text="Cache de dados acessados com frequência é o caso clássico de chave-valor (Redis)."
+            :options="[
+              { value: 'a', label: 'Cache de dados acessados com frequência' },
+              { value: 'b', label: 'Modelagem de relações sociais complexas' },
+              { value: 'c', label: 'Geração de diagramas entidade-relacionamento' },
+              { value: 'd', label: 'Substituição de toda lógica da aplicação por views' },
+              { value: 'e', label: 'Criação de procedures recursivas' },
+            ]" />
+        </section>
+
+        <!-- Q11: Chave-valor (base Q34) -->
+        <section>
+          <poll-question id="rev-q11" title="Questão 11: Chave-valor"
             question="Uma aplicação precisa armazenar sessões de usuários com expiração automática. O modelo NoSQL mais diretamente adequado é:"
-            answer="b"
-            answer-text="Chave-valor (Redis) é ideal para sessões com TTL — expiração automática integrada."
+            answer="b" answer-text="Chave-valor (Redis) é ideal para sessões com TTL — expiração automática integrada."
             :options="[
               { value: 'a', label: 'Grafo' },
               { value: 'b', label: 'Chave-valor' },
@@ -1061,15 +1324,25 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q8: Documentos -->
+        <!-- Q12: Documentos (base Q38) -->
         <section>
-          <poll-question
-            id="rev-q8"
-            title="Questão 8: Documentos"
-            question="Uma desvantagem possível de embutir muitos dados repetidos em documentos é:"
-            answer="a"
-            answer-text="Embutir demais causa aumento de redundância e dificuldade de atualização."
+          <poll-question id="rev-q12" title="Questão 12: Documentos"
+            question="Um catálogo de produtos em que cada tipo de produto possui atributos muito diferentes pode se beneficiar de um banco:"
+            answer="a" answer-text="Documentos (MongoDB): cada produto pode ter campos diferentes — schema flexível."
             :options="[
+              { value: 'a', label: 'Orientado a documentos' },
+              { value: 'b', label: 'Exclusivamente relacional e altamente rígido' },
+              { value: 'c', label: 'Apenas de grafos' },
+              { value: 'd', label: 'Apenas de procedures' },
+              { value: 'e', label: 'Apenas de materialized views' },
+            ]" />
+        </section>
+
+        <!-- Q13: Documentos (base Q40) -->
+        <section>
+          <poll-question id="rev-q13" title="Questão 13: Documentos"
+            question="Uma desvantagem possível de embutir muitos dados repetidos em documentos é:" answer="a"
+            answer-text="Embutir demais causa aumento de redundância e dificuldade de atualização." :options="[
               { value: 'a', label: 'Aumento de redundância e dificuldade de atualização' },
               { value: 'b', label: 'Impossibilidade de consultar o documento' },
               { value: 'c', label: 'Transformação automática em banco de grafos' },
@@ -1078,11 +1351,9 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q9: Colunar -->
+        <!-- Q14: Colunar (base Q44) -->
         <section>
-          <poll-question
-            id="rev-q9"
-            title="Questão 9: Colunar"
+          <poll-question id="rev-q14" title="Questão 14: Colunar"
             question="Comparado a um armazenamento orientado a linhas, o armazenamento colunar pode ser vantajoso quando:"
             answer="a"
             answer-text="Colunar brilha quando a consulta acessa poucas colunas de muitas linhas — leitura seletiva e boa compressão."
@@ -1095,13 +1366,10 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q10: Grafos -->
+        <!-- Q15: Grafos (base Q49) -->
         <section>
-          <poll-question
-            id="rev-q10"
-            title="Questão 10: Grafos"
-            question="Um cenário menos adequado para banco de grafos seria:"
-            answer="d"
+          <poll-question id="rev-q15" title="Questão 15: Grafos"
+            question="Um cenário menos adequado para banco de grafos seria:" answer="d"
             answer-text="Armazenar um código temporário acessado apenas por chave é trabalho para chave-valor (Redis), não para grafos."
             :options="[
               { value: 'a', label: 'Representar uma rede de conexões entre pessoas' },
@@ -1112,22 +1380,6 @@ RETURN DISTINCT recomendacao.nome
             ]" />
         </section>
 
-        <!-- Q11: Comparativo -->
-        <section>
-          <poll-question
-            id="rev-q11"
-            title="Questão 11: Associação NoSQL"
-            question="I. Sessão com expiração. II. Catálogo com estruturas variadas. III. Consulta analítica sobre grande volume. IV. Rede de relacionamentos. A associação correta é:"
-            answer="b"
-            answer-text="I → Chave-valor (TTL), II → Documentos (schema flexível), III → Colunar (OLAP), IV → Grafos (travessia)."
-            :options="[
-              { value: 'a', label: 'I documentos; II grafo; III chave-valor; IV colunar' },
-              { value: 'b', label: 'I chave-valor; II documentos; III colunar; IV grafo' },
-              { value: 'c', label: 'I grafo; II colunar; III documentos; IV chave-valor' },
-              { value: 'd', label: 'I colunar; II chave-valor; III grafo; IV documentos' },
-              { value: 'e', label: 'I view; II trigger; III procedure; IV function' },
-            ]" />
-        </section>
 
       </section><!-- fim Quiz -->
 
@@ -1135,10 +1387,12 @@ RETURN DISTINCT recomendacao.nome
       <section data-auto-animate>
         <h2>Dicas para a Prova 📝</h2>
         <ul>
-          <li><strong>Procedure × Função:</strong> procedure encapsula rotinas; função retorna valor e aparece em SELECT</li>
+          <li><strong>Procedure × Função:</strong> procedure encapsula rotinas; função retorna valor e aparece em SELECT
+          </li>
           <li><strong>Trigger:</strong> automática, reage a eventos; cuidado com recursão e desempenho</li>
           <li><strong>View:</strong> armazena a <strong>definição</strong>, não os dados; segurança e simplificação</li>
-          <li><strong>Materialized View:</strong> armazena o <strong>resultado</strong>; pode ficar defasada, precisa de REFRESH</li>
+          <li><strong>Materialized View:</strong> armazena o <strong>resultado</strong>; pode ficar defasada, precisa de
+            REFRESH</li>
           <li><strong>NoSQL:</strong> escolha o modelo pelo tipo de consulta e forma dos dados</li>
           <li><strong>Chave-valor:</strong> cache, sessões, TTL</li>
           <li><strong>Documentos:</strong> schema flexível, embutir vs referenciar</li>
@@ -1177,4 +1431,5 @@ RETURN DISTINCT recomendacao.nome
   </script>
 
 </body>
+
 </html>
