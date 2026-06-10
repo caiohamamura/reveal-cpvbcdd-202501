@@ -245,6 +245,33 @@ mindmap
         </header1>
       </section>
 
+      <!-- SLIDE: Por que uma Prova? -->
+      <section data-auto-animate>
+        <h2>Por que uma prova? 🎯</h2>
+        <multi-col style="gap:15px">
+          <div style="flex: 1;">
+            <div class="green-box">
+              <p><strong>Preparação para a vida real:</strong></p>
+            </div>
+            <ul>
+              <li><strong>Concursos Públicos:</strong> questões objetivas são o padrão para selecionar profissionais
+                qualificados.</li>
+              <li><strong>Provão (Enade/Poscomp):</strong> avaliações baseadas em fundamentos sólidos da computação.
+              </li>
+              <li><strong>Entrevistas Técnicas:</strong> provam que você domina a base (SQL, ACID, NoSQL), não apenas os
+                frameworks da moda.</li>
+            </ul>
+          </div>
+          <div style="flex: 1;">
+            <div class="info-box">
+              <p>Não se trata de decorar sintaxe, mas de saber identificar a <strong>ferramenta certa</strong> para o
+                <strong>problema certo</strong>!
+              </p>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
       <!-- SLIDE: Mapa da revisão -->
       <section data-auto-animate>
         <h2>Mapa da Revisão 🗺️</h2>
@@ -913,6 +940,38 @@ mindmap
           </multi-col>
         </section>
 
+        <section data-auto-animate>
+          <h2>Consultas em Documentos</h2>
+          <multi-col style="gap:15px">
+            <div style="flex: 1;">
+              <div class="green-box">
+                <p><strong>Filtros comuns no MongoDB:</strong></p>
+              </div>
+              <ul>
+                <li>Condições são passadas como objetos JSON</li>
+                <li>Operadores especiais começam com <code>$</code></li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <code-block lang="javascript" data-trim>
+                // Encontrar produtos com preço > 100
+                db.produtos.find({
+                preco: { $gt: 100 }
+                })
+              </code-block>
+
+            </div>
+          </multi-col>
+          <p><strong>Operadores de comparação</strong></p>
+          <multi-col class="info-box">
+            <p><strong>$eq</strong> = <em>equal</em> (igual a)</p>
+            <p><strong>$gt</strong> = <em>greater than</em> (maior que)</p>
+            <p><strong>$lt</strong> = <em>less than</em> (menor que)</p>
+            <p><strong>$gte</strong> = <em>greater than or equal to</em> (maior ou igual a)</p>
+            <p><strong>$lte</strong> = <em>less than or equal to</em> (menor ou igual a)</p>
+          </multi-col>
+        </section>
+
       </section><!-- fim Parte 7 -->
 
       <!-- ============================================================
@@ -1115,7 +1174,7 @@ mindmap
         <!-- SLIDE: Formato da prova -->
         <section>
           <h2>Formato da Prova 📋</h2>
-          <p>15 questões objetivas, distribuídas assim:</p>
+          <p>10 questões objetivas, distribuídas assim:</p>
           <table class="comparison-table">
             <thead>
               <tr>
@@ -1130,15 +1189,15 @@ mindmap
               </tr>
               <tr>
                 <td>Triggers</td>
-                <td>2</td>
+                <td>1</td>
               </tr>
               <tr>
                 <td>Views</td>
-                <td>2</td>
+                <td>1</td>
               </tr>
               <tr>
                 <td>Materialized views</td>
-                <td>2</td>
+                <td>1</td>
               </tr>
               <tr>
                 <td>NoSQL geral</td>
@@ -1146,11 +1205,11 @@ mindmap
               </tr>
               <tr>
                 <td>Chave-valor</td>
-                <td>2</td>
+                <td>1</td>
               </tr>
               <tr>
                 <td>Documentos</td>
-                <td>2</td>
+                <td>1</td>
               </tr>
               <tr>
                 <td>Colunar</td>
@@ -1169,217 +1228,151 @@ mindmap
           <h2>Simulado de Revisão 🎯</h2>
           <p>Conecte-se à sala e vote nas questões!</p>
           <div class="yellow-box">
-            <p>15 questões na mesma distribuição da prova + 1 bônus</p>
+            <p>10 questões selecionadas da base, contemplando cada tema e novos formatos práticos</p>
           </div>
         </section>
 
-        <!-- Q1: Procedures (base Q01) -->
+        <!-- Q1: Procedures -->
         <section>
           <poll-question id="rev-q1" title="Questão 1: Procedures"
-            question="Uma empresa precisa executar, ao final de cada mês, uma sequência de comandos no banco: calcular multas, atualizar saldos, registrar logs e marcar cobranças como processadas. Para centralizar essa rotina dentro do SGBD, o recurso mais adequado é:"
-            answer="c" answer-text="Stored procedure centraliza rotinas com vários comandos dentro do SGBD." :options="[
-              { value: 'a', label: 'View' },
-              { value: 'b', label: 'Índice' },
-              { value: 'c', label: 'Stored procedure' },
-              { value: 'd', label: 'Chave estrangeira' },
-              { value: 'e', label: 'Consulta simples com SELECT' },
+            question="Em geral, uma procedure é mais adequada quando se deseja:" answer="c"
+            answer-text="Procedures são ideais para centralizar regras de negócio e rotinas que manipulam múltiplos dados."
+            :options="[
+              { value: 'a', label: 'Retornar diretamente um valor numérico para ser usado no SELECT' },
+              { value: 'b', label: 'Aumentar artificialmente a latência da rede' },
+              { value: 'c', label: 'Automatizar uma rotina com vários comandos (ex: baixar estoque e registrar venda)' },
+              { value: 'd', label: 'Criar relacionamentos entre tabelas NoSQL' },
+              { value: 'e', label: 'Substituir completamente a modelagem relacional por colunar' },
             ]" />
         </section>
 
-        <!-- Q2: Funções (base Q05) -->
+        <!-- Q2: Funções -->
         <section>
           <poll-question id="rev-q2" title="Questão 2: Funções"
-            question="Uma função armazenada no banco se diferencia de uma procedure principalmente porque:" answer="c"
-            answer-text="Funções retornam um valor e podem ser usadas dentro de expressões SQL." :options="[
-              { value: 'a', label: 'Nunca pode receber parâmetros' },
-              { value: 'b', label: 'É executada somente por triggers' },
-              { value: 'c', label: 'Retorna um valor e pode ser usada em expressões' },
-              { value: 'd', label: 'Não pode acessar dados do banco' },
-              { value: 'e', label: 'Serve apenas para criar tabelas' },
+            question="Em uma consulta SQL, uma função pode ser usada para:" answer="e"
+            answer-text="Funções obrigatoriamente retornam valor e são usadas dentro de expressões SQL." :options="[
+              { value: 'a', label: 'Executar ações automáticas antes de um INSERT' },
+              { value: 'b', label: 'Substituir integralmente a funcionalidade do sistema operacional' },
+              { value: 'c', label: 'Realizar a modelagem física do banco de grafos' },
+              { value: 'd', label: 'Esconder a identidade do usuário administrador' },
+              { value: 'e', label: 'Retornar um valor calculado a partir dos parâmetros de entrada e ser usada no SELECT' },
             ]" />
         </section>
 
-        <!-- Q3: Triggers (base Q11) -->
+        <!-- Q3: Triggers -->
         <section>
-          <poll-question id="rev-q3" title="Questão 3: Triggers" question="Uma trigger BEFORE INSERT é executada:"
-            answer="b"
-            answer-text="BEFORE INSERT executa antes que o registro seja gravado — útil para validar ou ajustar dados."
-            :options="[
-              { value: 'a', label: 'Depois que o registro foi gravado' },
-              { value: 'b', label: 'Antes que o registro seja gravado' },
-              { value: 'c', label: 'Apenas quando o banco é iniciado' },
-              { value: 'd', label: 'Somente durante backup' },
-              { value: 'e', label: 'Somente em bancos NoSQL' },
-            ]" />
-        </section>
-
-        <!-- Q4: Triggers (base Q16) -->
-        <section>
-          <poll-question id="rev-q4" title="Questão 4: Triggers"
-            question="Uma trigger que altera a mesma tabela que disparou sua execução pode causar:" answer="b"
-            answer-text="Recursão ou comportamento inesperado — cuidado com triggers que modificam a tabela de origem!"
-            :options="[
-              { value: 'a', label: 'Maior normalização dos dados' },
-              { value: 'b', label: 'Recursão ou comportamento inesperado' },
-              { value: 'c', label: 'Eliminação automática de duplicidades' },
-              { value: 'd', label: 'Conversão para banco chave-valor' },
-              { value: 'e', label: 'Criação automática de índices compostos' },
-            ]" />
-        </section>
-
-        <!-- Q5: Views (base Q19) -->
-        <section>
-          <poll-question id="rev-q5" title="Questão 5: Views"
-            question="Uma view pode ser usada como mecanismo de segurança porque:" answer="a"
-            answer-text="Views permitem expor apenas determinadas colunas ou linhas, escondendo dados sensíveis."
-            :options="[
-              { value: 'a', label: 'Permite expor apenas determinadas colunas ou linhas' },
-              { value: 'b', label: 'Criptografa todos os arquivos do sistema' },
-              { value: 'c', label: 'Impede qualquer acesso ao banco' },
-              { value: 'd', label: 'Substitui senhas por índices' },
-              { value: 'e', label: 'Remove a necessidade de autenticação' },
-            ]" />
-        </section>
-
-        <!-- Q6: Views (base Q20) -->
-        <section>
-          <poll-question id="rev-q6" title="Questão 6: Views" question="Uma view comum, em geral:" answer="b"
-            answer-text="View comum armazena a definição da consulta, não os dados — a consulta roda a cada acesso."
-            :options="[
-              { value: 'a', label: 'Armazena fisicamente todos os dados resultantes da consulta' },
-              { value: 'b', label: 'Armazena a definição da consulta, não necessariamente os dados' },
-              { value: 'c', label: 'Funciona apenas em bancos NoSQL' },
-              { value: 'd', label: 'É sempre mais rápida que uma tabela' },
-              { value: 'e', label: 'Não pode ser usada em consultas' },
-            ]" />
-        </section>
-
-        <!-- Q7: Materialized Views (base Q23) -->
-        <section>
-          <poll-question id="rev-q7" title="Questão 7: Materialized Views"
-            question="A principal diferença entre uma view comum e uma materialized view é que a materialized view:"
-            answer="b"
-            answer-text="A materialized view armazena fisicamente o resultado da consulta, diferente da view comum que só guarda a definição."
-            :options="[
-              { value: 'a', label: 'Nunca usa SQL' },
-              { value: 'b', label: 'Armazena fisicamente o resultado da consulta' },
-              { value: 'c', label: 'Não pode ser consultada' },
-              { value: 'd', label: 'Só existe em bancos chave-valor' },
-              { value: 'e', label: 'É executada apenas por triggers' },
-            ]" />
-        </section>
-
-        <!-- Q8: Materialized Views (base Q27) -->
-        <section>
-          <poll-question id="rev-q8" title="Questão 8: Materialized Views"
-            question="Se uma materialized view armazena o total de vendas por mês, mas novas vendas foram inseridas após sua última atualização, então:"
+          <poll-question id="rev-q3" title="Questão 3: Triggers"
+            question="Para criar uma trigger no PostgreSQL que executa uma função logo após a inserção de um novo pedido, a sintaxe de declaração do evento seria similar a:"
             answer="a"
-            answer-text="A materialized view fica defasada até o próximo REFRESH — esse é seu principal cuidado."
+            answer-text="A sintaxe correta define o momento (AFTER) e a operação (INSERT) no objeto (ON pedido)."
             :options="[
-              { value: 'a', label: 'A materialized view pode apresentar valores desatualizados' },
-              { value: 'b', label: 'A tabela original será apagada automaticamente' },
-              { value: 'c', label: 'O banco deixará de aceitar consultas' },
-              { value: 'd', label: 'A materialized view se transforma em trigger' },
-              { value: 'e', label: 'Os dados deixam de ser relacionais' },
+              { value: 'a', label: 'AFTER INSERT ON pedido' },
+              { value: 'b', label: 'BEFORE DELETE ON pedido' },
+              { value: 'c', label: 'AFTER SELECT FROM pedido' },
+              { value: 'd', label: 'DURING UPDATE IN pedido' },
+              { value: 'e', label: 'WHENEVER INSERT AT pedido' },
             ]" />
         </section>
 
-        <!-- Q9: NoSQL geral (base Q30) -->
+        <!-- Q4: Views -->
         <section>
-          <poll-question id="rev-q9" title="Questão 9: NoSQL"
-            question="Assinale a alternativa que apresenta apenas categorias de bancos NoSQL:" answer="a"
-            answer-text="Os 4 modelos NoSQL: Chave-valor, Documentos, Colunar e Grafos." :options="[
-              { value: 'a', label: 'Chave-valor, documentos, colunar e grafos' },
-              { value: 'b', label: 'Tabela, linha, coluna e chave primária' },
-              { value: 'c', label: 'Procedure, function, trigger e view' },
-              { value: 'd', label: 'SELECT, INSERT, UPDATE e DELETE' },
-              { value: 'e', label: 'Normalização, dependência funcional, entidade e relacionamento' },
+          <poll-question id="rev-q4" title="Questão 4: Views"
+            question="Para criar uma view chamada v_vendas_resumo no SQL, a sintaxe padrão se inicia com:" answer="c"
+            answer-text="CREATE VIEW define a visualização com base na consulta em seguida." :options="[
+              { value: 'a', label: 'INSERT INTO VIEW v_vendas_resumo SELECT...' },
+              { value: 'b', label: 'ALTER TABLE v_vendas_resumo CREATE VIEW...' },
+              { value: 'c', label: 'CREATE VIEW v_vendas_resumo AS SELECT...' },
+              { value: 'd', label: 'MAKE VIEW v_vendas_resumo FROM SELECT...' },
+              { value: 'e', label: 'UPDATE VIEW v_vendas_resumo AS SELECT...' },
             ]" />
         </section>
 
-        <!-- Q10: Chave-valor (base Q33) -->
+        <!-- Q5: Materialized Views -->
         <section>
-          <poll-question id="rev-q10" title="Questão 10: Chave-valor" question="Um uso comum de banco chave-valor é:"
-            answer="a" answer-text="Cache de dados acessados com frequência é o caso clássico de chave-valor (Redis)."
+          <poll-question id="rev-q5" title="Questão 5: Materialized Views"
+            question="Uma materialized view é especialmente útil quando:" answer="a"
+            answer-text="Materialized views otimizam leitura trocando atualização em tempo real por velocidade."
             :options="[
-              { value: 'a', label: 'Cache de dados acessados com frequência' },
-              { value: 'b', label: 'Modelagem de relações sociais complexas' },
-              { value: 'c', label: 'Geração de diagramas entidade-relacionamento' },
-              { value: 'd', label: 'Substituição de toda lógica da aplicação por views' },
-              { value: 'e', label: 'Criação de procedures recursivas' },
+              { value: 'a', label: 'O banco precisa de respostas muito rápidas para agregações complexas e uma pequena defasagem de dados é aceitável' },
+              { value: 'b', label: 'É necessário garantir que os dados lidos sejam rigorosamente os mais recentes em tempo real' },
+              { value: 'c', label: 'O espaço em disco é muito limitado e não se pode armazenar mais nada' },
+              { value: 'd', label: 'O sistema usa exclusivamente armazenamento em fita magnética' },
+              { value: 'e', label: 'O banco de dados é do tipo chave-valor com expiração automática' },
             ]" />
         </section>
 
-        <!-- Q11: Chave-valor (base Q34) -->
+        <!-- Q6: NoSQL geral -->
         <section>
-          <poll-question id="rev-q11" title="Questão 11: Chave-valor"
+          <poll-question id="rev-q6" title="Questão 6: NoSQL"
+            question="A escolha entre diferentes modelos NoSQL deve considerar principalmente:" answer="b"
+            answer-text="NoSQL foca em como a aplicação vai consumir os dados (queries) mais do que na estrutura das tabelas."
+            :options="[
+              { value: 'a', label: 'A quantidade de chaves estrangeiras disponíveis' },
+              { value: 'b', label: 'Como os dados serão consultados pela aplicação (ex: por chave, travessia ou análise)' },
+              { value: 'c', label: 'Apenas o número de cores do processador' },
+              { value: 'd', label: 'A obrigatoriedade de normalização na terceira forma normal' },
+              { value: 'e', label: 'O uso exclusivo de triggers e functions no banco' },
+            ]" />
+        </section>
+
+        <!-- Q7: Chave-valor -->
+        <section>
+          <poll-question id="rev-q7" title="Questão 7: Chave-valor"
             question="Uma aplicação precisa armazenar sessões de usuários com expiração automática. O modelo NoSQL mais diretamente adequado é:"
-            answer="b" answer-text="Chave-valor (Redis) é ideal para sessões com TTL — expiração automática integrada."
+            answer="d"
+            answer-text="Bancos chave-valor como Redis gerenciam nativamente a expiração das chaves através do TTL."
             :options="[
-              { value: 'a', label: 'Grafo' },
-              { value: 'b', label: 'Chave-valor' },
-              { value: 'c', label: 'Colunar analítico' },
-              { value: 'd', label: 'Relacional normalizado' },
-              { value: 'e', label: 'View materializada' },
+              { value: 'a', label: 'Banco de grafos focado em relacionamentos complexos' },
+              { value: 'b', label: 'Armazenamento colunar otimizado para OLAP' },
+              { value: 'c', label: 'Tabela relacional normalizada sem controle de tempo' },
+              { value: 'd', label: 'Chave-valor, especialmente com o uso de TTL (Time to Live)' },
+              { value: 'e', label: 'Banco de documentos com agregações analíticas complexas' },
             ]" />
         </section>
 
-        <!-- Q12: Documentos (base Q38) -->
+        <!-- Q8: Documentos -->
         <section>
-          <poll-question id="rev-q12" title="Questão 12: Documentos"
-            question="Um catálogo de produtos em que cada tipo de produto possui atributos muito diferentes pode se beneficiar de um banco:"
-            answer="a" answer-text="Documentos (MongoDB): cada produto pode ter campos diferentes — schema flexível."
+          <poll-question id="rev-q8" title="Questão 8: Documentos"
+            question="Em um banco MongoDB (orientado a documentos), como escrevemos uma condição equivalente a preco > 100?"
+            answer="e" answer-text="O MongoDB usa objetos JSON e operadores como $gt (greater than) para avaliações."
             :options="[
-              { value: 'a', label: 'Orientado a documentos' },
-              { value: 'b', label: 'Exclusivamente relacional e altamente rígido' },
-              { value: 'c', label: 'Apenas de grafos' },
-              { value: 'd', label: 'Apenas de procedures' },
-              { value: 'e', label: 'Apenas de materialized views' },
+              { value: 'a', label: '{ preco: &quot;> 100&quot; }' },
+              { value: 'b', label: '{ preco: { $less: 100 } }' },
+              { value: 'c', label: '{ preco: { gt: 100 } }' },
+              { value: 'd', label: '{ preco > 100 }' },
+              { value: 'e', label: '{ preco: { $gt: 100 } }' },
             ]" />
         </section>
 
-        <!-- Q13: Documentos (base Q40) -->
+        <!-- Q9: Colunar -->
         <section>
-          <poll-question id="rev-q13" title="Questão 13: Documentos"
-            question="Uma desvantagem possível de embutir muitos dados repetidos em documentos é:" answer="a"
-            answer-text="Embutir demais causa aumento de redundância e dificuldade de atualização." :options="[
-              { value: 'a', label: 'Aumento de redundância e dificuldade de atualização' },
-              { value: 'b', label: 'Impossibilidade de consultar o documento' },
-              { value: 'c', label: 'Transformação automática em banco de grafos' },
-              { value: 'd', label: 'Perda obrigatória de todos os dados' },
-              { value: 'e', label: 'Impedimento do uso de JSON' },
-            ]" />
-        </section>
-
-        <!-- Q14: Colunar (base Q44) -->
-        <section>
-          <poll-question id="rev-q14" title="Questão 14: Colunar"
+          <poll-question id="rev-q9" title="Questão 9: Colunar"
             question="Comparado a um armazenamento orientado a linhas, o armazenamento colunar pode ser vantajoso quando:"
             answer="a"
-            answer-text="Colunar brilha quando a consulta acessa poucas colunas de muitas linhas — leitura seletiva e boa compressão."
+            answer-text="Colunar é perfeito quando apenas algumas colunas são analisadas em muitos registros, evitando ler dados desnecessários."
             :options="[
-              { value: 'a', label: 'A consulta acessa poucas colunas de muitas linhas' },
-              { value: 'b', label: 'A consulta sempre precisa de todos os campos de uma única linha' },
-              { value: 'c', label: 'Não há nenhuma consulta analítica' },
-              { value: 'd', label: 'Os dados são apenas pares chave-valor' },
-              { value: 'e', label: 'O objetivo principal é percorrer relacionamentos' },
+              { value: 'a', label: 'A consulta acessa apenas uma ou duas colunas ao processar milhões de registros' },
+              { value: 'b', label: 'A aplicação precisa ler e atualizar registros inteiros o tempo todo' },
+              { value: 'c', label: 'O objetivo é criar redes de relacionamentos complexos' },
+              { value: 'd', label: 'Os dados não têm nenhuma estrutura e mudam a cada inserção' },
+              { value: 'e', label: 'Não há nenhuma necessidade de análise de dados' },
             ]" />
         </section>
 
-        <!-- Q15: Grafos (base Q49) -->
+        <!-- Q10: Grafos -->
         <section>
-          <poll-question id="rev-q15" title="Questão 15: Grafos"
-            question="Um cenário menos adequado para banco de grafos seria:" answer="d"
-            answer-text="Armazenar um código temporário acessado apenas por chave é trabalho para chave-valor (Redis), não para grafos."
+          <poll-question id="rev-q10" title="Questão 10: Grafos"
+            question="Em um banco de grafos (Neo4j), usando a linguagem Cypher, como representamos o fato de que um nó 'a' conhece um nó 'b'?"
+            answer="c"
+            answer-text="O Cypher usa arte em ASCII: parênteses para nós e colchetes em setas para os relacionamentos."
             :options="[
-              { value: 'a', label: 'Representar uma rede de conexões entre pessoas' },
-              { value: 'b', label: 'Encontrar rotas entre pontos' },
-              { value: 'c', label: 'Analisar relacionamentos entre documentos' },
-              { value: 'd', label: 'Armazenar um código temporário acessado apenas por uma chave' },
-              { value: 'e', label: 'Recomendar conteúdos com base em conexões' },
+              { value: 'a', label: '[a] - (CONHECE) - [b]' },
+              { value: 'b', label: 'a.CONHECE = b' },
+              { value: 'c', label: '(a)-[:CONHECE]->(b)' },
+              { value: 'd', label: 'SELECT CONHECE FROM a, b' },
+              { value: 'e', label: '{ &quot;a&quot;: { &quot;conhece&quot;: &quot;b&quot; } }' },
             ]" />
         </section>
-
 
       </section><!-- fim Quiz -->
 
