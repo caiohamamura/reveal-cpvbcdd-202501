@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Inteligência Artificial - Aprendizado de Máquina e Regressão Logística</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <!-- Optional plugins -->
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .ml-table {
+      font-size: 15pt;
+      border-collapse: collapse;
+      margin: 0 auto;
+    }
+
+    .ml-table th {
+      background: #44475a;
+      color: #8be9fd;
+      padding: 5px 9px;
+      font-size: 13pt;
+    }
+
+    .ml-table td {
+      padding: 4px 9px;
+      text-align: center;
+    }
+
+    .ml-table td.hl {
+      background: #6272a4;
+      color: #f8f8f2;
+      font-weight: bold;
+    }
+
+    .step-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .step-list li {
+      background: #44475a;
+      border-radius: 8px;
+      margin: 6px 0;
+      padding: 8px 16px;
+      font-size: 20pt;
+    }
+
+    .step-list li .done {
+      color: #50fa7b;
+      font-size: 17pt;
+      float: right;
+    }
+
+    .formula-box {
+      background: #f8f8f2;
+      color: #282a36;
+      border-radius: 8px;
+      padding: 14px 22px;
+      display: inline-block;
+      margin: 8px auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="02" curso="Inteligência Artificial" title-size="24"
+                 title="Aprendizado de Máquina e Regressão Logística">
+          <img src="images/aula02/capa-ia.jpg"
+               alt="Ilustração de cabeça humana digital em circuito com as letras AI" width="460"
+               style="border-radius: 10px;" />
+        </header1>
+      </section>
+
+      <!-- SLIDE: Revisão -->
+      <section data-auto-animate>
+        <h2>Na aula passada</h2>
+        <ls-u>
+          <li>Inteligência artificial <strong>fraca</strong> e <strong>forte</strong></li>
+          <li>Diversas aplicações de inteligência artificial no dia a dia</li>
+          <li>Histórico da inteligência artificial (Turing, Dartmouth, perceptron, inverno da IA)</li>
+          <li>Aplicação prática com o <strong>Teachable Machine</strong></li>
+        </ls-u>
+      </section>
+
+      <!-- ============================================================
+         Etapa 1: O que é Aprendizado de Máquina
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 1 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 1: Aprendizado de Máquina</h2>
+          <p>Onde o <strong style="color: #ff79c6;">machine learning</strong> se encaixa no histórico da IA
+            e o que ele significa.</p>
+        </section>
+
+        <!-- SLIDE: Timeline -->
+        <section data-auto-animate>
+          <h2>Histórico da Inteligência Artificial</h2>
+          <div class="flow-row" style="justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 20px;">
+            <div class="flow-node" style="background:#44475a;"><strong>1956/57</strong><br />Dartmouth<br />Mark I Perceptron</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="background:#44475a;"><strong>1990</strong><br />Aprendizado<br />de Máquina</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-node" style="background:#44475a;"><strong>2010</strong><br />Redes Neurais<br />Deep Learning</div>
+          </div>
+          <p style="margin-top: 25px;">A partir dos anos <strong>1990</strong>, com o crescimento da internet e do
+            fluxo de dados, cresce o interesse em <strong style="color: #8be9fd;">extrair informação dos dados</strong>:
+            surge o Aprendizado de Máquina.</p>
+        </section>
+
+        <!-- SLIDE: Definição AM -->
+        <section data-auto-animate>
+          <h2>Aprendizado de Máquina (AM)</h2>
+          <ul>
+            <li>Subárea da <strong>inteligência artificial</strong></li>
+            <li>Aprender com os <strong style="color: #8be9fd;">dados anteriores</strong> para fazer predições ou
+              decisões, <strong>sem precisar criar um programa específico</strong> para isso</li>
+            <li>Nas décadas de 1990 e 2000, os dados na maioria eram em formato de <strong>tabela</strong></li>
+          </ul>
+          <div style="text-align: center; margin-top: 10px;">
+            <img src="images/aula02/one-hot-encoding.png"
+                 alt="Exemplo de tabela de dados sendo transformada" width="520"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Usos -->
+        <section data-auto-animate>
+          <h2>Usos do Aprendizado de Máquina</h2>
+          <div class="artifact-grid" style="display: flex; flex-flow: row wrap; justify-content: center; gap: 20px; margin-top: 20px;">
+            <div class="artifact-card" style="max-width: 320px; border-left: 4px solid #ff79c6; padding: 18px;">
+              <i class="fa-solid fa-credit-card" style="font-size: 42px; color: #ff79c6;"></i>
+              <h4 style="color: #ff79c6;">Detecção de fraude</h4>
+              <p style="font-size: 18pt;">Classificar transações de cartão como legítimas ou suspeitas</p>
+            </div>
+            <div class="artifact-card" style="max-width: 320px; border-left: 4px solid #8be9fd; padding: 18px;">
+              <i class="fa-solid fa-envelope-circle-check" style="font-size: 42px; color: #8be9fd;"></i>
+              <h4 style="color: #8be9fd;">Detecção de SPAM</h4>
+              <p style="font-size: 18pt;">Classificar e-mails como spam ou legítimos automaticamente</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE: Classificação x Regressão -->
+        <section data-auto-animate>
+          <h2>Quando uso Aprendizado de Máquina?</h2>
+          <p>Existem <strong>dois tipos principais</strong>:</p>
+          <multi-col style="gap:20px;">
+            <div style="flex: 1; background: #282a36; border-left: 4px solid #8be9fd; padding: 16px;">
+              <h4 style="color: #8be9fd;">Classificação</h4>
+              <p style="font-size: 19pt;">Prever uma <strong>classe</strong>.</p>
+              <p style="font-size: 18pt;">Ex.: a partir dos dados do paciente, prever o risco de ataque cardíaco
+                (classe: <strong>alto</strong> ou <strong>baixo</strong>)</p>
+            </div>
+            <div style="flex: 1; background: #282a36; border-left: 4px solid #ffb86c; padding: 16px;">
+              <h4 style="color: #ffb86c;">Regressão</h4>
+              <p style="font-size: 19pt;">Prever um <strong>número</strong>.</p>
+              <p style="font-size: 18pt;">Ex.: a partir de dados de imóveis, prever o preço de mercado
+                (um número: o <strong>preço</strong>)</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: O pipeline do Aprendizado de Máquina
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 2 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 2: Como funciona o Aprendizado de Máquina?</h2>
+          <ul class="step-list" style="margin-top: 15px;">
+            <li>🤔 Definição do problema</li>
+            <li>⛏️ Coleta de dados</li>
+            <li>📊 Tratamento de dados</li>
+            <li>🔎 Seleção de variáveis</li>
+            <li>🤖 Escolha e treinamento do modelo</li>
+            <li>🎯 Validação</li>
+            <li>👩🏻‍🔬 Teste</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Definição do problema -->
+        <section data-auto-animate>
+          <h2>🤔 Definição do problema</h2>
+          <ul>
+            <li>Qual problema queremos resolver?</li>
+            <li>Qual a melhor maneira de resolver isso?</li>
+            <li>Existe alguma forma já bem estabelecida de resolver?</li>
+            <li>Qual a natureza das informações que podemos obter?</li>
+            <li>Como e onde podemos obter os dados?</li>
+            <li>Precisamos medir? Fazer experimentos?</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Coleta de dados -->
+        <section data-auto-animate>
+          <h2>⛏️ Coleta de dados</h2>
+          <multi-col style="gap:20px;">
+            <div style="flex: 1;">
+              <h4 style="color: #50fa7b;">Bases já disponíveis</h4>
+              <ul>
+                <li>Kaggle</li>
+                <li>Hugging Face</li>
+                <li>IBGE (SIDRA)</li>
+                <li>INMET (dados climáticos)</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">Coletar você mesmo</h4>
+              <ul>
+                <li><strong>Experimento:</strong> delineamento experimental</li>
+                <li><strong>Observação:</strong> planejamento da coleta</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Coleta - diversidade -->
+        <section data-auto-animate>
+          <h2>⛏️ Coleta de dados: amostrar a diversidade</h2>
+          <p>Ao planejar ou delinear um experimento, é preciso amostrar o <strong style="color: #f1fa8c;">máximo
+            de condições possíveis</strong>:</p>
+          <ul>
+            <li>Tamanhos: pequeno, médio, grande</li>
+            <li>Pessoas: várias faixas etárias, hábitos, culturas, crenças, etnias</li>
+            <li>Imagens: fotos de dia e de noite, ensolarado, diferentes iluminações…</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Tratamento de dados -->
+        <section data-auto-animate>
+          <h2>📊 Tratamento de dados</h2>
+          <multi-col style="gap:20px;">
+            <div style="flex: 1;">
+              <h4 style="color: #ff79c6;">Analisar e corrigir problemas</h4>
+              <ul>
+                <li>Dados <strong>faltantes</strong></li>
+                <li>Dados fora do padrão (erro de digitação? número fora da realidade?)</li>
+                <li>O que fazer? Imputar valores (média)? Remover a linha? Descartar só o dado?</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #8be9fd;">Transformar os dados</h4>
+              <ul>
+                <li>Alguns modelos exigem que os dados sigam um <strong>padrão</strong></li>
+                <li>Podemos transformar os dados para que sigam esse padrão</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Seleção de variáveis -->
+        <section data-auto-animate>
+          <h2>🔎 Seleção de variáveis</h2>
+          <ul>
+            <li>Algumas variáveis claramente <strong>não ajudam</strong> a predizer (ex.: número da linha)</li>
+            <li>Variáveis <strong style="color: #ff79c6;">correlacionadas</strong> mostram a mesma coisa — basta uma:
+              temperatura corporal e febre (melhor usar a temperatura, mais exata)</li>
+            <li>Variáveis válidas, mas sem relação com o objetivo: prever o preço de venda de uma casa a partir do
+              <strong>número da casa</strong> — provavelmente sem relação alguma</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Divisão dos dados -->
+        <section data-auto-animate>
+          <h2>➗ Divisão dos dados</h2>
+          <div class="flow-row" style="justify-content: center; gap: 10px; margin: 20px 0;">
+            <div class="flow-node" style="background:#50fa7b; color:#282a36;"><strong>Treinamento</strong><br />70–80%</div>
+            <div class="flow-node" style="background:#8be9fd; color:#282a36;"><strong>Validação</strong><br />10–15%</div>
+            <div class="flow-node" style="background:#ffb86c; color:#282a36;"><strong>Teste</strong><br />10–15%</div>
+          </div>
+          <ul style="font-size: 20pt;">
+            <li><strong>Treinamento:</strong> dados usados para treinar o modelo</li>
+            <li><strong>Validação:</strong> dados usados para saber quando parar de treinar</li>
+            <li><strong>Teste:</strong> dados usados para verificar a qualidade do modelo final</li>
+          </ul>
+          <p style="font-size: 18pt; color: #f1fa8c;">Um dado só aparece em <strong>um</strong> dos três — nunca se
+            repete — para garantir que o modelo saiba lidar com amostras nunca vistas antes.</p>
+        </section>
+
+        <!-- SLIDE: Escolha do modelo -->
+        <section data-auto-animate>
+          <h2>🤖 Escolha do modelo</h2>
+          <p>Dependendo do objetivo, selecionamos modelos diferentes:</p>
+          <ul>
+            <li>Quer <strong>entender o problema</strong> e do que ele depende? Modelos estatísticos,
+              <strong style="color: #8be9fd;">floresta aleatória</strong> e <strong style="color: #8be9fd;">XGBoost</strong>
+              mostram com clareza as variáveis mais importantes</li>
+            <li>Melhores resultados em <strong>dados tabulares</strong>: floresta aleatória e XGBoost</li>
+            <li>🖼️🎥🔊 Melhores resultados em <strong>dados complexos</strong>: aprendizado profundo
+              (<strong style="color: #ff79c6;">redes neurais artificiais</strong>)</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Treinamento do modelo -->
+        <section data-auto-animate>
+          <h2>🤖 Treinamento do modelo</h2>
+          <p>Treinar é mostrar ao modelo os dados de exemplo. Cada modelo aprende de um jeito, mas todos estão
+            sujeitos a efeitos que atrapalham o resultado:</p>
+          <ul>
+            <li><strong style="color: #ff5555;">Amostragem ruim:</strong> não amostrar a diversidade; o modelo aprende
+              "errado"</li>
+            <li><strong style="color: #ffb86c;">Subajuste:</strong> não treinar ou não aprender o suficiente sobre os
+              dados</li>
+            <li><strong style="color: #ff79c6;">Sobreajuste:</strong> treinar demais; o modelo fica "viciado" e só
+              acerta nos dados em que foi treinado</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Validação -->
+        <section data-auto-animate>
+          <h2>🎯 Validação</h2>
+          <ul>
+            <li>A validação serve justamente para sabermos <strong style="color: #8be9fd;">quando parar de treinar</strong></li>
+            <li>A cada treino, verificamos a qualidade do resultado contra o <strong>conjunto de validação</strong></li>
+            <li>Quando a validação <strong style="color: #ff5555;">começa a piorar</strong>, é hora de parar de treinar</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Teste -->
+        <section data-auto-animate>
+          <h2>👩🏻‍🔬 Teste</h2>
+          <p>O teste é o <strong>resultado final</strong>. A avaliação depende do tipo de predição:</p>
+          <multi-col style="gap:20px;">
+            <div style="flex: 1; background: #282a36; border-left: 4px solid #8be9fd; padding: 16px;">
+              <h4 style="color: #8be9fd;">Classificação</h4>
+              <p style="font-size: 18pt;">Acurácia geral, kappa, F1-score, sensibilidade/especificidade, acurácia do
+                produtor e do usuário, erros de inclusão e omissão…</p>
+            </div>
+            <div style="flex: 1; background: #282a36; border-left: 4px solid #ffb86c; padding: 16px;">
+              <h4 style="color: #ffb86c;">Regressão</h4>
+              <p style="font-size: 18pt;">Erro médio quadrático (RMSE), erro absoluto médio (MAE), R²</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: Regressão Logística
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 3 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 3: Regressão Logística</h2>
+          <p>Um <strong style="color: #ff79c6;">modelo estatístico</strong> muito usado dentro do aprendizado de
+            máquina para problemas de <strong>classificação</strong>.</p>
+        </section>
+
+        <!-- SLIDE: Aplicação -->
+        <section data-auto-animate>
+          <h2>Para que serve a regressão logística?</h2>
+          <ul>
+            <li>Aceita <strong>múltiplas variáveis</strong> e sua saída é um valor entre <strong>[0, 1]</strong> —
+              interpretável como <strong>sim (1)</strong> ou <strong>não (0)</strong></li>
+            <li>Usada para classificar entre SIM/NÃO ou descobrir a <strong>probabilidade</strong> de algo:
+              <ul>
+                <li>Um e-mail ser spam ou não</li>
+                <li>Um paciente ter ou não uma doença</li>
+              </ul>
+            </li>
+            <li>É calculada rapidamente e vem sendo amplamente usada desde meados de <strong>1970</strong></li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Sigmoide -->
+        <section data-auto-animate>
+          <h2>A função sigmóide</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p>A regressão logística usa a função <strong style="color: #8be9fd;">sigmóide</strong>, que "espreme"
+                qualquer número real para o intervalo <strong>[0, 1]</strong>:</p>
+              <div class="formula-box">$$g(z) = \frac{1}{1 + e^{-z}}$$</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula02/sigmoide.png"
+                   alt="Gráfico da função sigmóide em forma de S entre 0 e 1" height="360"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Soma ponderada -->
+        <section data-auto-animate>
+          <h2>Somando as variáveis com pesos</h2>
+          <ul>
+            <li>Em vez de $x$ ser uma única variável, somamos <strong>todas as variáveis</strong> dando um
+              <strong style="color: #ff79c6;">peso</strong> ($w$, de <em>weight</em>) para cada uma:</li>
+          </ul>
+          <div class="formula-box" style="display:block; text-align:center;">
+            $$z = vi\acute{e}s + w_1 x_1 + w_2 x_2 + \dots + w_n x_n$$
+          </div>
+          <ul>
+            <li>O que a regressão precisa <strong style="color: #8be9fd;">aprender</strong> é como escolher os pesos
+              $w_1, w_2, w_3 \dots$ para chegar mais próximo do resultado real (de 0 a 1)</li>
+          </ul>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Como a regressão aprende — Gradiente Descendente
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 4 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 4: Como a regressão aprende?</h2>
+          <p>Usamos um algoritmo chamado <strong style="color: #ff79c6;">gradiente descendente</strong>
+            (<em>gradient descent</em>).</p>
+          <div style="text-align: center;">
+            <img src="images/aula02/gradiente-toy.jpg"
+                 alt="Rádio de brinquedo da marca Gradiente, trocadilho com gradiente" height="320"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Gradiente descendente conceito -->
+        <section data-auto-animate>
+          <h2>Gradiente descendente</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Imaginamos a <strong style="color: #ff79c6;">perda (loss)</strong> — o quão ruim o modelo está — em
+                função do peso. Queremos chegar ao ponto de <strong style="color: #50fa7b;">perda mínima</strong>.</p>
+              <p>Para isso precisamos definir <strong>duas coisas</strong>:</p>
+              <ul>
+                <li>A <strong style="color: #8be9fd;">função de perda</strong> (loss)</li>
+                <li>O <strong style="color: #ffb86c;">gradiente</strong>: quanto ela está mudando?</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula02/gradiente-descendente.png"
+                   alt="Curva de perda em U com passos descendo até a perda mínima" width="420"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 12px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Loss - exemplo dados -->
+        <section data-auto-animate>
+          <h2>A função Loss (perda)</h2>
+          <p style="font-size: 20pt;">Exemplo: prever a chance de ataque cardíaco. Primeiro, tratamos os dados
+            (<strong>sim → 1</strong>, <strong>não → 0</strong>):</p>
+          <table class="ml-table">
+            <thead>
+              <tr>
+                <th>Idade</th><th>Sexo</th><th>Pressão</th><th>Colest.</th><th>Batim.</th><th>Açúcar</th>
+                <th>Hist. Fam.</th><th>Ataque</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>45</td><td>M</td><td>130</td><td>200</td><td>80</td><td>100</td><td class="hl">1</td><td class="hl">1</td></tr>
+              <tr><td>55</td><td>F</td><td>145</td><td>240</td><td>70</td><td>150</td><td class="hl">0</td><td class="hl">1</td></tr>
+              <tr><td>60</td><td>M</td><td>120</td><td>180</td><td>90</td><td>90</td><td class="hl">1</td><td class="hl">0</td></tr>
+              <tr><td>50</td><td>M</td><td>135</td><td>220</td><td>75</td><td>160</td><td class="hl">1</td><td class="hl">1</td></tr>
+              <tr><td>40</td><td>F</td><td>125</td><td>190</td><td>85</td><td>95</td><td class="hl">0</td><td class="hl">0</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: quão certo está -->
+        <section data-auto-animate>
+          <h2>O quão certo está o modelo?</h2>
+          <p>Supondo que o modelo tenha previsões $\hat{y}$, podemos medir o <strong>acerto</strong> por linha:</p>
+          <ul>
+            <li>Se o resultado verdadeiro $y$ for <strong>1</strong> → acerto $= \hat{y}$</li>
+            <li>Se o resultado verdadeiro $y$ for <strong>0</strong> → acerto $= 1 - \hat{y}$</li>
+          </ul>
+          <p>Podemos escrever as duas regras em uma só fórmula:</p>
+          <div class="formula-box" style="display:block; text-align:center;">
+            $$\hat{y}^{\,y} \cdot (1 - \hat{y})^{\,1 - y}$$
+          </div>
+        </section>
+
+        <!-- SLIDE: verossimilhança -->
+        <section data-auto-animate>
+          <h2>Juntando todas as probabilidades</h2>
+          <ul>
+            <li>Multiplicando o acerto de todas as linhas, obtemos o quão correto está o modelo inteiro</li>
+            <li>Em matematiquês isso é um <strong>produtório</strong>. A fórmula é a
+              <strong style="color: #8be9fd;">verossimilhança</strong> ($L$, de <em>likelihood</em> — o quão provável):</li>
+          </ul>
+          <div class="formula-box" style="display:block; text-align:center;">
+            $$L = \prod_{i=1}^{n} \hat{y}_i^{\,y_i} \cdot (1 - \hat{y}_i)^{\,1 - y_i}$$
+          </div>
+        </section>
+
+        <!-- SLIDE: log-loss -->
+        <section data-auto-animate>
+          <h2>Da verossimilhança à função Loss</h2>
+          <ul>
+            <li>Para evitar trabalhar com produtório, aplicamos a função <strong>log</strong>, que transforma o produto
+              em <strong style="color: #8be9fd;">somatório</strong>:</li>
+          </ul>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 22pt;">
+            $$\log L = \sum_{i=1}^{n} \big( y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \big)$$
+          </div>
+          <ul>
+            <li>Como o resultado costuma ser negativo, <strong style="color: #ff79c6;">invertemos o sinal</strong> e
+              obtemos a nossa função de Loss:</li>
+          </ul>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 22pt;">
+            $$Loss = -\sum_{i=1}^{n} \big( y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \big)$$
+          </div>
+        </section>
+
+        <!-- SLIDE: gradiente = derivada -->
+        <section data-auto-animate>
+          <h2>E o gradiente?</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p>A linha de tendência da curva é a <strong style="color: #8be9fd;">derivada</strong> — neste caso, da
+                função Loss em relação ao peso.</p>
+              <p>Se eu descobrir a derivada, sei <strong>para que lado</strong> preciso ir e <strong>o quanto</strong>!</p>
+              <div class="formula-box">$$\frac{\partial Loss}{\partial w_i}$$</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula02/gradiente-descendente.png"
+                   alt="Curva de perda em U com a reta tangente indicando a derivada" width="400"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 12px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: regra da cadeia -->
+        <section data-auto-animate>
+          <h2>Derivando pela regra da cadeia</h2>
+          <p>Só conseguimos derivar em relação a $z$ e $\hat{y}$ (só elas aparecem na Loss). Usamos a
+            <strong style="color: #8be9fd;">regra da cadeia</strong> para chegar até o peso $w_i$:</p>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 22pt;">
+            $$\frac{\partial Loss}{\partial w_i} = \frac{\partial Loss}{\partial \hat{y}} \cdot
+            \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w_i}$$
+          </div>
+          <p style="font-size: 19pt;">Cada pedaço tem uma derivada conhecida:</p>
+          <ul style="font-size: 19pt;">
+            <li>$\dfrac{\partial Loss}{\partial \hat{y}} = \dfrac{\hat{y} - y}{\hat{y}(1 - \hat{y})}$</li>
+            <li>$\dfrac{\partial \hat{y}}{\partial z} = \hat{y}(1 - \hat{y})$ &nbsp; (derivada da sigmóide)</li>
+            <li>$\dfrac{\partial z}{\partial w_i} = x_i$</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: resultado da derivada -->
+        <section data-auto-animate>
+          <h2>Substituindo os três</h2>
+          <p>Ao multiplicar as três partes, os termos $\hat{y}(1 - \hat{y})$ se cancelam e sobra algo
+            <strong style="color: #50fa7b;">surpreendentemente simples</strong>:</p>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 30pt;">
+            $$\frac{\partial Loss}{\partial w_i} = (\hat{y} - y)\, x_i$$
+          </div>
+          <p style="text-align:center;">Isso é ótimo, porque já temos <strong>tudo</strong>: o erro $(\hat{y} - y)$
+            e as variáveis $x_i$!</p>
+        </section>
+
+        <!-- SLIDE: regra de atualização -->
+        <section data-auto-animate>
+          <h2>Atualizando o peso pelo gradiente descendente</h2>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 26pt;">
+            $$w_j = w_{j_{velho}} - \alpha \, \frac{\sum x_i (\hat{y}_i - y_i)}{n}$$
+          </div>
+          <table class="ml-table" style="font-size: 18pt; margin-top: 15px;">
+            <tbody>
+              <tr><td class="hl">$w_{j_{velho}}$</td><td style="text-align:left;">peso inicial (aleatório)</td></tr>
+              <tr><td class="hl">$\alpha$</td><td style="text-align:left;">taxa de aprendizado (normalmente &lt; 1)</td></tr>
+              <tr><td class="hl">$x_i$</td><td style="text-align:left;">variável de cada linha</td></tr>
+              <tr><td class="hl">$\hat{y}_i - y_i$</td><td style="text-align:left;">erro (resíduo)</td></tr>
+              <tr><td class="hl">$n$</td><td style="text-align:left;">número de linhas</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- ============================================================
+         Etapa 5: Exemplo prático completo — Heart Disease
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 5 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 5: Exemplo prático completo</h2>
+          <p>Percorrendo o pipeline inteiro para <strong style="color: #ff79c6;">prever o risco de ataque
+            cardíaco</strong>:</p>
+          <ul class="step-list" style="font-size: 17pt;">
+            <li>🤔 Definição — prever risco de ataque cardíaco</li>
+            <li>⛏️ Coleta — da internet (Heart Disease Dataset)</li>
+            <li>📊 Tratamento — o que a regressão logística vai precisar</li>
+            <li>🔎 Seleção — podemos pular, a máquina aprende os pesos</li>
+            <li>🤖 Modelo — regressão logística</li>
+            <li>🎯 Validação — verificar a hora de parar o treino</li>
+            <li>👩🏻‍🔬 Teste — o resultado final é bom?</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Coleta -->
+        <section data-auto-animate>
+          <h2>⛏️ Coleta de dados</h2>
+          <p>Vamos baixar o conjunto da internet:</p>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 18px; margin-top: 15px;">
+            <p><i class="fa-brands fa-kaggle" style="color: #8be9fd;"></i>
+              <strong>Heart Disease Dataset</strong> (Kaggle)</p>
+            <p style="font-size: 18pt;"><a href="https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset"
+               target="_blank">kaggle.com/datasets/johnsmith88/heart-disease-dataset</a></p>
+          </div>
+        </section>
+
+        <!-- SLIDE: Tratamento visão geral -->
+        <section data-auto-animate>
+          <h2>📊 Tratamento de dados</h2>
+          <p>Para a regressão logística, vamos precisar:</p>
+          <ul>
+            <li>Transformar variáveis <strong style="color: #ff79c6;">categóricas</strong> (textos ou números que são
+              categorias, não quantidades) em números</li>
+            <li>Para o gradiente descendente, deixar todas as variáveis numéricas na
+              <strong style="color: #8be9fd;">mesma escala</strong>, idealmente de 0 a 1</li>
+            <li>Caso contrário, o erro fica muito diferente entre as colunas e atrapalha o ajuste dos pesos</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: categóricas binárias -->
+        <section data-auto-animate>
+          <h2>📊 Transformar categóricas (binárias)</h2>
+          <p>Se a categoria tem <strong>dois</strong> valores (sim/não, M/F), usamos <strong>0</strong> e
+            <strong>1</strong>:</p>
+          <multi-col style="gap:15px; align-items: center;">
+            <table class="ml-table" style="font-size: 16pt;">
+              <thead><tr><th>Sexo</th><th>Hist. Fam.</th></tr></thead>
+              <tbody>
+                <tr><td>M</td><td>Sim</td></tr>
+                <tr><td>F</td><td>Não</td></tr>
+                <tr><td>M</td><td>Sim</td></tr>
+              </tbody>
+            </table>
+            <div class="flow-arrow" style="font-size: 30pt;">→</div>
+            <table class="ml-table" style="font-size: 16pt;">
+              <thead><tr><th>Sexo</th><th>Hist. Fam.</th></tr></thead>
+              <tbody>
+                <tr><td class="hl">0</td><td class="hl">1</td></tr>
+                <tr><td class="hl">1</td><td class="hl">0</td></tr>
+                <tr><td class="hl">0</td><td class="hl">1</td></tr>
+              </tbody>
+            </table>
+          </multi-col>
+          <p style="font-size: 18pt;">0 representa uma categoria e 1 representa a outra.</p>
+        </section>
+
+        <!-- SLIDE: One-Hot-Encoding -->
+        <section data-auto-animate>
+          <h2>📊 One-Hot-Encoding</h2>
+          <p>Quando há <strong>mais de duas</strong> categorias, criamos uma coluna para cada uma:</p>
+          <div style="text-align: center;">
+            <img src="images/aula02/one-hot-encoding.png"
+                 alt="Tabela com coluna color virando colunas color_red, color_blue e color_green com 0 e 1" width="640"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 12px;" />
+          </div>
+          <p style="font-size: 18pt; color: #f1fa8c;">Podemos tirar a primeira coluna: se as outras forem 0, já se
+            sabe que só pode ser ela.</p>
+        </section>
+
+        <!-- SLIDE: Padronizar numéricas -->
+        <section data-auto-animate>
+          <h2>📊 Padronizar variáveis numéricas</h2>
+          <p>Para a regressão logística, usamos o <strong>mínimo</strong> e o <strong>máximo</strong> para levar cada
+            coluna ao intervalo <strong style="color: #8be9fd;">0–1</strong>:</p>
+          <div class="formula-box" style="display:block; text-align:center;">
+            $$x_{padr} = \frac{x - x_{min}}{x_{max} - x_{min}}$$
+          </div>
+          <p style="font-size: 19pt;">Exemplo (coluna Idade, valores entre 40 e 60):</p>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 20pt;">
+            $$x_{padr} = \frac{45 - 40}{60 - 40} = \frac{5}{20} = 0{,}25$$
+          </div>
+        </section>
+
+        <!-- SLIDE: coluna de viés -->
+        <section data-auto-animate>
+          <h2>📊 Adicionar a coluna de viés</h2>
+          <p>Adicionamos uma coluna <strong style="color: #ffb86c;">viés</strong> preenchida com <strong>1</strong>.</p>
+          <p>Se todas as variáveis tiverem relação inversamente proporcional, o viés permite estabelecer uma
+            <strong>linha de base positiva</strong> para o modelo ainda dar certo.</p>
+          <table class="ml-table" style="margin-top: 15px;">
+            <thead><tr><th>Idade</th><th>Sexo</th><th>…</th><th>Hist. Fam.</th><th>Viés</th></tr></thead>
+            <tbody>
+              <tr><td>0,25</td><td>0</td><td>…</td><td>1</td><td class="hl">1</td></tr>
+              <tr><td>0,75</td><td>1</td><td>…</td><td>0</td><td class="hl">1</td></tr>
+              <tr><td>0,00</td><td>1</td><td>…</td><td>1</td><td class="hl">1</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: treino - pesos aleatórios -->
+        <section data-auto-animate>
+          <h2>🤖 Treinamento: pesos aleatórios</h2>
+          <p>Começamos escolhendo pesos <strong style="color: #ff79c6;">aleatórios</strong>, um para cada coluna
+            (incluindo o viés):</p>
+          <table class="ml-table">
+            <thead>
+              <tr><th>Idade</th><th>Sexo</th><th>Pressão</th><th>Colest.</th><th>Batim.</th><th>Açúcar</th>
+                <th>Hist. Fam.</th><th>Viés</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="hl">0,7</td><td class="hl">0,9</td><td class="hl">0,3</td><td class="hl">0,6</td>
+                <td class="hl">0,1</td><td class="hl">1,0</td><td class="hl">0,2</td><td class="hl">0,2</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: soma ponderada + sigmoide + erro -->
+        <section data-auto-animate>
+          <h2>🤖 Soma ponderada, sigmóide e erro</h2>
+          <ol>
+            <li>Calcular a <strong>soma ponderada</strong> $z = vi\acute{e}s + \sum w_i x_i$ de cada linha</li>
+            <li>Aplicar a <strong style="color: #8be9fd;">sigmóide</strong> para obter o estimado $\hat{y}$</li>
+            <li>Calcular o <strong style="color: #ff5555;">erro</strong> $= \hat{y} - y$</li>
+          </ol>
+          <table class="ml-table" style="margin-top: 10px;">
+            <thead><tr><th>$y$ (Ataque)</th><th>Estimado $\hat{y}$</th><th>Erro</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>0,7480</td><td class="hl">-0,2520</td></tr>
+              <tr><td>1</td><td>0,9671</td><td class="hl">-0,0329</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: atualizar coluna idade -->
+        <section data-auto-animate>
+          <h2>🤖 Atualizando a coluna Idade</h2>
+          <ul style="font-size: 20pt;">
+            <li>Multiplica <strong>idades × erros</strong> e tira a <strong>média</strong> (soma ÷ n):
+              média do erro $\approx 0{,}1275$</li>
+            <li>Com taxa de aprendizado $\alpha = 0{,}3$ e peso inicial da idade $= 0{,}7$:</li>
+          </ul>
+          <div class="formula-box" style="display:block; text-align:center; font-size: 22pt;">
+            $$w_1 = 0{,}7 - 0{,}3 \cdot 0{,}1275 = 0{,}7 + 0{,}03825 = 0{,}73825$$
+          </div>
+          <p style="font-size: 18pt; color: #f1fa8c;">Repetimos isso para todos os pesos, várias vezes, até a Loss
+            parar de melhorar.</p>
+        </section>
+
+        <!-- SLIDE: validação -->
+        <section data-auto-animate>
+          <h2>🎯 Verificar a hora de parar o treino</h2>
+          <ul>
+            <li>Ao trocar os pesos, um <strong>novo erro</strong> é gerado</li>
+            <li>Se o erro <strong style="color: #ff5555;">não melhorar</strong>, paramos de treinar</li>
+            <li>Mas o erro <strong>não</strong> pode ser analisado contra o próprio treinamento — e sim contra o
+              <strong style="color: #8be9fd;">conjunto de validação</strong>!</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: resultado final -->
+        <section data-auto-animate>
+          <h2>👩🏻‍🔬 Resultado final</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Pelos valores dos pesos, sabemos quais colunas têm <strong style="color: #8be9fd;">maior
+                importância</strong>:</p>
+              <ul style="font-size: 19pt;">
+                <li>Batimentos cardíacos (<strong>-1,80</strong>)</li>
+                <li>Nível de açúcar no sangue (<strong>1,51</strong>)</li>
+                <li>Colesterol (<strong>1,11</strong>)</li>
+              </ul>
+              <p style="color: #50fa7b;">A Loss caiu de <strong>3,5033</strong> para <strong>1,061</strong>! ✅</p>
+            </div>
+            <div style="flex: 1;">
+              <table class="ml-table" style="font-size: 15pt;">
+                <thead><tr><th>Coluna</th><th>Peso final</th></tr></thead>
+                <tbody>
+                  <tr><td>Idade</td><td>-0,0592</td></tr>
+                  <tr><td>Sexo</td><td>-0,5570</td></tr>
+                  <tr><td>Pressão</td><td>0,8152</td></tr>
+                  <tr><td>Colesterol</td><td class="hl">1,1103</td></tr>
+                  <tr><td>Batimentos</td><td class="hl">-1,8044</td></tr>
+                  <tr><td>Açúcar</td><td class="hl">1,5133</td></tr>
+                  <tr><td>Hist. Familiar</td><td>0,3505</td></tr>
+                  <tr><td>Viés</td><td>0,2410</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: prática -->
+        <section data-auto-animate>
+          <h2>Mãos à obra 🧑‍💻</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 2;">
+              <ul>
+                <li>Regressão logística <strong>manual</strong> no Colab:
+                  <a href="https://colab.research.google.com/drive/1tC__qZFGiXhd1ciCvbrxgyG-Hf3hOzPD"
+                     target="_blank">abrir notebook</a></li>
+                <li>Planilha de apoio:
+                  <a href="https://docs.google.com/spreadsheets/d/17YQwqcjT9LXReF5_R630B75kYSxBKl3J9rsS5zxwbCI/edit"
+                     target="_blank">abrir planilha</a></li>
+                <li>Dataset:
+                  <a href="https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset"
+                     target="_blank">Heart Disease Dataset</a></li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula02/professor-ilustracao.png"
+                   alt="Ilustração de pessoa escrevendo em um quadro" width="240"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 5 -->
+
+      <!-- SLIDE: Resumo -->
+      <section data-auto-animate>
+        <h2>Resumo da aula</h2>
+        <ls-u>
+          <li>Aprendizado de máquina: aprender com os dados, classificação × regressão</li>
+          <li>O pipeline completo: definição, coleta, tratamento, seleção, divisão, treino, validação e teste</li>
+          <li>Regressão logística: sigmóide, soma ponderada com pesos e função Loss (log-loss)</li>
+          <li>Gradiente descendente: derivada da Loss e a regra de atualização $(\hat{y} - y)\,x_i$</li>
+          <li>Exemplo completo: prever risco de ataque cardíaco com o Heart Disease Dataset</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>Redes Neurais e Aprendizado Profundo</strong></p>
+        </div>
+      </section>
+
+      <!-- SLIDE: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul style="font-size: 18pt;">
+          <li><a href="https://spectrum.ieee.org/dartmouth-ai-workshop" target="_blank">
+            IEEE Spectrum — The Dartmouth AI Workshop</a></li>
+          <li><a href="https://www.cantorsparadise.org/the-birthplace-of-ai-9ab7d4e5fb00/" target="_blank">
+            Cantor's Paradise — The Birthplace of AI</a></li>
+          <li><a href="https://www.youtube.com/watch?v=a0_lo_GDcFw&amp;t=315s" target="_blank">
+            YouTube — The Machine that Changed the World: The Thinking Machine</a></li>
+          <li><a href="https://timeline.historyofdatascience.com/" target="_blank">
+            History of Data Science — Timeline</a></li>
+          <li><a href="https://github.com/fastai/fastbook/blob/master/01_intro.ipynb" target="_blank">
+            fast.ai — fastbook: 01_intro</a></li>
+          <li><a href="https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset" target="_blank">
+            Kaggle — Heart Disease Dataset</a></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <!-- Plugin scripts (local — NOT CDN) -->
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <!-- socket.io required by seminar plugin — must load before init.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

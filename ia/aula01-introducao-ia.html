@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Inteligência Artificial - Introdução à Inteligência Artificial</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <!-- Optional plugins -->
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .app-grid {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .app-grid img {
+      background: #f8f8f2;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .timeline-badge {
+      display: inline-block;
+      background: #44475a;
+      color: #8be9fd;
+      font-weight: bold;
+      border-radius: 6px;
+      padding: 2px 12px;
+      margin-right: 8px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="01" curso="Inteligência Artificial" title-size="24"
+                 title="Introdução à Inteligência Artificial">
+          <img src="images/aula01/capa-ia.jpg" alt="Ilustração de circuito com as letras AI representando inteligência artificial"
+               width="450" style="border-radius: 10px;" />
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         Etapa 1: O que é inteligência?
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 1 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 1: O que é inteligência?</h2>
+          <p>Antes de falar de inteligência <strong>artificial</strong>, precisamos combinar o que
+            entendemos por <strong style="color: #ff79c6;">inteligência</strong>.</p>
+          <p class="fragment" style="color: #f1fa8c;">Como você definiria inteligência? 🤔</p>
+        </section>
+
+        <!-- SLIDE: Definição de dicionário -->
+        <section data-auto-animate>
+          <h2>O que é inteligência?</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 2; text-align: center;">
+              <img src="images/aula01/michaelis-inteligencia.png"
+                   alt="Verbete inteligência do dicionário Michaelis com sete acepções" width="520"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/michaelis-logo.png" alt="Logotipo do dicionário Michaelis" width="220"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+          <ul>
+            <li>Faculdade de entender, pensar, raciocinar e interpretar</li>
+            <li>Capacidade de resolver situações novas com rapidez e êxito</li>
+            <li>Habilidade de aproveitar a eficácia de uma situação e utilizá-la na prática de outra atividade</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: O que é IA? Definições -->
+        <section data-auto-animate>
+          <h2>O que é inteligência artificial?</h2>
+          <div style="text-align: center; margin-bottom: 10px;">
+            <img src="images/aula01/definicao-ia-dicionario.png"
+                 alt="Definição de dicionário: projeto e desenvolvimento de programas de computador que simulam o pensamento humano"
+                 width="850" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <div class="fragment" style="text-align: center;">
+            <img src="images/aula01/definicao-ia-google.png"
+                 alt="Definição da Google Cloud: conjunto de tecnologias que permitem aos computadores executar funções avançadas"
+                 width="700" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            <div style="margin-top: 8px;">
+              <img src="images/aula01/google-cloud-logo.png" alt="Logotipo do Google Cloud" width="180"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 8px;" />
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE: Perguntando para a própria IA -->
+        <section data-auto-animate>
+          <h2>Perguntando para a própria IA 🤖</h2>
+          <div style="text-align: center;">
+            <img src="images/aula01/chatgpt-o-que-e-ia.png"
+                 alt="Resposta do ChatGPT explicando o que é inteligência artificial e seus objetivos principais"
+                 height="480" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: IA Fraca vs IA Forte -->
+        <section data-auto-animate>
+          <h2>IA Fraca × IA Forte</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong style="color: #8be9fd;">IA Fraca (específica):</strong> projetada para tarefas
+                  determinadas — como responder perguntas e gerar texto. O ChatGPT é um exemplo</li>
+                <li><strong style="color: #ff79c6;">IA Forte (geral):</strong> teria inteligência
+                  semelhante à humana, capaz de generalizar como um ser humano — ainda não existe</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/chatgpt-ia-fraca.png"
+                   alt="Resposta do ChatGPT explicando por que ele é um exemplo de IA fraca" width="440"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: Aplicações de IA atuais
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 2 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 2: Aplicações de IA atuais</h2>
+          <div class="app-grid" style="margin-top: 20px;">
+            <img src="images/aula01/dalle3-logo.png" alt="Logotipo do DALL-E 3" width="170" />
+            <img src="images/aula01/gemini-logo.png" alt="Logotipo do Google Gemini" width="170" />
+            <img src="images/aula01/copilot.png" alt="Logotipo do Microsoft Copilot" width="200" />
+            <img src="images/aula01/netflix-logo.png" alt="Logotipo da Netflix" width="120" />
+            <img src="images/aula01/leonardo-ai-logo.png" alt="Logotipo do Leonardo.Ai" width="170" />
+            <img src="images/aula01/carro-autonomo.jpg" alt="Carro autônomo do Google em estrada ao pôr do sol"
+                 width="240" style="padding: 0;" />
+          </div>
+          <p style="margin-top: 20px;">IAs generativas, recomendação de conteúdo, carros autônomos...
+            a IA já faz parte do nosso dia a dia!</p>
+        </section>
+
+        <!-- SLIDE: Detecção de fraude -->
+        <section data-auto-animate>
+          <h2>Usos consolidados: detecção de fraude 💳</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Bancos e cartões analisam cada transação em tempo real</li>
+                <li>Um modelo preditivo dá uma pontuação de risco</li>
+                <li>Transações suspeitas são bloqueadas ou investigadas</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/deteccao-fraude-fluxo.png"
+                   alt="Fluxograma de detecção de fraude com modelo preditivo aprovando ou rejeitando transações de cartão"
+                   width="460" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Reconhecimento facial -->
+        <section data-auto-animate>
+          <h2>Usos consolidados: reconhecimento facial 🧑</h2>
+          <div style="text-align: center;">
+            <img src="images/aula01/reconhecimento-facial.png"
+                 alt="Software de reconhecimento facial destacando rostos detectados em vídeo" height="440"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Imagens médicas -->
+        <section data-auto-animate>
+          <h2>Usos consolidados: análise de imagens médicas 🏥</h2>
+          <div style="text-align: center;">
+            <img src="images/aula01/imagens-medicas.jpg"
+                 alt="Radiografias e tomografias com regiões destacadas por algoritmos de IA" height="440"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Suporte e vendas -->
+        <section data-auto-animate>
+          <h2>Usos consolidados: suporte e vendas 💬</h2>
+          <multi-col cols="3" style="gap:15px; align-items: center;">
+            <div style="text-align: center;">
+              <img src="images/aula01/bia-bradesco.jpg" alt="BIA, a inteligência artificial do Bradesco" width="290"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 16pt; text-align: center;">BIA — Bradesco</p>
+            </div>
+            <div style="text-align: center;">
+              <img src="images/aula01/ifood-whatsapp.png" alt="Conversa comercial do iFood pelo WhatsApp" height="380"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 16pt; text-align: center;">iFood no WhatsApp</p>
+            </div>
+            <div style="text-align: center;">
+              <img src="images/aula01/claro-whatsapp.png" alt="Atendimento automático da Claro pelo WhatsApp" height="380"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 16pt; text-align: center;">Claro no WhatsApp</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Segurança pública -->
+        <section data-auto-animate>
+          <h2>Usos consolidados: segurança pública 🚨</h2>
+          <div style="text-align: center;">
+            <img src="images/aula01/noticia-duque-de-caxias.png"
+                 alt="Notícia: inteligência artificial auxilia na segurança pública de Duque de Caxias" width="620"
+                 style="border-radius: 8px; margin-bottom: 15px;" />
+          </div>
+          <div class="fragment" style="text-align: center;">
+            <img src="images/aula01/noticia-fortaleza.png"
+                 alt="Notícia: câmeras com inteligência artificial vão detectar crimes e infrações em Fortaleza"
+                 width="620" style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Outros usos -->
+        <section data-auto-animate>
+          <h2>Usos consolidados: outros</h2>
+          <multi-col style="gap:15px;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/robo-xadrez.jpg" alt="Ilustração de robô jogando xadrez contra humano"
+                   height="215" style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 2px;">🎮 Jogos</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/industria-robos.png" alt="Braços robóticos montando carro em linha de produção"
+                   height="215" style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 2px;">🏭 Indústria</p>
+            </div>
+          </multi-col>
+          <multi-col style="gap:15px;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/anuncio-x-developers.png"
+                   alt="Anúncio direcionado na rede social X para desenvolvedores" height="185"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 2px;">📣 Propaganda direcionada</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/drone-agricultura.jpg" alt="Drone pulverizando lavoura de arroz"
+                   height="185" style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 2px;">🌾 Agricultura</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: Histórico da IA
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 3 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 3: Histórico da IA</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/historico-ia.jpg"
+                   alt="Ilustração futurista de cérebro digital em circuito eletrônico" width="420"
+                   style="border-radius: 8px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/alan-turing.jpg" alt="Retrato de Alan Turing" width="260"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center;">Tudo começa com <strong>Alan Turing</strong></p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Alan Turing 1940-50 -->
+        <section data-auto-animate>
+          <h2>Alan Turing — década de 1940-50</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 3;">
+              <ul>
+                <li>Considerado o <strong style="color: #8be9fd;">pai da computação moderna</strong></li>
+                <li>Desenvolveu um computador para decifrar código criptografado na Segunda Guerra Mundial</li>
+                <li>Encurtou a guerra em 2 a 4 anos, salvando mais de <strong>14 milhões de vidas</strong></li>
+                <li>Um dos primeiros cientistas a cogitar a possibilidade de computadores inteligentes</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/jogo-da-imitacao.jpg"
+                   alt="Cartaz do filme O Jogo da Imitação sobre Alan Turing" height="400"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 14pt; text-align: center; color: #6272a4;">🎬 O Jogo da Imitação (2014)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Citação de Turing -->
+        <section data-auto-animate>
+          <h2>Alan Turing</h2>
+          <multi-col style="gap:25px; align-items: center;">
+            <div style="flex: 2;">
+              <blockquote style="border-left: 4px solid #ff79c6; padding: 12px 18px; font-style: italic; font-size: 24pt;">
+                O computador do futuro seria capaz de <strong style="color: #ff79c6;">aprender com a
+                experiência</strong>. O caminho para isso era que ele fosse capaz de
+                <strong style="color: #8be9fd;">alterar as próprias instruções</strong> fornecidas por seu mecanismo.
+                <footer style="font-style: normal; margin-top: 10px; color: #6272a4;">— Alan Turing</footer>
+              </blockquote>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/alan-turing.jpg" alt="Retrato de Alan Turing" width="280"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: 1946 neurônio artificial -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1946</span> O neurônio artificial</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p><strong style="color: #8be9fd;">Warren McCulloch</strong> (neurofisiologista) e
+                <strong style="color: #ff79c6;">Walter Pitts</strong> (matemático lógico) teorizaram:</p>
+              <p>O neurônio nada mais é que uma unidade de processamento que:</p>
+              <ul>
+                <li>Recebe entradas pelos <strong>dendritos</strong></li>
+                <li>Realiza alguma função internamente com os resultados</li>
+                <li>Emite saídas pelos seus <strong>axônios</strong></li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/neuronio-biologico.png"
+                   alt="Diagrama comparando neurônio biológico com modelo matemático de entradas e saídas" width="440"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: 1956 Dartmouth -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1956</span> Surgimento da IA: Dartmouth</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 3;">
+              <ul>
+                <li><strong style="color: #8be9fd;">John McCarthy</strong> cria o termo
+                  <strong>Inteligência Artificial</strong> na Conferência de Dartmouth</li>
+                <li>Grupo de matemáticos, cientistas da computação e psicólogos</li>
+                <li>Durou 8 semanas</li>
+                <li>Nos anos seguintes, esses cientistas desenvolvem conceitos usados nas IAs mais
+                  modernas, como os neurônios artificiais</li>
+              </ul>
+            </div>
+            <div style="flex: 2; text-align: center;">
+              <img src="images/aula01/dartmouth-grupo.jpg"
+                   alt="Foto em preto e branco dos participantes da Conferência de Dartmouth" width="360"
+                   style="border-radius: 8px; margin-bottom: 10px;" />
+              <img src="images/aula01/mccarthy-minsky.png"
+                   alt="Retratos de John McCarthy e Marvin Minsky" width="300" style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: 1958 Mark I Perceptron -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1958</span> Frank Rosenblatt: Mark I Perceptron</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/mark1-perceptron.jpg"
+                   alt="Fotografia da máquina Mark I Perceptron com painéis de cabos" height="380"
+                   style="border-radius: 8px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/mark1-organizacao.jpg"
+                   alt="Diagrama da organização do Mark I Perceptron com unidades sensoriais, de associação e resposta"
+                   height="320" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+              <p style="font-size: 16pt; text-align: center;">📺 YouTube: <em>The Machine that Changed the World —
+                The Thinking Machine</em></p>
+            </div>
+          </multi-col>
+        </section>
+
+        <section>
+          <center>
+            <iframe width="1120" height="630" src="https://www.youtube.com/embed/Suevq-kZdIw?si=j5RCc0XW_oqP3YIn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </center>
+        </section>
+
+        <!-- SLIDE: Por que o Mark I morreu -->
+        <section data-auto-animate>
+          <h2>Por que o Mark I Perceptron morreu? 💀</h2>
+          <ul>
+            <li>Tinha apenas <strong>uma camada</strong> de neurônios</li>
+            <li>Era gigante e demorava muito tempo para treinar</li>
+            <li>O maior golpe foi o livro de <strong style="color: #ff79c6;">Marvin Minsky</strong> e
+              <strong style="color: #ff79c6;">Seymour Papert</strong>, que demonstrou que a máquina não era capaz
+              de realizar operações matemáticas simples como o <code>XOR</code></li>
+            <li class="fragment">Mas no capítulo seguinte eles dão a solução: criar <strong>mais uma camada de
+              neurônios</strong> — assim ele seria capaz de generalizar qualquer função</li>
+            <li class="fragment">A maioria não leu até esse capítulo e simplesmente deixou de lado…</li>
+            <li class="fragment">Não havia aplicação prática? Mas sim: a das <strong style="color: #f1fa8c;">IAs
+              simbólicas</strong>…</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Inverno da IA -->
+        <section data-auto-animate>
+          <h2>O inverno da IA ❄️ (até 2010)</h2>
+          <ul>
+            <li>Houve um esfriamento e descrédito em simular o nosso cérebro com neurônios artificiais</li>
+            <li>Ainda precisaríamos de máquinas muito melhores e maior capacidade de obter e armazenar dados</li>
+            <li>Os investimentos mudam para a <strong style="color: #f1fa8c;">IA simbólica</strong></li>
+            <li>IA simbólica usa uma base de conhecimentos e faz buscas nela para encontrar respostas por
+              uma série de regras lógicas de <code>IF-ELSE</code>, <code>AND</code>, <code>OR</code> etc.</li>
+            <li>Apesar de a IA simbólica ter algum sucesso, nunca chegou nem perto de fazer algo semelhante
+              ao que somos capazes de fazer</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Quem usa IA simbólica -->
+        <section data-auto-animate>
+          <h2>Quem usa IA simbólica?</h2>
+          <p>Assistente Google, Siri, Cortana, …</p>
+          <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 15px 20px; margin-top: 15px;">
+            <p><strong style="color: #8be9fd;">Sistemas especialistas:</strong> codificam os conhecimentos de
+              especialistas com base em como eles tomam decisões</p>
+            <ul>
+              <li>Paciente chega com febre, tosse, coriza → <strong>gripe</strong></li>
+              <li>Paciente com dor de estômago, consome muita fritura, industrializados, cafeína e faz poucas
+                refeições → <strong>gastrite</strong></li>
+              <li>etc…</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SLIDE: Retomando redes neurais -->
+        <section data-auto-animate>
+          <h2>Retomando as redes neurais</h2>
+          <ul>
+            <li>No final da década de 1980, o interesse nas redes neurais retorna com o surgimento de
+              <strong>algoritmos mais eficientes</strong></li>
+            <li>A partir de 1990, com o crescimento da internet e do fluxo de dados, cresce o interesse em
+              <strong style="color: #8be9fd;">extrair informações dos dados</strong></li>
+            <li>Na década de 2000, as aplicações de <strong style="color: #ff79c6;">machine learning</strong>
+              ganham cada vez mais força</li>
+            <li><strong>Machine learning:</strong> o dispositivo aprende, com base em experiências passadas,
+              a tomar decisões no futuro</li>
+            <li>Surgem diversas soluções para analisar dados mais complexos: SVM, AdaBoost, Random Forest e XGBoost</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: 2012/2014 redes profundas -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">2010+</span> Redes cada vez mais profundas</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Até os anos 2000, os computadores dos cientistas eram muito limitados</li>
+                <li>Isso muda, e redes neurais cada vez mais complexas passam a ser testadas</li>
+                <li>Análise de imagens com redes neurais vira o <strong style="color: #f1fa8c;">padrão ouro</strong>
+                  da visão computacional</li>
+                <li>Redes convolucionais: Kunihiko Fukushima (1979), usadas com sucesso por Yann LeCun (1989)
+                  para ler CEP escrito à mão</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/alexnet-vggnet.png"
+                   alt="Diagramas das arquiteturas AlexNet e VGGNet em camadas coloridas" height="400"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+              <p style="font-size: 16pt; text-align: center;">AlexNet (2012) e VGGNet (2014)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: 2017 Transformers -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">2017+</span> Redes neurais Transformer</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Vaswani (2017): <em style="color: #8be9fd;">Attention is All You Need</em></li>
+                <li>Revolução no processamento de linguagem natural (NLP)</li>
+              </ul>
+              <p style="margin-top: 15px;">
+                <span class="timeline-badge">2018</span> GPT<br />
+                <span class="timeline-badge">2018</span> BERT: mecanismo de busca Google<br />
+                <span class="timeline-badge">2020</span> GPT-3<br />
+                <span class="timeline-badge">2023</span> GPT-4
+              </p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/attention-arxiv.png"
+                   alt="Página do artigo Attention is All You Need no arXiv" width="440"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Chaves para a retomada -->
+        <section data-auto-animate>
+          <h2>Chaves para a retomada das redes neurais 🔑</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 3;">
+              <ul>
+                <li>Melhora dos <strong>algoritmos de treinamento</strong> e arquiteturas de rede</li>
+                <li>Poder de computação: <strong style="color: #50fa7b;">GPU</strong></li>
+                <li>Ferramentas de código aberto: <strong>TensorFlow</strong> (2015), <strong>PyTorch</strong> (2016)</li>
+              </ul>
+            </div>
+            <div style="flex: 2; text-align: center;">
+              <img src="images/aula01/nvidia-gpu-1gb.png"
+                   alt="Nota sobre as primeiras placas de vídeo Nvidia com 1 GB de memória, GeForce GTX 470 e 480 de 2010"
+                   width="420" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: GPU na prática - Colab -->
+        <section data-auto-animate>
+          <h2>GPU na prática: Google Colab</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/colab-logo.png" alt="Logotipo do Google Colab" width="200"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px; margin-bottom: 10px;" />
+              <img src="images/aula01/colab-ambiente-execucao.png"
+                   alt="Tela do Colab para escolher acelerador de hardware entre CPU, GPU e TPU" width="380"
+                   style="border-radius: 8px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/gpus-nvidia.png" alt="Grade de placas de vídeo Nvidia de diferentes gerações"
+                   width="400" style="border-radius: 8px; margin-bottom: 10px;" />
+              <img src="images/aula01/colab-pay-as-you-go.png"
+                   alt="Preços do Colab Pay As You Go: R$ 58 por 100 unidades e R$ 258 por 500 unidades" width="330"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+          <p style="font-size: 18pt;">GPUs de datacenter são caras — o Colab dá acesso gratuito (limitado) para estudar! 🎓</p>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Manipulação de dados com pandas
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 4 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 4: Manipulação de dados com pandas 🐼</h2>
+          <p>Modelos de IA aprendem com <strong>dados</strong> — antes de treinar, precisamos limpar e
+            preparar esses dados com a biblioteca <code>pandas</code>.</p>
+        </section>
+
+        <!-- SLIDE: Limpando dados -->
+        <section data-auto-animate>
+          <h2>Limpando dados</h2>
+          <ul style="margin-bottom: 10px;">
+            <li><code>.isnull()</code>: verifica se os dados são NaN (not a number / erro)</li>
+            <li><code>.fillna()</code>: substitui dados faltantes</li>
+            <li><code>.drop_duplicates()</code>: remove linhas duplicadas</li>
+          </ul>
+          <code-block lang="python" data-trim>
+# Substituindo dados faltantes pela média
+dados['idade'].fillna(dados['idade'].mean(), inplace=True)
+
+# Removendo linhas duplicadas
+dados = dados.drop_duplicates()
+
+# Corrigindo inconsistências
+dados['genero'] = dados['genero'].replace(['Feminino', 'fem'], 'F')
+</code-block>
+        </section>
+
+        <!-- SLIDE: Manipulando dados -->
+        <section data-auto-animate>
+          <h2>Manipulando dados</h2>
+          <code-block lang="python" data-trim>
+# Selecionando colunas
+dados[['age', 'sex']]
+
+# Quero ver apenas idosos
+dados[dados['age'] >= 60]
+
+# Agrupando dados
+dados.groupby('sex')['age'].mean()
+
+# Ordenando dados
+dados.sort_values('age', ascending=True)
+
+# Criando novas colunas
+dados['idoso'] = dados['age'] > 60
+</code-block>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- ============================================================
+         Etapa 5: Prática — Teachable Machine
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 5 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 5: Teachable Machine</h2>
+          <p><strong style="color: #ff79c6;">CNN para leigos:</strong> treine um modelo de visão computacional
+            sem escrever uma linha de código!</p>
+          <div style="text-align: center;">
+            <img src="images/aula01/teachable-novo-projeto.png"
+                 alt="Página inicial do Teachable Machine com projetos de imagem, áudio e pose" width="540"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Iniciando o projeto -->
+        <section data-auto-animate>
+          <h2>Iniciando o projeto</h2>
+          <ul>
+            <li>Acesse <a href="https://teachablemachine.withgoogle.com/train" target="_blank">
+              https://teachablemachine.withgoogle.com/train</a></li>
+            <li>Inicie um <strong>projeto de imagem</strong></li>
+          </ul>
+          <div style="text-align: center;">
+            <img src="images/aula01/teachable-novo-projeto.png"
+                 alt="Tela de novo projeto do Teachable Machine destacando o projeto de imagem" width="520"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Modelo standard -->
+        <section data-auto-animate>
+          <h2>Inicie um modelo standard</h2>
+          <multi-col style="gap:15px;">
+            <div style="flex: 1;">
+              <h4 style="color: #50fa7b;">Standard ✅</h4>
+              <ul>
+                <li>Maioria dos usos</li>
+                <li>Imagens maiores: 224 × 224</li>
+                <li>Imagens coloridas RGB</li>
+              </ul>
+              <h4 style="color: #ffb86c; margin-top: 20px;">Embedded</h4>
+              <ul>
+                <li>Para sistemas embarcados (Arduino…)</li>
+                <li>Imagens menores: 96 × 96</li>
+                <li>Imagens em tons de cinza</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/teachable-standard.png"
+                   alt="Janela de novo projeto de imagem do Teachable Machine com a opção de modelo standard" width="420"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: A atividade -->
+        <section data-auto-animate>
+          <h2>A atividade 🎯</h2>
+          <p><strong>Projeto para classificar diferentes imagens.</strong> Exemplo: mostrar diferentes objetos
+            (ou tipos de objetos) e fazer o modelo identificar o que é.</p>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px; margin-top: 15px;">
+            <p><strong>Passos:</strong></p>
+            <ls-u>
+              <li>Crie uma classe para cada objeto/tipo de objeto</li>
+              <li>Adicione fotos de exemplo para cada um</li>
+              <li>Treine o modelo</li>
+              <li>Ao final do treinamento, seu modelo conseguirá classificar <strong>ao vivo</strong> que tipo
+                de objeto está vendo</li>
+            </ls-u>
+          </div>
+        </section>
+
+        <!-- SLIDE: Renomeie as classes -->
+        <section data-auto-animate>
+          <h2>Renomeie e adicione classes</h2>
+          <ul>
+            <li>Renomeie as classes com o nome de cada objeto (clique no lápis ✏️)</li>
+            <li>Adicione novas classes com o botão <strong>"+ Add a class"</strong></li>
+          </ul>
+          <div style="text-align: center;">
+            <img src="images/aula01/teachable-projeto.png"
+                 alt="Área de trabalho do Teachable Machine com classes, painel de treinamento e pré-visualização"
+                 width="680" style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Adicionando imagens -->
+        <section data-auto-animate>
+          <h2>Adicionando imagens</h2>
+          <multi-col style="gap:15px;">
+            <div style="flex: 1;">
+              <h4 style="color: #8be9fd;">📷 Com webcam</h4>
+              <ul>
+                <li>Capture amostras ao vivo segurando o botão de gravação</li>
+                <li>Dá para usar o celular como webcam!</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #ffb86c;">📁 Fazer upload</h4>
+              <ul>
+                <li>Envie fotos já salvas do computador ou do Google Drive</li>
+              </ul>
+            </div>
+          </multi-col>
+          <div style="text-align: center;">
+            <img src="images/aula01/teachable-projeto.png"
+                 alt="Classe do Teachable Machine com botões de webcam e upload para adicionar amostras de imagem"
+                 width="600" style="border-radius: 8px;" />
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 5 -->
+
+      <!-- ============================================================
+         Etapa 6: Usando o celular como webcam
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 6 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 6: Usando o celular como webcam 📱</h2>
+          <p>Sem webcam no computador? O celular resolve!</p>
+        </section>
+
+        <!-- SLIDE: Android 14+ -->
+        <section data-auto-animate>
+          <h2>Android 14+</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Conecte pelo <strong>cabo USB</strong></li>
+                <li>Nas opções de USB do Android, selecione o modo <strong style="color: #50fa7b;">Webcam</strong></li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula01/android-webcam.png"
+                   alt="Telas do Android mostrando as preferências USB com o modo webcam selecionado" height="400"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Android 13- -->
+        <section data-auto-animate>
+          <h2>Android 13 ou anterior</h2>
+          <ul>
+            <li>Use o aplicativo <strong style="color: #8be9fd;">DroidCam</strong>:
+              <a href="https://droidcam.app/" target="_blank">https://droidcam.app/</a></li>
+            <li>Instale o app no celular e o cliente no computador</li>
+            <li>Funciona por Wi-Fi ou cabo USB</li>
+          </ul>
+        </section>
+
+      </section><!-- fim Etapa 6 -->
+
+      <!-- SLIDE: Resumo -->
+      <section data-auto-animate>
+        <h2>Resumo da aula</h2>
+        <ls-u>
+          <li>O que é inteligência e inteligência artificial (IA fraca × IA forte)</li>
+          <li>Aplicações atuais: geração de conteúdo, fraude, reconhecimento facial, medicina, vendas…</li>
+          <li>Histórico: Turing, neurônio artificial, Dartmouth, perceptron, inverno da IA e retomada</li>
+          <li>Chaves da retomada: algoritmos, GPUs e ferramentas open source</li>
+          <li>Prática: classificador de imagens com o Teachable Machine</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>Machine Learning</strong></p>
+        </div>
+      </section>
+
+      <!-- SLIDE: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul style="font-size: 18pt;">
+          <li><a href="https://spectrum.ieee.org/dartmouth-ai-workshop" target="_blank">
+            IEEE Spectrum — The Dartmouth AI Workshop</a></li>
+          <li><a href="https://www.cantorsparadise.org/the-birthplace-of-ai-9ab7d4e5fb00/" target="_blank">
+            Cantor's Paradise — The Birthplace of AI</a></li>
+          <li><a href="https://www.youtube.com/watch?v=a0_lo_GDcFw&amp;t=315s" target="_blank">
+            YouTube — The Machine that Changed the World: The Thinking Machine</a></li>
+          <li><a href="https://timeline.historyofdatascience.com/" target="_blank">
+            History of Data Science — Timeline</a></li>
+          <li><a href="https://github.com/fastai/fastbook/blob/master/01_intro.ipynb" target="_blank">
+            fast.ai — fastbook: 01_intro</a></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <!-- Plugin scripts (local — NOT CDN) -->
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <!-- socket.io required by seminar plugin — must load before init.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

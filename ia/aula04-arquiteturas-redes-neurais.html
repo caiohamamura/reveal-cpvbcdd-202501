@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Inteligência Artificial - Tipos e Arquiteturas de Redes Neurais</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <!-- Optional plugins -->
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .arch-grid {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="04" curso="Inteligência Artificial" title-size="24"
+                 title="Tipos e Arquiteturas de Redes Neurais">
+          <img src="images/aula04/rede-neural-densa.png"
+               alt="Ilustração de rede neural densa com muitas conexões coloridas entre neurônios" width="430"
+               style="border-radius: 10px;" />
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         Etapa 1: Revisão — a rede neural e o neurônio
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 1 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 1: A rede neural e o neurônio</h2>
+          <p>Na aula passada aprendemos o <strong style="color: #ff79c6;">básico das redes neurais</strong>.
+            Vamos relembrar como o neurônio funciona antes de estudar as diferentes arquiteturas.</p>
+        </section>
+
+        <!-- SLIDE: A rede neural -->
+        <section data-auto-animate>
+          <h2>A rede neural</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Uma rede neural é formada por dois elementos principais:</p>
+              <ul>
+                <li><strong style="color: #8be9fd;">Neurônios (perceptrons):</strong> unidades de
+                  processamento organizadas em camadas</li>
+                <li><strong style="color: #ff79c6;">Conexões:</strong> ligam os neurônios e carregam
+                  <strong>pesos</strong> aprendidos durante o treinamento</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/rede-simples-camadas.png"
+                   alt="Rede neural simples com camada de entrada, camada oculta e camada de saída" height="380"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: O neurônio -->
+        <section data-auto-animate>
+          <h2>O neurônio</h2>
+          <p>Cada neurônio combina as entradas \(x_i\) com seus pesos \(w_i\), soma um <strong>viés</strong>
+            e aplica uma <strong>função de ativação</strong>:</p>
+          <div style="text-align: center; margin: 15px 0;">
+            <img src="images/aula04/formula-z-soma.png"
+                 alt="Fórmula z igual ao somatório de x_i vezes w_i mais o viés" height="90"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <ul style="font-size: 20pt;">
+            <li>\(x_i\): entradas &nbsp;•&nbsp; \(w_i\): pesos &nbsp;•&nbsp; <strong>viés</strong>: deslocamento</li>
+            <li>\(z\): valor pré-ativação, resultado da combinação linear</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Ativação sigmoide -->
+        <section data-auto-animate>
+          <h2>O neurônio: ativação sigmóide</h2>
+          <p>O valor \(z\) passa por uma <strong style="color: #ff79c6;">função de ativação</strong>. A
+            sigmóide "achata" o resultado entre 0 e 1:</p>
+          <div style="text-align: center; margin: 12px 0;">
+            <img src="images/aula04/formula-sigmoide.png"
+                 alt="Função sigmóide: sigma de z igual a 1 sobre 1 mais e elevado a menos z" height="80"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/formula-z-exemplo.png"
+                   alt="Exemplo: z igual a 0,7 vezes 0,2 mais 0,2 vezes 0,1 igual a 0,16" height="55"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 8px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/formula-sigmoide-016.png"
+                   alt="Exemplo: sigma de 0,16 igual a 1 sobre 1 mais e elevado a menos 0,16 igual a 0,5399149"
+                   height="70" style="background: #f8f8f2; border-radius: 8px; padding: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Por que as redes funcionam -->
+        <section data-auto-animate>
+          <h2>Por que as redes neurais funcionam? 🎰</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Uma rede é um conjunto de várias <strong style="color: #8be9fd;">regressões / modelos
+                  estatísticos</strong> trabalhando juntos</li>
+                <li><strong style="color: #ff79c6;">Hipótese do bilhete de loteria:</strong> tendo muitos
+                  modelos, a chance de inicializar os pesos aleatoriamente de forma "sortuda" é cada vez maior</li>
+                <li>O treinamento ajusta os pesos para minimizar o erro (descida do gradiente)</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/python-superficie-perda.jpg"
+                   alt="Superfície 3D da função de perda usada na descida do gradiente estocástica em Python"
+                   width="420" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: O que muda entre as redes neurais?
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 2 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 2: O que muda entre as redes neurais?</h2>
+          <div style="text-align: center;">
+            <img src="images/aula04/rede-profunda-camadas.jpg"
+                 alt="Rede neural profunda com camada de entrada, várias camadas ocultas e camada de saída"
+                 width="620" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <p style="text-align: center;">Diferentes arquiteturas mudam <strong>camadas</strong>,
+            <strong>saídas</strong>, <strong>ativações</strong> e <strong>conectividade</strong>.</p>
+        </section>
+
+        <!-- SLIDE: Número de camadas e neurônios -->
+        <section data-auto-animate>
+          <h2>Número de camadas e de neurônios</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Podemos variar <strong style="color: #8be9fd;">quantas camadas</strong> a rede tem
+                  (profundidade)</li>
+                <li>E <strong style="color: #ff79c6;">quantos neurônios</strong> há em cada camada (largura)</li>
+                <li>Mais camadas e neurônios → capacidade de aprender padrões mais complexos, mas maior custo
+                  de treinamento</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/rede-neural-densa.png"
+                   alt="Rede neural densa e profunda com muitos neurônios e conexões coloridas" height="400"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Múltiplas saídas -->
+        <section data-auto-animate>
+          <h2>Múltiplas saídas</h2>
+          <p>A camada de saída pode ter <strong style="color: #8be9fd;">vários neurônios</strong> — um por
+            classe. A ativação <strong>softmax</strong> transforma as saídas em probabilidades que somam 1:</p>
+          <div style="text-align: center;">
+            <img src="images/aula04/rede-multiplas-saidas.png"
+                 alt="Rede classificando uma pera com softmax gerando probabilidades para maçã, laranja, pera e uva"
+                 width="800" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Função de ativação -->
+        <section data-auto-animate>
+          <h2>Função de ativação do neurônio</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>A função de ativação define como o neurônio responde ao valor \(z\):</p>
+              <ul style="font-size: 20pt;">
+                <li><strong style="color: #8be9fd;">Sigmoid / Tanh:</strong> achatam a saída (0 a 1 ou −1 a 1)</li>
+                <li><strong style="color: #50fa7b;">ReLU:</strong> \(\max(0, z)\) — a mais usada hoje, rápida
+                  e evita saturação</li>
+                <li><strong style="color: #ffb86c;">Leaky ReLU:</strong> permite valores negativos pequenos</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/funcoes-ativacao.png"
+                   alt="Gráficos das funções de ativação Tanh, ReLU, Sigmoid e Leaky ReLU" width="420"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Padrão de conectividade - RNN -->
+        <section data-auto-animate>
+          <h2>Padrão de conectividade: RNN</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>As <strong style="color: #8be9fd;">RNN (Redes Neurais Recorrentes)</strong> usam
+                  recorrência em relação às vezes anteriores em que foram ativadas</li>
+                <li>Funciona como se fosse uma <strong>memória</strong> do que ocorreu antes</li>
+                <li><strong style="color: #ff79c6;">Usos:</strong> séries temporais, processamento de
+                  linguagem natural</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/rnn-diagrama.jpg"
+                   alt="Diagrama desenhado à mão de uma rede neural recorrente destacando o laço de recorrência"
+                   width="420" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: Classificação × regressão
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 3 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 3: Classificação × regressão</h2>
+          <p>O <strong>tipo de problema</strong> muda a camada de saída e a função de perda da rede.</p>
+        </section>
+
+        <!-- SLIDE: Classificação -->
+        <section data-auto-animate>
+          <h2>Classificação</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Prever uma <strong style="color: #ff79c6;">categoria</strong> (classe) para a entrada</li>
+                <li>Um neurônio de saída por classe + <strong>softmax</strong></li>
+                <li>A saída é a <strong>probabilidade</strong> de cada classe — escolhemos a maior</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/rede-multiplas-saidas.png"
+                   alt="Rede de classificação gerando probabilidades para quatro classes de frutas via softmax"
+                   width="440" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Exemplos (Colab) -->
+        <section data-auto-animate>
+          <h2>Exemplos práticos no Colab 🧪</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 18px 22px;">
+            <ul>
+              <li><strong style="color: #8be9fd;">Classificação de múltiplas classes:</strong>
+                <a href="https://colab.research.google.com/drive/1K1KHQzcpkriH8NE7wHWapd0lf-6pV6z8" target="_blank">
+                  abrir notebook no Colab</a></li>
+              <li><strong style="color: #ff79c6;">Regressão:</strong>
+                <a href="https://colab.research.google.com/drive/1AY2oaX3KgJuqmU6y7056EVsWeHdNuCY_" target="_blank">
+                  abrir notebook no Colab</a></li>
+            </ul>
+          </div>
+          <p style="margin-top: 15px;">Na <strong>regressão</strong>, a saída é um <strong>número
+            contínuo</strong> (sem softmax) — ex.: prever um preço ou uma temperatura.</p>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Redes convolucionais (CNN)
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 4 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 4: Redes convolucionais (CNN)</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>As <strong style="color: #ff79c6;">CNN</strong> têm um padrão de conectividade especial,
+                ideal para <strong>imagens</strong>: cada neurônio olha apenas uma
+                <strong>região local</strong> da entrada.</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/convolucao-receptive-field.png"
+                   alt="Diagrama do campo receptivo local e do kernel na operação de convolução" width="440"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Imagens são matrizes -->
+        <section data-auto-animate>
+          <h2>Imagens são matrizes de números</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Toda imagem é, para o computador, uma <strong style="color: #8be9fd;">matriz de
+                números</strong> — cada pixel é um valor de intensidade.</p>
+              <p>Ampliando bem, vemos os pixels individuais que formam o texto e as formas:</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/centro-pixelado.png"
+                   alt="Palavra Centro ampliada mostrando os pixels individuais que a formam" width="440"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Filtros no processamento de imagens -->
+        <section data-auto-animate>
+          <h2>Filtros no processamento de imagens</h2>
+          <ul>
+            <li>Podemos analisar os números da imagem e <strong>realizar operações</strong> sobre eles</li>
+            <li>Filtros são usados há muito tempo no processamento de imagens para:</li>
+          </ul>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Remover <strong style="color: #ff79c6;">ruído</strong></li>
+                <li>Evidenciar <strong style="color: #8be9fd;">dados relevantes</strong></li>
+                <li>Facilitar a análise automática de imagens</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/filtros-tabela.png"
+                   alt="Tabela de kernels: filtro de média, Laplaciano, passa-baixa e máscara" width="440"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Original / Passa-alta / Passa-baixa -->
+        <section data-auto-animate>
+          <h2>Aplicando filtros a uma imagem</h2>
+          <multi-col cols="3" style="gap:15px; align-items: start;">
+            <div style="text-align: center;">
+              <img src="images/aula04/satelite-original.png"
+                   alt="Imagem de satélite original em tons de cinza" width="290" style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 4px;">Original</p>
+            </div>
+            <div style="text-align: center;">
+              <img src="images/aula04/satelite-passa-alta.png"
+                   alt="Imagem de satélite após filtro passa-alta, realçando bordas" width="290"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 4px;">Passa-alta (bordas)</p>
+            </div>
+            <div style="text-align: center;">
+              <img src="images/aula04/satelite-passa-baixa.png"
+                   alt="Imagem de satélite após filtro passa-baixa, suavizada e borrada" width="290"
+                   style="border-radius: 8px;" />
+              <p style="font-size: 18pt; text-align: center; margin: 4px;">Passa-baixa (suaviza)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Convolução na prática -->
+        <section data-auto-animate>
+          <h2>A convolução na prática</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul style="font-size: 20pt;">
+                <li>Deslizamos um <strong style="color: #8be9fd;">kernel</strong> (pequena matriz de pesos)
+                  sobre a imagem</li>
+                <li>Em cada posição, multiplicamos e somamos os valores → um novo pixel</li>
+                <li>O kernel <em>sharpen</em> realça bordas e detalhes da face</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/convolucao-face.png"
+                   alt="Convolução aplicando kernel sharpen a um rosto, mostrando o cálculo e a imagem de saída"
+                   width="440" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Deixar a rede aprender o kernel -->
+        <section data-auto-animate>
+          <h2>Por que não deixar a rede aprender o kernel? 💡</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Em vez de escolhermos os filtros à mão, deixamos a rede neural
+                <strong style="color: #ff79c6;">aprender os pesos do kernel</strong> durante o treinamento.</p>
+              <p style="font-size: 26pt; color: #f1fa8c;">Esses filtros aprendidos são as
+                <strong>CONVOLUÇÕES</strong>! 🔍</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/convolucao-receptive-field.png"
+                   alt="Campo receptivo e kernel de uma camada convolucional com pesos aprendidos" width="420"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Feature maps do macaco -->
+        <section data-auto-animate>
+          <h2>Transformações aprendidas pela rede 🐒</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Esta rede foi treinada para identificar a <strong>espécie de macaco</strong> na imagem.</p>
+              <ul style="font-size: 20pt;">
+                <li>Podemos ver que transformações são feitas na imagem</li>
+                <li>Muitas saídas (feature maps) <strong style="color: #8be9fd;">realçam a face do
+                  macaco</strong></li>
+              </ul>
+              <p style="font-size: 16pt;"><a
+                href="https://colab.research.google.com/drive/18XgeuSCii2h7dPBvKF1Y0MI0dh0QO6mo?usp=sharing"
+                target="_blank">Ver notebook no Colab</a></p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/macaco-uakari.png" alt="Foto de um macaco uakari de face vermelha"
+                   width="230" style="border-radius: 8px; margin-bottom: 8px;" />
+              <img src="images/aula04/macaco-feature-maps.jpg"
+                   alt="Grade de feature maps da CNN destacando a face do macaco em cores" width="380"
+                   style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Class activation map -->
+        <section data-auto-animate>
+          <h2>Onde a rede "olha"? Mapa de ativação</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Podemos analisar quais partes da imagem mais <strong style="color: #ff79c6;">ativam a
+                rede</strong> (mais contribuem para a classificação final).</p>
+              <p>Vemos que a região mais utilizada é o <strong style="color: #8be9fd;">rosto do
+                macaco</strong>.</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula04/class-activation-map.jpg"
+                   alt="Mapa de ativação de classe destacando o rosto do animal sobreposto à foto original"
+                   height="420" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- ============================================================
+         Etapa 5: Arquiteturas CNN populares
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 5 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 5: Arquiteturas CNN populares</h2>
+          <p>Ao longo dos anos surgiram arquiteturas de CNN cada vez mais profundas e eficientes.</p>
+        </section>
+
+        <!-- SLIDE: AlexNet -->
+        <section data-auto-animate>
+          <h2>Arquiteturas CNN: AlexNet</h2>
+          <div style="text-align: center;">
+            <img src="images/aula04/alexnet-arquitetura.png"
+                 alt="Diagrama da arquitetura AlexNet com camadas convolucionais e totalmente conectadas"
+                 width="820" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <p style="text-align: center;">Marco de 2012 na visão computacional, com camadas convolucionais
+            seguidas de camadas densas.</p>
+        </section>
+
+        <!-- SLIDE: VGG -->
+        <section data-auto-animate>
+          <h2>Arquiteturas CNN: VGG</h2>
+          <div style="text-align: center;">
+            <img src="images/aula04/vgg-arquitetura.png"
+                 alt="Diagrama da arquitetura VGG com blocos de convolução, max pooling e camadas densas"
+                 width="620" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <p style="text-align: center; font-size: 20pt;">Arquitetura profunda e regular: blocos de
+            convolução 3×3 + <em>max pooling</em>.</p>
+        </section>
+
+        <!-- SLIDE: VGG feature maps -->
+        <section data-auto-animate>
+          <h2>VGG: feature maps por camada</h2>
+          <div style="text-align: center;">
+            <img src="images/aula04/cnn-feature-maps.png"
+                 alt="Feature maps de várias camadas convolucionais da VGG, de conv1 a conv5" height="470"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+          <p style="text-align: center; font-size: 18pt; margin-top: 6px;">As primeiras camadas detectam
+            bordas e cores; as profundas capturam padrões complexos.</p>
+        </section>
+
+        <!-- SLIDE: Redes CNN populares -->
+        <section data-auto-animate>
+          <h2>Algumas redes CNN populares</h2>
+          <div style="background: #282a36; border-left: 4px solid #8be9fd; padding: 18px 22px;">
+            <ul>
+              <li><strong style="color: #8be9fd;">ResNet:</strong>
+                <a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py" target="_blank">
+                  torchvision/models/resnet.py</a></li>
+              <li><strong style="color: #50fa7b;">MobileNetV3:</strong>
+                <a href="https://github.com/tensorflow/models/tree/master/official/vision" target="_blank">
+                  tensorflow/models — vision</a></li>
+              <li><strong style="color: #ffb86c;">YOLO:</strong>
+                <a href="https://github.com/ultralytics/ultralytics" target="_blank">
+                  ultralytics/ultralytics</a></li>
+            </ul>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 5 -->
+
+      <!-- SLIDE: Resumo -->
+      <section data-auto-animate>
+        <h2>Resumo da aula</h2>
+        <ls-u>
+          <li>Revisão do neurônio: entradas, pesos, viés e função de ativação</li>
+          <li>O que muda entre redes: nº de camadas/neurônios, múltiplas saídas, ativação e conectividade</li>
+          <li>Classificação (softmax) × regressão (saída contínua)</li>
+          <li>Redes convolucionais: imagens como matrizes, filtros e kernels aprendidos (convolução)</li>
+          <li>Arquiteturas CNN populares: AlexNet, VGG, ResNet, MobileNet e YOLO</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>Conceitos CNN</strong></p>
+        </div>
+      </section>
+
+      <!-- SLIDE: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul style="font-size: 18pt;">
+          <li><a href="https://www.youtube.com/watch?v=UKcWu1l_UNw" target="_blank">
+            YouTube — As redes e o aprendizado: por que funcionam?</a></li>
+          <li><a href="https://laconicml.com/stochastic-gradient-descent-in-python/" target="_blank">
+            LaconicML — Stochastic Gradient Descent in Python</a></li>
+          <li><a href="https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py" target="_blank">
+            ResNet — torchvision (PyTorch)</a></li>
+          <li><a href="https://github.com/tensorflow/models/tree/master/official/vision" target="_blank">
+            MobileNetV3 — TensorFlow Models</a></li>
+          <li><a href="https://github.com/ultralytics/ultralytics" target="_blank">
+            YOLO — Ultralytics</a></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <!-- Plugin scripts (local — NOT CDN) -->
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <!-- socket.io required by seminar plugin — must load before init.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

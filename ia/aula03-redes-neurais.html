@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Inteligência Artificial - Redes Neurais e Aprendizado Profundo</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <!-- Optional plugins -->
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .timeline-badge {
+      display: inline-block;
+      background: #44475a;
+      color: #8be9fd;
+      font-weight: bold;
+      border-radius: 6px;
+      padding: 2px 12px;
+      margin-right: 8px;
+      font-size: 0.9em;
+    }
+
+    .people-grid {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    .people-grid figure {
+      margin: 0;
+      text-align: center;
+    }
+
+    .people-grid img {
+      border-radius: 8px;
+    }
+
+    .people-grid figcaption {
+      font-size: 15pt;
+      color: #6272a4;
+      margin-top: 4px;
+    }
+
+    .nn-node {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #44475a;
+      color: #f8f8f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18pt;
+      margin: 8px auto;
+      border: 2px solid #8be9fd;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="03" curso="Inteligência Artificial" title-size="24"
+                 title="Redes Neurais e Aprendizado Profundo">
+          <img src="images/aula03/rede-neural-profunda.jpg"
+               alt="Ilustração colorida de uma rede neural profunda com camadas ocultas" width="480"
+               style="border-radius: 10px;" />
+        </header1>
+      </section>
+
+      <!-- ============================================================
+         Etapa 1: Revisão — Regressão Logística e Gradiente Descendente
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 1 header -->
+        <section data-auto-animate data-background-image="images/aula03/sala-aula.jpg" data-background-opacity="0.25">
+          <h2 style="color: #8be9fd;">Etapa 1: Revisão da aula passada</h2>
+          <ls-u>
+            <li>A <strong>regressão logística</strong> como classificador</li>
+            <li>A função sigmoide como saída de probabilidade</li>
+            <li>O <strong>gradiente descendente</strong> ajustando os pesos</li>
+          </ls-u>
+        </section>
+
+        <!-- SLIDE: A regressão logística -->
+        <section data-auto-animate>
+          <h2>A regressão logística</h2>
+          <div style="text-align: center; margin-bottom: 8px;">
+            <img src="images/aula03/dataset-heart.png"
+                 alt="Tabela do dataset de doença cardíaca com variáveis X1 a X7, viés e alvo y"
+                 width="820" style="background: #f8f8f2; border-radius: 8px; padding: 8px;" />
+          </div>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/sigmoid-formula.png"
+                   alt="Gráfico da função sigmoide g(z) = 1 / (1 + e elevado a menos z)" height="220"
+                   style="border-radius: 8px;" />
+            </div>
+            <div style="flex: 1;">
+              <p>A saída passa por uma <strong style="color: #8be9fd;">sigmoide</strong>, gerando uma
+                probabilidade entre 0 e 1:</p>
+              <p style="text-align: center;">\( g(z) = \dfrac{1}{1 + e^{-z}} \)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Gradiente descendente -->
+        <section data-auto-animate>
+          <h2>Gradiente descendente: ajustando os pesos</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>A <strong style="color: #ffb86c;">função de perda (Loss)</strong> mede o quão ruim está
+                  o modelo</li>
+                <li>A <strong>derivada (gradiente)</strong> indica a tendência de melhora ou piora</li>
+                <li>Damos <strong>passos</strong> na direção que reduz a perda até o mínimo</li>
+              </ul>
+              <p style="text-align: center;">\( \text{Loss} = -\sum_{i=1}^{n}\big(y_i\log(\hat{y_i}) +
+                (1-y_i)\log(1-\hat{y_i})\big) \)</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/gradiente-descendente.png"
+                   alt="Curva de custo em função do peso com a bola descendo até o ponto de perda mínima"
+                   width="420" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Fórmula do gradiente -->
+        <section data-auto-animate>
+          <h2>Gradiente na regressão logística</h2>
+          <p style="text-align: center; font-size: 30pt; margin: 20px 0;">
+            \( w_j = w_{j_{\text{velho}}} - \alpha \; \dfrac{\sum_i x_i(\hat{y_i} - y_i)}{n} \)</p>
+          <table style="font-size: 20pt;">
+            <tbody>
+              <tr><td>\( w_j \)</td><td>peso inicial (aleatório)</td></tr>
+              <tr><td>\( \alpha \)</td><td>taxa de aprendizado (normalmente &lt; 1)</td></tr>
+              <tr><td>\( x_i \)</td><td>variáveis X de cada linha</td></tr>
+              <tr><td>\( \hat{y_i} - y_i \)</td><td>erro (resíduo)</td></tr>
+              <tr><td>\( n \)</td><td>número de linhas</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: Intuição do gradiente -->
+        <section data-auto-animate>
+          <h2>Intuição do ajuste</h2>
+          <div style="background: #282a36; border-left: 4px solid #f1fa8c; padding: 20px; margin-top: 15px;">
+            <p style="font-size: 26pt;">Quanto <strong style="color: #f1fa8c;">maior o valor da variável</strong>,
+              mais ela contribuiu para o erro →
+              <strong style="color: #8be9fd;">preciso ajustar mais o seu peso</strong>.</p>
+          </div>
+          <p style="text-align: center; margin-top: 20px;">\( \hat{y_i} - y_i \) (erro) \( \times \; x_i \)
+            (variável) → correção do peso</p>
+        </section>
+
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: História das Redes Neurais
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 2 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 2: A Rede Neural</h2>
+          <div style="text-align: center;">
+            <img src="images/aula03/neural-network-art.png"
+                 alt="Ilustração estilizada de uma rede neural com nós em azul" width="620"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: Linha do tempo -->
+        <section data-auto-animate>
+          <h2>Uma linha do tempo</h2>
+          <table style="font-size: 20pt;">
+            <thead>
+              <tr><th>Ano</th><th>Marco</th><th>Nomes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1943</td><td>Neurônio lógico (perceptron)</td><td>McCulloch e Pitts</td></tr>
+              <tr><td>1956</td><td>Conferência de Dartmouth</td><td>—</td></tr>
+              <tr><td>1958</td><td>Mark I Perceptron</td><td>Rosenblatt</td></tr>
+              <tr><td>1965</td><td>Redes multicamadas</td><td>Alexey Ivakhnenko</td></tr>
+              <tr><td>1969</td><td>Limitações do perceptron</td><td>Minsky e Papert</td></tr>
+              <tr><td>1986</td><td>Retropropagação</td><td>LeCun, Rumelhart, Hinton, Williams</td></tr>
+              <tr><td>2010+</td><td>Deep Learning</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: 1943 McCulloch e Pitts -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1943</span> Neurônio lógico</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p><strong style="color: #8be9fd;">McCulloch</strong> (neurofisiologista) e
+                <strong style="color: #ff79c6;">Pitts</strong> (matemático) propõem o neurônio artificial:</p>
+              <ul>
+                <li>Recebe várias <strong>entradas</strong></li>
+                <li>Produz uma única <strong>saída</strong></li>
+                <li>Neurônios <strong>lógicos</strong>: apenas 0 ou 1</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/neuronio-logico.png"
+                   alt="Diagrama de neurônio com entradas x1 a xn produzindo saída y no conjunto zero ou um"
+                   width="380" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+          <div style="text-align: center; margin-top: 10px;">
+            <img src="images/aula03/mcculloch-pitts.png" alt="Foto histórica de McCulloch e Pitts"
+                 height="150" style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: 1958 Rosenblatt Mark I -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1958</span> Rosenblatt: Mark I Perceptron</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/rosenblatt-mark1.jpg"
+                   alt="Foto histórica do Mark I Perceptron com sua fiação sendo ajustada" height="400"
+                   style="border-radius: 8px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/organizacao-perceptron.jpg"
+                   alt="Figuras da organização de um cérebro biológico e de um perceptron de Rosenblatt"
+                   height="400" style="background: #f8f8f2; border-radius: 8px; padding: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: 1969 Limitações -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1969</span> Limitações? Minsky e Papert</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 2;">
+              <ul>
+                <li>O perceptron só diferencia <strong style="color: #ff79c6;">classes lineares</strong></li>
+                <li>Para resolver problemas não lineares precisaria de
+                  <strong style="color: #8be9fd;">pelo menos mais uma camada</strong>!</li>
+              </ul>
+              <img src="images/aula03/perceptron-minsky-papert.png"
+                   alt="Modelo do perceptron de Minsky e Papert com entradas x1 x2 x3, pesos e saída y"
+                   width="420" style="background: #f8f8f2; border-radius: 8px; padding: 10px; margin-top: 10px;" />
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/minsky-papert.png" alt="Retratos de Marvin Minsky e Seymour Papert"
+                   height="360" style="border-radius: 8px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: O problema do XOR -->
+        <section data-auto-animate>
+          <h2>O problema do XOR</h2>
+          <div style="text-align: center;">
+            <img src="images/aula03/and-or-xor.png"
+                 alt="Gráficos AND, OR e XOR: AND e OR são separáveis por uma reta, XOR não é" width="760"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 12px;" />
+          </div>
+          <p style="text-align: center; margin-top: 15px;">Uma única reta separa <strong>AND</strong> e
+            <strong>OR</strong>, mas <strong style="color: #ff79c6;">não o XOR</strong> — daí a necessidade
+            de mais camadas.</p>
+        </section>
+
+        <!-- SLIDE: XOR com pesos (AND) -->
+        <section data-auto-animate>
+          <h2>Um neurônio linear resolve AND e OR</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <h4 style="color: #50fa7b;">AND (pesos 0,4 e 0,4; limiar 0,5)</h4>
+              <ul style="font-size: 20pt;">
+                <li>\(1,0\): \(1\!\cdot\!0{,}4 + 0\!\cdot\!0{,}4 = 0{,}4 \to 0\)</li>
+                <li>\(1,1\): \(1\!\cdot\!0{,}4 + 1\!\cdot\!0{,}4 = 0{,}8 \to 1\)</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <h4 style="color: #8be9fd;">OR (pesos 1 e -1... falha no XOR)</h4>
+              <ul style="font-size: 20pt;">
+                <li>\(1,0\): \(1\!\cdot\!1 + 0\!\cdot\!(-1) = 1 \to 1\)</li>
+                <li>\(1,1\): \(1\!\cdot\!1 + 1\!\cdot\!(-1) = 0 \to 0\)</li>
+              </ul>
+            </div>
+          </multi-col>
+          <p style="text-align: center; margin-top: 12px; color: #ff79c6;">Nenhum conjunto único de pesos
+            reproduz o XOR com uma só camada.</p>
+        </section>
+
+        <!-- SLIDE: 1965 Multicamadas -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1965</span> Redes multicamadas</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li><strong style="color: #8be9fd;">Alexey Ivakhnenko</strong> propõe empilhar várias
+                  camadas de neurônios</li>
+                <li>Com camadas ocultas, a rede pode aprender fronteiras
+                  <strong>não lineares</strong> — inclusive o XOR</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/rede-multicamadas.png"
+                   alt="Diagrama de rede com camada de entrada, três camadas ocultas e uma saída, com retrato de Ivakhnenko"
+                   width="440" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: 1986 Retropropagação -->
+        <section data-auto-animate>
+          <h2><span class="timeline-badge">1986</span> Retropropagação</h2>
+          <p>Propagação dos erros <strong style="color: #8be9fd;">para trás</strong> (multiplicando pelos
+            pesos) — o algoritmo que finalmente permitiu treinar redes profundas.</p>
+          <div class="people-grid" style="margin-top: 15px;">
+            <figure><img src="images/aula03/lecun.png" alt="Retrato de Yann LeCun" height="140" />
+              <figcaption>LeCun</figcaption></figure>
+            <figure><img src="images/aula03/rumelhart.png" alt="Retrato de David Rumelhart" height="140" />
+              <figcaption>Rumelhart</figcaption></figure>
+            <figure><img src="images/aula03/hinton.png" alt="Retrato de Geoffrey Hinton" height="140" />
+              <figcaption>Hinton</figcaption></figure>
+            <figure><img src="images/aula03/williams.png" alt="Retrato de Ronald Williams" height="140" />
+              <figcaption>Williams</figcaption></figure>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: Entendendo as Redes Neurais Modernas
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 3 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 3: Entendendo as redes neurais modernas</h2>
+          <div style="text-align: center;">
+            <img src="images/aula03/neuronio-biologico.png"
+                 alt="Diagrama de um neurônio biológico com dendritos, corpo celular e axônio" width="560"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: O neurônio artificial -->
+        <section data-auto-animate>
+          <h2>O neurônio (perceptron)</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Modelo do neurônio biológico, com 4 componentes:</p>
+              <ul>
+                <li><strong style="color: #8be9fd;">Entrada</strong> \(x\): conjunto de valores</li>
+                <li><strong style="color: #ff79c6;">Pesos</strong> \(w\): cada \(x\) é multiplicado por seu \(w\)</li>
+                <li><strong style="color: #f1fa8c;">Função de ativação</strong> \(\varphi\): sigmoide, tanh, ReLU...</li>
+                <li><strong style="color: #50fa7b;">Saída</strong>: resultado final ou entrada de outros neurônios</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/neuronio-perceptron.png"
+                   alt="Diagrama do neurônio: entradas, pesos, bias, somatório e função de ativação gerando a saída"
+                   width="440" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Neurônio = regressão logística -->
+        <section data-auto-animate>
+          <h2>Um neurônio = regressão logística!</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px; margin-top: 10px;">
+            <p style="font-size: 26pt;">A regressão logística nada mais é do que <strong>um único neurônio</strong>
+              cuja função de ativação é a <strong style="color: #8be9fd;">sigmoide</strong>.</p>
+          </div>
+          <p style="text-align: center; margin-top: 15px;">
+            entrada \(x\) \(\;\to\;\) \(\sum w_i x_i\) \(\;\to\;\) sigmoide \(\;\to\;\) saída \(\hat{y}\)</p>
+        </section>
+
+        <!-- SLIDE: A diferença — mais camadas -->
+        <section data-auto-animate>
+          <h2>A grande diferença: mais camadas</h2>
+          <p>Podemos criar <strong style="color: #8be9fd;">mais de uma camada</strong> de neurônios —
+            é isso que dá à rede o poder de aprender funções complexas.</p>
+          <div style="text-align: center;">
+            <img src="images/aula03/rede-multicamada.gif"
+                 alt="Animação de rede neural classificando imagens de cachorro e gato com camadas ocultas"
+                 width="500" style="border-radius: 8px;" />
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Como a rede é treinada — Backpropagation
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 4 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 4: Como a rede é treinada?</h2>
+          <div style="text-align: center;">
+            <img src="images/aula03/backpropagation-art.png"
+                 alt="Ilustração de backpropagation com seta indicando propagação para trás na rede" width="560"
+                 style="border-radius: 8px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: O neurônio final -->
+        <section data-auto-animate>
+          <h2>O neurônio final: onde está o erro</h2>
+          <ul>
+            <li>Na regressão logística, o gradiente do peso é \( \text{erro} \times \text{entrada} \)</li>
+            <li>O <strong style="color: #ffb86c;">erro</strong> é a diferença
+              \( \hat{y} - y \) (estimado − real)</li>
+            <li>Atualizamos: \( w = w_{\text{velho}} - \alpha \cdot \text{grad} \)</li>
+          </ul>
+          <p style="text-align: center; font-size: 24pt; margin-top: 15px;">
+            \( w_1' = w_1 + \alpha \, x_1 (\hat{y} - y) \)</p>
+          <p style="text-align: center; color: #6272a4;">(erro médio do exemplo: \(0{,}1275\))</p>
+        </section>
+
+        <!-- SLIDE: A camada de trás -->
+        <section data-auto-animate>
+          <h2>Mas e a camada de trás?</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <p>O neurônio final é fácil — ali temos o erro direto.</p>
+              <p>Para as camadas escondidas, precisamos
+                <strong style="color: #8be9fd;">propagar o erro para trás</strong>.</p>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/backpropagation-diagrama.png"
+                   alt="Diagrama de backpropagation mostrando o caminho normal para frente e o alternativo para trás"
+                   width="440" style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Retropropagação corrigida pelo gradiente -->
+        <section data-auto-animate>
+          <h2>Retropropagação do erro</h2>
+          <div style="background: #282a36; border-left: 4px solid #ffb86c; padding: 20px;">
+            <p style="font-size: 24pt;">O erro propagado para trás tem que ser corrigido pelo
+              <strong style="color: #ffb86c;">valor do gradiente</strong> da função de ativação:</p>
+            <p style="text-align: center;">\( \delta_{\text{anterior}} = \big(\sum w \cdot \delta\big)
+              \cdot g'(z) \)</p>
+          </div>
+          <p style="margin-top: 12px;">Para a sigmoide: \( g'(z) = z \cdot (1 - z) \).</p>
+        </section>
+
+        <!-- SLIDE: Exemplo — forward pass -->
+        <section data-auto-animate>
+          <h2>Exemplo: calculando a saída (y esperado = 1)</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p><strong style="color: #8be9fd;">Camada oculta:</strong></p>
+              <ul style="font-size: 20pt;">
+                <li>\( 0{,}7\!\cdot\!0{,}2 + 0{,}2\!\cdot\!0{,}1 = 0{,}16 \) → sigmoide → \(0{,}54\)</li>
+                <li>\( 0{,}7\!\cdot\!0{,}1 + 0{,}2\!\cdot\!0{,}1 = 0{,}09 \) → sigmoide → \(0{,}52\)</li>
+              </ul>
+              <p><strong style="color: #50fa7b;">Saída:</strong></p>
+              <p style="font-size: 20pt;">\( \dfrac{1}{1+e^{-0{,}16}} = 0{,}54 \)</p>
+            </div>
+            <div style="flex: 1;">
+              <p><strong style="color: #ffb86c;">Erro na saída:</strong></p>
+              <p style="text-align: center; font-size: 26pt;">
+                \( \text{erro} = \hat{y} - y = 0{,}54 - 1 = -0{,}46 \)</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Retropropagando para a camada oculta -->
+        <section data-auto-animate>
+          <h2>Propagando o erro para a camada oculta</h2>
+          <p>Multiplicamos o erro pelos pesos e pelo gradiente da sigmoide \( z(1-z) \):</p>
+          <ul style="font-size: 20pt;">
+            <li>\( -0{,}46 \cdot 0{,}2 = -0{,}092 \), \(\times\, 0{,}54(1-0{,}54) = \mathbf{-0{,}02385} \)</li>
+            <li>\( -0{,}46 \cdot 0{,}1 = -0{,}046 \), \(\times\, 0{,}54(1-0{,}54) = \mathbf{-0{,}01341} \)</li>
+          </ul>
+          <p style="text-align: center; color: #6272a4; margin-top: 10px;">Estes são os deltas
+            (\(\delta\)) de cada neurônio oculto.</p>
+        </section>
+
+        <!-- SLIDE: Atualizando os pesos da última camada -->
+        <section data-auto-animate>
+          <h2>Atualizando os pesos (taxa \(\alpha = 1\))</h2>
+          <p><strong style="color: #8be9fd;">Gradientes da última camada</strong> (\(\delta \times\) ativação):</p>
+          <ul style="font-size: 20pt;">
+            <li>\( -0{,}46 \cdot 0{,}54 = -0{,}2484 \)</li>
+            <li>\( -0{,}46 \cdot 0{,}52 = -0{,}2392 \)</li>
+          </ul>
+          <p><strong style="color: #50fa7b;">Novos pesos:</strong></p>
+          <ul style="font-size: 20pt;">
+            <li>\( w = 0{,}2 - 1\cdot(-0{,}2484) = \mathbf{0{,}4484} \)</li>
+            <li>\( w = 0{,}1 - 1\cdot(-0{,}2392) = \mathbf{0{,}3392} \)</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Gradientes da camada 1 -->
+        <section data-auto-animate>
+          <h2>Gradientes da camada 1</h2>
+          <p>Cada delta multiplica a entrada correspondente:</p>
+          <table style="font-size: 19pt;">
+            <thead>
+              <tr><th>Cálculo</th><th>Gradiente</th><th>Novo peso</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>\(-0{,}02385 \cdot 0{,}7\)</td><td>\(-0{,}01670\)</td><td>\(0{,}2 - (-0{,}01670) = 0{,}2167\)</td></tr>
+              <tr><td>\(-0{,}02385 \cdot 0{,}2\)</td><td>\(-0{,}00477\)</td><td>\(0{,}1 - (-0{,}00477) = 0{,}10477\)</td></tr>
+              <tr><td>\(-0{,}01341 \cdot 0{,}2\)</td><td>\(-0{,}002682\)</td><td>\(0{,}2 - (-0{,}002682) = 0{,}20268\)</td></tr>
+              <tr><td>\(-0{,}01341 \cdot 0{,}1\)</td><td>\(-0{,}001341\)</td><td>\(0{,}1 - (-0{,}001341) = 0{,}10134\)</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE: Calculando novamente -->
+        <section data-auto-animate>
+          <h2>Calculando novamente</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p>Com os pesos atualizados, refazemos o forward pass:</p>
+              <ul style="font-size: 20pt;">
+                <li>Ativações ocultas: \(0{,}547909\) e \(0{,}523384\)</li>
+                <li>Saída: \(0{,}60425\)</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 18px;">
+                <p style="font-size: 22pt;">Erro anterior: \(-0{,}46\)</p>
+                <p style="font-size: 22pt;">Novo erro: \( 0{,}60425 - 1 = \mathbf{-0{,}39575} \)</p>
+                <p style="color: #50fa7b; font-size: 22pt;">O erro diminuiu! ✅</p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- ============================================================
+         Etapa 5: Funções de Ativação — ReLU e Leaky ReLU
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 5 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 5: Facilitando os cálculos com ReLU</h2>
+          <div style="text-align: center;">
+            <img src="images/aula03/sigmoid-vs-relu.png"
+                 alt="Gráficos comparando a função sigmoide com a função ReLU" width="720"
+                 style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+          </div>
+        </section>
+
+        <!-- SLIDE: ReLU -->
+        <section data-auto-animate>
+          <h2>ReLU: evita a exponencial</h2>
+          <multi-col style="gap:20px; align-items: center;">
+            <div style="flex: 1;">
+              <p><strong style="color: #8be9fd;">Função:</strong></p>
+              <p style="font-size: 22pt;">\( R(z) = \max(0, z) \)</p>
+              <ul style="font-size: 20pt;">
+                <li>\( z \le 0 \Rightarrow 0 \)</li>
+                <li>\( z &gt; 0 \Rightarrow z \)</li>
+              </ul>
+            </div>
+            <div style="flex: 1;">
+              <p><strong style="color: #ff79c6;">Derivada (bem mais fácil):</strong></p>
+              <ul style="font-size: 20pt;">
+                <li>\( z \le 0 \Rightarrow 0 \)</li>
+                <li>\( z &gt; 0 \Rightarrow 1 \)</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE: Retropropagação com ReLU -->
+        <section data-auto-animate>
+          <h2>Retropropagação com ReLU</h2>
+          <p>Como a derivada é \(1\) (quando ativa), o erro volta "cheio", sem encolher:</p>
+          <ul style="font-size: 20pt;">
+            <li>\( -0{,}46 \cdot 0{,}2 = -0{,}092 \), \(\times\, 1 = \mathbf{-0{,}092} \)</li>
+            <li>\( -0{,}46 \cdot 0{,}1 = -0{,}046 \), \(\times\, 1 = \mathbf{-0{,}046} \)</li>
+          </ul>
+          <p style="color: #6272a4; margin-top: 10px;">Compare com a sigmoide, onde multiplicávamos por
+            \(z(1-z) \approx 0{,}25\), encolhendo o erro.</p>
+        </section>
+
+        <!-- SLIDE: Melhorias da ReLU -->
+        <section data-auto-animate>
+          <h2>Melhorias da ReLU</h2>
+          <ul>
+            <li>Evita o cálculo exponencial, que é <strong>pesado</strong> para o computador</li>
+            <li><strong style="color: #ff79c6;">Desaparecimento do gradiente:</strong> na sigmoide a
+              derivada \(z(1-z)\) faz o erro sumir ao atravessar muitas camadas</li>
+            <li>Com a ReLU isso não acontece: o gradiente volta "cheio" (\(1\)) sempre que a ativação
+              for \(&gt; 0\)</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE: Problema da ReLU e Leaky ReLU -->
+        <section data-auto-animate>
+          <h2>Problema: a "morte do neurônio" 💀</h2>
+          <multi-col style="gap:15px; align-items: center;">
+            <div style="flex: 1;">
+              <ul>
+                <li>Se a ativação for \(&lt; 0\), o gradiente propagado é \(0\) — o neurônio
+                  <strong style="color: #ff79c6;">para de aprender</strong></li>
+                <li><strong style="color: #50fa7b;">Solução — Leaky ReLU:</strong> valores negativos passam a
+                  ser aceitos</li>
+                <li>A derivada para \(z \le 0\) deixa de ser \(0\) e passa a ser \(\alpha\)
+                  (fator de vazamento)</li>
+              </ul>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <img src="images/aula03/leaky-relu.png"
+                   alt="Gráfico da Leaky ReLU com diferentes valores de alpha, permitindo saída negativa" width="440"
+                   style="background: #f8f8f2; border-radius: 8px; padding: 10px;" />
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 5 -->
+
+      <!-- ============================================================
+         Etapa 6: Prática
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE: Etapa 6 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 6: Prática 🧪</h2>
+          <p>Vamos treinar uma rede neural para prever <strong>doença cardíaca</strong> a partir de dados
+            de pacientes.</p>
+        </section>
+
+        <!-- SLIDE: Links da prática -->
+        <section data-auto-animate>
+          <h2>Mãos à obra</h2>
+          <div style="background: #282a36; border-left: 4px solid #50fa7b; padding: 20px;">
+            <p><strong>Notebook (Google Colab):</strong></p>
+            <p style="font-size: 18pt; word-break: break-all;">
+              <a href="https://colab.research.google.com/drive/1Vxu6gAre102fyz0kAMM3j4SgkMZiGAfV?usp=sharing"
+                 target="_blank">colab.research.google.com/drive/1Vxu6gAre102fyz0kAMM3j4SgkMZiGAfV</a></p>
+            <p style="margin-top: 15px;"><strong>Dataset (Kaggle):</strong></p>
+            <p style="font-size: 18pt; word-break: break-all;">
+              <a href="https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset" target="_blank">
+                kaggle.com/datasets/johnsmith88/heart-disease-dataset</a></p>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 6 -->
+
+      <!-- SLIDE: Resumo -->
+      <section data-auto-animate>
+        <h2>Resumo da aula</h2>
+        <ls-u>
+          <li>Revisão: regressão logística, sigmoide e gradiente descendente</li>
+          <li>História: McCulloch-Pitts, Rosenblatt, Minsky-Papert (XOR) e retropropagação</li>
+          <li>O neurônio artificial e por que a regressão logística é um neurônio só</li>
+          <li>Treinamento por <strong>backpropagation</strong>: exemplo numérico passo a passo</li>
+          <li>Funções de ativação: sigmoide, ReLU e Leaky ReLU</li>
+        </ls-u>
+        <div class="fragment" style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 22pt;">Próxima aula: <strong>Arquiteturas de Redes Neurais</strong></p>
+        </div>
+      </section>
+
+      <!-- SLIDE: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul style="font-size: 18pt;">
+          <li><a href="https://timeline.historyofdatascience.com/" target="_blank">
+            History of Data Science — Timeline</a></li>
+          <li><a href="https://github.com/fastai/fastbook/blob/master/01_intro.ipynb" target="_blank">
+            fast.ai — fastbook: 01_intro</a></li>
+          <li><a href="https://www.ibm.com/topics/neural-networks" target="_blank">
+            IBM — What are Neural Networks?</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Backpropagation" target="_blank">
+            Wikipedia — Backpropagation</a></li>
+          <li><a href="https://www.kaggle.com/datasets/johnsmith88/heart-disease-dataset" target="_blank">
+            Kaggle — Heart Disease Dataset</a></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <!-- Plugin scripts (local — NOT CDN) -->
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <!-- socket.io required by seminar plugin — must load before init.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+
+    // Vue renders the slide content asynchronously, after the KaTeX plugin's
+    // initial auto-render pass. Re-run KaTeX once it and the DOM are ready so the
+    // inline \(...\) math is typeset. KaTeX's auto-render is idempotent (it skips
+    // already-rendered spans), so it is safe to call on Reveal events too.
+    function typesetMath() {
+      if (!window.renderMathInElement || !window.deck || !window.deck.getSlidesElement) return;
+      var el = window.deck.getSlidesElement();
+      if (!el) return;
+      renderMathInElement(el, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '\\[', right: '\\]', display: true },
+          { left: '\\(', right: '\\)', display: false },
+          { left: '$', right: '$', display: false }
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        throwOnError: false
+      });
+      try { window.deck.layout(); } catch (e) {}
+    }
+
+    (function waitAndRender(tries) {
+      if (window.renderMathInElement && window.deck && window.deck.getSlidesElement &&
+          window.deck.getSlidesElement()) {
+        typesetMath();
+        if (window.deck.on) {
+          window.deck.on('ready', typesetMath);
+          window.deck.on('scrollviewexit', typesetMath);
+          window.deck.on('slidechanged', typesetMath);
+        }
+      } else if (tries > 0) {
+        setTimeout(function () { waitAndRender(tries - 1); }, 150);
+      }
+    })(40);
+  </script>
+
+</body>
+</html>
