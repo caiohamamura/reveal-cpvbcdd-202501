@@ -581,15 +581,41 @@
 
         <!-- SLIDE 23: Grid não recorta -->
         <section data-auto-animate>
-          <h2>O grid não recorta a imagem</h2>
+          <h2>O grid não recorta a imagem: YOLOv1</h2>
           <a href="images/aula06/yolo-original-arquitetura.png" target="_blank" rel="noopener">
             <img src="images/aula06/yolo-original-arquitetura.png"
                  alt="Arquitetura do YOLO original: entrada 448 por 448, convoluções e pooling, camadas conectadas e saída 7 por 7 por 30"
                  style="display:block; width:100%; height:350px; object-fit:contain; background:white; margin:12px auto;" />
           </a>
-          <p class="source">Fonte: Redmon et al., <a href="https://arxiv.org/pdf/1506.02640" target="_blank" rel="noopener">You Only Look Once, Figura 3</a> (imagem fornecida no anexo).</p>
+          <p class="source">Fonte: Redmon et al. (2014), <a href="https://arxiv.org/pdf/1506.02640" target="_blank" rel="noopener">You Only Look Once, Figura 3</a> (imagem fornecida no anexo).</p>
           <p style="font-size:20pt; text-align:center;">Imagem inteira 448×448×3 → convoluções e pooling → camadas conectadas → saída 7×7×30.</p>
           <p style="font-size:18pt; text-align:center;">No YOLO original, cada posição da saída reúne 2 caixas × 5 valores + 20 classes. O grid organiza as previsões; não cria 49 recortes de entrada.</p>
+        </section>
+        
+        <section data-auto-animate>
+          <h2>Comparação: YOLOv2 - Darknet</h2>
+          <a href="images/aula06/yolov2-darknet.png" target="_blank" rel="noopener">
+            <img src="images/aula06/yolov2-darknet.png"
+                 alt="Arquitetura do YOLO original: entrada 448 por 448, convoluções e pooling, camadas conectadas e saída 7 por 7 por 30"
+                 style="display:block; width:100%; height:350px; object-fit:contain; background:white; margin:12px auto;" />
+          </a>
+          <p class="source">Fonte: Redmon et al. (2015), <a href="https://arxiv.org/pdf/1612.08242" target="_blank" rel="noopener">YOLO9000:
+Better, Faster, Stronger, Tabela 6</a></p>
+          <p style="font-size:20pt; text-align:center;">Usa o Global Average Pooling (GAP) da rede VGG (2014) para classificar</p>
+      
+        </section>
+
+        <section data-auto-animate>
+          <h2>Comparação: YOLOv2 - Caixas</h2>
+          <a href="images/aula06/yolov2.png" target="_blank" rel="noopener">
+            <img src="images/aula06/yolov2.png"
+                 alt="Arquitetura do YOLO original: entrada 448 por 448, convoluções e pooling, camadas conectadas e saída 7 por 7 por 30"
+                 style="display:block; width:100%; height:350px; object-fit:contain; background:white; margin:12px auto;" />
+          </a>
+          <p class="source">Fonte: Redmon et al. (2015), <a href="https://arxiv.org/pdf/1612.08242" target="_blank" rel="noopener">YOLO9000:
+Better, Faster, Stronger, Tabela 6</a></p>
+          <p style="font-size:20pt; text-align:center;">Usa o Global Average Pooling (GAP) da rede VGG (2014) para classificar</p>
+      
         </section>
 
         <!-- SLIDE 24: Multi-escala -->
