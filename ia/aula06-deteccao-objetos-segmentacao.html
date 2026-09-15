@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Inteligência Artificial - Detecção de Objetos e Segmentação</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .reveal p.source {
+      color: #b8b8c8;
+      font-size: 11pt !important;
+      line-height: 1.2;
+      margin: 4px 0 0;
+      text-align: center;
+    }
+
+    .scene {
+      border: 2px solid #6272a4;
+      border-radius: 10px;
+      display: inline-block;
+      line-height: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scene img {
+      display: block;
+      height: auto;
+      margin: 0;
+      max-width: none;
+    }
+
+    .grid-3 {
+      background-image:
+        linear-gradient(to right, transparent 32.8%, rgba(139, 233, 253, 0.95) 33%, rgba(139, 233, 253, 0.95) 33.5%, transparent 33.7%, transparent 66.1%, rgba(139, 233, 253, 0.95) 66.3%, rgba(139, 233, 253, 0.95) 66.8%, transparent 67%),
+        linear-gradient(to bottom, transparent 32.8%, rgba(139, 233, 253, 0.95) 33%, rgba(139, 233, 253, 0.95) 33.5%, transparent 33.7%, transparent 66.1%, rgba(139, 233, 253, 0.95) 66.3%, rgba(139, 233, 253, 0.95) 66.8%, transparent 67%);
+      inset: 0;
+      position: absolute;
+    }
+
+    .box {
+      border: 4px solid;
+      box-sizing: border-box;
+      position: absolute;
+    }
+
+    .box::after {
+      background: currentColor;
+      color: #282a36;
+      content: attr(data-label);
+      font: 700 14px/1.4 Arial, sans-serif;
+      left: -4px;
+      padding: 1px 6px;
+      position: absolute;
+      top: -26px;
+      white-space: nowrap;
+    }
+
+    .center-dot {
+      background: currentColor;
+      border: 2px solid #282a36;
+      border-radius: 50%;
+      height: 12px;
+      margin: -7px 0 0 -7px;
+      position: absolute;
+      width: 12px;
+    }
+
+    .cell-highlight {
+      background: rgba(255, 121, 198, 0.18);
+      border: 4px solid #ff79c6;
+      box-sizing: border-box;
+      height: 33.34%;
+      left: 33.33%;
+      position: absolute;
+      top: 33.33%;
+      width: 33.34%;
+    }
+
+    .vector-row {
+      align-items: stretch;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 5px;
+      justify-content: center;
+    }
+
+    .neuron {
+      align-items: center;
+      background: #44475a;
+      border-bottom: 5px solid #8be9fd;
+      border-radius: 7px;
+      display: flex;
+      flex-direction: column;
+      font-family: Consolas, monospace;
+      font-size: 17pt;
+      justify-content: center;
+      min-height: 68px;
+      min-width: 82px;
+      padding: 7px;
+    }
+
+    .neuron small {
+      color: #b8b8c8;
+      font: 11pt Arial, sans-serif;
+    }
+
+    .mask-demo {
+      clip-path: polygon(18% 65%, 24% 38%, 42% 22%, 66% 26%, 82% 48%, 72% 75%, 43% 83%);
+      inset: 0;
+      opacity: 0.65;
+      position: absolute;
+    }
+
+    .pixel-grid {
+      display: grid;
+      gap: 3px;
+      grid-template-columns: repeat(9, 28px);
+      justify-content: center;
+    }
+
+    .pixel-grid span {
+      background: #44475a;
+      border-radius: 3px;
+      height: 28px;
+      width: 28px;
+    }
+
+    .pipeline {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .pipeline-node {
+      background: #44475a;
+      border-top: 5px solid #8be9fd;
+      border-radius: 8px;
+      font-size: 19pt;
+      padding: 18px 20px;
+      text-align: center;
+    }
+
+    .pipeline-arrow {
+      color: #f1fa8c;
+      font-size: 34pt;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate data-background-image="images/aula06/capa-cena-urbana.png"
+               data-background-opacity="0.22" data-background-position="center">
+        <header1 aula="06" curso="Inteligência Artificial" title-size="24"
+                 title="Detecção de Objetos e Segmentação">
+          <div style="width: 430px; height: 220px;"></div>
+        </header1>
+        <p class="source">Imagem de fundo: OpenAI, imagem gerada por IA (2026)</p>
+      </section>
+
+      <!-- SLIDE 2: Revisão -->
+      <section data-auto-animate>
+        <h2>Revisão: conceitos de CNN</h2>
+        <multi-col style="gap: 28px; align-items: center;">
+          <div>
+            <ls-u>
+              <li>Convoluções aprendem filtros para bordas, texturas e formas</li>
+              <li>Pooling e stride reduzem a resolução espacial</li>
+              <li>Camadas profundas combinam padrões locais em conceitos</li>
+              <li>A classificação produz uma resposta para a imagem inteira</li>
+            </ls-u>
+          </div>
+          <div style="text-align: center;">
+            <div class="pipeline" style="flex-direction: column; margin-top: 0;">
+              <div class="pipeline-node">Imagem<br><span style="color:#8be9fd">H × W × 3</span></div>
+              <div class="pipeline-arrow">↓</div>
+              <div class="pipeline-node">CNN<br><span style="color:#ff79c6">mapas de atributos</span></div>
+              <div class="pipeline-arrow">↓</div>
+              <div class="pipeline-node">Classe<br><span style="color:#50fa7b">“carro”</span></div>
+            </div>
+          </div>
+        </multi-col>
+      </section>
+
+      <!-- SLIDE 3: Roteiro -->
+      <section data-auto-animate>
+        <h2>Roteiro da aula</h2>
+        <div class="pipeline">
+          <div class="pipeline-node" style="border-color:#bd93f9">10 min<br><strong>Contexto</strong></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node" style="border-color:#ff79c6">30 min<br><strong>YOLO</strong></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node" style="border-color:#50fa7b">Prática<br><strong>YOLO11</strong></div>
+        </div>
+        <highlight-box :index="0">
+          <p style="text-align:center; font-size: 24pt;">Pergunta central: como uma CNN produz <strong>várias respostas espaciais</strong> em uma única passagem?</p>
+        </highlight-box>
+      </section>
+
+      <!-- ============================================================
+         Etapa 1: Contexto e histórico
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 4: Etapa 1 header -->
+        <section data-auto-animate>
+          <h2 style="color: #8be9fd;">Etapa 1: contexto e histórico</h2>
+          <p>Da separação de regiões por cor até redes que localizam muitos objetos em tempo real.</p>
+          <div class="pipeline">
+            <div class="pipeline-node">Pixels semelhantes</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node">Janelas e classificadores</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node">Predição em uma passagem</div>
+          </div>
+        </section>
+
+        <!-- SLIDE 5: Quatro perguntas -->
+        <section data-auto-animate>
+          <h2>Quatro perguntas sobre uma imagem</h2>
+          <table style="font-size: 20pt;">
+            <thead>
+              <tr><th>Tarefa</th><th>Pergunta</th><th>Saída</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="color:#8be9fd">Classificação</td><td>O que aparece?</td><td>Uma classe por imagem</td></tr>
+              <tr><td style="color:#f1fa8c">Detecção</td><td>Quais objetos e onde?</td><td>Caixas, classes e confiança</td></tr>
+              <tr><td style="color:#bd93f9">Segmentação semântica</td><td>Qual classe ocupa cada pixel?</td><td>Um mapa de classes</td></tr>
+              <tr><td style="color:#ff79c6">Segmentação de instâncias</td><td>Qual pixel pertence a cada objeto?</td><td>Uma máscara por instância</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- SLIDE 6: Aplicações -->
+        <section data-auto-animate>
+          <h2>Importância e aplicações</h2>
+          <multi-col :cols="2" style="gap: 34px;">
+            <div>
+              <ul>
+                <li><i class="fa-solid fa-car" style="color:#8be9fd"></i> Veículos, pedestres e faixas na mobilidade</li>
+                <li><i class="fa-solid fa-microscope" style="color:#ff79c6"></i> Células, tecidos e lesões em imagens médicas</li>
+                <li><i class="fa-solid fa-industry" style="color:#f1fa8c"></i> Defeitos, peças e EPIs na indústria</li>
+              </ul>
+            </div>
+            <div>
+              <ul>
+                <li><i class="fa-solid fa-seedling" style="color:#50fa7b"></i> Plantas, frutos e pragas no campo</li>
+                <li><i class="fa-solid fa-boxes-stacked" style="color:#bd93f9"></i> Contagem e rastreamento em logística</li>
+                <li><i class="fa-solid fa-satellite" style="color:#ffb86c"></i> Edificações, rios e queimadas em satélites</li>
+              </ul>
+            </div>
+          </multi-col>
+          <p style="text-align:center; color:#f1fa8c; margin-top: 28px;">Localização transforma reconhecimento em decisão.</p>
+        </section>
+
+        <!-- SLIDE 7: Hemograma -->
+        <section data-auto-animate>
+          <h2>Um problema clássico: contar células</h2>
+          <multi-col style="gap: 22px; align-items: center;">
+            <div style="text-align:center;">
+              <img src="images/aula06/hemograma-sintetico.png"
+                   alt="Imagem sintética de microscopia com hemácias, leucócitos e plaquetas" width="570"
+                   style="border-radius: 10px;" />
+              <p class="source">Fonte: OpenAI, imagem sintética gerada por IA (2026)</p>
+            </div>
+            <div>
+              <ul>
+                <li>Quantas hemácias existem?</li>
+                <li>Quais células se tocam?</li>
+                <li>Onde estão os leucócitos?</li>
+                <li>Qual área cada célula ocupa?</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 8: Crescimento de regiões -->
+        <section data-auto-animate>
+          <h2>Crescimento de regiões e sementes</h2>
+          <multi-col style="gap: 34px; align-items: center;">
+            <div>
+              <div class="pixel-grid" aria-label="Grade de pixels para demonstrar crescimento de região">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span style="background:#6272a4"></span><span style="background:#6272a4"></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span style="background:#6272a4"></span><span style="background:#bd93f9"></span><span style="background:#bd93f9"></span><span style="background:#6272a4"></span><span></span><span></span><span></span><span></span>
+                <span></span><span style="background:#6272a4"></span><span style="background:#bd93f9"></span><span style="background:#ff79c6"></span><span style="background:#bd93f9"></span><span style="background:#6272a4"></span><span></span><span></span><span></span>
+                <span></span><span></span><span style="background:#6272a4"></span><span style="background:#bd93f9"></span><span style="background:#6272a4"></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <p style="text-align:center; font-size: 16pt;"><span style="color:#ff79c6">semente</span> e pixels aceitos por similaridade</p>
+            </div>
+            <div>
+              <ol>
+                <li>Escolha um pixel semente</li>
+                <li>Compare cor ou intensidade com os vizinhos</li>
+                <li>Inclua os vizinhos semelhantes</li>
+                <li>Repita até a fronteira da região</li>
+              </ol>
+              <p style="color:#ffb86c;">Sensível à semente, ao limiar e ao ruído.</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 9: Agrupamento -->
+        <section data-auto-animate>
+          <h2>Agrupamento de pixels</h2>
+          <multi-col style="gap: 35px; align-items: center;">
+            <div style="text-align:center;">
+              <div style="width:430px; height:330px; border-radius:12px; background:linear-gradient(135deg,#311f4a 0 32%,#355b70 32% 61%,#708a45 61%); position:relative; overflow:hidden;">
+                <div style="background:#bd93f9; border-radius:50%; width:180px; height:140px; position:absolute; left:45px; top:42px; opacity:.85"></div>
+                <div style="background:#8be9fd; border-radius:45%; width:165px; height:190px; position:absolute; right:35px; top:55px; opacity:.82"></div>
+                <div style="background:#50fa7b; border-radius:50%; width:210px; height:100px; position:absolute; left:110px; bottom:22px; opacity:.75"></div>
+              </div>
+            </div>
+            <div>
+              <p>Algoritmos como <strong>K-Means</strong> agrupam pixels por atributos:</p>
+              <ul>
+                <li>cor RGB ou HSV</li>
+                <li>intensidade e textura</li>
+                <li>posição espacial (x,y)</li>
+              </ul>
+              <p style="color:#f1fa8c;">O grupo encontra regiões parecidas, mas não conhece o conceito “carro”.</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 10: Janela deslizante -->
+        <section data-auto-animate>
+          <h2>IA inicial: janela deslizante</h2>
+          <multi-col style="gap: 28px; align-items: center;">
+            <div style="width:470px; height:350px; position:relative; border:2px solid #6272a4; background:linear-gradient(#303442,#20222c); border-radius:10px; overflow:hidden;">
+              <i class="fa-solid fa-car-side" style="font-size:140px; color:#8be9fd; position:absolute; left:160px; top:110px;"></i>
+              <div style="border:5px solid #f1fa8c; width:165px; height:130px; position:absolute; left:55px; top:45px;"></div>
+              <div class="fragment" data-fragment-index="1" style="border:5px solid #ff79c6; width:165px; height:130px; position:absolute; left:155px; top:105px;"></div>
+              <div class="fragment" data-fragment-index="2" style="border:5px solid #50fa7b; width:165px; height:130px; position:absolute; left:255px; top:165px;"></div>
+            </div>
+            <div>
+              <ol>
+                <li class="fragment" data-fragment-index="0">Recorte uma janela</li>
+                <li class="fragment" data-fragment-index="1">Classifique o recorte</li>
+                <li class="fragment" data-fragment-index="2">Desloque e repita</li>
+                <li class="fragment" data-fragment-index="3">Mude a escala e recomece</li>
+              </ol>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 11: Custo -->
+        <section data-auto-animate>
+          <h2>O custo das múltiplas passagens</h2>
+          <div class="pipeline">
+            <div class="pipeline-node">Muitas posições</div>
+            <div class="pipeline-arrow">×</div>
+            <div class="pipeline-node">Muitos tamanhos</div>
+            <div class="pipeline-arrow">×</div>
+            <div class="pipeline-node">Uma CNN por recorte</div>
+          </div>
+          <div style="margin-top:45px; text-align:center;">
+            <p style="font-size:32pt; color:#ffb86c;">A mesma região da imagem passa pela CNN várias vezes.</p>
+            <p style="font-size:24pt;">YOLO troca essa busca repetitiva por uma única predição estruturada.</p>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: YOLO e o método do grid
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 12: Etapa 2 header -->
+        <section data-auto-animate>
+          <h2 style="color: #ff79c6;">Etapa 2: YOLO e o método do grid</h2>
+          <p><strong>You Only Look Once:</strong> uma rede recebe a imagem inteira e prevê localizações e classes em uma única avaliação.</p>
+          <div class="pipeline">
+            <div class="pipeline-node">Imagem inteira</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#ff79c6">CNN</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node">Caixas + classes</div>
+          </div>
+          <p class="source">Fonte conceitual: Redmon et al., YOLO (CVPR 2016)</p>
+        </section>
+
+        <!-- SLIDE 13: Imagem de treino -->
+        <section data-auto-animate>
+          <h2>Nossa imagem de treinamento</h2>
+          <div style="text-align:center;">
+            <img src="images/aula06/objetos-treinamento.png"
+                 alt="Vista superior com carro azul, bola laranja, caneca verde e avião amarelo" width="690"
+                 style="border-radius:10px;" />
+            <p class="source">Fonte: OpenAI, imagem gerada por IA (2026)</p>
+          </div>
+          <p style="text-align:center; font-size:20pt;">Quatro objetos, quatro classes e posições diferentes.</p>
+        </section>
+
+        <!-- SLIDE 14: Grid -->
+        <section data-auto-animate>
+          <h2>O grid organiza as saídas</h2>
+          <div style="text-align:center;">
+            <div class="scene">
+              <img src="images/aula06/objetos-treinamento.png"
+                   alt="Objetos de treinamento com um grid 3 por 3 sobreposto" width="650" />
+              <div class="grid-3"></div>
+            </div>
+            <p class="source">Imagem: OpenAI (2026); grid: elaboração própria</p>
+          </div>
+          <p style="text-align:center; font-size:22pt;">Cada célula ocupa uma posição fixa no tensor de saída.</p>
+        </section>
+
+        <!-- SLIDE 15: Célula responsável -->
+        <section data-auto-animate>
+          <h2>O centro define a célula responsável</h2>
+          <div style="text-align:center;">
+            <div class="scene">
+              <img src="images/aula06/objetos-treinamento.png"
+                   alt="Objetos com grid, caixas delimitadoras e centros marcados" width="650" />
+              <div class="grid-3"></div>
+              <div class="box" data-label="carro" style="color:#8be9fd; left:31%; top:34%; width:20%; height:28%;"></div>
+              <div class="center-dot" style="color:#8be9fd; left:41%; top:48%;"></div>
+              <div class="box" data-label="bola" style="color:#ffb86c; left:54%; top:40%; width:14%; height:22%;"></div>
+              <div class="center-dot" style="color:#ffb86c; left:61%; top:51%;"></div>
+              <div class="box" data-label="caneca" style="color:#50fa7b; left:70%; top:5%; width:25%; height:29%;"></div>
+              <div class="center-dot" style="color:#50fa7b; left:82.5%; top:19.5%;"></div>
+              <div class="box" data-label="avião" style="color:#f1fa8c; left:4%; top:59%; width:24%; height:34%;"></div>
+              <div class="center-dot" style="color:#f1fa8c; left:16%; top:76%;"></div>
+            </div>
+            <p class="source">Imagem: OpenAI (2026); anotações: elaboração própria</p>
+          </div>
+          <p style="text-align:center; font-size:20pt;">A caixa pode atravessar células. A responsabilidade acompanha apenas o seu centro.</p>
+        </section>
+
+        <!-- SLIDE 16: Saída original -->
+        <section data-auto-animate>
+          <h2>Tensor de saída no YOLO original</h2>
+          <div style="font-size:38pt; text-align:center; margin:28px 0;">
+            \[S \times S \times (B \cdot 5 + C)\]
+          </div>
+          <multi-col :cols="3" style="gap: 24px; text-align:center;">
+            <div><strong style="color:#8be9fd; font-size:34pt;">S × S</strong><p>células do grid</p></div>
+            <div><strong style="color:#ff79c6; font-size:34pt;">B × 5</strong><p>caixas candidatas</p></div>
+            <div><strong style="color:#50fa7b; font-size:34pt;">C</strong><p>classes da célula</p></div>
+          </multi-col>
+          <p style="text-align:center; color:#f1fa8c;">YOLOv1: \( 7 \times 7 \times (2 \cdot 5 + 20) = 1470 \) saídas.</p>
+          <p class="source">Fonte: Redmon et al., 2016, seção 2</p>
+        </section>
+
+        <!-- SLIDE 17: Cinco neurônios -->
+        <section data-auto-animate>
+          <h2>Um vetor de caixa usa cinco neurônios</h2>
+          <div class="vector-row" style="margin-top:48px;">
+            <div class="neuron"><strong>x</strong><small>centro horizontal</small></div>
+            <div class="neuron"><strong>y</strong><small>centro vertical</small></div>
+            <div class="neuron" style="border-color:#bd93f9"><strong>w</strong><small>largura</small></div>
+            <div class="neuron" style="border-color:#bd93f9"><strong>h</strong><small>altura</small></div>
+            <div class="neuron" style="border-color:#50fa7b"><strong>conf.</strong><small>objeto × IoU</small></div>
+          </div>
+          <p style="font-size:26pt; text-align:center; margin-top:42px;">
+            <em>n</em> = (x, y, w, h, p<sub>obj</sub>)
+          </p>
+          <p style="text-align:center; font-size:20pt;">As classes completam a saída da célula. No YOLOv1, as caixas da célula compartilham as probabilidades de classe.</p>
+        </section>
+
+        <!-- SLIDE 18: Rótulos globais -->
+        <section data-auto-animate>
+          <h2>Rótulos normalizados da imagem</h2>
+          <multi-col style="gap: 20px; align-items:center;">
+            <div style="text-align:center;">
+              <div class="scene">
+                <img src="images/aula06/objetos-treinamento.png"
+                     alt="Imagem rotulada com quatro objetos para treinamento" width="470" />
+                <div class="box" data-label="0 carro" style="color:#8be9fd; left:31%; top:34%; width:20%; height:28%;"></div>
+                <div class="box" data-label="1 bola" style="color:#ffb86c; left:54%; top:40%; width:14%; height:22%;"></div>
+                <div class="box" data-label="2 caneca" style="color:#50fa7b; left:70%; top:5%; width:25%; height:29%;"></div>
+                <div class="box" data-label="3 avião" style="color:#f1fa8c; left:4%; top:59%; width:24%; height:34%;"></div>
+              </div>
+              <p class="source">Imagem: OpenAI (2026); rótulos aproximados: elaboração própria</p>
+            </div>
+            <div>
+              <code-block lang="text" data-trim>
+0 0.410 0.480 0.200 0.280
+1 0.610 0.510 0.140 0.220
+2 0.825 0.195 0.250 0.290
+3 0.160 0.760 0.240 0.340
+              </code-block>
+              <p style="font-size:17pt; text-align:center;">classe, x<sub>centro</sub>, y<sub>centro</sub>, largura, altura</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 19: Coordenadas da célula -->
+        <section data-auto-animate>
+          <h2>Coordenadas relativas à célula</h2>
+          <div style="display:flex; gap: 22px; align-items:center;">
+            <div style="text-align:center;">
+              <div class="scene">
+                <img src="images/aula06/objetos-treinamento.png"
+                     alt="Grid 3 por 3 com a célula central destacada" width="520" />
+                <div class="grid-3"></div>
+                <div class="cell-highlight"></div>
+                <div class="center-dot" style="color:#8be9fd; left:41%; top:48%;"></div>
+                <div class="center-dot" style="color:#ffb86c; left:61%; top:51%;"></div>
+              </div>
+              <p class="source">Imagem: OpenAI (2026); grid: elaboração própria</p>
+            </div>
+            <div style="font-size:20pt;">
+              <p>Para <strong>S = 3</strong>, coluna <strong>c = 1</strong> e linha <strong>r = 1</strong>:</p>
+              <p>\[x_{local}=3x-c\]</p>
+              <p>\[y_{local}=3y-r\]</p>
+              <p style="color:#8be9fd;">carro: <code>(0,23; 0,44)</code></p>
+              <p style="color:#ffb86c;">bola: <code>(0,83; 0,53)</code></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 20: Amplificação -->
+        <section data-auto-animate>
+          <h2>Por que relativizar x e y?</h2>
+          <table style="font-size: 22pt; margin-top: 25px;">
+            <thead>
+              <tr><th>Sistema</th><th>Carro</th><th>Bola</th><th>Diferença em x</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Imagem inteira</td><td>0,410</td><td>0,610</td><td style="color:#b8b8c8">0,200</td></tr>
+              <tr><td>Célula central</td><td>0,230</td><td>0,830</td><td style="color:#50fa7b"><strong>0,600</strong></td></tr>
+            </tbody>
+          </table>
+          <div style="text-align:center; margin-top:32px;">
+            <p style="font-size:30pt;">A diferença local cresce por um fator <strong>S</strong>.</p>
+            <p style="font-size:20pt;">O modelo usa melhor o intervalo entre 0 e 1 para aprender posições dentro da célula.</p>
+          </div>
+        </section>
+
+        <!-- SLIDE 21: Mesma célula -->
+        <section data-auto-animate>
+          <h2>Dois objetos na mesma célula</h2>
+          <div style="display:flex;gap:22px; align-items:center;">
+            <div style="text-align:center;">
+              <div class="scene">
+                <img src="images/aula06/objetos-treinamento.png"
+                     alt="Carro e bola com centros dentro da mesma célula do grid" width="500" />
+                <div class="grid-3"></div>
+                <div class="cell-highlight"></div>
+                <div class="box" data-label="caixa 1" style="color:#8be9fd; left:31%; top:34%; width:20%; height:28%;"></div>
+                <div class="center-dot" style="color:#8be9fd; left:41%; top:48%;"></div>
+                <div class="box" data-label="caixa 2" style="color:#ffb86c; left:54%; top:40%; width:14%; height:22%;"></div>
+                <div class="center-dot" style="color:#ffb86c; left:61%; top:51%;"></div>
+              </div>
+              <p class="source">Imagem: OpenAI (2026); anotações: elaboração própria</p>
+            </div>
+            <div>
+              <div class="vector-row" style="flex-direction:column;">
+                <div class="neuron" style="border-color:#8be9fd; min-height:42px;">B₁ = (x₁,y₁,w₁,h₁,conf₁)</div>
+                <div class="neuron" style="border-color:#ffb86c; min-height:42px;">B₂ = (x₂,y₂,w₂,h₂,conf₂)</div>
+              </div>
+              <p style="font-size:19pt;">Uma quantidade finita de previsões por posição limita quantos centros muito próximos o modelo consegue representar.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SLIDE 22: Largura e altura -->
+        <section data-auto-animate>
+          <h2>Largura e altura: a referência muda</h2>
+          <table style="font-size:20pt;">
+            <thead>
+              <tr><th>Família</th><th>Posição x, y</th><th>Largura w, altura h</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="color:#8be9fd">YOLOv1</td><td>relativas à célula</td><td>normalizadas pela imagem</td></tr>
+              <tr><td style="color:#bd93f9">YOLO com âncoras</td><td>offset na célula</td><td>ajuste relativo à âncora</td></tr>
+              <tr><td style="color:#50fa7b">YOLO modernos</td><td>predições em mapas de vários strides</td><td>decodificação depende da cabeça</td></tr>
+            </tbody>
+          </table>
+          <highlight-box :index="0">
+            <p style="font-size:21pt; text-align:center;">A ideia permanece: prever valores em uma escala estável. A fórmula exata depende da versão.</p>
+          </highlight-box>
+          <p class="source">Fonte: Redmon et al. (2016) e documentação Ultralytics YOLO11</p>
+        </section>
+
+        <!-- SLIDE 23: Grid não recorta -->
+        <section data-auto-animate>
+          <h2>O grid não recorta a imagem</h2>
+          <div class="pipeline">
+            <div class="pipeline-node">Imagem completa</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#bd93f9">Backbone CNN<br><small>contexto global</small></div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#50fa7b">Mapas de atributos</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#ff79c6">Cabeça de saída<br><small>posições organizadas</small></div>
+          </div>
+          <multi-col style="gap:30px; margin-top:35px;">
+            <div style="text-align:center; color:#ff5555;"><i class="fa-solid fa-xmark" style="font-size:54px;"></i><p>Uma CNN por célula</p></div>
+            <div style="text-align:center; color:#50fa7b;"><i class="fa-solid fa-check" style="font-size:54px;"></i><p>Uma passagem pela imagem</p></div>
+          </multi-col>
+          <p style="text-align:center; font-size:20pt;">O grid afeta o formato dos alvos e das saídas, não o recorte da entrada.</p>
+        </section>
+
+        <!-- SLIDE 24: Multi-escala -->
+        <section data-auto-animate>
+          <h2>Mapas de atributos em várias escalas</h2>
+          <multi-col :cols="3" style="gap:24px; align-items:end; text-align:center;">
+            <div>
+              <div style="display:grid; grid-template-columns:repeat(4,42px); gap:4px; justify-content:center;">
+                <span v-for="n in 16" style="height:42px; background:#44475a; border:2px solid #8be9fd"></span>
+              </div>
+              <p><strong style="color:#8be9fd">alta resolução</strong><br><small>objetos pequenos</small></p>
+            </div>
+            <div>
+              <div style="display:grid; grid-template-columns:repeat(3,58px); gap:5px; justify-content:center;">
+                <span v-for="n in 9" style="height:58px; background:#44475a; border:2px solid #bd93f9"></span>
+              </div>
+              <p><strong style="color:#bd93f9">resolução média</strong><br><small>objetos médios</small></p>
+            </div>
+            <div>
+              <div style="display:grid; grid-template-columns:repeat(2,82px); gap:6px; justify-content:center;">
+                <span v-for="n in 4" style="height:82px; background:#44475a; border:2px solid #50fa7b"></span>
+              </div>
+              <p><strong style="color:#50fa7b">baixa resolução</strong><br><small>objetos grandes</small></p>
+            </div>
+          </multi-col>
+          <p style="text-align:center; font-size:20pt;">YOLO modernos fazem previsões em mais de um mapa de atributos.</p>
+        </section>
+
+        <!-- SLIDE 25: Classes -->
+        <section data-auto-animate>
+          <h2>Da caixa à classe prevista</h2>
+          <div class="vector-row" style="margin-top:30px;">
+            <div class="neuron">x<small>0,23</small></div>
+            <div class="neuron">y<small>0,44</small></div>
+            <div class="neuron" style="border-color:#bd93f9">w<small>0,20</small></div>
+            <div class="neuron" style="border-color:#bd93f9">h<small>0,28</small></div>
+            <div class="neuron" style="border-color:#50fa7b">obj<small>0,96</small></div>
+          </div>
+          <div class="vector-row" style="margin-top:16px;">
+            <div class="neuron" style="border-color:#8be9fd">carro<small>0,93</small></div>
+            <div class="neuron" style="border-color:#ffb86c">bola<small>0,02</small></div>
+            <div class="neuron" style="border-color:#50fa7b">caneca<small>0,03</small></div>
+            <div class="neuron" style="border-color:#f1fa8c">avião<small>0,02</small></div>
+          </div>
+          <p style="text-align:center; font-size:23pt; margin-top:28px;">pontuação da classe ≈ confiança no objeto × probabilidade da classe</p>
+        </section>
+
+        <!-- SLIDE 26: Decodificação -->
+        <section data-auto-animate>
+          <h2>Da saída bruta às detecções</h2>
+          <div class="pipeline" style="margin-top:25px;">
+            <div class="pipeline-node">Milhares de candidatos</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node">Decodificação</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node">Limiar de confiança</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node">Supressão de duplicatas</div>
+          </div>
+          <ul style="margin-top:38px;">
+            <li>O limiar remove candidatos pouco confiáveis</li>
+            <li>A conversão recupera coordenadas na imagem</li>
+            <li>A etapa final combina caixas que representam o mesmo objeto</li>
+          </ul>
+        </section>
+
+        <!-- SLIDE 27: IoU -->
+        <section data-auto-animate>
+          <h2>IoU mede a sobreposição</h2>
+          <multi-col style="gap:35px; align-items:center;">
+            <div style="height:310px; position:relative;">
+              <div style="background:rgba(139,233,253,.35); border:5px solid #8be9fd; height:190px; left:70px; position:absolute; top:45px; width:245px;"></div>
+              <div style="background:rgba(255,121,198,.35); border:5px solid #ff79c6; height:175px; left:180px; position:absolute; top:100px; width:250px;"></div>
+              <div style="left:190px; position:absolute; top:145px; color:#f8f8f2; font-size:18pt;">interseção</div>
+            </div>
+            <div>
+              <p style="font-size:30pt; text-align:center;">\[IoU=\frac{A \cap B}{A \cup B}\]</p>
+              <ul>
+                <li>0: sem contato</li>
+                <li>1: caixas idênticas</li>
+                <li>Durante o treino, indica qualidade da localização</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 28: NMS -->
+        <section data-auto-animate>
+          <h2>Supressão não máxima</h2>
+          <multi-col style="gap:36px; align-items:center;">
+            <div style="height:330px; position:relative; border-radius:10px; background:#303442;">
+              <i class="fa-solid fa-car-side" style="font-size:150px; color:#8be9fd; position:absolute; left:120px; top:100px;"></i>
+              <div style="border:5px solid #50fa7b; height:170px; left:95px; position:absolute; top:80px; width:290px;"></div>
+              <div style="border:4px solid #ffb86c; height:155px; left:112px; position:absolute; top:92px; width:275px;"></div>
+              <div style="border:4px solid #bd93f9; height:180px; left:82px; position:absolute; top:72px; width:310px;"></div>
+            </div>
+            <div>
+              <ol>
+                <li>Ordene as caixas pela confiança</li>
+                <li>Mantenha a melhor</li>
+                <li>Remova as caixas com grande IoU e mesma classe</li>
+                <li>Repita com as restantes</li>
+              </ol>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: Da detecção à segmentação
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 29: Etapa 3 header -->
+        <section data-auto-animate>
+          <h2 style="color: #bd93f9;">Etapa 3: da detecção à segmentação</h2>
+          <p>A caixa localiza aproximadamente. A máscara descreve a forma ocupada por cada objeto.</p>
+          <div style="height:310px; max-width:620px; margin:20px auto; position:relative; background:#303442; border-radius:12px; overflow:hidden;">
+            <i class="fa-solid fa-car-side" style="font-size:160px; color:#8be9fd; position:absolute; left:225px; top:80px;"></i>
+            <div class="box" data-label="carro" style="color:#f1fa8c; left:28%; top:19%; width:52%; height:65%;"></div>
+            <div class="mask-demo" style="background:#ff79c6;"></div>
+          </div>
+        </section>
+
+        <!-- SLIDE 30: Tipos de segmentação -->
+        <section data-auto-animate>
+          <h2>Semântica e instâncias</h2>
+          <multi-col style="gap:45px; align-items:center;">
+            <div style="text-align:center;">
+              <div style="height:260px; position:relative; background:#303442; border-radius:12px; overflow:hidden;">
+                <i class="fa-solid fa-car-side" style="font-size:105px; color:#8be9fd; position:absolute; left:25px; top:85px;"></i>
+                <i class="fa-solid fa-car-side" style="font-size:105px; color:#8be9fd; position:absolute; right:25px; top:85px;"></i>
+                <div style="background:rgba(189,147,249,.55); inset:55px 18px 35px; position:absolute; border-radius:45%;"></div>
+              </div>
+              <h3>Semântica</h3>
+              <p style="font-size:18pt; text-align:center;">todos os carros usam a mesma classe de pixels</p>
+            </div>
+            <div style="text-align:center;">
+              <div style="height:260px; position:relative; background:#303442; border-radius:12px; overflow:hidden;">
+                <div style="background:rgba(139,233,253,.6); border-radius:45%; height:150px; left:15px; position:absolute; top:58px; width:205px;"></div>
+                <div style="background:rgba(255,121,198,.6); border-radius:45%; height:150px; right:15px; position:absolute; top:58px; width:205px;"></div>
+                <i class="fa-solid fa-car-side" style="font-size:105px; color:#f8f8f2; position:absolute; left:25px; top:85px;"></i>
+                <i class="fa-solid fa-car-side" style="font-size:105px; color:#f8f8f2; position:absolute; right:25px; top:85px;"></i>
+              </div>
+              <h3>Instâncias</h3>
+              <p style="font-size:18pt; text-align:center;">cada carro recebe uma máscara própria</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- SLIDE 31: YOLO Segment -->
+        <section data-auto-animate>
+          <h2>YOLO para segmentação de instâncias</h2>
+          <div class="pipeline">
+            <div class="pipeline-node">Backbone e neck</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#8be9fd">Caixas + classes</div>
+            <div class="pipeline-arrow">+</div>
+            <div class="pipeline-node" style="border-color:#ff79c6">Coeficientes de máscara</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#bd93f9">Máscara por objeto</div>
+          </div>
+          <ul style="margin-top:42px;">
+            <li>A detecção ainda localiza e classifica cada instância</li>
+            <li>Uma cabeça adicional estima a forma dentro da região</li>
+            <li>A saída combina caixa, classe, confiança e máscara</li>
+          </ul>
+          <p class="source">Fonte: documentação Ultralytics, tarefa Segment</p>
+        </section>
+
+        <!-- SLIDE 32: Rótulo de segmentação -->
+        <section data-auto-animate>
+          <h2>Rótulo de segmentação</h2>
+          <multi-col style="gap:30px; align-items:center;">
+            <div style="height:340px; position:relative; background:#303442; border-radius:12px; overflow:hidden;">
+              <i class="fa-solid fa-plane" style="font-size:190px; color:#f1fa8c; left:120px; position:absolute; top:80px; transform:rotate(-20deg);"></i>
+              <div style="clip-path:polygon(12% 61%,38% 51%,48% 14%,60% 52%,90% 65%,60% 69%,53% 92%,44% 69%); background:rgba(255,121,198,.62); inset:25px; position:absolute;"></div>
+            </div>
+            <div>
+              <p>Uma linha por instância:</p>
+              <code-block lang="text" data-trim>
+3 0.12 0.61 0.38 0.51 0.48 0.14
+  0.60 0.52 0.90 0.65 0.60 0.69
+  0.53 0.92 0.44 0.69
+              </code-block>
+              <p style="font-size:18pt;">classe seguida pelos pontos <code>(x,y)</code> normalizados do polígono.</p>
+            </div>
+          </multi-col>
+          <p class="source">Formato: documentação Ultralytics para datasets de segmentação</p>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Prática com YOLO11
+         ============================================================ -->
+      <section>
+
+        <!-- SLIDE 33: Etapa 4 header -->
+        <section data-auto-animate>
+          <h2 style="color: #50fa7b;">Etapa 4: prática com YOLO11</h2>
+          <p>Vamos comparar detecção e segmentação na mesma imagem usando modelos pré-treinados.</p>
+          <div class="pipeline">
+            <div class="pipeline-node">Sua imagem</div>
+            <div class="pipeline-arrow">→</div>
+            <div class="pipeline-node" style="border-color:#8be9fd">yolo11n.pt</div>
+            <div class="pipeline-arrow">+</div>
+            <div class="pipeline-node" style="border-color:#ff79c6">yolo11n-seg.pt</div>
+          </div>
+        </section>
+
+        <!-- SLIDE 34: Código -->
+        <section data-auto-animate>
+          <h2>Inferência em Python</h2>
+          <multi-col style="gap:24px; align-items:start;">
+            <div>
+              <code-block lang="python" data-trim style="font-size:15pt;">
+%pip install ultralytics
+from ultralytics import YOLO
+
+foto = "minha_foto.jpg"
+detector = YOLO("yolo11n.pt")
+segmentador = YOLO("yolo11n-seg.pt")
+
+detector.predict(
+    foto, conf=0.25, save=True
+)
+segmentador.predict(
+    foto, conf=0.25, save=True
+)
+              </code-block>
+            </div>
+            <div>
+              <ul>
+                <li><strong style="color:#8be9fd">Detect:</strong> caixas, classes e confiança</li>
+                <li><strong style="color:#ff79c6">Segment:</strong> adiciona uma máscara por objeto</li>
+                <li><strong style="color:#50fa7b">conf:</strong> controla o limiar de exibição</li>
+              </ul>
+              <p style="font-size:17pt;">Caderno do repositório: <code>cadernos/YOLO11 Tutorial.ipynb</code></p>
+            </div>
+          </multi-col>
+          <p class="source">API e modelos: Ultralytics YOLO11</p>
+        </section>
+
+        <!-- SLIDE 35: Exercício -->
+        <section data-auto-animate>
+          <h2>Exercício prático</h2>
+          <div style="background:#282a36; border-left:5px solid #50fa7b; padding:18px 24px;">
+            <p><strong>Objetivo:</strong> relacionar a anotação manual com a saída do modelo.</p>
+            <ls-u>
+              <li>Escolha uma imagem com pelo menos três objetos visíveis</li>
+              <li>Execute os modelos de detecção e segmentação</li>
+              <li>Compare os resultados com limiares 0,15; 0,40 e 0,70</li>
+              <li>Escolha uma caixa e calcule <code>x_c, y_c, w, h</code> normalizados</li>
+              <li>Para um grid 3×3, identifique a célula e calcule <code>x_local, y_local</code></li>
+            </ls-u>
+          </div>
+        </section>
+
+        <!-- SLIDE 36: Discussão -->
+        <section data-auto-animate>
+          <h2>Discussão dos resultados</h2>
+          <multi-col style="gap:32px;">
+            <div>
+              <h3 style="color:#8be9fd">Observe</h3>
+              <ul>
+                <li>objetos pequenos ou parcialmente ocultos</li>
+                <li>caixas duplicadas e confiança baixa</li>
+                <li>máscaras que vazam para o fundo</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="color:#ff79c6">Explique</h3>
+              <ul>
+                <li>o efeito do limiar de confiança</li>
+                <li>a diferença entre caixa e contorno</li>
+                <li>qual saída atende melhor à aplicação</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- SLIDE 37: Quiz 1 -->
+      <section>
+        <section>
+          <poll-question
+            id="aula06-grid-recorte"
+            title="Questão 1: o papel do grid"
+            question="No YOLO, cada célula recorta sua parte da imagem e executa uma CNN separada?"
+            answer="b"
+            answer-text="A rede processa a imagem inteira. O grid organiza posições e alvos na cabeça de saída."
+            :options="[
+              { value: 'a', label: 'Sim, uma CNN por célula' },
+              { value: 'b', label: 'Não, a imagem passa pela rede uma vez' },
+              { value: 'c', label: 'Somente durante o treinamento' }
+            ]" />
+        </section>
+
+        <!-- SLIDE 38: Quiz 2 -->
+        <section>
+          <poll-question
+            id="aula06-centro-celula"
+            title="Questão 2: célula responsável"
+            question="Uma caixa cruza quatro células. Qual célula recebe a responsabilidade pelo objeto no exemplo clássico?"
+            answer="c"
+            answer-text="A célula que contém o centro do objeto recebe o alvo."
+            :options="[
+              { value: 'a', label: 'A célula com maior área da caixa' },
+              { value: 'b', label: 'Todas as quatro células' },
+              { value: 'c', label: 'A célula que contém o centro' }
+            ]" />
+        </section>
+      </section><!-- fim Quiz -->
+
+      <!-- SLIDE 39: Resumo -->
+      <section data-auto-animate>
+        <h2>Resumo da aula</h2>
+        <ls-u font-size="19">
+          <li>Métodos clássicos separam pixels por similaridade, sementes ou agrupamento</li>
+          <li>Janelas deslizantes repetem o classificador em várias posições e escalas</li>
+          <li>YOLO processa a imagem inteira e organiza saídas espaciais</li>
+          <li>Cada caixa usa posição, dimensões e confiança; as classes completam a predição</li>
+          <li>Segmentação de instâncias acrescenta uma máscara por objeto</li>
+        </ls-u>
+        <div class="fragment" style="text-align:center; margin-top:18px;">
+          <p style="font-size:21pt;">Próxima etapa: <strong>treinar o YOLO com um conjunto de dados próprio</strong></p>
+        </div>
+      </section>
+
+      <!-- SLIDE 40: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul style="font-size:17pt;">
+          <li><a href="https://arxiv.org/abs/1506.02640" target="_blank">Redmon et al. — You Only Look Once (2016)</a></li>
+          <li><a href="https://arxiv.org/abs/1505.04597" target="_blank">Ronneberger, Fischer e Brox — U-Net (2015)</a></li>
+          <li><a href="https://arxiv.org/abs/1703.06870" target="_blank">He et al. — Mask R-CNN (2017)</a></li>
+          <li><a href="https://docs.ultralytics.com/models/yolo11/" target="_blank">Ultralytics — YOLO11</a></li>
+          <li><a href="https://docs.ultralytics.com/tasks/segment/" target="_blank">Ultralytics — Instance Segmentation</a></li>
+          <li><a href="https://docs.ultralytics.com/datasets/segment/" target="_blank">Ultralytics — formato de anotação para segmentação</a></li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>

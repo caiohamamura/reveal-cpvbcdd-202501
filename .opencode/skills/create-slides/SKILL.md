@@ -394,6 +394,7 @@ Technical details:
 - Center images with parent `style="text-align: center"` or `<center>`
 - Prefer local, versioned assets for course slides; official logos, real screenshots, generated outputs, file trees, and query results are usually better than generic decorative diagrams.
 - Mermaid should clarify a flow or structure, not be default cover decoration.
+- For compact attribution captions, use a selector at least as specific as `.reveal p.source` and add `font-size: 11pt !important`; the global paragraph rule can otherwise enlarge `.source` text.
 
 ### Slide Design Quality
 - Pick a visual direction from the lesson purpose and audience before building slides.
