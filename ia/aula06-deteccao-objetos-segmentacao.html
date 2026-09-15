@@ -199,21 +199,6 @@
         </multi-col>
       </section>
 
-      <!-- SLIDE 3: Roteiro -->
-      <section data-auto-animate>
-        <h2>Roteiro da aula</h2>
-        <div class="pipeline">
-          <div class="pipeline-node" style="border-color:#bd93f9">10 min<br><strong>Contexto</strong></div>
-          <div class="pipeline-arrow">→</div>
-          <div class="pipeline-node" style="border-color:#ff79c6">30 min<br><strong>YOLO</strong></div>
-          <div class="pipeline-arrow">→</div>
-          <div class="pipeline-node" style="border-color:#50fa7b">Prática<br><strong>YOLO11</strong></div>
-        </div>
-        <highlight-box :index="0">
-          <p style="text-align:center; font-size: 24pt;">Pergunta central: como uma CNN produz <strong>várias respostas espaciais</strong> em uma única passagem?</p>
-        </highlight-box>
-      </section>
-
       <!-- ============================================================
          Etapa 1: Contexto e histórico
          ============================================================ -->
@@ -343,7 +328,7 @@
 
         <!-- SLIDE 10: Janela deslizante -->
         <section data-auto-animate>
-          <h2>IA inicial: janela deslizante</h2>
+          <h2>Algoritimos iniciais: janela deslizante</h2>
           <multi-col style="gap: 28px; align-items: center;">
             <div style="width:470px; height:350px; position:relative; border:2px solid #6272a4; background:linear-gradient(#303442,#20222c); border-radius:10px; overflow:hidden;">
               <i class="fa-solid fa-car-side" style="font-size:140px; color:#8be9fd; position:absolute; left:160px; top:110px;"></i>
@@ -597,20 +582,14 @@
         <!-- SLIDE 23: Grid não recorta -->
         <section data-auto-animate>
           <h2>O grid não recorta a imagem</h2>
-          <div class="pipeline">
-            <div class="pipeline-node">Imagem completa</div>
-            <div class="pipeline-arrow">→</div>
-            <div class="pipeline-node" style="border-color:#bd93f9">Backbone CNN<br><small>contexto global</small></div>
-            <div class="pipeline-arrow">→</div>
-            <div class="pipeline-node" style="border-color:#50fa7b">Mapas de atributos</div>
-            <div class="pipeline-arrow">→</div>
-            <div class="pipeline-node" style="border-color:#ff79c6">Cabeça de saída<br><small>posições organizadas</small></div>
-          </div>
-          <multi-col style="gap:30px; margin-top:35px;">
-            <div style="text-align:center; color:#ff5555;"><i class="fa-solid fa-xmark" style="font-size:54px;"></i><p>Uma CNN por célula</p></div>
-            <div style="text-align:center; color:#50fa7b;"><i class="fa-solid fa-check" style="font-size:54px;"></i><p>Uma passagem pela imagem</p></div>
-          </multi-col>
-          <p style="text-align:center; font-size:20pt;">O grid afeta o formato dos alvos e das saídas, não o recorte da entrada.</p>
+          <a href="images/aula06/yolo-original-arquitetura.png" target="_blank" rel="noopener">
+            <img src="images/aula06/yolo-original-arquitetura.png"
+                 alt="Arquitetura do YOLO original: entrada 448 por 448, convoluções e pooling, camadas conectadas e saída 7 por 7 por 30"
+                 style="display:block; width:100%; height:350px; object-fit:contain; background:white; margin:12px auto;" />
+          </a>
+          <p class="source">Fonte: Redmon et al., <a href="https://arxiv.org/pdf/1506.02640" target="_blank" rel="noopener">You Only Look Once, Figura 3</a> (imagem fornecida no anexo).</p>
+          <p style="font-size:20pt; text-align:center;">Imagem inteira 448×448×3 → convoluções e pooling → camadas conectadas → saída 7×7×30.</p>
+          <p style="font-size:18pt; text-align:center;">No YOLO original, cada posição da saída reúne 2 caixas × 5 valores + 20 classes. O grid organiza as previsões; não cria 49 recortes de entrada.</p>
         </section>
 
         <!-- SLIDE 24: Multi-escala -->
@@ -636,7 +615,12 @@
               <p><strong style="color:#50fa7b">baixa resolução</strong><br><small>objetos grandes</small></p>
             </div>
           </multi-col>
-          <p style="text-align:center; font-size:20pt;">YOLO modernos fazem previsões em mais de um mapa de atributos.</p>
+          <p style="text-align:center; font-size:20pt;">YOLO modernos combinam atributos e fazem previsões em múltiplas escalas.</p>
+          <p style="text-align:center; font-size:23pt; margin:18px 0;">
+            <a href="https://arxiv.org/pdf/2408.15857#page=4" target="_blank" rel="noopener">Abrir Figura 2 — arquitetura do YOLOv8 em tamanho completo ↗</a>
+          </p>
+          <p style="text-align:center; font-size:17pt;">No diagrama, acompanhe o backbone, a fusão de atributos e as três saídas de detecção.</p>
+          <p class="source">Fonte: Muhammad Yaseen (2024), What is YOLOv8, Figura 2, p. 4. A prática a seguir utiliza YOLO11.</p>
         </section>
 
         <!-- SLIDE 25: Classes -->
@@ -800,133 +784,10 @@
               <p style="font-size:18pt;">classe seguida pelos pontos <code>(x,y)</code> normalizados do polígono.</p>
             </div>
           </multi-col>
-          <p class="source">Formato: documentação Ultralytics para datasets de segmentação</p>
         </section>
 
       </section><!-- fim Etapa 3 -->
 
-      <!-- ============================================================
-         Etapa 4: Prática com YOLO11
-         ============================================================ -->
-      <section>
-
-        <!-- SLIDE 33: Etapa 4 header -->
-        <section data-auto-animate>
-          <h2 style="color: #50fa7b;">Etapa 4: prática com YOLO11</h2>
-          <p>Vamos comparar detecção e segmentação na mesma imagem usando modelos pré-treinados.</p>
-          <div class="pipeline">
-            <div class="pipeline-node">Sua imagem</div>
-            <div class="pipeline-arrow">→</div>
-            <div class="pipeline-node" style="border-color:#8be9fd">yolo11n.pt</div>
-            <div class="pipeline-arrow">+</div>
-            <div class="pipeline-node" style="border-color:#ff79c6">yolo11n-seg.pt</div>
-          </div>
-        </section>
-
-        <!-- SLIDE 34: Código -->
-        <section data-auto-animate>
-          <h2>Inferência em Python</h2>
-          <multi-col style="gap:24px; align-items:start;">
-            <div>
-              <code-block lang="python" data-trim style="font-size:15pt;">
-%pip install ultralytics
-from ultralytics import YOLO
-
-foto = "minha_foto.jpg"
-detector = YOLO("yolo11n.pt")
-segmentador = YOLO("yolo11n-seg.pt")
-
-detector.predict(
-    foto, conf=0.25, save=True
-)
-segmentador.predict(
-    foto, conf=0.25, save=True
-)
-              </code-block>
-            </div>
-            <div>
-              <ul>
-                <li><strong style="color:#8be9fd">Detect:</strong> caixas, classes e confiança</li>
-                <li><strong style="color:#ff79c6">Segment:</strong> adiciona uma máscara por objeto</li>
-                <li><strong style="color:#50fa7b">conf:</strong> controla o limiar de exibição</li>
-              </ul>
-              <p style="font-size:17pt;">Caderno do repositório: <code>cadernos/YOLO11 Tutorial.ipynb</code></p>
-            </div>
-          </multi-col>
-          <p class="source">API e modelos: Ultralytics YOLO11</p>
-        </section>
-
-        <!-- SLIDE 35: Exercício -->
-        <section data-auto-animate>
-          <h2>Exercício prático</h2>
-          <div style="background:#282a36; border-left:5px solid #50fa7b; padding:18px 24px;">
-            <p><strong>Objetivo:</strong> relacionar a anotação manual com a saída do modelo.</p>
-            <ls-u>
-              <li>Escolha uma imagem com pelo menos três objetos visíveis</li>
-              <li>Execute os modelos de detecção e segmentação</li>
-              <li>Compare os resultados com limiares 0,15; 0,40 e 0,70</li>
-              <li>Escolha uma caixa e calcule <code>x_c, y_c, w, h</code> normalizados</li>
-              <li>Para um grid 3×3, identifique a célula e calcule <code>x_local, y_local</code></li>
-            </ls-u>
-          </div>
-        </section>
-
-        <!-- SLIDE 36: Discussão -->
-        <section data-auto-animate>
-          <h2>Discussão dos resultados</h2>
-          <multi-col style="gap:32px;">
-            <div>
-              <h3 style="color:#8be9fd">Observe</h3>
-              <ul>
-                <li>objetos pequenos ou parcialmente ocultos</li>
-                <li>caixas duplicadas e confiança baixa</li>
-                <li>máscaras que vazam para o fundo</li>
-              </ul>
-            </div>
-            <div>
-              <h3 style="color:#ff79c6">Explique</h3>
-              <ul>
-                <li>o efeito do limiar de confiança</li>
-                <li>a diferença entre caixa e contorno</li>
-                <li>qual saída atende melhor à aplicação</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
-
-      </section><!-- fim Etapa 4 -->
-
-      <!-- SLIDE 37: Quiz 1 -->
-      <section>
-        <section>
-          <poll-question
-            id="aula06-grid-recorte"
-            title="Questão 1: o papel do grid"
-            question="No YOLO, cada célula recorta sua parte da imagem e executa uma CNN separada?"
-            answer="b"
-            answer-text="A rede processa a imagem inteira. O grid organiza posições e alvos na cabeça de saída."
-            :options="[
-              { value: 'a', label: 'Sim, uma CNN por célula' },
-              { value: 'b', label: 'Não, a imagem passa pela rede uma vez' },
-              { value: 'c', label: 'Somente durante o treinamento' }
-            ]" />
-        </section>
-
-        <!-- SLIDE 38: Quiz 2 -->
-        <section>
-          <poll-question
-            id="aula06-centro-celula"
-            title="Questão 2: célula responsável"
-            question="Uma caixa cruza quatro células. Qual célula recebe a responsabilidade pelo objeto no exemplo clássico?"
-            answer="c"
-            answer-text="A célula que contém o centro do objeto recebe o alvo."
-            :options="[
-              { value: 'a', label: 'A célula com maior área da caixa' },
-              { value: 'b', label: 'Todas as quatro células' },
-              { value: 'c', label: 'A célula que contém o centro' }
-            ]" />
-        </section>
-      </section><!-- fim Quiz -->
 
       <!-- SLIDE 39: Resumo -->
       <section data-auto-animate>
@@ -948,6 +809,7 @@ segmentador.predict(
         <h2>Referências</h2>
         <ul style="font-size:17pt;">
           <li><a href="https://arxiv.org/abs/1506.02640" target="_blank">Redmon et al. — You Only Look Once (2016)</a></li>
+          <li><a href="https://arxiv.org/abs/2408.15857" target="_blank" rel="noopener">Yaseen — What is YOLOv8 (2024), Figura 2</a></li>
           <li><a href="https://arxiv.org/abs/1505.04597" target="_blank">Ronneberger, Fischer e Brox — U-Net (2015)</a></li>
           <li><a href="https://arxiv.org/abs/1703.06870" target="_blank">He et al. — Mask R-CNN (2017)</a></li>
           <li><a href="https://docs.ultralytics.com/models/yolo11/" target="_blank">Ultralytics — YOLO11</a></li>
