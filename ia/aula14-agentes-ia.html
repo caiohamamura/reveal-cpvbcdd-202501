@@ -659,11 +659,11 @@
             <div class="compact-code">
               <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e iniciar na pasta do projeto</p>
               <code-block lang="bash" data-trim>
-# Linux / macOS / WSL
+				  # Linux / macOS / WSL
 curl -LsSf https://mistral.ai/vibe/install.sh | bash
 
 # Ou via uv (cross-platform, inclui Windows)
-winget install Mistral.Vibe
+winget install MistralAI.MistralVibe
 
 # Criar pasta limpa e iniciar o agente
 mkdir meu-projeto-agente
@@ -683,6 +683,42 @@ vibe
                   <li><strong>Múltiplas interfaces:</strong><code>CLI</code> para terminal, extensão do <code>VS Code</code>, app <code>Desktop</code> ou <code>Web</code>.</li>
                   <li><strong>Acesso gratuito simples:</strong> Plano gratuito com $10 por mês!</li>
                   <li><strong>Padrões abertos:</strong> suporta nativamente <code>AGENTS.md</code>, <code>SKILLS</code>, <code>servidores MCP</code> e provedores compatíveis.</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+		  <section data-auto-animate>
+          <h2>Instalação e Acesso ao <code>OpenCode</code></h2>
+          <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
+            <div class="compact-code">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e iniciar na pasta do projeto</p>
+              <code-block lang="bash" data-trim>
+# Linux / macOS / WSL
+curl -fsSL https://opencode.ai/install | bash
+
+# Ou via npm / Brew (cross-platform, inclui Windows)
+npm install -g @opencode/cli
+
+# Criar pasta limpa e iniciar o agente
+mkdir meu-projeto-agente
+cd meu-projeto-agente
+opencode
+              </code-block>
+              <div style="margin-top: 10px;">
+                <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
+                  Documentação OpenCode ↗
+                </a>
+              </div>
+            </div>
+            <div>
+              <div class="checklist-panel" style="padding: 12px 15px;">
+                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que começar pelo OpenCode?</h3>
+                <ul class="tight-list" style="margin-top: 6px;">
+                  <li><strong>Múltiplas interfaces:</strong><code>TUI</code> nativa no terminal, extensão do <code>VS Code</code> e app <code>Desktop</code>.</li>
+                  <li><strong>Acesso gratuito simples:</strong> Modelos gratuitos integrados via <code>OpenCode Zen</code> ou conecte sua conta (Claude, ChatGPT, GitHub Copilot).</li>
+                  <li><strong>Padrões abertos:</strong> 100% open source, suporta nativamente <code>AGENTS.md</code>, <code>LSP</code>, <code>servidores MCP</code> e +75 provedores.</li>
                 </ul>
               </div>
             </div>
