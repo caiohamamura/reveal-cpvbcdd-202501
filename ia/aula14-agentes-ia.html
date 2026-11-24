@@ -659,16 +659,22 @@
             <div class="compact-code">
               <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e iniciar na pasta do projeto</p>
               <code-block lang="bash" data-trim>
-				  # Linux / macOS / WSL
+# Linux / macOS / WSL
 curl -LsSf https://mistral.ai/vibe/install.sh | bash
 
 # Ou via uv (cross-platform, inclui Windows)
-winget install MistralAI.MistralVibe
+uv tool install --python 3.14 mistral-vibe
+				  
+# Ou via winget
+# winget install MistralAI.MistralVibe
 
 # Criar pasta limpa e iniciar o agente
 mkdir meu-projeto-agente
 cd meu-projeto-agente
-vibe
+
+# --trust para confiar nesssa pasta 
+# --smart-approve para auto aprovar comandos seguros
+vibe --trust --smart-approve
               </code-block>
               <div style="margin-top: 10px;">
                 <a class="colab-pill" href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">
@@ -704,7 +710,9 @@ npm install -g @opencode/cli
 # Criar pasta limpa e iniciar o agente
 mkdir meu-projeto-agente
 cd meu-projeto-agente
-opencode
+
+# --auto aprova automaticamente ações 
+opencode --auto
               </code-block>
               <div style="margin-top: 10px;">
                 <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
