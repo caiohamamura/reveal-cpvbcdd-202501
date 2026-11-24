@@ -16,31 +16,6 @@
   <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
   <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
   <style>
-    .agenda-table {
-      font-size: 0.58em;
-      margin: 8px auto 6px;
-      width: 100%;
-    }
-
-    .agenda-table th {
-      background: rgba(98, 114, 164, 0.5);
-      color: #8be9fd;
-      padding: 6px 9px;
-      text-align: left;
-    }
-
-    .agenda-table td {
-      border-bottom: 1px solid rgba(98, 114, 164, 0.3);
-      padding: 6px 9px;
-      vertical-align: middle;
-    }
-
-    .agenda-table tr.break-row td {
-      background: rgba(241, 250, 140, 0.1);
-      color: #f1fa8c;
-      font-style: italic;
-    }
-
     .cover-pillars {
       display: flex;
       flex-direction: column;
@@ -141,6 +116,12 @@
       margin: 5px 0 !important;
     }
 
+    .tight-list li {
+      font-size: 0.56em !important;
+      line-height: 1.28 !important;
+      margin: 4px 0 !important;
+    }
+
     .compact-code pre.code-wrapper {
       font-size: 0.48em !important;
       line-height: 1.32 !important;
@@ -213,56 +194,6 @@
         </header1>
       </section>
 
-      <!-- SLIDE 2: Roteiro da Oficina (180 min) -->
-      <section data-auto-animate>
-        <h2>Oficina Prática (180 min) — Formato Sanduíche</h2>
-        <p style="margin-bottom: 10px;">
-          Visão de Engenharia de Software: tiramos a “mágica” da frente — agentes são
-          <strong style="color: #8be9fd;">sistemas distribuídos</strong> com um motor de decisão não-determinístico.
-        </p>
-        <table class="agenda-table">
-          <thead>
-            <tr>
-              <th style="width: 24%;">Tempo</th>
-              <th style="width: 30%;">Bloco</th>
-              <th>Foco Principal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>00:00 – 00:40</code> (40 min)</td>
-              <td><span class="tag-pill tag-pill--cyan">1. Fundamentos</span></td>
-              <td>Loop agêntico, MCP, Skills e Memória (RAG vs. Contexto)</td>
-            </tr>
-            <tr>
-              <td><code>00:40 – 00:55</code> (15 min)</td>
-              <td><span class="tag-pill tag-pill--green">2. Setup</span></td>
-              <td>OpenCode no terminal, modelos gratuitos e primeiro diagnóstico local</td>
-            </tr>
-            <tr>
-              <td><code>00:55 – 01:40</code> (45 min)</td>
-              <td><span class="tag-pill tag-pill--green">3. Prática I</span></td>
-              <td>Criar uma Skill reutilizável e conectar o servidor <code>@playwright/mcp</code></td>
-            </tr>
-            <tr class="break-row">
-              <td><code>01:40 – 01:55</code> (15 min)</td>
-              <td>Intervalo</td>
-              <td>Pausa e ajustes de rede, dependências ou limites de taxa</td>
-            </tr>
-            <tr>
-              <td><code>01:55 – 02:35</code> (40 min)</td>
-              <td><span class="tag-pill tag-pill--yellow">4. Prática II</span></td>
-              <td>Playwright vs. Selenium, Accessibility Snapshots, CAPTCHAs e segurança</td>
-            </tr>
-            <tr>
-              <td><code>02:35 – 03:00</code> (25 min)</td>
-              <td><span class="tag-pill tag-pill--pink">5. Produção</span></td>
-              <td>Sistemas legados, filas/webhooks, Human-in-the-Loop, custos e auditoria</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
       <!-- ============================================================
          Etapa 1: Fundamentos e Arquitetura
          ============================================================ -->
@@ -271,9 +202,9 @@
         <!-- Slide 1.1: Banner -->
         <section data-auto-animate>
           <section-banner
-            eyebrow="Etapa 1 • 00:00 – 00:40"
+            eyebrow="Etapa 1"
             title="Fundamentos e Arquitetura"
-            subtitle="Loop agêntico, MCP, Skills e Memória (RAG vs. Contexto)">
+            subtitle="Loop agêntico, desacoplamento de LLMs, Contexto, Memória, Skills e MCP">
             <paper-card
               compact
               title="ReAct: Synergizing Reasoning and Acting in Language Models"
@@ -310,7 +241,7 @@
             </div>
           </div>
           <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
-            <strong style="color: #8be9fd;">Chatbot:</strong> uma única passagem no <em>Large Language Model</em> (LLM) — sem verificar se a resposta funciona.
+            <strong style="color: #8be9fd;">Chatbot:</strong> uma única passagem no LLM — sem verificar se a resposta funciona.
           </p>
           <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
             <strong style="color: #50fa7b;">Agente:</strong> chama ferramentas, lê erros reais e corrige a rota até atingir o critério de parada.
@@ -378,7 +309,206 @@
           <p class="source">Fonte: Yao et al. (2023), <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">ReAct (arXiv:2210.03629), Fig. 1</a></p>
         </section>
 
-        <!-- Slide 1.5: MCP - O USB-C dos Agentes -->
+        <!-- Slide 1.5: Ferramenta Agêntica ≠ LLM -->
+        <section data-auto-animate>
+          <h2>Ferramenta Agêntica ≠ LLM (Arquitetura Desacoplada)</h2>
+          <p style="font-size: 0.64em; margin-bottom: 12px;">
+            O <strong>agente</strong> é o software que executa o loop, lê arquivos e chama ferramentas; o <strong>LLM</strong> é apenas o motor de decisão plugável via API ou local.
+          </p>
+          <multi-col cols="1fr 1fr" style="gap: 20px; align-items: stretch;">
+            <div class="checklist-panel">
+              <h3 style="color: #8be9fd !important;">Ferramentas Agênticas (o “corpo”)</h3>
+              <ul class="compact-list" style="margin-top: 6px;">
+                <li><strong>Terminal (CLI):</strong> OpenCode, Claude Code, Codex CLI, Gemini CLI, Mistral Vibe</li>
+                <li><strong>IDE / Editor:</strong> Cursor, Cline, Roo Code, Windsurf, Antigravity</li>
+                <li>Gerenciam sessão, permissões, <code>AGENTS.md</code>, Skills e servidores MCP</li>
+              </ul>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #50fa7b !important;">LLMs Plugáveis (o “cérebro”)</h3>
+              <ul class="compact-list" style="margin-top: 6px;">
+                <li><strong>Proprietários (nuvem):</strong> Claude Sonnet/Opus, GPT-5/o3, Gemini Pro/Flash</li>
+                <li><strong>Abertos / Roteadores:</strong> DeepSeek-R1/V3, Qwen, Llama (OpenRouter, Groq, etc.)</li>
+                <li><strong>Locais (privacidade):</strong> Ollama / vLLM rodando na própria máquina</li>
+              </ul>
+            </div>
+          </multi-col>
+          <div class="cyan-box" style="margin-top: 14px; padding: 8px 14px;">
+            <p style="margin: 0; font-size: 0.6em;">
+              <strong>Independência na prática:</strong> você pode usar <strong>OpenCode</strong> ou <strong>Cline</strong> com Gemini, Claude, GPT ou um Qwen local — mantendo exatamente as mesmas Skills, memórias e MCPs.
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 1.6: Mapa Físico dos 5 Pilares (Complementares) -->
+        <section data-auto-animate>
+          <h2>Os 5 Pilares: O Que São Fisicamente (Não Competem!)</h2>
+          <table class="comparison-table compact-table" style="margin-top: 8px;">
+            <thead>
+              <tr>
+                <th style="width: 19%;">Pilar</th>
+                <th style="width: 39%;">O que é fisicamente</th>
+                <th>Efeito no contexto, custo e confiabilidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: #f1fa8c;">Contexto</strong></td>
+                <td>A própria conversa acumulada (mensagens + retornos de ferramentas) enviada ao LLM</td>
+                <td>Cresce a cada turno; pode estourar o limite da janela e encarece cada chamada</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #ffb86c;">Memória Simples</strong></td>
+                <td>Arquivos texto <code>.md</code> (<code>AGENTS.md</code>, <code>MEMORY.md</code>) com regras e contexto do projeto</td>
+                <td>Carregados sempre no início de novas conversas → ocupam contexto e aumentam custo</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #50fa7b;">Memória RAG + Grafos</strong></td>
+                <td>Bancos de dados estruturados (vetoriais / grafos de conhecimento) consultados sob demanda</td>
+                <td>Resgatam memórias de interações anteriores e documentos extensos sem inflar tudo</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #ff79c6;">SKILL</strong></td>
+                <td><strong>Docs texto</strong> (<code>SKILL.md</code>: procedimentos, estilo) + <strong>scripts opcionais</strong> (Python, shell, <code>.bat</code>)</td>
+                <td>Carregada sob demanda; scripts determinísticos tornam tarefas mais rápidas e confiáveis em qualquer LLM</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #8be9fd;">MCP</strong></td>
+                <td>Serviço contínuo (<code>stdio</code> local ou TCP/HTTP) com protocolo padronizado (JSON-RPC)</td>
+                <td>Descoberta padrão de ferramentas, esquemas de entrada/saída e execução em tempo real</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="green-box" style="margin-top: 10px; padding: 7px 12px;">
+            <p style="margin: 0; font-size: 0.56em;">
+              <strong>Camadas complementares:</strong> Contexto é a RAM da sessão; Memória (<code>.md</code> ou RAG/Grafos) persiste conhecimento; Skills trazem o <em>como fazer</em> (+ scripts); MCP conecta o agente a sistemas externos.
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 1.7: Memória e RAG (Paper Seminal) -->
+        <section data-auto-animate>
+          <div class="title-with-paper">
+            <h2>Memória Externa: RAG e Grafos (2020)</h2>
+            <paper-card
+              compact
+              title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+              authors="Patrick Lewis et al."
+              venue="NeurIPS"
+              year="2020"
+              url="https://arxiv.org/abs/2005.11401">
+            </paper-card>
+          </div>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/paper-rag-fig1.png"
+                     alt="Figura 1 do artigo RAG mostrando codificador de consulta, índice vetorial não-paramétrico e gerador paramétrico"
+                     width="880" />
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="1"
+                     style="left: 17.5%; top: 17%; width: 46.5%; height: 80%;"></div>
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="2"
+                     style="left: 63.8%; top: 17%; width: 16.5%; height: 80%;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
+            <strong style="color: #50fa7b;">Retriever (memória externa):</strong> consulta bancos vetoriais ou grafos para resgatar trechos relevantes e memórias anteriores.
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong style="color: #8be9fd;">Generator (LLM):</strong> gera a resposta fundamentada apenas no que foi recuperado — sem carregar tudo na janela.
+          </p>
+          <p class="source">Fonte: Lewis et al. (2020), <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener">RAG (arXiv:2005.11401), Fig. 1</a></p>
+        </section>
+
+        <!-- Slide 1.8: Memória Vetorial vs. Memória em Grafo (Graph RAG) -->
+        <section data-auto-animate>
+          <h2>Memória Agêntica: Vetorial vs. Grafo (Graph RAG)</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/memoria-vetorial-vs-grafo.jpg"
+                     alt="Infográfico comparando Memória Vetorial baseada em embeddings e similaridade semântica à esquerda com Memória em Grafo baseada em entidades e relações explícitas à direita"
+                     height="365" />
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
+                     style="left: 2%; top: 18%; width: 46%; height: 78%;"></div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 51%; top: 18%; width: 47%; height: 78%;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
+            <strong style="color: #8be9fd;">Memória Vetorial (RAG):</strong> busca rápida por similaridade semântica em textos e logs, mas perde raciocínio em múltiplos saltos (A → B → C).
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong style="color: #50fa7b;">Memória em Grafo (Graph RAG):</strong> conecta entidades e relações explícitas para consultas <em>multi-hop</em> explicáveis — ideal combinada com busca vetorial.
+          </p>
+          <p class="source">Ilustração comparativa — Memória Vetorial (embeddings) vs. Graph RAG</p>
+        </section>
+
+        <!-- Slide 1.9: Exemplo prático — Onde o RAG Vetorial falha e o Graph RAG acerta -->
+        <section data-auto-animate>
+          <h2>Na Prática: Onde o RAG Vetorial Falha (e o Grafo Resolve)</h2>
+          <div class="yellow-box" style="padding: 8px 14px; margin-bottom: 12px;">
+            <p style="margin: 0; font-size: 0.62em;">
+              <strong>Pergunta ao agente:</strong> <em>“Quais clientes serão afetados se atualizarmos a biblioteca <code>AuthCore v2</code>?”</em>
+            </p>
+          </div>
+          <multi-col cols="1fr 1fr" style="gap: 18px; align-items: stretch;">
+            <div class="checklist-panel">
+              <h3 style="color: #ff79c6 !important;">RAG Vetorial (Similaridade)</h3>
+              <ul class="compact-list" style="margin-top: 6px;">
+                <li><strong>Doc 1:</strong> <code>AuthCore v2</code> é usada pelo serviço <code>Pagamentos</code>. <span style="color: #50fa7b;">✔ recuperado</span></li>
+                <li><strong>Doc 2:</strong> <code>Pagamentos</code> alimenta o módulo <code>Checkout</code>. <span style="color: #ff79c6;">✘ distante</span></li>
+                <li><strong>Doc 3:</strong> Cliente <code>Loja Alfa</code> usa o <code>Checkout</code>. <span style="color: #ff79c6;">✘ sem termos em comum</span></li>
+              </ul>
+              <p style="color: #ff79c6; margin-top: 8px !important;">
+                <strong>Falha:</strong> o Doc 3 não menciona <code>AuthCore v2</code>, então fica fora do <em>top-k</em> vetorial.
+              </p>
+            </div>
+            <div class="checklist-panel fragment">
+              <h3 style="color: #50fa7b !important;">Graph RAG (Múltiplos Saltos)</h3>
+              <p style="margin-top: 8px !important; font-size: 0.62em !important;">
+                O agente percorre as arestas explícitas do grafo a partir de <code>AuthCore v2</code>:
+              </p>
+              <pre class="terminal" style="font-size: 0.44em; line-height: 1.55; width: auto; box-shadow: none; margin: 10px 0;">[AuthCore v2]
+   ──(usada por)──▶ [Pagamentos]
+   ──(alimenta)───▶ [Checkout]
+   ──(contratado)─▶ [Loja Alfa] ✔</pre>
+              <p style="color: #50fa7b; margin-top: 6px !important;">
+                <strong>Solução:</strong> raciocínio <em>multi-hop</em> (A → B → C → D) com caminho 100% explicável.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 1.10: Skills + MCP (Complementares) -->
+        <section data-auto-animate>
+          <h2>Skills e MCP Trabalhando Juntos: O Manual e as Mãos</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/mcp-vs-skills.jpg"
+                     alt="Infográfico comparando MCP como ferramentas conectadas à esquerda e Skills como procedimentos carregados sob demanda à direita"
+                     height="365" />
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
+                     style="left: 7%; top: 47%; width: 42%; height: 45%;"></div>
+                <div class="overlay-badge overlay-badge--dark fragment" data-fragment-index="1"
+                     style="left: 8%; top: 41.5%;">MCP = Serviço contínuo (ferramentas)</div>
+                <div class="annotate-box annotate-box--yellow fragment" data-fragment-index="2"
+                     style="left: 51%; top: 33%; width: 42%; height: 59%;"></div>
+                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="2"
+                     style="left: 51%; top: 27%;">Skill = Docs .md + Scripts determinísticos</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong>Skill sob demanda:</strong> o agente lê só o resumo no início e carrega <code>SKILL.md</code> + scripts (Python/shell) quando precisa — executando tarefas algorítmicas com rapidez e confiabilidade.
+          </p>
+          <p class="source">Fonte: ilustração conceitual baseada no padrão aberto <a href="https://agentskills.io/" target="_blank" rel="noopener">agentskills.io</a></p>
+        </section>
+
+        <!-- Slide 1.9: MCP - O USB-C dos Agentes -->
         <section data-auto-animate>
           <h2>MCP: O “USB-C” dos Agentes de IA</h2>
           <div style="text-align: center;">
@@ -399,18 +529,18 @@
             </div>
           </div>
           <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            O <strong>Model Context Protocol (MCP)</strong> padroniza o acesso a bancos, navegadores e APIs — escreva o servidor uma vez e conecte em OpenCode, Claude ou VS Code.
+            O <strong>Model Context Protocol (MCP)</strong> padroniza o acesso a bancos, navegadores e APIs — escreva o servidor uma vez e conecte em OpenCode, Claude Code, Cursor ou VS Code.
           </p>
           <p class="source">Fonte: ilustração conceitual baseada na especificação oficial <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">modelcontextprotocol.io</a></p>
         </section>
 
-        <!-- Slide 1.6: MCP por baixo dos panos (JSON-RPC) -->
+        <!-- Slide 1.10: MCP por baixo dos panos (JSON-RPC) -->
         <section data-auto-animate>
-          <h2>MCP por Baixo dos Panos: JSON-RPC 2.0</h2>
+          <h2>MCP por Baixo dos Panos: Serviço + JSON-RPC 2.0</h2>
           <multi-col cols="1.05fr 1fr" style="gap: 22px; align-items: center;">
             <div>
-              <p style="margin-bottom: 8px; font-size: 0.66em;">
-                Um servidor MCP expõe três primitivos padronizados via <code>stdio</code> (local) ou HTTP (remoto):
+              <p style="margin-bottom: 8px; font-size: 0.64em;">
+                É um <strong>serviço contínuo</strong> via <code>stdio</code> (local) ou TCP/HTTP (remoto) com descoberta padrão (<code>tools/list</code>) e três primitivos:
               </p>
               <ul class="compact-list">
                 <li><strong style="color: #8be9fd;">Tools (Ferramentas):</strong> funções executáveis com esquema JSON (SQL, clique no navegador).</li>
@@ -438,111 +568,10 @@
 }
               </code-block>
               <p style="font-size: 0.54em; color: #b8b8c8; margin-top: 8px;">
-                Sem mágica: o cliente traduz a decisão do LLM em uma chamada <strong>JSON-RPC 2.0</strong> tipada e devolve o retorno ao loop.
+                Sem mágica: o cliente descobre os esquemas, traduz a decisão do LLM em <strong>JSON-RPC 2.0</strong> e devolve o retorno estruturado ao loop.
               </p>
             </div>
           </multi-col>
-        </section>
-
-        <!-- Slide 1.7: MCP vs Skills -->
-        <section data-auto-animate>
-          <h2>MCP vs. Skills: As Mãos e o Manual</h2>
-          <div style="text-align: center;">
-            <div class="figure-card">
-              <div class="figure-stage">
-                <img src="images/aula14/mcp-vs-skills.jpg"
-                     alt="Infográfico comparando MCP como ferramentas conectadas à esquerda e Skills como procedimentos carregados sob demanda à direita"
-                     height="365" />
-                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
-                     style="left: 7%; top: 47%; width: 42%; height: 45%;"></div>
-                <div class="overlay-badge overlay-badge--dark fragment" data-fragment-index="1"
-                     style="left: 8%; top: 41.5%;">MCP = As mãos (ferramentas)</div>
-                <div class="annotate-box annotate-box--yellow fragment" data-fragment-index="2"
-                     style="left: 51%; top: 33%; width: 42%; height: 59%;"></div>
-                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="2"
-                     style="left: 53%; top: 27%;">Skills = Procedimento sob demanda</div>
-              </div>
-            </div>
-          </div>
-          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            <strong>Divulgação progressiva:</strong> o agente lê apenas o resumo das Skills no início e carrega o manual completo só quando a tarefa exige — economizando tokens.
-          </p>
-          <p class="source">Fonte: ilustração conceitual baseada no padrão aberto <a href="https://agentskills.io/" target="_blank" rel="noopener">agentskills.io</a></p>
-        </section>
-
-        <!-- Slide 1.8: Memória e RAG (Paper Seminal) -->
-        <section data-auto-animate>
-          <div class="title-with-paper">
-            <h2>Memória Externa: RAG (2020)</h2>
-            <paper-card
-              compact
-              title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
-              authors="Patrick Lewis et al."
-              venue="NeurIPS"
-              year="2020"
-              url="https://arxiv.org/abs/2005.11401">
-            </paper-card>
-          </div>
-          <div style="text-align: center;">
-            <div class="figure-card">
-              <div class="figure-stage">
-                <img src="images/aula14/paper-rag-fig1.png"
-                     alt="Figura 1 do artigo RAG mostrando codificador de consulta, índice vetorial não-paramétrico e gerador paramétrico"
-                     width="880" />
-                <div class="annotate-box annotate-box--green fragment" data-fragment-index="1"
-                     style="left: 17.5%; top: 17%; width: 46.5%; height: 80%;"></div>
-                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="2"
-                     style="left: 63.8%; top: 17%; width: 16.5%; height: 80%;"></div>
-              </div>
-            </div>
-          </div>
-          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
-            <strong style="color: #50fa7b;">Retriever (memória não-paramétrica):</strong> busca semântica vetorial nos trechos relevantes de PDFs e manuais.
-          </p>
-          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            <strong style="color: #8be9fd;">Generator (memória paramétrica):</strong> o LLM gera a resposta fundamentada nos documentos recuperados.
-          </p>
-          <p class="source">Fonte: Lewis et al. (2020), <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener">RAG (arXiv:2005.11401), Fig. 1</a></p>
-        </section>
-
-        <!-- Slide 1.9: Contexto vs RAG vs MCP -->
-        <section data-auto-animate>
-          <h2>Quando Usar: Contexto vs. RAG vs. MCP</h2>
-          <table class="comparison-table" style="margin-top: 16px;">
-            <thead>
-              <tr>
-                <th style="width: 19%;">Mecanismo</th>
-                <th style="width: 24%;">Como funciona</th>
-                <th style="width: 22%;">Limitação</th>
-                <th>Melhor uso em sistemas</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong style="color: #f1fa8c;">Janela de Contexto</strong></td>
-                <td>Tokens ativos na sessão atual do modelo</td>
-                <td>Caro, volátil e degrada com excesso de ruído</td>
-                <td>Estado imediato da tarefa, código aberto no momento</td>
-              </tr>
-              <tr>
-                <td><strong style="color: #50fa7b;">RAG (Base Vetorial)</strong></td>
-                <td>Busca semântica por <em>embeddings</em> em trechos indexados</td>
-                <td>Não consulta estado transacional ao vivo</td>
-                <td>Milhares de PDFs, normas internas, manuais e wikis</td>
-              </tr>
-              <tr>
-                <td><strong style="color: #8be9fd;">MCP (Ferramentas)</strong></td>
-                <td>Chamadas JSON-RPC estruturadas em tempo real</td>
-                <td>Requer contrato seguro e controle de permissões</td>
-                <td>SQL ao vivo, APIs REST/SOAP, Git, logs e estado atual</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="cyan-box" style="margin-top: 18px;">
-            <p style="margin: 0;">
-              <strong>Regra prática:</strong> RAG para <em>conhecimento documental extenso</em>; MCP para <em>dados estruturados e ações em tempo real</em>. Eles se complementam.
-            </p>
-          </div>
         </section>
 
       </section><!-- fim Etapa 1 -->
@@ -555,28 +584,29 @@
         <!-- Slide 2.1: Banner -->
         <section data-auto-animate>
           <section-banner
-            eyebrow="Etapa 2 • 00:40 – 00:55"
+            eyebrow="Etapa 2"
             title="Setup e Primeiro Contato"
             subtitle="OpenCode no terminal, modelos gratuitos e contingência em laboratório">
           </section-banner>
         </section>
 
-        <!-- Slide 2.2: Instalação e Aquecimento OpenCode -->
+        <!-- Slide 2.2: Instalação e Interface Web do OpenCode -->
         <section data-auto-animate>
-          <h2>Aquecimento no OpenCode (15 min)</h2>
-          <multi-col cols="1.12fr 1fr" style="gap: 24px; align-items: start;">
+          <h2>Instalação e Interface Web (<code>opencode serve</code>)</h2>
+          <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
             <div class="compact-code">
-              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalação e abertura no repositório base</p>
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e subir o servidor na pasta do projeto</p>
               <code-block lang="bash" data-trim>
 # Linux / macOS / WSL
 curl -fsSL https://opencode.ai/install | bash
 
 # Ou via Node.js (cross-platform)
-npm install -g opencode-ai
+npm install -g @opencode/cli
 
-# Abrir o agente na pasta do projeto base
-cd projeto-base-ads
-opencode
+# Criar pasta limpa e iniciar a interface web
+mkdir meu-projeto-agente
+cd meu-projeto-agente
+opencode serve
               </code-block>
               <div style="margin-top: 10px;">
                 <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
@@ -585,22 +615,49 @@ opencode
               </div>
             </div>
             <div>
-              <div class="green-box">
-                <p style="margin-top: 0;"><strong>Roteiro de Aquecimento</strong></p>
-                <ol class="compact-list">
-                  <li class="fragment">Selecione um dos <strong>modelos gratuitos nativos</strong> no OpenCode.</li>
-                  <li class="fragment">Peça ao agente para <strong>mapear a arquitetura</strong> da API e do banco SQLite.</li>
-                  <li class="fragment">Encontre o <strong>bug intencional</strong> e peça correção acompanhada de <strong>testes automatizados</strong>.</li>
-                </ol>
+              <div class="checklist-panel" style="padding: 12px 15px;">
+                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que usar via Web?</h3>
+                <ul class="tight-list" style="margin-top: 6px;">
+                  <li><strong>Mais amigável:</strong> troque de modelo, crie conversas e alterne <em>Plan/Build</em> sem decorar atalhos.</li>
+                  <li><strong>Acesso remoto:</strong> rode no seu PC ou em um servidor alugado e conecte pelo navegador com <strong>Tailscale</strong>.</li>
+                  <li><strong>Vibe Coding:</strong> peça ao próprio agente para configurar o <strong>Tailscale</strong> e devolver o endereço de acesso.</li>
+                </ul>
               </div>
-              <p style="font-size: 0.56em; color: #b8b8c8; margin-top: 10px;">
-                Observe o loop ReAct acontecendo ao vivo: leitura de arquivos → execução de testes → erro → correção.
-              </p>
             </div>
           </multi-col>
         </section>
 
-        <!-- Slide 2.3: Alternativas gratuitas (Plano B e C) -->
+        <!-- Slide 2.3: Exercício Guiado de Aquecimento -->
+        <section data-auto-animate>
+          <h2>Aquecimento Prático: Do Zero ao <code>AGENTS.md</code></h2>
+          <multi-col cols="1fr 1fr" style="gap: 16px; align-items: stretch;">
+            <div class="checklist-panel" style="padding: 10px 14px;">
+              <h3 style="color: #8be9fd !important; font-size: 19pt !important; margin-bottom: 6px !important;">Parte 1 — Criar e Testar</h3>
+              <ol class="tight-list" style="margin-top: 4px;">
+                <li>Rode <code>opencode serve</code> em uma <strong>nova pasta</strong> e abra a interface web no navegador.</li>
+                <li>Selecione um <strong>modelo gratuito nativo</strong> no seletor da interface.</li>
+                <li>Peça ao agente um <strong>script em Python</strong> simples (ex.: conversor ou gerador de senhas).</li>
+                <li>Teste manualmente rodando <code>python &lt;script.py&gt;</code>.</li>
+              </ol>
+            </div>
+            <div class="checklist-panel" style="padding: 10px 14px;">
+              <h3 style="color: #50fa7b !important; font-size: 19pt !important; margin-bottom: 6px !important;">Parte 2 — Quebrar, Corrigir e Documentar</h3>
+              <ol class="tight-list" start="5" style="margin-top: 4px;">
+                <li>Edite o script <strong>na mão</strong> inserindo um bug (ex.: apague aspas, parêntese ou quebre a indentação).</li>
+                <li>Inicie uma <strong>nova conversa</strong> (<code>/new</code>) para zerar a memória e peça para ele <strong>corrigir o bug</strong>.</li>
+                <li>Rode <code>python &lt;script.py&gt;</code> novamente e confirme o funcionamento.</li>
+                <li>Inicie outro <code>/new</code> e peça para documentar o projeto criando o <code>AGENTS.md</code>.</li>
+              </ol>
+            </div>
+          </multi-col>
+          <div class="green-box" style="margin-top: 8px; padding: 6px 12px;">
+            <p style="margin: 0; font-size: 0.52em;">
+              <strong>O que observar:</strong> mesmo em conversa nova (sem lembrar do código), o agente aplica o loop <strong>ReAct</strong> — lê o arquivo, executa, vê o erro real e corrige.
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 2.4: Alternativas gratuitas (Plano B e C) -->
         <section data-auto-animate>
           <h2>Plano B e C: Contingência no Laboratório</h2>
           <p style="margin-bottom: 6px; font-size: 0.62em;">
@@ -629,24 +686,13 @@ opencode
                 <td>Falha local ou bloqueio do provedor</td>
               </tr>
               <tr>
-                <td><strong style="color: #f1fa8c;">Gemini CLI</strong></td>
-                <td>Plano C</td>
-                <td>Open-source; cota gratuita por conta Google individual</td>
-                <td>Bloqueio por IP compartilhado</td>
-              </tr>
-              <tr>
-                <td><strong style="color: #ff79c6;">Cline / Roo Code</strong></td>
-                <td>IDE</td>
-                <td>Extensão VS Code com MCP + AI Studio / OpenRouter <code>:free</code></td>
-                <td>Fluxo visual no VS Code (API key)</td>
+                <td style="border-bottom: 1px solid;"><strong style="color: #f1fa8c;">Gemini CLI</strong></td>
+                <td style="border-bottom: 1px solid;">Plano C</td>
+                <td style="border-bottom: 1px solid;">Open-source; cota gratuita por conta Google individual</td>
+                <td style="border-bottom: 1px solid;">Bloqueio por IP compartilhado</td>
               </tr>
             </tbody>
           </table>
-          <div class="yellow-box" style="margin-top: 8px; padding: 7px 12px;">
-            <p style="margin: 0; font-size: 0.56em;">
-              <strong>Infraestrutura de rede:</strong> mantenha Node.js e Chromium pré-instalados nas máquinas para evitar 30 downloads simultâneos na sala.
-            </p>
-          </div>
         </section>
 
       </section><!-- fim Etapa 2 -->
@@ -659,27 +705,33 @@ opencode
         <!-- Slide 3.1: Banner -->
         <section data-auto-animate>
           <section-banner
-            eyebrow="Etapa 3 • 00:55 – 01:40"
-            title="Prática I: Skills e MCP"
-            subtitle="Criando um procedimento reutilizável da equipe e plugando o navegador ao agente">
+            eyebrow="Etapa 3"
+            title="Prática I: Skills, Memória e MCP"
+            subtitle="Configurando o próprio agente com Vibe Coding: AGENTS.md, Skills e Playwright MCP">
           </section-banner>
         </section>
 
         <!-- Slide 3.2: Criando uma Skill -->
         <section data-auto-animate>
-          <h2>Criando uma Skill Reutilizável (20 min)</h2>
-          <multi-col cols="0.85fr 1.25fr" style="gap: 20px; align-items: start;">
+          <h2>Criando <code>AGENTS.md</code> e Skills via Vibe Coding</h2>
+          <multi-col cols="0.88fr 1.22fr" style="gap: 20px; align-items: start;">
             <div>
               <p style="color: #f1fa8c; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Estrutura no projeto</p>
-              <pre class="file-tree" style="font-size: 0.54em; padding: 10px 14px;">.opencode/
+              <pre class="file-tree" style="font-size: 0.52em; padding: 10px 14px;">AGENTS.md
+.opencode/
 └── skills/
     └── code-review-turma/
         ├── SKILL.md
         ├── references/
-        └── scripts/</pre>
-              <div class="green-box" style="margin-top: 10px; padding: 8px 12px;">
-                <p style="margin: 0; font-size: 0.56em;">
-                  <strong>Desafio:</strong> crie a Skill de <em>Code Review</em> (ou <em>Gerador de Migrations</em>) e invoque-a para padronizar um módulo do projeto base.
+        └── scripts/check.py</pre>
+              <div class="pink-box" style="margin-top: 8px; padding: 7px 11px;">
+                <p style="margin: 0; font-size: 0.54em;">
+                  <strong>Vibe Coding na configuração:</strong> você não precisa escrever <code>AGENTS.md</code>, memórias, <code>SKILL.md</code> ou scripts na mão — <strong>peça ao próprio agente</strong> para criá-los e testá-los.
+                </p>
+              </div>
+              <div class="green-box" style="margin-top: 8px; padding: 7px 11px;">
+                <p style="margin: 0; font-size: 0.54em;">
+                  <strong>Desafio:</strong> peça ao agente para criar a Skill de <em>Code Review</em> (+ script Python auxiliar) e invocá-la em um módulo do projeto.
                 </p>
               </div>
             </div>
@@ -694,14 +746,14 @@ description: >
 
 # Padrão de Revisão da Turma
 
-1. Verificar segredos ou senhas hardcoded.
+1. Executar `python scripts/check.py` (segredos/lint).
 2. Garantir tratamento explícito de erros.
 3. Adicionar docstring em funções públicas.
 4. Validar teste unitário para o módulo.
 5. Listar riscos antes de aplicar edições.
               </code-block>
               <p style="font-size: 0.52em; color: #b8b8c8; margin-top: 6px;">
-                Metadados YAML são lidos no início; o corpo entra no contexto só quando a Skill é ativada.
+                Metadados YAML são lidos no início; o corpo e os scripts entram em ação só quando a Skill é ativada.
               </p>
             </div>
           </multi-col>
@@ -709,7 +761,7 @@ description: >
 
         <!-- Slide 3.3: Plugando Playwright MCP -->
         <section data-auto-animate>
-          <h2>Plugando o <code>@playwright/mcp</code> (25 min)</h2>
+          <h2>Plugando o <code>@playwright/mcp</code></h2>
           <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: start;">
             <div class="compact-code">
               <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Arquivo <code>opencode.json</code> na raiz do projeto</p>
@@ -735,13 +787,13 @@ description: >
               <div class="green-box" style="padding: 8px 12px;">
                 <p style="margin-top: 0; font-size: 0.64em;"><strong>Desafio Prático</strong></p>
                 <ol class="compact-list">
-                  <li class="fragment">Salve <code>opencode.json</code> e reinicie o OpenCode.</li>
-                  <li class="fragment">Peça para abrir <code>books.toscrape.com</code> (ou o app local).</li>
-                  <li class="fragment">Navegue numa categoria e salve <strong>título, preço e nota</strong> em <code>livros.json</code> ou <code>livros.csv</code>.</li>
+                  <li class="fragment">Peça ao próprio agente (via <strong>Vibe Coding</strong>) para configurar o <code>opencode.json</code> e reinicie o OpenCode.</li>
+                  <li class="fragment">Peça para abrir <code>books.toscrape.com</code>.</li>
+                  <li class="fragment">Navegue em duas categorias e salve <strong>categoria, título, preço e nota</strong> em <code>livros.csv</code>.</li>
                 </ol>
               </div>
               <p style="font-size: 0.52em; color: #b8b8c8; margin-top: 8px;">
-                Ferramentas: <code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code> e <code>browser_type</code>.
+                Ferramentas expostas: <code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code> e <code>browser_type</code>.
               </p>
             </div>
           </multi-col>
@@ -757,7 +809,7 @@ description: >
         <!-- Slide 4.1: Banner -->
         <section data-auto-animate>
           <section-banner
-            eyebrow="Etapa 4 • 01:55 – 02:35 (após intervalo)"
+            eyebrow="Etapa 4"
             title="Prática II: Automação Web e Limites"
             subtitle="Playwright vs. Selenium, Accessibility Snapshots, CAPTCHAs e segurança">
             <paper-card
@@ -879,10 +931,10 @@ description: >
 
         <!-- Slide 4.6: Prática II — Teste de Estresse -->
         <section data-auto-animate>
-          <h2>Prática II: Teste de Estresse e Contornos (20 min)</h2>
+          <h2>Prática II: Teste de Estresse e Contornos</h2>
           <div class="pink-box" style="margin-bottom: 16px;">
             <p style="margin: 0;">
-              <strong>Experimento:</strong> peça ao agente (via <code>@playwright/mcp</code>) para acessar uma página protegida por CAPTCHA ou fluxo de login complexo e observe no terminal onde o loop agêntico trava.
+              <strong>Experimento:</strong> peça ao agente (via <code>@playwright/mcp</code>) para acessar o SUAP e retornar o seu prontuário sem passar login e senha e veja o que acontece.
             </p>
           </div>
           <multi-col cols="3" style="gap: 16px;">
@@ -911,7 +963,7 @@ description: >
         <!-- Slide 5.1: Banner -->
         <section data-auto-animate>
           <section-banner
-            eyebrow="Etapa 5 • 02:35 – 03:00"
+            eyebrow="Etapa 5"
             title="Integração em Sistemas Reais"
             subtitle="Sistemas legados, automação assíncrona, Human-in-the-Loop e produção">
           </section-banner>
@@ -973,58 +1025,93 @@ description: >
       </section><!-- fim Etapa 5 -->
 
       <!-- ============================================================
-         Quiz Interativo
+         Etapa 6: Dicas Práticas no Dia a Dia
          ============================================================ -->
       <section>
 
+        <!-- Slide 6.1: Banner -->
         <section data-auto-animate>
-          <h2>Quiz Interativo</h2>
-          <p>Conecte-se à sala e teste suas decisões arquiteturais!</p>
+          <section-banner
+            eyebrow="Etapa 6"
+            title="Dicas Práticas no Dia a Dia"
+            subtitle="Skills determinísticas, estratégia de modelos, KV Cache e subagentes">
+          </section-banner>
         </section>
 
-        <section>
-          <poll-question
-            id="q1-rag-mcp"
-            title="Questão 1: RAG vs. MCP"
-            question="Um agente precisa consultar estoque em tempo real no PostgreSQL e responder dúvidas sobre 4.000 páginas de PDFs. Qual arquitetura escolher?"
-            answer="b"
-            answer-text="MCP expõe consultas SQL read-only em tempo real; RAG faz busca semântica nos PDFs extensos."
-            :options="[
-              { value: 'a', label: 'Colar todos os PDFs e um dump SQL na janela de contexto' },
-              { value: 'b', label: 'MCP (views SQL read-only) para estoque + RAG vetorial para PDFs' },
-              { value: 'c', label: 'Usar apenas Playwright MCP para fazer scraping do ERP interno' },
-              { value: 'd', label: 'Treinar um LLM do zero toda semana com o banco atualizado' }
-            ]">
-          </poll-question>
+        <!-- Slide 6.2: Ecossistema, Vibe Coding e Skills Determinísticas -->
+        <section data-auto-animate>
+          <h2>Dicas Práticas: Skills, MCPs e Scripts Determinísticos</h2>
+          <multi-col cols="1fr 1fr" style="gap: 18px; margin-top: 12px;">
+            <div class="checklist-panel">
+              <h3 style="color: #8be9fd !important;">1. Ecossistema Pronto no GitHub</h3>
+              <p>Existem inúmeras <strong>Skills e servidores MCP</strong> já publicados no GitHub. Peça ao próprio agente para <strong>buscar, instalar ou criar</strong> novas Skills e MCPs sob medida (Vibe Coding).</p>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #f1fa8c !important;">2. Demorou? Transforme em Skill</h3>
+              <p>Sempre que o agente fizer muitas buscas e demorar para concluir uma tarefa recorrente, peça ao final: <em>“gere uma Skill consolidando esse processo”</em>.</p>
+            </div>
+          </multi-col>
+          <div class="green-box" style="margin-top: 16px; padding: 10px 16px;">
+            <p style="margin: 0; font-size: 0.62em;">
+              <strong style="color: #50fa7b;">3. Prefira scripts determinísticos (em Python) dentro das Skills:</strong><br />
+              Quando houver algoritmo definido, peça ao agente para encapsular a lógica em um script Python (roda igual em Linux, macOS e Windows). Menos inspeções, menos tentativas frustradas e funcionamento confiável <strong>independente do LLM</strong>.
+            </p>
+          </div>
         </section>
 
-        <section>
-          <poll-question
-            id="q2-hitl"
-            title="Questão 2: Autonomia e Human-in-the-Loop"
-            question="Em um fluxo assíncrono disparado ao abrir um chamado de produção, qual política respeita boas práticas de ADS?"
-            answer="c"
-            answer-text="Leitura e rascunhos podem ser autônomos; ações destrutivas ou financeiras exigem aprovação humana (HITL)."
-            :options="[
-              { value: 'a', label: 'Dar acesso de superusuário para o agente apagar registros sozinho' },
-              { value: 'b', label: 'Proibir leitura de logs e responder apenas com texto estático' },
-              { value: 'c', label: 'Consultar logs e abrir rascunho de PR; exigir aprovação para deploy/DELETE' },
-              { value: 'd', label: 'Remover limite de iterações até o agente concluir sem supervisão' }
-            ]">
-          </poll-question>
+        <!-- Slide 6.3: Estratégia de Modelos, Plan vs. Build e KV Cache -->
+        <section data-auto-animate>
+          <h2>Dicas Práticas: Modelos, <em>Plan vs. Build</em> e KV Cache</h2>
+          <multi-col cols="1fr 1fr" style="gap: 18px; margin-top: 10px;">
+            <div class="checklist-panel">
+              <h3 style="color: #50fa7b !important;">4. Configure Forte, Opere Leve</h3>
+              <p>Use LLMs mais inteligentes e maior raciocínio para criar <code>AGENTS.md</code>, Skills e scripts. Com o agente bem estruturado, reduza o raciocínio e use <strong>LLMs menores, mais rápidos e baratos/gratuitos</strong> no dia a dia.</p>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #ff79c6 !important;">5. Planeje Forte, Execute Rápido</h3>
+              <p>Em tarefas complexas, use o modo <strong>Plan</strong> (no OpenCode, alterne com <code>TAB</code> entre <em>Plan</em> e <em>Build</em>) com raciocínio alto só para planejar; depois baixe o nível para executar o plano.</p>
+            </div>
+          </multi-col>
+          <div class="yellow-box" style="margin-top: 14px; padding: 10px 16px;">
+            <p style="margin: 0; font-size: 0.6em;">
+              <strong style="color: #f1fa8c;">6. Evite trocar o LLM base no meio da conversa (KV Cache / Prompt Cache):</strong>
+              o prefixo do contexto fica em cache no servidor do provedor, reduzindo custo e latência. Trocar de LLM invalida o cache e obriga a reprocessar todo o histórico (mesmo no mesmo provedor). <em>Alterar apenas o nível de raciocínio costuma preservar o cache, dependendo do provedor.</em>
+            </p>
+          </div>
         </section>
 
-      </section>
+        <!-- Slide 6.4: Subagentes e Higiene de Contexto -->
+        <section data-auto-animate>
+          <h2>Dicas Práticas: Subagentes e Higiene de Contexto</h2>
+          <multi-col cols="1fr 1fr" style="gap: 18px; margin-top: 12px;">
+            <div class="checklist-panel">
+              <h3 style="color: #8be9fd !important;">7. Subagentes para Paralelismo</h3>
+              <p>Em planos pagos (ou APIs com boa cota), delegue tarefas paralelizáveis a <strong>subagentes</strong> — ex.: analisar várias fontes de notícias, revisar múltiplos módulos ou pesquisar documentações ao mesmo tempo.</p>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #f1fa8c !important;">8. Higiene de Contexto</h3>
+              <p>Mudou de assunto ou a sessão ficou longa demais? Use <code>/compact</code> ou abra uma <strong>nova conversa</strong>. Contexto inchado degrada a precisão e multiplica o custo por turno.</p>
+            </div>
+          </multi-col>
+          <div class="cyan-box" style="margin-top: 16px; padding: 10px 16px;">
+            <p style="margin: 0; font-size: 0.6em;">
+              <strong style="color: #8be9fd;">9. Versione a configuração no Git:</strong>
+              commite <code>AGENTS.md</code>, <code>.opencode/skills/</code> e <code>opencode.json</code> junto com o projeto para toda a equipe evoluir o agente — <strong>nunca</strong> commite chaves de API ou tokens.
+            </p>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 6 -->
 
       <!-- SLIDE FINAL: Resumo da Aula -->
       <section data-auto-animate>
         <h2>Resumo da Aula</h2>
-        <ls-u font-size="20">
-          <li><strong>Loop agêntico (ReAct):</strong> planejar → chamar ferramenta → observar retorno/erro → corrigir rota até o critério de parada.</li>
-          <li><strong>MCP vs. Skills:</strong> MCP conecta ferramentas e dados padronizados (JSON-RPC); Skills entregam procedimentos sob demanda sem inflar o contexto.</li>
-          <li><strong>RAG vs. MCP:</strong> RAG para buscas semânticas em grandes acervos documentais; MCP para estado estruturado em tempo real.</li>
+        <ls-u font-size="19">
+          <li><strong>Loop agêntico (ReAct) &amp; Desacoplamento:</strong> o agente é independente do LLM — você troca o modelo mantendo ferramentas, Skills e MCPs.</li>
+          <li><strong>5 Pilares complementares:</strong> Contexto (sessão), Memória simples (<code>.md</code>), RAG + Grafos (bancos sob demanda), Skills (<code>SKILL.md</code> + scripts determinísticos) e MCP (serviço contínuo JSON-RPC).</li>
+          <li><strong>Vibe Coding na configuração:</strong> use o próprio agente para criar e evoluir <code>AGENTS.md</code>, memórias, Skills com scripts Python e arquivos MCP.</li>
           <li><strong>Playwright MCP &amp; limites:</strong> <em>Accessibility Snapshots</em> economizam tokens, mas CAPTCHAs, 2FA e <em>Indirect Prompt Injection</em> exigem engenharia — nunca substitua uma API oficial.</li>
-          <li><strong>Produção segura:</strong> arquitetura orientada a filas/webhooks, MCP interno <em>read-only</em>, limites de custo e <strong>Human-in-the-Loop</strong> em ações destrutivas.</li>
+          <li><strong>Boas práticas &amp; produção:</strong> configure com modelos fortes (<em>Plan</em>), opere com leves (<em>Build</em>), preserve o KV Cache, use subagentes e exija <strong>Human-in-the-Loop</strong> em ações destrutivas.</li>
         </ls-u>
       </section>
 
