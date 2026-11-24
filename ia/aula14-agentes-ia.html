@@ -111,7 +111,7 @@
     }
 
     .compact-list li {
-      font-size: 0.68em !important;
+      font-size: 0.66em !important;
       line-height: 1.28 !important;
       margin: 5px 0 !important;
     }
@@ -123,13 +123,24 @@
     }
 
     .compact-code pre.code-wrapper {
-      font-size: 0.48em !important;
-      line-height: 1.32 !important;
+      font-size: 0.46em !important;
+      line-height: 1.3 !important;
     }
 
     .compact-code pre.code-wrapper code {
       max-height: none !important;
-      padding: 10px 14px !important;
+      padding: 8px 12px !important;
+    }
+
+    .mini-code pre.code-wrapper {
+      font-size: 0.36em !important;
+      line-height: 1.24 !important;
+      margin: 4px 0 0 !important;
+    }
+
+    .mini-code pre.code-wrapper code {
+      max-height: none !important;
+      padding: 6px 8px !important;
     }
 
     .compact-table {
@@ -143,9 +154,9 @@
     }
 
     .ref-list li {
-      font-size: 0.62em !important;
-      line-height: 1.35 !important;
-      margin: 6px 0 !important;
+      font-size: 0.6em !important;
+      line-height: 1.32 !important;
+      margin: 5px 0 !important;
     }
 
     .ref-list a {
@@ -156,18 +167,35 @@
       background: rgba(68, 71, 90, 0.65);
       border: 1px solid rgba(139, 233, 253, 0.35);
       border-radius: 10px;
-      padding: 14px 18px;
+      padding: 12px 16px;
     }
 
     .checklist-panel h3 {
-      font-size: 23pt !important;
+      font-size: 20pt !important;
       margin: 0 0 8px !important;
     }
 
     .checklist-panel p {
-      font-size: 0.64em !important;
-      line-height: 1.35 !important;
+      font-size: 0.62em !important;
+      line-height: 1.34 !important;
       margin: 4px 0 !important;
+    }
+
+    .prompt-bubble {
+      background: rgba(25, 26, 33, 0.92);
+      border-left: 4px solid #50fa7b;
+      border-radius: 8px;
+      color: #f8f8f2;
+      font-family: "Roboto", Arial, sans-serif;
+      font-size: 0.6em;
+      line-height: 1.35;
+      padding: 10px 14px;
+    }
+
+    .mcp-step-card {
+      border-radius: 8px;
+      padding: 6px 8px;
+      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -180,22 +208,22 @@
       <!-- SLIDE 1: Capa -->
       <section data-auto-animate>
         <header1 aula="14" curso="Inteligência Artificial" title-size="27"
-                 title="Agentes de IA: Arquitetura, MCP, Skills e Automação">
+                 title="Agentes de IA: AGENTS.md, MCP, Skills e Automação">
           <img src="images/aula14/capa-agentes-ia.jpg"
                alt="Ilustração isométrica de um núcleo de agente de IA conectado a terminal, navegador, banco de dados e APIs"
                height="235"
                style="border-radius: 10px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);" />
           <div class="cover-pillars">
             <span class="cover-pillar" style="border-color: #50fa7b;">Loop Agêntico (ReAct)</span>
-            <span class="cover-pillar" style="border-color: #8be9fd;">Model Context Protocol (MCP)</span>
-            <span class="cover-pillar" style="border-color: #f1fa8c;">Agent Skills &amp; Memória RAG</span>
-            <span class="cover-pillar" style="border-color: #ff79c6;">Playwright MCP &amp; HITL</span>
+            <span class="cover-pillar" style="border-color: #ffb86c;">AGENTS.md na Prática</span>
+            <span class="cover-pillar" style="border-color: #8be9fd;">MCP &amp; Playwright</span>
+            <span class="cover-pillar" style="border-color: #ff79c6;">Agent Skills &amp; Automação</span>
           </div>
         </header1>
       </section>
 
       <!-- ============================================================
-         Etapa 1: Fundamentos e Arquitetura
+         Etapa 1: Fundamentos — O Que É um Agente de IA?
          ============================================================ -->
       <section>
 
@@ -203,8 +231,8 @@
         <section data-auto-animate>
           <section-banner
             eyebrow="Etapa 1"
-            title="Fundamentos e Arquitetura"
-            subtitle="Loop agêntico, desacoplamento de LLMs, Contexto, Memória, Skills e MCP">
+            title="Fundamentos: O Que É um Agente?"
+            subtitle="Loop agêntico (ReAct), desacoplamento de LLMs e o mapa dos 5 pilares">
             <paper-card
               compact
               title="ReAct: Synergizing Reasoning and Acting in Language Models"
@@ -212,14 +240,6 @@
               venue="ICLR"
               year="2023"
               url="https://arxiv.org/abs/2210.03629">
-            </paper-card>
-            <paper-card
-              compact
-              title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
-              authors="Patrick Lewis et al. — Facebook AI Research"
-              venue="NeurIPS"
-              year="2020"
-              url="https://arxiv.org/abs/2005.11401">
             </paper-card>
           </section-banner>
         </section>
@@ -335,58 +355,775 @@
           </multi-col>
           <div class="cyan-box" style="margin-top: 14px; padding: 8px 14px;">
             <p style="margin: 0; font-size: 0.6em;">
-              <strong>Independência na prática:</strong> você pode usar <strong>Mistral Vibe</strong> ou <strong>OpenCode</strong> com modelos na nuvem (Mistral, Gemini, Claude, GPT) ou locais via Ollama — mantendo exatamente as mesmas Skills, memórias e MCPs.
+              <strong>Independência na prática:</strong> você pode usar <strong>Mistral Vibe</strong> ou <strong>OpenCode</strong> com modelos na nuvem ou locais via Ollama — mantendo exatamente os mesmos <code>AGENTS.md</code>, Skills e MCPs.
             </p>
           </div>
         </section>
 
-        <!-- Slide 1.6: Mapa Físico dos 5 Pilares (Complementares) -->
+        <!-- Slide 1.6: Mapa Físico dos 5 Pilares (Roteiro da Aula) -->
         <section data-auto-animate>
-          <h2>Os 5 Pilares: O Que São Fisicamente (Não Competem!)</h2>
+          <h2>Os 5 Pilares: O Que São Fisicamente (Roteiro de Hoje)</h2>
           <table class="comparison-table compact-table" style="margin-top: 4px; font-size: 0.78em;">
             <thead>
               <tr>
                 <th style="width: 19%;">Pilar</th>
                 <th style="width: 39%;">O que é fisicamente</th>
-                <th>Efeito no contexto, custo e confiabilidade</th>
+                <th>Papel na aula de hoje</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong style="color: #f1fa8c;">Contexto</strong></td>
                 <td>A própria conversa acumulada (mensagens + retornos de ferramentas) enviada ao LLM</td>
-                <td>Cresce a cada turno; pode estourar o limite da janela e encarece cada chamada</td>
+                <td>Memória RAM da sessão — zerada ao rodar <code>/new</code></td>
               </tr>
               <tr>
-                <td><strong style="color: #ffb86c;">Memória Simples</strong></td>
-                <td>Arquivos texto <code>.md</code> (<code>AGENTS.md</code>, <code>MEMORY.md</code>) com regras e contexto do projeto</td>
-                <td>Carregados sempre no início de novas conversas → ocupam contexto e aumentam custo</td>
-              </tr>
-              <tr>
-                <td><strong style="color: #50fa7b;">Memória RAG + Grafos</strong></td>
-                <td>Bancos de dados estruturados (vetoriais / grafos de conhecimento) consultados sob demanda</td>
-                <td>Resgatam memórias de interações anteriores e documentos extensos sem inflar tudo</td>
-              </tr>
-              <tr>
-                <td><strong style="color: #ff79c6;">SKILL</strong></td>
-                <td><strong>Docs texto</strong> (<code>SKILL.md</code>: procedimentos, estilo) + <strong>scripts opcionais</strong> (Python, shell, <code>.bat</code>)</td>
-                <td>Carregada sob demanda; scripts determinísticos tornam tarefas mais rápidas e confiáveis em qualquer LLM</td>
+                <td><strong style="color: #ffb86c;">AGENTS.md</strong></td>
+                <td>Arquivo texto <code>.md</code> com estrutura do projeto, estilo e comportamento do agente</td>
+                <td><strong>Prática 1:</strong> memória simples carregada em toda conversa</td>
               </tr>
               <tr>
                 <td><strong style="color: #8be9fd;">MCP</strong></td>
-                <td>Serviço contínuo (<code>stdio</code> local ou TCP/HTTP) com protocolo padronizado (JSON-RPC)</td>
-                <td>Descoberta padrão de ferramentas, esquemas de entrada/saída e execução em tempo real</td>
+                <td>Protocolo padronizado (JSON-RPC) para conversar com ferramentas externas ou internas</td>
+                <td><strong>Prática 2:</strong> Playwright + Chrome visível no CoinMarketCap</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #ff79c6;">SKILL</strong></td>
+                <td><strong>Docs texto</strong> (<code>SKILL.md</code>: estilo e passo a passo) + <strong>scripts opcionais</strong></td>
+                <td><strong>Prática 3:</strong> consolidar cotações cripto em uma Skill reutilizável</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #50fa7b;">RAG + Grafos</strong></td>
+                <td>Bancos vetoriais e grafos de conhecimento consultados sob demanda</td>
+                <td><strong>Em escala:</strong> memória longa sem inflar o contexto</td>
               </tr>
             </tbody>
           </table>
-          <div class="green-box" style="margin-top: 5px; padding: 5px 10px;">
-            <p style="margin: 0; font-size: 0.48em;">
-              <strong>Camadas complementares:</strong> Contexto é a RAM da sessão; Memória (<code>.md</code> ou RAG/Grafos) persiste conhecimento; Skills trazem o <em>como fazer</em> (+ scripts); MCP conecta o agente a sistemas externos.
+          <div class="green-box" style="margin-top: 6px; padding: 6px 12px;">
+            <p style="margin: 0; font-size: 0.5em;">
+              <strong>Camadas complementares:</strong> vamos testar cada peça na prática — primeiro <code>AGENTS.md</code>, depois <strong>MCP</strong>, depois <strong>Skills</strong>, e fechar com um projeto completo!
             </p>
           </div>
         </section>
 
-        <!-- Slide 1.7: Memória e RAG (Paper Seminal) -->
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: Setup e Prática 1 — AGENTS.md
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 2.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 2"
+            title="Setup e Prática 1: AGENTS.md"
+            subtitle="Preparando o agente no laboratório e dominando instruções persistentes de projeto e estilo">
+          </section-banner>
+        </section>
+
+        <!-- Slide 2.2: Instalação e Acesso ao Mistral Vibe -->
+        <section data-auto-animate>
+          <h2>Instalação e Acesso ao <code>Mistral Vibe</code></h2>
+          <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
+            <div class="compact-code">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">1. Instalar e iniciar na pasta do projeto</p>
+              <code-block lang="bash" data-trim>
+# Linux / macOS / WSL
+curl -LsSf https://mistral.ai/vibe/install.sh | bash
+
+# Ou via uv (cross-platform, inclui Windows)
+uv tool install --python 3.14 mistral-vibe
+
+# Ou via winget
+# winget install MistralAI.MistralVibe
+
+# Criar pasta limpa e iniciar o agente
+mkdir meu-projeto-agente
+cd meu-projeto-agente
+
+# --trust para confiar nessa pasta
+# --smart-approve para auto aprovar comandos seguros
+vibe --trust --smart-approve
+              </code-block>
+              <div style="margin-top: 10px;">
+                <a class="colab-pill" href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">
+                  Documentação Mistral Vibe ↗
+                </a>
+              </div>
+            </div>
+            <div>
+              <div class="checklist-panel" style="padding: 12px 15px;">
+                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que começar pelo Vibe?</h3>
+                <ul class="tight-list" style="margin-top: 6px;">
+                  <li><strong>Múltiplas interfaces:</strong> <code>CLI</code> no terminal, extensão do <code>VS Code</code>, app <code>Desktop</code> ou <code>Web</code>.</li>
+                  <li><strong>Acesso gratuito simples:</strong> plano gratuito com cota mensal para começar rápido.</li>
+                  <li><strong>Padrões abertos:</strong> suporta nativamente <code>AGENTS.md</code>, <code>SKILLS</code>, servidores <code>MCP</code> e provedores compatíveis.</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 2.3: Instalação e Acesso ao OpenCode -->
+        <section data-auto-animate>
+          <h2>Instalação e Acesso ao <code>OpenCode</code> (Alternativa)</h2>
+          <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
+            <div class="compact-code">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">1. Instalar e iniciar na pasta do projeto</p>
+              <code-block lang="bash" data-trim>
+# Linux / macOS / WSL
+curl -fsSL https://opencode.ai/install | bash
+
+# Ou via npm / Brew (cross-platform, inclui Windows)
+npm install -g @opencode/cli
+
+# Criar pasta limpa e iniciar o agente
+mkdir meu-projeto-agente
+cd meu-projeto-agente
+
+# --auto aprova automaticamente ações
+opencode --auto
+              </code-block>
+              <div style="margin-top: 10px;">
+                <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
+                  Documentação OpenCode ↗
+                </a>
+              </div>
+            </div>
+            <div>
+              <div class="checklist-panel" style="padding: 12px 15px;">
+                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que o OpenCode é ótimo Plano B?</h3>
+                <ul class="tight-list" style="margin-top: 6px;">
+                  <li><strong>Múltiplas interfaces:</strong> <code>TUI</code> nativa no terminal, extensão do <code>VS Code</code> e app <code>Desktop</code>.</li>
+                  <li><strong>Acesso gratuito simples:</strong> modelos gratuitos integrados ou conecte sua conta (Claude, ChatGPT, GitHub Copilot).</li>
+                  <li><strong>Padrões abertos:</strong> 100% open source, suporta nativamente <code>AGENTS.md</code>, <code>SKILLS</code>, <code>MCP</code> e +75 provedores.</li>
+                </ul>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 2.4: Plano B e C (Contingência no Laboratório) -->
+        <section data-auto-animate>
+          <h2>Plano B e C: Contingência no Laboratório</h2>
+          <p style="margin-bottom: 6px; font-size: 0.62em;">
+            Com <em>Network Address Translation</em> (NAT), várias máquinas saem pelo mesmo IP público e podem sofrer <em>rate limit</em> simultâneo.
+          </p>
+          <table class="comparison-table compact-table">
+            <thead>
+              <tr>
+                <th style="width: 21%;">Ferramenta</th>
+                <th style="width: 14%;">Papel</th>
+                <th style="width: 34%;">Diferencial Técnico</th>
+                <th>Quando migrar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: #50fa7b;">Mistral Vibe</strong></td>
+                <td>Principal</td>
+                <td>Skills nativas (comandos <code>/</code>), MCP, terminal, VS Code e web</td>
+                <td>Uso padrão no laboratório</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #8be9fd;">OpenCode</strong></td>
+                <td>Plano B</td>
+                <td>Modelos gratuitos nativos, interface web e MCP</td>
+                <td>Falha local ou limite da conta Mistral</td>
+              </tr>
+              <tr>
+                <td style="border-bottom: 1px solid;"><strong style="color: #f1fa8c;">Gemini CLI</strong></td>
+                <td style="border-bottom: 1px solid;">Plano C</td>
+                <td style="border-bottom: 1px solid;">Open-source; cota gratuita por conta Google individual</td>
+                <td style="border-bottom: 1px solid;">Bloqueio por IP compartilhado</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Slide 2.5: O Que É o AGENTS.md? -->
+        <section data-auto-animate>
+          <h2>O Que É o <code>AGENTS.md</code>?</h2>
+          <multi-col cols="1.05fr 1fr" style="gap: 18px; align-items: start;">
+            <div style="min-width: 0;">
+              <div class="checklist-panel" style="margin-bottom: 10px; padding: 10px 14px;">
+                <h3 style="color: #ffb86c !important; font-size: 19pt !important;">Manual de Boas-Vindas do Agente</h3>
+                <ul class="tight-list" style="margin-top: 6px;">
+                  <li><strong>Instruções gerais</strong> em Markdown na raiz do projeto, lidas automaticamente a cada nova conversa.</li>
+                  <li><strong>Estrutura do projeto:</strong> informa pastas, linguagens, comandos e convenções para o agente não adivinhar.</li>
+                  <li><strong>Estilo e comportamento:</strong> define tom de resposta, idioma e regras de como o agente deve agir.</li>
+                </ul>
+              </div>
+              <div class="cyan-box" style="padding: 7px 11px;">
+                <p style="margin: 0; font-size: 0.52em;">
+                  <strong>Atenção ao tamanho:</strong> entra sempre no contexto inicial — mantenha objetivo e mova tarefas longas para <strong>Skills</strong>.
+                </p>
+              </div>
+            </div>
+            <div class="compact-code" style="min-width: 0;">
+              <p style="color: #f1fa8c; font-weight: 700; margin-bottom: 6px; font-size: 0.6em;">Exemplo enxuto de <code>AGENTS.md</code></p>
+              <code-block lang="markdown" data-trim>
+# AGENTS.md — Projeto da Turma
+
+## Estrutura do Projeto
+- `scripts/` — automações em Python 3
+- `dados/` — arquivos CSV gerados
+
+## Comandos Úteis
+- Rodar testes: `pytest`
+
+## Estilo e Comportamento
+- Responder em pt-BR, de forma direta.
+- Nunca apagar arquivos sem confirmação.
+              </code-block>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 2.6: Prática 1 — Brincando com o AGENTS.md -->
+        <section data-auto-animate>
+          <h2>Prática 1: Testando o <code>AGENTS.md</code> no Modo “Brother”</h2>
+          <div class="prompt-bubble" style="margin-bottom: 14px;">
+            <strong style="color: #50fa7b;">Prompt da brincadeira (envie no seu agente):</strong><br />
+            <em>“Atualize o AGENTS.md para falar comigo como se fosse meu brother, tamo junto!”</em>
+          </div>
+          <multi-col cols="1fr 1fr" style="gap: 18px; align-items: stretch;">
+            <div class="checklist-panel">
+              <h3 style="color: #8be9fd !important;">Passo a passo rápido</h3>
+              <ol class="compact-list" style="margin-top: 6px;">
+                <li class="fragment">Inicie o <code>vibe</code> (ou <code>opencode</code>) na pasta <code>meu-projeto-agente</code>.</li>
+                <li class="fragment">Envie o prompt acima e aprove a edição do arquivo.</li>
+                <li class="fragment"><strong>Abra e leia o <code>AGENTS.md</code></strong> que o agente criou ou atualizou na pasta.</li>
+                <li class="fragment">Rode <code>/new</code> (nova conversa, memória zerada) e pergunte: <em>“Qual a boa hoje?”</em> ou <em>“O que tem nessa pasta?”</em></li>
+              </ol>
+            </div>
+            <div class="checklist-panel fragment">
+              <h3 style="color: #50fa7b !important;">O que acabamos de provar?</h3>
+              <p style="margin-top: 8px !important;">
+                Mesmo zerando o histórico com <code>/new</code>, o agente já entra no personagem — porque ele lê o <code>AGENTS.md</code> antes de responder!
+              </p>
+              <div class="yellow-box" style="margin-top: 10px; padding: 7px 10px;">
+                <p style="margin: 0; font-size: 0.54em;">
+                  <strong>Dica:</strong> se quiser voltar ao tom profissional depois da brincadeira, basta editar o <code>AGENTS.md</code> na mão ou pedir para o próprio agente ajustar.
+                </p>
+              </div>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: MCP — Protocolo de Comunicação com Ferramentas
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 3.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 3"
+            title="MCP: Conectando Ferramentas ao Agente"
+            subtitle="Primeiro na prática com Playwright + Chrome real; depois, como o protocolo funciona por baixo dos panos">
+          </section-banner>
+        </section>
+
+        <!-- Slide 3.2: MCP — O USB-C dos Agentes -->
+        <section data-auto-animate>
+          <h2>MCP: Protocolo de Comunicação com Ferramentas</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/mcp-usb-c-metafora.jpg"
+                     alt="Infográfico comparando conexões emaranhadas M vezes N sem padrão contra um barramento universal MCP M mais N"
+                     height="350" />
+                <div class="annotate-box annotate-box--pink fragment" data-fragment-index="1"
+                     style="left: 3%; top: 9%; width: 43%; height: 80%;"></div>
+                <div class="overlay-badge overlay-badge--pink fragment" data-fragment-index="1"
+                     style="left: 10%; top: 3%;">Sem padrão: M × N conectores</div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 52.5%; top: 9%; width: 44.5%; height: 80%;"></div>
+                <div class="overlay-badge overlay-badge--green fragment" data-fragment-index="2"
+                     style="left: 59%; top: 3%;">Com MCP: M + N (JSON-RPC)</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            O <strong>Model Context Protocol (MCP)</strong> padroniza como o agente conversa (via LLM) com ferramentas <strong>externas</strong> (navegador, APIs, GitHub) ou <strong>internas</strong> (bancos e sistemas da empresa).
+          </p>
+          <p class="source">Fonte: ilustração conceitual baseada na especificação oficial <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">modelcontextprotocol.io</a></p>
+        </section>
+
+        <!-- Slide 3.3: Prática 2 — Playwright MCP + Chrome Visível no CoinMarketCap -->
+        <section data-auto-animate>
+          <h2>Prática 2: Playwright MCP + Chrome Visível</h2>
+          <div class="prompt-bubble" style="margin-bottom: 8px; padding: 8px 12px; font-size: 0.56em; border-left-color: #8be9fd;">
+            <strong style="color: #8be9fd;">Peça ao agente via Vibe Coding:</strong>
+            <em>“Configure o MCP do Playwright usando o Google Chrome instalado nesta máquina em modo não headless (janela visível). Depois abra https://coinmarketcap.com/ e exiba as cotações das principais criptomoedas.”</em>
+          </div>
+          <multi-col cols="1.08fr 1fr" style="gap: 16px; align-items: start;">
+            <div class="checklist-panel" style="min-width: 0; padding: 10px 14px;">
+              <h3 style="color: #50fa7b !important; font-size: 19pt !important;">Roteiro da Prática</h3>
+              <ol class="tight-list" style="margin-top: 4px;">
+                <li class="fragment">Envie o prompt acima (se o agente editar a config, reinicie o <code>vibe</code> / <code>opencode</code> para carregar o MCP).</li>
+                <li class="fragment">Acompanhe a <strong>janela do Google Chrome abrindo ao vivo</strong> em <code>coinmarketcap.com</code>.</li>
+                <li class="fragment">Confira a tabela com as cotações das principais criptomoedas retornada pelo agente.</li>
+                <li class="fragment"><strong style="color: #f1fa8c;">Inspeção obrigatória:</strong> verifique quais arquivos foram criados ou modificados na pasta (ex.: <code>.vibe/config.toml</code> ou <code>opencode.json</code>).</li>
+              </ol>
+            </div>
+            <div class="compact-code" style="min-width: 0;">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 4px; font-size: 0.56em;">Exemplo esperado em <code>.vibe/config.toml</code></p>
+              <code-block lang="toml" data-trim data-line-numbers="1-8|5-8">
+[[mcp_servers]]
+name = "playwright"
+transport = "stdio"
+command = "npx"
+args = [
+  "-y", "@playwright/mcp@latest",
+  "--browser", "chrome"
+]
+              </code-block>
+              <p style="font-size: 0.46em; color: #b8b8c8; margin: 5px 0;">
+                <code>--browser chrome</code> usa o Chrome da máquina; sem <code>--headless</code> a janela abre visível.
+              </p>
+              <a class="colab-pill" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">
+                Repositório @playwright/mcp ↗
+              </a>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 3.4: Como Funciona o MCP (Visão Geral com o exemplo do Playwright) -->
+        <section data-auto-animate>
+          <h2>Como o MCP Funcionou na Prática do Playwright?</h2>
+          <div class="green-box" style="padding: 10px 16px; margin: 10px auto; max-width: 900px;">
+            <ol class="compact-list" style="margin: 0;">
+              <li><strong>Conectar (<code>initialize</code>):</strong> o agente (cliente MCP) inicia o processo <code>@playwright/mcp</code> via <code>stdio</code> e negocia capacidades.</li>
+              <li><strong>Descobrir (<code>tools/list</code>):</strong> o agente pergunta quais ferramentas existem (<code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code>…).</li>
+              <li><strong>Decidir (LLM):</strong> o LLM recebe os nomes, descrições e parâmetros e escolhe abrir <code>https://coinmarketcap.com/</code>.</li>
+              <li><strong>Executar (<code>tools/call</code>):</strong> o agente envia a chamada JSON-RPC; o Playwright abre o Chrome real e navega.</li>
+              <li><strong>Retornar:</strong> o Playwright devolve o conteúdo estruturado da página; o LLM lê os preços e monta sua resposta.</li>
+            </ol>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact">
+            O MCP padroniza a conversa entre <strong>agente</strong> e <strong>servidor de ferramentas</strong>; o <strong>LLM</strong> decide qual ferramenta chamar e com quais argumentos.
+          </p>
+          <p class="source">
+            Fonte: <a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">Arquitetura oficial do MCP (modelcontextprotocol.io)</a>
+          </p>
+        </section>
+
+        <!-- Slide 3.5: Uma chamada MCP passo a passo (Exemplo CoinMarketCap) -->
+        <section data-auto-animate>
+          <h2>Uma Chamada MCP, Passo a Passo (Playwright)</h2>
+          <div class="figure-card" style="padding: 8px 14px; margin: 6px auto 10px; width: 900px; background-color: #192420;">
+            <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 0.56em;">
+              <span class="yellow-box fragment" data-fragment-index="1" style="padding: 4px 10px;">1. Handshake</span>
+              <span class="cyan-box fragment" data-fragment-index="2" style="padding: 4px 10px;">2. Descoberta</span>
+              <span class="pink-box fragment" data-fragment-index="3" style="padding: 4px 10px;">3. Esquema → LLM</span>
+              <span class="green-box fragment" data-fragment-index="4" style="padding: 4px 10px;">4. tools/call</span>
+              <span class="yellow-box fragment" data-fragment-index="5" style="padding: 4px 10px;">5. Resultado</span>
+            </div>
+          </div>
+          <multi-col cols="1fr 1fr" style="gap: 14px; align-items: start;">
+            <div class="mini-code">
+              <div class="fragment yellow-box mcp-step-card" data-fragment-index="1">
+                <div style="display: flex; gap: 8px;">
+                  <div style="flex: 1;">
+                    <strong style="font-size: 0.52em;">Cliente (Agente)</strong>
+                    <code-block lang="json" class="terminal">{
+  "jsonrpc": "2.0", "id": 1,
+  "method": "initialize",
+  "params": { "clientInfo": {...} }
+}</code-block>
+                  </div>
+                  <div style="flex: 1;">
+                    <strong style="font-size: 0.52em;">Servidor (Playwright)</strong>
+                    <code-block lang="json" class="terminal">{
+  "jsonrpc": "2.0", "id": 1,
+  "result": { "capabilities": {...} }
+}</code-block>
+                  </div>
+                </div>
+              </div>
+              <div class="fragment cyan-box mcp-step-card" data-fragment-index="2">
+                <div style="display: flex; gap: 8px;">
+                  <div style="flex: 0.9;">
+                    <strong style="font-size: 0.52em;">Cliente (Agente)</strong>
+                    <code-block lang="json" class="terminal">{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list"
+}</code-block>
+                  </div>
+                  <div style="flex: 1.1;">
+                    <strong style="font-size: 0.52em;">Servidor (Playwright)</strong>
+                    <code-block lang="json" class="terminal">{
+  "tools": [{
+    "name": "browser_navigate",
+    "inputSchema": {"url": "string"}
+  }]
+}</code-block>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mini-code">
+              <div class="fragment pink-box mcp-step-card" data-fragment-index="3" style="padding: 8px 12px;">
+                <p style="margin: 0; font-size: 0.54em;">
+                  O cliente entrega o esquema ao <strong>LLM</strong>; o modelo escolhe <code>browser_navigate</code> e preenche o argumento <code>url</code>.
+                </p>
+              </div>
+              <div class="fragment green-box mcp-step-card" data-fragment-index="4">
+                <strong style="font-size: 0.52em;">Cliente → Servidor (Execução)</strong>
+                <code-block class="terminal" lang="json">{
+  "jsonrpc": "2.0", "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "browser_navigate",
+    "arguments": { "url": "https://coinmarketcap.com/" }
+  }
+}</code-block>
+              </div>
+              <div class="fragment yellow-box mcp-step-card" data-fragment-index="5">
+                <strong style="font-size: 0.52em;">Servidor → Cliente (Retorno)</strong>
+                <code-block class="terminal" lang="json">{
+  "jsonrpc": "2.0", "id": 3,
+  "result": { "content": [{ "type": "text", "text": "BTC, ETH, SOL..." }] }
+}</code-block>
+              </div>
+            </div>
+          </multi-col>
+          <p class="source">Exemplo didático das mensagens JSON-RPC trocadas com o Playwright MCP</p>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Agent Skills — Estilo, Procedimentos e Scripts
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 4.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 4"
+            title="Agent Skills: Ensinando Tarefas ao LLM"
+            subtitle="Documentos .md + scripts para padronizar estilo, automatizar rotinas repetitivas e consolidar nossa consulta cripto">
+          </section-banner>
+        </section>
+
+        <!-- Slide 4.2: O Que É uma SKILL? -->
+        <section data-auto-animate>
+          <h2>O Que É uma <code>SKILL</code>?</h2>
+          <p style="font-size: 0.58em; margin-bottom: 8px;">
+            Uma maneira de instruir o LLM a realizar tarefas específicas — composta basicamente por <strong>documentos texto (<code>.md</code>)</strong> e <strong>scripts opcionais</strong> (Python, shell, etc.).
+          </p>
+          <multi-col cols="1fr 1fr" style="gap: 14px; align-items: stretch;">
+            <div class="checklist-panel" style="padding: 10px 14px;">
+              <h3 style="color: #ff79c6 !important; font-size: 19pt !important;">Para que serve?</h3>
+              <ul class="tight-list" style="margin-top: 4px;">
+                <li><strong>Estilo específico:</strong> instruir o modelo a adotar paletas de cores e elementos específicos ao compor páginas HTML/CSS ou slides.</li>
+                <li><strong>Passo a passo repetitivo:</strong> documentar rotinas recorrentes (ex.: exibir cotações de criptomoedas).</li>
+                <li><strong>Scripts auxiliares:</strong> lógica determinística que funciona igual em qualquer LLM.</li>
+              </ul>
+            </div>
+            <div class="checklist-panel" style="padding: 10px 14px;">
+              <h3 style="color: #f1fa8c !important; font-size: 19pt !important;">Como criar uma SKILL?</h3>
+              <ul class="tight-list" style="margin-top: 4px;">
+                <li><strong>Manual:</strong> escrever o <code>SKILL.md</code> e os scripts à mão, com controle total.</li>
+                <li><strong>Automática (Vibe Coding):</strong> pedir ao agente para gerar a Skill após realizar uma tarefa.</li>
+                <li><strong style="color: #50fa7b;">Mista (mais comum):</strong> gerar a base por Vibe Coding e ajustar manualmente conforme desejado.</li>
+              </ul>
+            </div>
+          </multi-col>
+          <div class="cyan-box" style="margin-top: 8px; padding: 6px 12px;">
+            <p style="margin: 0; font-size: 0.52em;">
+              <strong>Carregamento sob demanda:</strong> diferente do <code>AGENTS.md</code>, a Skill só carrega seu conteúdo completo quando a tarefa pede — mantendo o contexto limpo.
+            </p>
+          </div>
+        </section>
+
+        <!-- Slide 4.3: Skills + MCP Trabalhando Juntos -->
+        <section data-auto-animate>
+          <h2>Skills e MCP Trabalhando Juntos: O Manual e as Mãos</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/mcp-vs-skills.jpg"
+                     alt="Infográfico comparando MCP como ferramentas conectadas à esquerda e Skills como procedimentos carregados sob demanda à direita"
+                     height="360" />
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
+                     style="left: 7%; top: 47%; width: 42%; height: 45%;"></div>
+                <div class="overlay-badge overlay-badge--dark fragment" data-fragment-index="1"
+                     style="left: 8%; top: 41.5%;">MCP = Serviço contínuo (ferramentas)</div>
+                <div class="annotate-box annotate-box--yellow fragment" data-fragment-index="2"
+                     style="left: 51%; top: 33%; width: 42%; height: 59%;"></div>
+                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="2"
+                     style="left: 51%; top: 27%;">Skill = Docs .md + Scripts determinísticos</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong>MCP</strong> dá as mãos (abrir o Chrome no CoinMarketCap); a <strong>Skill</strong> ensina o passo a passo e o formato exato de saída!
+          </p>
+          <p class="source">Fonte: ilustração conceitual baseada no padrão aberto <a href="https://agentskills.io/" target="_blank" rel="noopener">agentskills.io</a></p>
+        </section>
+
+        <!-- Slide 4.4: Prática 3 — Consolidar Cotações Cripto em uma SKILL -->
+        <section data-auto-animate>
+          <h2>Prática 3: Transformar Cotações Cripto em uma <code>SKILL</code></h2>
+          <multi-col cols="0.92fr 1.18fr" style="gap: 18px; align-items: start;">
+            <div>
+              <p style="color: #f1fa8c; font-weight: 700; margin-bottom: 6px; font-size: 0.6em;">Estrutura esperada no projeto</p>
+              <pre class="file-tree" style="font-size: 0.5em; padding: 9px 12px;">AGENTS.md
+.vibe/ (ou .agents/)
+└── skills/
+    └── cotacao-cripto/
+        ├── SKILL.md
+        └── scripts/ (opcional)</pre>
+              <div class="green-box" style="margin-top: 8px; padding: 8px 11px;">
+                <p style="margin: 0 0 4px; font-size: 0.56em;"><strong>Passo a passo da prática</strong></p>
+                <ol class="tight-list" style="margin: 0;">
+                  <li class="fragment">Peça ao agente: <em>“Consolide em uma SKILL o método que usamos para exibir as cotações das principais criptomoedas.”</em></li>
+                  <li class="fragment"><strong>Inspecione os arquivos gerados</strong> (<code>SKILL.md</code> e eventuais scripts).</li>
+                  <li class="fragment">Faça um ajuste manual no <code>SKILL.md</code> (modo misto: ex. formato da tabela) e teste em um <code>/new</code>!</li>
+                </ol>
+              </div>
+            </div>
+            <div class="compact-code" style="min-width: 0;">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 4px; font-size: 0.58em;">Exemplo de <code>SKILL.md</code> gerado</p>
+              <code-block lang="markdown" data-trim data-line-numbers="1-15|1-5|7-15">
+---
+name: cotacao-cripto
+description: >
+  Consultar e exibir cotações das principais
+  criptomoedas via CoinMarketCap.
+---
+
+# Consulta de Cotações Cripto
+
+1. Abrir `coinmarketcap.com` via Playwright MCP.
+2. Coletar nome, símbolo, preço (USD) e 24h
+   das 5 principais criptomoedas.
+3. Exibir em tabela Markdown ordenada.
+4. Informar data e hora da consulta ao final.
+              </code-block>
+              <p style="font-size: 0.5em; color: #b8b8c8; margin-top: 6px;">
+                Metadados YAML são lidos no início; as instruções e scripts só entram no contexto quando a Skill é ativada.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- ============================================================
+         Etapa 5: Automação Web, Limites e Prática Final
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 5.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 5"
+            title="Automação Web, Limites e Projeto Completo"
+            subtitle="Accessibility Snapshots, Playwright vs. Selenium, segurança e o exercício completo com livros + AGENTS.md">
+            <paper-card
+              compact
+              title="Not what you've signed up for: Indirect Prompt Injection"
+              authors="Greshake, Abdelnabi, Mishra, Endres, Holz, Fritz"
+              venue="AISec / arXiv"
+              year="2023"
+              url="https://arxiv.org/abs/2302.12173">
+            </paper-card>
+          </section-banner>
+        </section>
+
+        <!-- Slide 5.2: O que o Playwright MCP envia ao LLM -->
+        <section data-auto-animate>
+          <h2>Como o Agente Enxerga a Web: Accessibility Snapshot</h2>
+          <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: center;">
+            <div style="text-align: center;">
+              <div class="figure-card">
+                <img src="images/aula14/books-toscrape-real.jpg"
+                     alt="Captura de tela real do site de testes Books to Scrape exibindo categorias e livros"
+                     width="465" />
+              </div>
+              <p class="source">Captura real: <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a></p>
+            </div>
+            <div>
+              <p style="color: #50fa7b; font-weight: 700; margin-bottom: 6px;">Saída de <code>browser_snapshot</code></p>
+              <pre class="terminal" style="font-size: 0.44em; line-height: 1.48; width: auto; box-shadow: none; margin: 0;">- link "Books to Scrape" [ref=e1]
+- link "Home" [ref=e2]
+- link "Travel" [ref=e4]
+- link "Mystery" [ref=e5]
+- heading "All products" [ref=e22]
+- link "A Light in the Attic" [ref=e25]
+- link "Tipping the Velvet" [ref=e28]
+→ browser_click(ref="e4")</pre>
+              <p style="font-size: 0.62em; margin-top: 12px;">
+                A árvore de acessibilidade entrega <strong>elementos semânticos com <code>ref</code> determinístico</strong> — sem screenshots caros nem seletores CSS frágeis.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 5.3: Playwright vs Selenium (Gráfico Real) -->
+        <section data-auto-animate>
+          <h2>Por que Playwright Leva Vantagem sobre Selenium</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <img src="images/aula14/tokens-navegacao-comparativo.png"
+                   alt="Gráfico de barras comparando custo em tokens de HTML bruto, screenshot de visão e Accessibility Snapshot no books.toscrape.com"
+                   height="365" />
+            </div>
+          </div>
+          <p class="slide-takeaway">
+            <strong style="color: #50fa7b;">Playwright (<code>@playwright/mcp</code>):</strong> <em>auto-waiting</em> nativo para <em>Single-Page Applications</em> (SPAs), ~16× menos tokens que DOM bruto e cliques por <code>ref</code> (vs. XPath/CSS manuais no Selenium).
+          </p>
+          <p class="source">Fonte: medição real em <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a> (51.274 caracteres de HTML vs. 95 nós semânticos)</p>
+        </section>
+
+        <!-- Slide 5.4: Limitações Reais na Web vs API Oficial -->
+        <section data-auto-animate>
+          <h2>Onde a Automação Web Trava (e Quando Usar API)</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/barreiras-web-vs-api.jpg"
+                     alt="Ilustração comparando agente de navegador bloqueado por CAPTCHA, fingerprinting e 2FA versus tráfego direto em API oficial"
+                     height="365" />
+                <div class="annotate-box annotate-box--orange fragment" data-fragment-index="1"
+                     style="left: 24%; top: 15%; width: 50%; height: 43%;"></div>
+                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="1"
+                     style="left: 27%; top: 7%;">CAPTCHA • Fingerprinting • Login 2FA</div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 28%; top: 58%; width: 51%; height: 22%;"></div>
+                <div class="overlay-badge overlay-badge--green fragment" data-fragment-index="2"
+                     style="left: 33%; top: 82%;">Via expressa: API oficial (REST / GraphQL)</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway fragment" data-fragment-index="1">
+            <strong style="color: #ffb86c;">Barreiras reais:</strong> Cloudflare Turnstile, reCAPTCHA, detecção de automação e autenticação em dois fatores (2FA).
+          </p>
+          <p class="slide-takeaway fragment" data-fragment-index="2">
+            <strong style="color: #50fa7b;">Regra de ouro:</strong> agente navegando no browser <strong>não substitui uma API oficial</strong> quando ela existe.
+          </p>
+          <p class="source">Ilustração elaborada para a disciplina — arquitetura de integração web</p>
+        </section>
+
+        <!-- Slide 5.5: Risco Crítico — Indirect Prompt Injection -->
+        <section data-auto-animate>
+          <div class="title-with-paper">
+            <h2>Segurança: Indirect Prompt Injection (2023)</h2>
+            <paper-card
+              compact
+              title="Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
+              authors="Greshake et al."
+              venue="AISec"
+              year="2023"
+              url="https://arxiv.org/abs/2302.12173">
+            </paper-card>
+          </div>
+          <multi-col cols="1.05fr 1fr" style="gap: 24px; align-items: center;">
+            <div style="text-align: center;">
+              <div class="figure-card">
+                <img src="images/aula14/paper-ipi-fig1.png"
+                     alt="Figura 1 do artigo de Greshake et al. mostrando prompts maliciosos em páginas recuperadas sequestrando a saída do agente"
+                     height="345" />
+              </div>
+              <p class="source">Fonte: Greshake et al. (2023), <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">arXiv:2302.12173, Fig. 1</a></p>
+            </div>
+            <div>
+              <ul class="compact-list">
+                <li class="fragment"><strong style="color: #ff79c6;">Dados viram comandos:</strong> LLMs não separam rigidamente texto lido de instruções do sistema.</li>
+                <li class="fragment"><strong style="color: #f1fa8c;">Ataque remoto:</strong> um comentário oculto ou HTML invisível numa página pode mandar o agente exfiltrar segredos ou chamar APIs indevidas.</li>
+                <li class="fragment"><strong style="color: #50fa7b;">Mitigação:</strong> privilégio mínimo, domínio permitido (<em>allowlist</em>) e aprovação humana antes de ações sensíveis.</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 5.6: Teste de Estresse e Contornos -->
+        <section data-auto-animate>
+          <h2>Teste de Estresse: Login, 2FA e Contornos</h2>
+          <div class="pink-box" style="margin-bottom: 16px;">
+            <p style="margin: 0;">
+              <strong>Experimento rápido:</strong> peça ao agente (via <code>@playwright/mcp</code>) para acessar o SUAP e retornar o seu prontuário sem passar login e senha — e veja onde ele trava.
+            </p>
+          </div>
+          <multi-col cols="3" style="gap: 16px;">
+            <div class="checklist-panel fragment">
+              <h3 style="color: #8be9fd !important;">1. Estado Autenticado</h3>
+              <p>Humano faz login uma única vez e salva cookies/tokens via <code>storageState</code> do Playwright para o agente reutilizar com escopo restrito.</p>
+            </div>
+            <div class="checklist-panel fragment">
+              <h3 style="color: #50fa7b !important;">2. Migrar para API</h3>
+              <p>Se o serviço oferece API oficial, encapsule-a em um servidor MCP dedicado — menor custo, maior velocidade e contrato estável.</p>
+            </div>
+            <div class="checklist-panel fragment">
+              <h3 style="color: #f1fa8c !important;">3. Pausar para Humano</h3>
+              <p>Detectou desafio CAPTCHA ou 2FA? Em vez de entrar em loop infinito queimando tokens, o agente pausa e solicita intervenção humana.</p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 5.7: Exercício Completo — Extração de Livros + Documentação no AGENTS.md -->
+        <section data-auto-animate>
+          <h2>Prática Final: Extração de Livros + <code>AGENTS.md</code> Completo</h2>
+          <multi-col cols="1fr 1fr" style="gap: 16px; align-items: stretch;">
+            <div class="checklist-panel">
+              <h3 style="color: #8be9fd !important;">Parte 1 — Extração via Playwright MCP</h3>
+              <ol class="tight-list" style="margin-top: 6px;">
+                <li class="fragment">Peça ao agente para abrir <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a> com o Playwright MCP.</li>
+                <li class="fragment">Navegue por <strong>duas categorias</strong> à sua escolha (ex.: <em>Travel</em> e <em>Mystery</em>).</li>
+                <li class="fragment">Extraia <strong>categoria, título, preço e nota</strong> dos livros e salve em <code>livros.csv</code>.</li>
+                <li class="fragment">Peça um script Python rápido para validar o CSV (total de linhas, colunas e livro mais barato/caro).</li>
+              </ol>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #50fa7b !important;">Parte 2 — Documentar no <code>AGENTS.md</code></h3>
+              <ol class="tight-list" start="5" style="margin-top: 6px;">
+                <li class="fragment">Peça ao agente para <strong>documentar todo o projeto no <code>AGENTS.md</code></strong>: estrutura de arquivos, MCP configurado, Skills criadas e comandos de validação.</li>
+                <li class="fragment"><strong>Inspecione o <code>AGENTS.md</code></strong> final e ajuste manualmente o que achar necessário.</li>
+                <li class="fragment">Abra uma nova conversa (<code>/new</code>) e pergunte: <em>“Como funciona este projeto e o que já existe aqui?”</em></li>
+              </ol>
+            </div>
+          </multi-col>
+          <div class="green-box" style="margin-top: 10px; padding: 7px 12px;">
+            <p style="margin: 0; font-size: 0.54em;">
+              <strong>Fechando o ciclo:</strong> você integrou <strong>MCP</strong> (Playwright), <strong>Skills</strong> (procedimentos reutilizáveis) e <strong><code>AGENTS.md</code></strong> (documentação viva do projeto) em um fluxo completo!
+            </p>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 5 -->
+
+      <!-- ============================================================
+         Etapa 6: Memória em Escala, Produção e Dicas Práticas
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 6.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 6"
+            title="Em Escala: Memória, Produção e Dicas"
+            subtitle="RAG &amp; Graph RAG, integração com sistemas legados (HITL) e boas práticas do dia a dia">
+            <paper-card
+              compact
+              title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+              authors="Patrick Lewis et al. — Facebook AI Research"
+              venue="NeurIPS"
+              year="2020"
+              url="https://arxiv.org/abs/2005.11401">
+            </paper-card>
+          </section-banner>
+        </section>
+
+        <!-- Slide 6.2: Memória e RAG (Paper Seminal) -->
         <section data-auto-animate>
           <div class="title-with-paper">
             <h2>Memória Externa: RAG e Grafos (2020)</h2>
@@ -413,15 +1150,15 @@
             </div>
           </div>
           <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
-            <strong style="color: #50fa7b;">Retriever (memória externa):</strong> consulta bancos vetoriais ou grafos para resgatar trechos relevantes e memórias anteriores.
+            <strong style="color: #50fa7b;">Retriever (memória externa):</strong> consulta bancos vetoriais ou grafos para resgatar trechos relevantes quando o conhecimento não cabe no <code>AGENTS.md</code>.
           </p>
           <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            <strong style="color: #8be9fd;">Generator (LLM):</strong> gera a resposta fundamentada apenas no que foi recuperado — sem carregar tudo na janela.
+            <strong style="color: #8be9fd;">Generator (LLM):</strong> gera a resposta fundamentada apenas no que foi recuperado — sem inflar a janela de contexto.
           </p>
           <p class="source">Fonte: Lewis et al. (2020), <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener">RAG (arXiv:2005.11401), Fig. 1</a></p>
         </section>
 
-        <!-- Slide 1.8: Memória Vetorial vs. Memória em Grafo (Graph RAG) -->
+        <!-- Slide 6.3: Memória Vetorial vs. Memória em Grafo (Graph RAG) -->
         <section data-auto-animate>
           <h2>Memória Agêntica: Vetorial vs. Grafo (Graph RAG)</h2>
           <div style="text-align: center;">
@@ -446,7 +1183,7 @@
           <p class="source">Ilustração comparativa — Memória Vetorial (embeddings) vs. Graph RAG</p>
         </section>
 
-        <!-- Slide 1.9: Exemplo prático — Onde o RAG Vetorial falha e o Graph RAG acerta -->
+        <!-- Slide 6.4: Exemplo prático — Onde o RAG Vetorial falha e o Graph RAG acerta -->
         <section data-auto-animate>
           <h2>Na Prática: Onde o RAG Vetorial Falha (e o Grafo Resolve)</h2>
           <div class="yellow-box" style="padding: 8px 14px; margin-bottom: 12px;">
@@ -482,596 +1219,7 @@
           </multi-col>
         </section>
 
-        <!-- Slide 1.10: Skills + MCP (Complementares) -->
-        <section data-auto-animate>
-          <h2>Skills e MCP Trabalhando Juntos: O Manual e as Mãos</h2>
-          <div style="text-align: center;">
-            <div class="figure-card">
-              <div class="figure-stage">
-                <img src="images/aula14/mcp-vs-skills.jpg"
-                     alt="Infográfico comparando MCP como ferramentas conectadas à esquerda e Skills como procedimentos carregados sob demanda à direita"
-                     height="365" />
-                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
-                     style="left: 7%; top: 47%; width: 42%; height: 45%;"></div>
-                <div class="overlay-badge overlay-badge--dark fragment" data-fragment-index="1"
-                     style="left: 8%; top: 41.5%;">MCP = Serviço contínuo (ferramentas)</div>
-                <div class="annotate-box annotate-box--yellow fragment" data-fragment-index="2"
-                     style="left: 51%; top: 33%; width: 42%; height: 59%;"></div>
-                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="2"
-                     style="left: 51%; top: 27%;">Skill = Docs .md + Scripts determinísticos</div>
-              </div>
-            </div>
-          </div>
-          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            <strong>Skill sob demanda:</strong> o agente lê só o resumo no início e carrega <code>SKILL.md</code> + scripts (Python/shell) quando precisa — executando tarefas algorítmicas com rapidez e confiabilidade.
-          </p>
-          <p class="source">Fonte: ilustração conceitual baseada no padrão aberto <a href="https://agentskills.io/" target="_blank" rel="noopener">agentskills.io</a></p>
-        </section>
-
-        <!-- Slide 1.9: MCP - O USB-C dos Agentes -->
-        <section data-auto-animate>
-          <h2>MCP: O “USB-C” dos Agentes de IA</h2>
-          <div style="text-align: center;">
-            <div class="figure-card">
-              <div class="figure-stage">
-                <img src="images/aula14/mcp-usb-c-metafora.jpg"
-                     alt="Infográfico comparando conexões emaranhadas M vezes N sem padrão contra um barramento universal MCP M mais N"
-                     height="365" />
-                <div class="annotate-box annotate-box--pink fragment" data-fragment-index="1"
-                     style="left: 3%; top: 9%; width: 43%; height: 80%;"></div>
-                <div class="overlay-badge overlay-badge--pink fragment" data-fragment-index="1"
-                     style="left: 10%; top: 3%;">Sem padrão: M × N conectores</div>
-                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
-                     style="left: 52.5%; top: 9%; width: 44.5%; height: 80%;"></div>
-                <div class="overlay-badge overlay-badge--green fragment" data-fragment-index="2"
-                     style="left: 59%; top: 3%;">Com MCP: M + N (JSON-RPC)</div>
-              </div>
-            </div>
-          </div>
-          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            O <strong>Model Context Protocol (MCP)</strong> padroniza o acesso a bancos, navegadores e APIs — escreva o servidor uma vez e conecte em Mistral Vibe, OpenCode, Claude Code, Cursor ou VS Code.
-          </p>
-          <p class="source">Fonte: ilustração conceitual baseada na especificação oficial <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">modelcontextprotocol.io</a></p>
-        </section>
-
-        <!-- Slide 1.10: MCP por baixo dos panos (JSON-RPC) -->
-        <section data-auto-animate>
-                        <h2>MCP por Baixo dos Panos: Visão Geral</h2>
-                        <div class="green-box" style="padding: 10px 16px; margin: 12px auto; max-width: 900px;">
-                            <ol class="tight-list" style="font-size: 0.72em; margin: 0;">
-                                <li><strong>Conectar:</strong> cliente e serviço iniciam a sessão e negociam capacidades (<code>initialize</code>).</li>
-                                <li><strong>Descobrir:</strong> cliente pede ferramentas e esquemas (<code>tools/list</code>).</li>
-                                <li><strong>Escolher:</strong> o LLM recebe os nomes, descrições e parâmetros permitidos.</li>
-                                <li><strong>Executar:</strong> cliente envia a chamada MCP com argumentos validados (<code>tools/call</code>).</li>
-                                <li><strong>Retornar:</strong> serviço responde; cliente entrega o resultado ao LLM para compor a resposta.</li>
-                            </ol>
-                        </div>
-                        <p class="slide-takeaway">MCP padroniza a conversa entre cliente e serviço; o LLM decide quando usar cada ferramenta.</p>
-                        <p class="source">
-                            <a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">Arquitetura oficial do MCP</a>
-                        </p>
-                    </section>
-                    <section data-auto-animate>
-                        <h2>Uma chamada MCP, passo a passo</h2>
-                        <div class="figure-card" style="padding: 12px 18px; margin: 10px auto; width: 900px;background-color: #192420;">
-                            <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 0.6em;">
-                                <span class="yellow-box fragment" data-fragment-index="1">Handshake</span>
-                                <span class="cyan-box fragment" data-fragment-index="2">Descoberta</span>
-                                <span class="pink-box fragment" data-fragment-index="3">Esquema → LLM</span>
-                                <span class="green-box fragment" data-fragment-index="4">Tools/Call</span>
-                                <span class="yellow-box fragment" data-fragment-index="5">Resultado</span>
-                            </div>
-                        </div>
-                        <multi-col cols="1fr 1fr" style="gap: 14px; align-items: start;">
-                            <div style="font-size: 0.78em;">
-
-                                <div class="fragment yellow-box" data-fragment-index="1" style="display:flex;flex-direction:row;font-size:0.8em;width:400px;justify-content: space-between;">
-                                    <div><strong>LLM</strong> <code-block lang="json" class="terminal">{
-    "jsonrpc": "2.0", "id": 1,
-    "method": "initialize",
-    "params": { ... }
-    }
-                                    </code-block></div>
-                                    <div style="display:flex;flex-direction: column;align-items:end;"><strong>Servidor</strong><code-block lang="json" class="terminal">{
-  "jsonrpc": "2.0", "id": 1,
-  "result": { ... }
-}
-                                    </code-block></div>
-                                </div>
-                                <div class="fragment cyan-box" data-fragment-index="2" style="display:flex;flex-direction:row;font-size:0.8em;width:400px;justify-content: space-between;">
-                                    <div><strong>LLM</strong>
-                                    <code-block lang="json" class="terminal">{
-    "jsonrpc":"2.0",
-    "id":1,
-    "method":"tools/list"
-}
-                                    </code-block>
-                                    </div>
-                                    <div style="display:flex;flex-direction: column;align-items:end;"><strong>Servidor</strong> <code-block lang="json" class="terminal">{
-    tools: [
-        {
-            name:"browser_navigate",
-            inputSchema: {url: "string"}
-        }
-    ]
-}
-                                    </code-block></div>
-                            </div></div>
-                            <div class="compact-code" style="font-size: 0.78em;">
-                                <p class="fragment pink-box" data-fragment-index="3" style="width:420px;padding:10px">O cliente mostra o esquema ao LLM; o LLM escolhe a ferramenta e preenche <code>url</code>.</p>
-                                <div style="display:flex;width:100%;">
-                                <div class="fragment green-box" data-fragment-index="4">
-                                    <strong>LLM</strong>
-
-
-                                <code-block class="terminal" lang="json">{
-	"jsonrpc": "2.0",
-	"id": 2,
-	"method": "tools/call",
-	"params": {
-		"name": "browser_navigate",
-		"arguments": {
-			"url": "https://books.toscrape.com"
-		}
-	}
-}
-                                </code-block>
-                                </div>
-                                <div class="fragment yellow-box" data-fragment-index="5" style="display:flex;flex-direction: column;align-items:end;"><strong>Servidor</strong> <code-block class="terminal" lang="json">{
-	"jsonrpc": "2.0",
-	"id": 2,
-	"result": {
-		"content": [
-			{
-				"type": "text",
-				"text": "Página aberta"
-			}
-		]
-	}
-}
-</code-block></div>
-</div>
-                            </div>
-                        </multi-col>
-                        <p class="source">Exemplo didático de mensagens JSON-RPC; o retorno real depende da ferramenta.</p>
-                    </section>
-                </section>
-      </section><!-- fim Etapa 1 -->
-
-      <!-- ============================================================
-         Etapa 2: Setup e Primeiro Contato
-         ============================================================ -->
-      <section>
-
-        <!-- Slide 2.1: Banner -->
-        <section data-auto-animate>
-          <section-banner
-            eyebrow="Etapa 2"
-            title="Setup e Primeiro Contato"
-            subtitle="Mistral Vibe no terminal, VS Code e web, conta gratuita e contingência em laboratório">
-          </section-banner>
-        </section>
-
-        <!-- Slide 2.2: Instalação e Acesso ao Mistral Vibe -->
-        <section data-auto-animate>
-          <h2>Instalação e Acesso ao <code>Mistral Vibe</code></h2>
-          <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
-            <div class="compact-code">
-              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e iniciar na pasta do projeto</p>
-              <code-block lang="bash" data-trim>
-# Linux / macOS / WSL
-curl -LsSf https://mistral.ai/vibe/install.sh | bash
-
-# Ou via uv (cross-platform, inclui Windows)
-uv tool install --python 3.14 mistral-vibe
-				  
-# Ou via winget
-# winget install MistralAI.MistralVibe
-
-# Criar pasta limpa e iniciar o agente
-mkdir meu-projeto-agente
-cd meu-projeto-agente
-
-# --trust para confiar nesssa pasta 
-# --smart-approve para auto aprovar comandos seguros
-vibe --trust --smart-approve
-              </code-block>
-              <div style="margin-top: 10px;">
-                <a class="colab-pill" href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">
-                  Documentação Mistral Vibe ↗
-                </a>
-              </div>
-            </div>
-            <div>
-              <div class="checklist-panel" style="padding: 12px 15px;">
-                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que começar pelo Vibe?</h3>
-                <ul class="tight-list" style="margin-top: 6px;">
-                  <li><strong>Múltiplas interfaces:</strong><code>CLI</code> para terminal, extensão do <code>VS Code</code>, app <code>Desktop</code> ou <code>Web</code>.</li>
-                  <li><strong>Acesso gratuito simples:</strong> Plano gratuito com $10 por mês!</li>
-                  <li><strong>Padrões abertos:</strong> suporta nativamente <code>AGENTS.md</code>, <code>SKILLS</code>, <code>servidores MCP</code> e provedores compatíveis.</li>
-                </ul>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-		  <section data-auto-animate>
-          <h2>Instalação e Acesso ao <code>OpenCode</code></h2>
-          <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
-            <div class="compact-code">
-              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e iniciar na pasta do projeto</p>
-              <code-block lang="bash" data-trim>
-# Linux / macOS / WSL
-curl -fsSL https://opencode.ai/install | bash
-
-# Ou via npm / Brew (cross-platform, inclui Windows)
-npm install -g @opencode/cli
-
-# Criar pasta limpa e iniciar o agente
-mkdir meu-projeto-agente
-cd meu-projeto-agente
-
-# --auto aprova automaticamente ações 
-opencode --auto
-              </code-block>
-              <div style="margin-top: 10px;">
-                <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
-                  Documentação OpenCode ↗
-                </a>
-              </div>
-            </div>
-            <div>
-              <div class="checklist-panel" style="padding: 12px 15px;">
-                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que começar pelo OpenCode?</h3>
-                <ul class="tight-list" style="margin-top: 6px;">
-                  <li><strong>Múltiplas interfaces:</strong><code>TUI</code> nativa no terminal, extensão do <code>VS Code</code> e app <code>Desktop</code>.</li>
-                  <li><strong>Acesso gratuito simples:</strong> Modelos gratuitos integrados via <code>OpenCode Zen</code> ou conecte sua conta (Claude, ChatGPT, GitHub Copilot).</li>
-                  <li><strong>Padrões abertos:</strong> 100% open source, suporta nativamente <code>AGENTS.md</code>, <code>LSP</code>, <code>servidores MCP</code> e +75 provedores.</li>
-                </ul>
-              </div>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- Slide 2.3: Exercício Guiado de Aquecimento -->
-        <section data-auto-animate>
-          <h2>Aquecimento Prático: Do Zero ao <code>AGENTS.md</code></h2>
-          <multi-col cols="1fr 1fr" style="gap: 16px; align-items: stretch;">
-            <div class="checklist-panel" style="padding: 10px 14px;">
-              <h3 style="color: #8be9fd !important; font-size: 19pt !important; margin-bottom: 6px !important;">Parte 1 — Criar e Testar</h3>
-              <ol class="tight-list" style="margin-top: 4px;">
-                <li>Rode <code>vibe</code> em uma <strong>nova pasta</strong> (ou abra a extensão no VS Code) e conclua o login inicial.</li>
-                <li>Confirme o <strong>modelo gratuito</strong> ativo na sessão (ou ajuste nas configurações).</li>
-                <li>Peça ao agente um <strong>script em Python</strong> simples (ex.: conversor ou gerador de senhas).</li>
-                <li>Teste manualmente rodando <code>python &lt;script.py&gt;</code>.</li>
-              </ol>
-            </div>
-            <div class="checklist-panel" style="padding: 10px 14px;">
-              <h3 style="color: #50fa7b !important; font-size: 19pt !important; margin-bottom: 6px !important;">Parte 2 — Quebrar, Corrigir e Documentar</h3>
-              <ol class="tight-list" start="5" style="margin-top: 4px;">
-                <li>Edite o script <strong>na mão</strong> inserindo um bug (ex.: apague aspas, parêntese ou quebre a indentação).</li>
-                <li>Inicie uma <strong>nova conversa</strong> (<code>/new</code>) para zerar a memória e peça para ele <strong>corrigir o bug</strong>.</li>
-                <li>Rode <code>python &lt;script.py&gt;</code> novamente e confirme o funcionamento.</li>
-                <li>Inicie outro <code>/new</code> e peça para documentar o projeto criando o <code>AGENTS.md</code>.</li>
-              </ol>
-            </div>
-          </multi-col>
-          <div class="green-box" style="margin-top: 8px; padding: 6px 12px;">
-            <p style="margin: 0; font-size: 0.52em;">
-              <strong>O que observar:</strong> mesmo em conversa nova (sem lembrar do código), o agente aplica o loop <strong>ReAct</strong> — lê o arquivo, executa, vê o erro real e corrige.
-            </p>
-          </div>
-        </section>
-
-        <!-- Slide 2.4: Alternativas gratuitas (Plano B e C) -->
-        <section data-auto-animate>
-          <h2>Plano B e C: Contingência no Laboratório</h2>
-          <p style="margin-bottom: 6px; font-size: 0.62em;">
-            Com <em>Network Address Translation</em> (NAT), várias máquinas saem pelo mesmo IP público e podem sofrer <em>rate limit</em> simultâneo.
-          </p>
-          <table class="comparison-table compact-table">
-            <thead>
-              <tr>
-                <th style="width: 21%;">Ferramenta</th>
-                <th style="width: 14%;">Papel</th>
-                <th style="width: 34%;">Diferencial Técnico</th>
-                <th>Quando migrar</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong style="color: #50fa7b;">Mistral Vibe</strong></td>
-                <td>Principal</td>
-                <td>Skills nativas (comandos <code>/</code>), MCP, terminal, VS Code e web</td>
-                <td>Uso padrão no laboratório</td>
-              </tr>
-              <tr>
-                <td><strong style="color: #8be9fd;">OpenCode</strong></td>
-                <td>Plano B</td>
-                <td>Modelos gratuitos nativos, interface web (<code>opencode serve</code>) e MCP</td>
-                <td>Falha local ou limite da conta Mistral</td>
-              </tr>
-              <tr>
-                <td style="border-bottom: 1px solid;"><strong style="color: #f1fa8c;">Gemini CLI</strong></td>
-                <td style="border-bottom: 1px solid;">Plano C</td>
-                <td style="border-bottom: 1px solid;">Open-source; cota gratuita por conta Google individual</td>
-                <td style="border-bottom: 1px solid;">Bloqueio por IP compartilhado</td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
-
-      </section><!-- fim Etapa 2 -->
-
-      <!-- ============================================================
-         Etapa 3: Prática I — Skills e MCP
-         ============================================================ -->
-      <section>
-
-        <!-- Slide 3.1: Banner -->
-        <section data-auto-animate>
-          <section-banner
-            eyebrow="Etapa 3"
-            title="Prática I: Skills, Memória e MCP"
-            subtitle="Configurando o próprio agente com Vibe Coding: AGENTS.md, Skills e Playwright MCP">
-          </section-banner>
-        </section>
-
-        <!-- Slide 3.2: Criando uma Skill -->
-        <section data-auto-animate>
-          <h2>Criando <code>AGENTS.md</code> e Skills via Vibe Coding</h2>
-          <multi-col cols="0.88fr 1.22fr" style="gap: 20px; align-items: start;">
-            <div>
-              <p style="color: #f1fa8c; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Estrutura no projeto</p>
-              <pre class="file-tree" style="font-size: 0.52em; padding: 10px 14px;">AGENTS.md
-.vibe/
-└── skills/
-    └── code-review-turma/
-        ├── SKILL.md
-        ├── references/
-        └── scripts/check.py</pre>
-              <div class="pink-box" style="margin-top: 8px; padding: 7px 11px;">
-                <p style="margin: 0; font-size: 0.54em;">
-                  <strong>Vibe Coding na configuração:</strong> você não precisa escrever <code>AGENTS.md</code>, memórias, <code>SKILL.md</code> ou scripts na mão — <strong>peça ao próprio agente</strong> para criá-los e testá-los.
-                </p>
-              </div>
-              <div class="green-box" style="margin-top: 8px; padding: 7px 11px;">
-                <p style="margin: 0; font-size: 0.54em;">
-                  <strong>Desafio:</strong> peça ao agente para criar a Skill de <em>Code Review</em> (+ script Python auxiliar) e invocá-la em um módulo do projeto.
-                </p>
-              </div>
-            </div>
-            <div class="compact-code">
-              <code-block lang="markdown" data-trim data-line-numbers="1-15|1-5|7-15">
----
-name: code-review-turma
-description: >
-  Usar ao revisar código, padronizar funções
-  ou documentar módulos do projeto.
----
-
-# Padrão de Revisão da Turma
-
-1. Executar `python scripts/check.py` (segredos/lint).
-2. Garantir tratamento explícito de erros.
-3. Adicionar docstring em funções públicas.
-4. Validar teste unitário para o módulo.
-5. Listar riscos antes de aplicar edições.
-              </code-block>
-              <p style="font-size: 0.52em; color: #b8b8c8; margin-top: 6px;">
-                Metadados YAML são lidos no início; o corpo e os scripts entram em ação só quando a Skill é ativada.
-              </p>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- Slide 3.3: Plugando Playwright MCP -->
-        <section data-auto-animate>
-          <h2>Plugando o <code>@playwright/mcp</code></h2>
-          <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: start;">
-            <div class="compact-code">
-              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Arquivo <code>.vibe/config.toml</code> no projeto</p>
-              <code-block lang="toml" data-trim data-line-numbers="1-6|2-6">
-# .vibe/config.toml (ou ~/.vibe/config.toml)
-[[mcp_servers]]
-name = "playwright"
-transport = "stdio"
-command = "npx"
-args = ["-y", "@playwright/mcp@latest"]
-              </code-block>
-              <div style="margin-top: 8px;">
-                <a class="colab-pill" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">
-                  Repositório @playwright/mcp ↗
-                </a>
-              </div>
-            </div>
-            <div>
-              <div class="green-box" style="padding: 8px 12px;">
-                <p style="margin-top: 0; font-size: 0.64em;"><strong>Desafio Prático</strong></p>
-                <ol class="compact-list">
-                  <li class="fragment">Peça ao próprio agente (via <strong>Vibe Coding</strong>) para configurar o <code>.vibe/config.toml</code> (ou rode <code>vibe mcp add</code>) e reinicie o <code>vibe</code>.</li>
-                  <li class="fragment">Peça para abrir <code>books.toscrape.com</code>.</li>
-                  <li class="fragment">Navegue em duas categorias e salve <strong>categoria, título, preço e nota</strong> em <code>livros.csv</code>.</li>
-                </ol>
-              </div>
-              <p style="font-size: 0.52em; color: #b8b8c8; margin-top: 8px;">
-                Ferramentas expostas: <code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code> e <code>browser_type</code>.
-              </p>
-            </div>
-          </multi-col>
-        </section>
-
-      </section><!-- fim Etapa 3 -->
-
-      <!-- ============================================================
-         Etapa 4: Prática II — Automação Web e Limites
-         ============================================================ -->
-      <section>
-
-        <!-- Slide 4.1: Banner -->
-        <section data-auto-animate>
-          <section-banner
-            eyebrow="Etapa 4"
-            title="Prática II: Automação Web e Limites"
-            subtitle="Playwright vs. Selenium, Accessibility Snapshots, CAPTCHAs e segurança">
-            <paper-card
-              compact
-              title="Not what you've signed up for: Indirect Prompt Injection"
-              authors="Greshake, Abdelnabi, Mishra, Endres, Holz, Fritz"
-              venue="AISec / arXiv"
-              year="2023"
-              url="https://arxiv.org/abs/2302.12173">
-            </paper-card>
-          </section-banner>
-        </section>
-
-        <!-- Slide 4.2: O que o Playwright MCP envia ao LLM -->
-        <section data-auto-animate>
-          <h2>Como o Agente Enxerga a Web: Accessibility Snapshot</h2>
-          <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: center;">
-            <div style="text-align: center;">
-              <div class="figure-card">
-                <img src="images/aula14/books-toscrape-real.jpg"
-                     alt="Captura de tela real do site de testes Books to Scrape exibindo categorias e livros"
-                     width="465" />
-              </div>
-              <p class="source">Captura real: <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a></p>
-            </div>
-            <div>
-              <p style="color: #50fa7b; font-weight: 700; margin-bottom: 6px;">Saída de <code>browser_snapshot</code></p>
-              <pre class="terminal" style="font-size: 0.44em; line-height: 1.48; width: auto; box-shadow: none; margin: 0;">- link "Books to Scrape" [ref=e1]
-- link "Home" [ref=e2]
-- link "Travel" [ref=e4]
-- link "Mystery" [ref=e5]
-- heading "All products" [ref=e22]
-- link "A Light in the Attic" [ref=e25]
-- link "Tipping the Velvet" [ref=e28]
-→ browser_click(ref="e4")</pre>
-              <p style="font-size: 0.62em; margin-top: 12px;">
-                A árvore de acessibilidade entrega <strong>elementos semânticos com <code>ref</code> determinístico</strong> — sem screenshots caros nem seletores CSS frágeis.
-              </p>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- Slide 4.3: Playwright vs Selenium (Gráfico Real) -->
-        <section data-auto-animate>
-          <h2>Por que Playwright Leva Vantagem sobre Selenium</h2>
-          <div style="text-align: center;">
-            <div class="figure-card">
-              <img src="images/aula14/tokens-navegacao-comparativo.png"
-                   alt="Gráfico de barras comparando custo em tokens de HTML bruto, screenshot de visão e Accessibility Snapshot no books.toscrape.com"
-                   height="365" />
-            </div>
-          </div>
-          <p class="slide-takeaway">
-            <strong style="color: #50fa7b;">Playwright (<code>@playwright/mcp</code>):</strong> <em>auto-waiting</em> nativo para <em>Single-Page Applications</em> (SPAs), ~16× menos tokens que DOM bruto e cliques por <code>ref</code> (vs. XPath/CSS manuais no Selenium).
-          </p>
-          <p class="source">Fonte: medição real em <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a> (51.274 caracteres de HTML vs. 95 nós semânticos)</p>
-        </section>
-
-        <!-- Slide 4.4: Limitações Reais na Web vs API Oficial -->
-        <section data-auto-animate>
-          <h2>Onde a Automação Web Trava (e Quando Usar API)</h2>
-          <div style="text-align: center;">
-            <div class="figure-card">
-              <div class="figure-stage">
-                <img src="images/aula14/barreiras-web-vs-api.jpg"
-                     alt="Ilustração comparando agente de navegador bloqueado por CAPTCHA, fingerprinting e 2FA versus tráfego direto em API oficial"
-                     height="365" />
-                <div class="annotate-box annotate-box--orange fragment" data-fragment-index="1"
-                     style="left: 24%; top: 15%; width: 50%; height: 43%;"></div>
-                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="1"
-                     style="left: 27%; top: 7%;">CAPTCHA • Fingerprinting • Login 2FA</div>
-                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
-                     style="left: 28%; top: 58%; width: 51%; height: 22%;"></div>
-                <div class="overlay-badge overlay-badge--green fragment" data-fragment-index="2"
-                     style="left: 33%; top: 82%;">Via expressa: API oficial (REST / GraphQL)</div>
-              </div>
-            </div>
-          </div>
-          <p class="slide-takeaway fragment" data-fragment-index="1">
-            <strong style="color: #ffb86c;">Barreiras reais:</strong> Cloudflare Turnstile, reCAPTCHA, detecção de automação e autenticação em dois fatores (2FA).
-          </p>
-          <p class="slide-takeaway fragment" data-fragment-index="2">
-            <strong style="color: #50fa7b;">Regra de ouro:</strong> agente navegando no browser <strong>não substitui uma API oficial</strong> quando ela existe.
-          </p>
-          <p class="source">Ilustração elaborada para a disciplina — arquitetura de integração web</p>
-        </section>
-
-        <!-- Slide 4.5: Risco Crítico — Indirect Prompt Injection -->
-        <section data-auto-animate>
-          <div class="title-with-paper">
-            <h2>Segurança: Indirect Prompt Injection (2023)</h2>
-            <paper-card
-              compact
-              title="Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
-              authors="Greshake et al."
-              venue="AISec"
-              year="2023"
-              url="https://arxiv.org/abs/2302.12173">
-            </paper-card>
-          </div>
-          <multi-col cols="1.05fr 1fr" style="gap: 24px; align-items: center;">
-            <div style="text-align: center;">
-              <div class="figure-card">
-                <img src="images/aula14/paper-ipi-fig1.png"
-                     alt="Figura 1 do artigo de Greshake et al. mostrando prompts maliciosos em páginas recuperadas sequestrando a saída do agente"
-                     height="345" />
-              </div>
-              <p class="source">Fonte: Greshake et al. (2023), <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">arXiv:2302.12173, Fig. 1</a></p>
-            </div>
-            <div>
-              <ul class="compact-list">
-                <li class="fragment"><strong style="color: #ff79c6;">Dados viram comandos:</strong> LLMs não separam rigidamente texto lido de instruções do sistema.</li>
-                <li class="fragment"><strong style="color: #f1fa8c;">Ataque remoto:</strong> um comentário oculto ou HTML invisível numa página pode mandar o agente exfiltrar segredos ou chamar APIs indevidas.</li>
-                <li class="fragment"><strong style="color: #50fa7b;">Mitigação:</strong> privilégio mínimo, domínio permitido (<em>allowlist</em>) e aprovação humana antes de ações sensíveis.</li>
-              </ul>
-            </div>
-          </multi-col>
-        </section>
-
-        <!-- Slide 4.6: Prática II — Teste de Estresse -->
-        <section data-auto-animate>
-          <h2>Prática II: Teste de Estresse e Contornos</h2>
-          <div class="pink-box" style="margin-bottom: 16px;">
-            <p style="margin: 0;">
-              <strong>Experimento:</strong> peça ao agente (via <code>@playwright/mcp</code>) para acessar o SUAP e retornar o seu prontuário sem passar login e senha e veja o que acontece.
-            </p>
-          </div>
-          <multi-col cols="3" style="gap: 16px;">
-            <div class="checklist-panel fragment">
-              <h3 style="color: #8be9fd !important;">1. Estado Autenticado</h3>
-              <p>Humano faz login uma única vez e salva cookies/tokens via <code>storageState</code> do Playwright para o agente reutilizar com escopo restrito.</p>
-            </div>
-            <div class="checklist-panel fragment">
-              <h3 style="color: #50fa7b !important;">2. Migrar para API</h3>
-              <p>Se o serviço oferece API oficial, encapsule-a em um servidor MCP dedicado — menor custo, maior velocidade e contrato estável.</p>
-            </div>
-            <div class="checklist-panel fragment">
-              <h3 style="color: #f1fa8c !important;">3. Pausar para Humano</h3>
-              <p>Detectou desafio CAPTCHA ou 2FA? Em vez de entrar em loop infinito queimando tokens, o agente pausa e solicita intervenção humana.</p>
-            </div>
-          </multi-col>
-        </section>
-
-      </section><!-- fim Etapa 4 -->
-
-      <!-- ============================================================
-         Etapa 5: Integração em Sistemas Reais
-         ============================================================ -->
-      <section>
-
-        <!-- Slide 5.1: Banner -->
-        <section data-auto-animate>
-          <section-banner
-            eyebrow="Etapa 5"
-            title="Integração em Sistemas Reais"
-            subtitle="Sistemas legados, automação assíncrona, Human-in-the-Loop e produção">
-          </section-banner>
-        </section>
-
-        <!-- Slide 5.2: Arquitetura de Produção com HITL -->
+        <!-- Slide 6.5: Arquitetura de Produção com HITL -->
         <section data-auto-animate>
           <h2>Plugando Agentes em Sistemas Existentes</h2>
           <div style="text-align: center;">
@@ -1101,7 +1249,7 @@ args = ["-y", "@playwright/mcp@latest"]
           <p class="source">Elaboração própria — arquitetura de referência para agentes corporativos</p>
         </section>
 
-        <!-- Slide 5.3: Engenharia em Produção (Custos, Segurança, Evals) -->
+        <!-- Slide 6.6: Engenharia em Produção (Custos, Segurança, Evals) -->
         <section data-auto-animate>
           <h2>Checklist de Engenharia para Produção</h2>
           <multi-col cols="2" style="gap: 18px; margin-top: 14px;">
@@ -1124,23 +1272,7 @@ args = ["-y", "@playwright/mcp@latest"]
           </multi-col>
         </section>
 
-      </section><!-- fim Etapa 5 -->
-
-      <!-- ============================================================
-         Etapa 6: Dicas Práticas no Dia a Dia
-         ============================================================ -->
-      <section>
-
-        <!-- Slide 6.1: Banner -->
-        <section data-auto-animate>
-          <section-banner
-            eyebrow="Etapa 6"
-            title="Dicas Práticas no Dia a Dia"
-            subtitle="Skills determinísticas, estratégia de modelos, KV Cache e subagentes">
-          </section-banner>
-        </section>
-
-        <!-- Slide 6.2: Ecossistema, Vibe Coding e Skills Determinísticas -->
+        <!-- Slide 6.7: Dicas Práticas — Skills e Scripts Determinísticos -->
         <section data-auto-animate>
           <h2>Dicas Práticas: Skills, MCPs e Scripts Determinísticos</h2>
           <multi-col cols="1fr 1fr" style="gap: 18px; margin-top: 12px;">
@@ -1161,7 +1293,7 @@ args = ["-y", "@playwright/mcp@latest"]
           </div>
         </section>
 
-        <!-- Slide 6.3: Estratégia de Modelos, Plan vs. Build e KV Cache -->
+        <!-- Slide 6.8: Dicas Práticas — Modelos, Plan vs. Build e KV Cache -->
         <section data-auto-animate>
           <h2>Dicas Práticas: Modelos, <em>Plan vs. Build</em> e KV Cache</h2>
           <multi-col cols="1fr 1fr" style="gap: 18px; margin-top: 10px;">
@@ -1182,7 +1314,7 @@ args = ["-y", "@playwright/mcp@latest"]
           </div>
         </section>
 
-        <!-- Slide 6.4: Subagentes e Higiene de Contexto -->
+        <!-- Slide 6.9: Dicas Práticas — Subagentes e Higiene de Contexto -->
         <section data-auto-animate>
           <h2>Dicas Práticas: Subagentes e Higiene de Contexto</h2>
           <multi-col cols="1fr 1fr" style="gap: 18px; margin-top: 12px;">
@@ -1209,11 +1341,11 @@ args = ["-y", "@playwright/mcp@latest"]
       <section data-auto-animate>
         <h2>Resumo da Aula</h2>
         <ls-u font-size="19">
-          <li><strong>Loop agêntico (ReAct) &amp; Desacoplamento:</strong> o agente é independente do LLM — você troca o modelo mantendo ferramentas, Skills e MCPs.</li>
-          <li><strong>5 Pilares complementares:</strong> Contexto (sessão), Memória simples (<code>.md</code>), RAG + Grafos (bancos sob demanda), Skills (<code>SKILL.md</code> + scripts determinísticos) e MCP (serviço contínuo JSON-RPC).</li>
-          <li><strong>Vibe Coding na configuração:</strong> use o próprio agente para criar e evoluir <code>AGENTS.md</code>, memórias, Skills com scripts Python e arquivos MCP.</li>
-          <li><strong>Playwright MCP &amp; limites:</strong> <em>Accessibility Snapshots</em> economizam tokens, mas CAPTCHAs, 2FA e <em>Indirect Prompt Injection</em> exigem engenharia — nunca substitua uma API oficial.</li>
-          <li><strong>Boas práticas &amp; produção:</strong> configure com modelos fortes (<em>Plan</em>), opere com leves (<em>Build</em>), preserve o KV Cache, use subagentes e exija <strong>Human-in-the-Loop</strong> em ações destrutivas.</li>
+          <li><strong>Loop agêntico (ReAct) &amp; Desacoplamento:</strong> o agente é independente do LLM — você troca o modelo mantendo <code>AGENTS.md</code>, Skills e MCPs.</li>
+          <li><strong><code>AGENTS.md</code> na prática:</strong> arquivo de instruções gerais que documenta a estrutura do projeto e define estilo e comportamento entre conversas.</li>
+          <li><strong>MCP (Model Context Protocol):</strong> protocolo padronizado (JSON-RPC) para o agente conversar via LLM com ferramentas externas ou internas (como o Playwright no Chrome real).</li>
+          <li><strong>Agent Skills:</strong> documentos <code>.md</code> + scripts para padronizar estilo e procedimentos repetitivos — criadas manualmente, por Vibe Coding ou de forma mista.</li>
+          <li><strong>Automação, Escala &amp; Produção:</strong> respeite limites da web (CAPTCHA, 2FA, IPI), use RAG/Grafos para memória longa e exija <strong>Human-in-the-Loop</strong> em ações destrutivas.</li>
         </ls-u>
       </section>
 
@@ -1226,7 +1358,7 @@ args = ["-y", "@playwright/mcp@latest"]
           <li>Greshake, K. et al. (2023). <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">Not what you've signed up for: Indirect Prompt Injection</a>. ACM AISec 2023.</li>
           <li>Model Context Protocol — <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">Especificação Oficial (modelcontextprotocol.io)</a>.</li>
           <li>Agent Skills Standard — <a href="https://agentskills.io/" target="_blank" rel="noopener">Especificação Aberta de Skills (agentskills.io)</a>.</li>
-          <li>Microsoft — <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP Server (@playwright/mcp)</a> e ambiente de prática <a href="https://books.toscrape.com/" target="_blank" rel="noopener">Books to Scrape</a>.</li>
+          <li>Microsoft — <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP Server (@playwright/mcp)</a> e sites de prática <a href="https://coinmarketcap.com/" target="_blank" rel="noopener">CoinMarketCap</a> e <a href="https://books.toscrape.com/" target="_blank" rel="noopener">Books to Scrape</a>.</li>
           <li>Ferramentas práticas: <a href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">Mistral Vibe</a>, <a href="https://opencode.ai/docs" target="_blank" rel="noopener">OpenCode</a> e <a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">Gemini CLI</a>.</li>
         </ul>
       </section>
