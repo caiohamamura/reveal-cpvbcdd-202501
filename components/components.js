@@ -599,6 +599,85 @@ const reveald3PlotComponent = {
   `
 };
 
+const sectionBannerComponent = {
+  props: {
+    title: { type: String, required: true },
+    subtitle: { type: String, default: '' },
+    eyebrow: { type: String, default: '' },
+    align: { type: String, default: 'right' },
+    titleSize: { type: [Number, String], default: 36 },
+    bg: { type: String, default: '../img/fundo.png' },
+  },
+  computed: {
+    heroStyle() {
+      return { backgroundImage: `url('${this.bg}')` };
+    },
+    titleStyle() {
+      return {
+        fontSize: `${this.titleSize}pt`,
+        textAlign: this.align === 'left' ? 'left' : 'right',
+      };
+    },
+    subtitleStyle() {
+      return {
+        textAlign: this.align === 'left' ? 'left' : 'right',
+      };
+    },
+  },
+  /*html*/
+  template: `
+    <div class="section-banner">
+      <div class="section-banner__hero" :style="heroStyle">
+        <p v-if="eyebrow" class="section-banner__eyebrow">{{ eyebrow }}</p>
+        <div class="section-banner__media">
+          <slot></slot>
+        </div>
+        <h2 class="section-banner__title" :style="titleStyle" v-html="title"></h2>
+      </div>
+      <div class="section-banner__footer">
+        <p v-if="subtitle" class="section-banner__subtitle" :style="subtitleStyle" v-html="subtitle"></p>
+      </div>
+    </div>
+  `,
+};
+
+const paperCardComponent = {
+  props: {
+    title: { type: String, required: true },
+    authors: { type: String, default: '' },
+    venue: { type: String, default: '' },
+    year: { type: [String, Number], default: '' },
+    url: { type: String, default: '' },
+    compact: { type: Boolean, default: false },
+  },
+  computed: {
+    hasDefaultSlot() {
+      return Boolean(this.$slots.default);
+    },
+    venueLine() {
+      if (this.venue && this.year) return `${this.venue} (${this.year})`;
+      return this.venue || (this.year ? String(this.year) : '');
+    },
+  },
+  /*html*/
+  template: `
+    <div :class="['paper-card', { 'paper-card--compact': compact }]">
+      <hr class="paper-card__rule" />
+      <p class="paper-card__title">{{ title }}</p>
+      <hr class="paper-card__rule--thin" />
+      <p v-if="authors" class="paper-card__authors">{{ authors }}</p>
+      <p v-if="venueLine || url" class="paper-card__venue">
+        <span v-if="venueLine">{{ venueLine }}</span>
+        <span v-if="venueLine && url"> — </span>
+        <a v-if="url" :href="url" target="_blank" rel="noopener">Artigo original ↗</a>
+      </p>
+      <div v-if="hasDefaultSlot" class="paper-card__abstract">
+        <slot></slot>
+      </div>
+    </div>
+  `,
+};
+
 function initializeComponents(app) {
   app.component('copy-btn', copyBtnComponent);
   app.component('code-block', codeBlockComponent);
@@ -611,6 +690,8 @@ function initializeComponents(app) {
   app.component('poll-question', pollQuestionComponent);
   app.component('plotly-figure', plotlyFigureComponent);
   app.component('reveald3-plot', reveald3PlotComponent);
+  app.component('section-banner', sectionBannerComponent);
+  app.component('paper-card', paperCardComponent);
 }
 
 

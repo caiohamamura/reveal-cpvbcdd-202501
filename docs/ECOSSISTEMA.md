@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este repositório é um **framework de apresentação educacional** construído sobre o Reveal.js, extensivamente customizado para suportar aulas interativas de programação, banco de dados e IoT no IFSP Capivari. O ecossistema integra múltiplas bibliotecas para criar slides com código destacado, componentes Vue.js, animações, e suporte a SQL animado.
+Este repositório é um **framework de apresentação educacional** construído sobre o Reveal.js, extensivamente customizado para suportar aulas interativas de Inteligência Artificial, Ciência de Dados, Banco de Dados e IoT no IFSP Capivari. O ecossistema integra múltiplas bibliotecas para criar slides ilustrados com figuras anotadas, código destacado, componentes Vue.js, gráficos RevealD3/Plotly e animações.
 
 ---
 
@@ -145,6 +145,30 @@ Os componentes `components.js` e `header1.js` detectam `window.app` e se auto-re
 - Logo IFSP + dados do professor no rodapé
 - Slot para imagens extras
 - Atualiza `<title>` da página automaticamente
+
+#### `section-banner` — Divisor de Seção Estilo IFSP
+```html
+<section-banner
+  eyebrow="Etapa 2"
+  title="O histórico até o Stable Diffusion"
+  subtitle="Dos Autoencoders (2006) à Difusão Latente (2022)">
+  <!-- Slot opcional: figura ou <paper-card compact> -->
+</section-banner>
+```
+**Props:** `title` (obrigatório), `subtitle`, `eyebrow`, `align` (`right` padrão ou `left`), `title-size` (padrão `36`), `bg` (padrão `../img/fundo.png`).
+
+#### `paper-card` — Cartão de Artigo Seminal
+```html
+<paper-card
+  title="Auto-Encoding Variational Bayes"
+  authors="Diederik P. Kingma, Max Welling"
+  venue="ICLR"
+  year="2013"
+  url="https://arxiv.org/abs/1312.6114">
+  <p><mark class="paper-mark fragment">Trecho-chave destacado progressivamente...</mark></p>
+</paper-card>
+```
+**Props:** `title` (obrigatório), `authors`, `venue`, `year`, `url`, `compact` (booleano para âncora compacta ao lado de `<h2>` usando `.title-with-paper`).
 
 #### `code-inline` — Bloco de Código Inline
 ```html
@@ -369,7 +393,7 @@ No HTML separado (`aulas/meu-grafico.html`), carregue Plotly.js e defina as tran
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path("..") / ".opencode" / "skills" / "export-plots" / "scripts"))
+sys.path.append(str(Path("..") / ".agents" / "skills" / "export-plots" / "scripts"))
 from export_reveald3_plotly import export_reveald3_plotly
 
 export_reveald3_plotly(
@@ -382,7 +406,7 @@ export_reveald3_plotly(
 Pelo terminal, exporte uma lista de `fig.to_dict()` para JSON e rode:
 
 ```bash
-python ../.opencode/skills/export-plots/scripts/export_reveald3_plotly.py plot_steps.json --output aulas/meu-grafico.html
+python3 .agents/skills/export-plots/scripts/export_reveald3_plotly.py plot_steps.json --output aulas/meu-grafico.html
 ```
 
 #### `plotly-figure` — Gráficos Plotly.js inline
@@ -514,6 +538,11 @@ Otimizado para mostrar mudanças graduais em código SQL.
 | `.terminal` | Estilo de console com fonte monospace |
 | `.pill` | Badge/tag arredondada colorida |
 | `.multi-col > *` / `div:has(> pre.code-wrapper)` | Fix global de overflow e min-width (scroll horizontal) para o `code-block` dentro de colunas |
+| `.figure-card` | Moldura branca com sombra suave para diagramas/figuras de artigos e gráficos de fundo claro |
+| `.figure-stage` + `.annotate-box` + `.annotate-svg` | Palco relativo para destaques translúcidos (`--yellow`, `--pink`, `--green`, `--cyan`, `--orange`) e setas SVG sobre figuras |
+| `.formula-stage` + `.formula-term` + `.formula-caption` | Decomposição progressiva de equações KaTeX com legendas intuitivas por cor |
+| `.title-with-paper` | Cabeçalho flex pareando `<h2>` com `<paper-card compact>` |
+| `.slide-takeaway` / `.colab-pill` / `p.source` | Frase-síntese abaixo de figura, pílula de link para Colab/notebook e legenda padronizada de fonte (`11pt`) |
 
 ### Temas Disponíveis
 Os 12 temas do Reveal.js estão em `dist/theme/`:
@@ -654,7 +683,7 @@ Biblioteca `plugin/leader-line.min.js` para desenhar linhas/setas SVG entre elem
 ## Chalkboard Plugin (Quadro Branco Interativo)
 
 ### Visão Geral
-O plugin `chalkboard` permite desenhar直接在 nos slides — funciona como um quadro branco virtual com caneta multicores, borracha e quadro de anotações. **Usa SOMENTE a versão local** em `plugin/chalkboard/` — a versão CDN não tem as customizações.
+O plugin `chalkboard` permite desenhar diretamente nos slides — funciona como um quadro branco virtual com caneta multicores, borracha e quadro de anotações. **Usa SOMENTE a versão local** em `plugin/chalkboard/` — a versão CDN não tem as customizações.
 
 ### Arquivos
 ```

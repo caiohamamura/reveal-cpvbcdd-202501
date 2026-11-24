@@ -1,105 +1,35 @@
-# AGENTS.md — Ciência de Dados (IFSP Capivari)
+# AGENTS.md — Ciência de Dados (`ciencia-dados/`)
 
-Subagent for the Data Science course within the Reveal.js slide framework.
+Course-specific guidelines for **Ciência de Dados** decks, notebooks, and interactive plots. Follows root `../AGENTS.md`, `export-plots`, `run-notebook`, `create-slides`, and `slide-design`.
 
-## Course Scope
+## Directory Layout
 
-4 slide decks covering supervised learning, clustering, anomaly detection, and dimensionality reduction.
+- `*.html` — Reveal.js decks (`aula-09-projeto-completo.html`, `aula12-cluster-analysis.html`, `aula13-deteccao-anomalias.html`, `pca-e-lda.html`, etc.).
+- `notebooks/` — Source `.ipynb` notebooks, Python helper scripts, and R plot refinement scripts (`Rscript fix_plots.R`).
+- `aulas/` — Standalone RevealD3 + Plotly HTML plots loaded via `<reveald3-plot>`.
+- `images/` — Versioned static plots and visual assets.
 
-```
-ciencia-dados/
-├── AGENTS.md                         # This file
-├── aula-09-projeto-completo.html     # ML pipeline (supervised)
-├── aula12-cluster-analysis.html      # K-Means, hierarchical clustering
-├── aula13-deteccao-anomalias.html    # Isolation Forest, LOF, novelty detection
-├── pca-e-lda.html                    # PCA, LDA, feature reduction
-├── notebooks/                        # Jupyter notebooks + R scripts
-│   ├── aula-09-projeto-completo.ipynb
-│   ├── aula12_clustering.ipynb
-│   ├── aula13-deteccao-anomalias.ipynb
-│   ├── aula13-gerar-figuras.ipynb
-│   ├── aula13-ilustracoes-algoritmos.ipynb
-│   └── *.R                           # Plot refinement scripts
-├── images/                           # Extracted plots for slides
-└── aulas/                            # Sub-lesson content
-```
+## Course-Specific Patterns
 
-## Key Commands
+- **Interactive Plotly charts (default)**: Use RevealD3 (`../plugin/reveald3/reveald3.js`) + `<reveald3-plot file="aulas/<plot>.html" width="780px" height="460px">` generated with:
+  ```bash
+  python3 .agents/skills/export-plots/scripts/export_reveald3_plotly.py plot_steps.json --output ciencia-dados/aulas/<plot>.html
+  ```
+  - Define `_transitions` inside the iframe HTML and use `Plotly.animate()` with stable trace `uid`s for step-by-step updates; do not fall back to `Plotly.react()` when only styling/positions/annotations change.
+  - Use `<plotly-figure>` only when maintaining unmigrated legacy decks.
+- **Dracula plot palette**: `['#8be9fd', '#ff5555', '#f1fa8c', '#50fa7b', '#bd93f9', '#ff79c6', '#6272a4']`.
+- **Reproducible outputs & data**:
+  - Back every Python output shown on slides with a real script or notebook in `notebooks/`.
+  - Commit concrete CSV files used with `pd.read_csv()` under `ciencia-dados/`, even for fictitious classroom datasets.
+  - Extract notebook PNG outputs with `python3 .agents/skills/run-notebook/scripts/run_notebook.py <nb.ipynb> --extract-only --output-dir ciencia-dados/images/`.
+- **Library & dataset gotchas**:
+  - `load_breast_cancer()` uses `0 = malignant`, `1 = benign`; for novelty/anomaly detection, train on benign (`y=1`) and evaluate against malignant (`y=0`).
+  - For `statsmodels.OLS`, build dummies as numeric integers: `pd.get_dummies(..., dtype=int)`.
+  - For `statsmodels.seasonal_decompose()`, edge trend values are `NaN`; cite the last valid trend date.
+  - When indexing a SciPy sparse matrix with a pandas boolean mask, pass `mask.to_numpy()`.
+
+## Verification
 
 ```bash
-# Serve slides locally
-python -m http.server 8000
-
-# Execute notebook + extract images
-jupyter nbconvert --execute --to notebook --output executed.ipynb notebook.ipynb
-python .opencode/skills/run-notebook/extract_notebook_images.py notebook.ipynb --output-dir images/
-
-# Rebuild Dracula-themed plots from R scripts
-python .opencode/skills/export-plots/export_plots.py notebook.ipynb --output-dir images/
-
-# Validate all HTML images (status 200, >1KB, image MIME)
-python -c "
-import glob, requests
-for f in glob.glob('*.html'):
-    html = open(f).read()
-    for url in re.findall(r'<img[^>]+src=\"([^\"]+)\"', html):
-        r = requests.head(url)
-        assert r.status_code == 200 and 'image' in r.headers.get('content-type','')
-"
+python3 .agents/skills/validate-slides/scripts/validate_slide_deck.py ciencia-dados/<deck>.html --check-orphans
 ```
-
-## Slide Patterns Specific to Ciência de Dados
-
-### Plotly charts in slides
-- Default method: use RevealD3 (`../plugin/reveald3/reveald3.js`) with each Plotly chart in a separate HTML file loaded by `data-file`.
-- Put plot logic, data, and transitions inside the iframe HTML; the slide deck should only contain `<reveald3-plot file="aulas/<plot>.html">` and visible fragment labels.
-- For step-by-step updates, define `_transitions` in the plot HTML and call `Plotly.animate()` for smooth movement/size changes; use stable trace order/`uid` values and fall back to `Plotly.react()` only for initial render or structural resets.
-- Do not call `Plotly.react()` from `_transitions` when only colors, sizes, opacity, labels, or annotations change; keep traces stable and animate those attributes.
-- Use `<plotly-figure :traces="tracesVar" :layout="layoutVar">` only for legacy decks that have not been migrated.
-- Export Plotly JSON from Python via `fig.to_dict()`, clean `None` values before embedding in JS.
-- Preferred exporter: `python ../.opencode/skills/export-plots/scripts/export_reveald3_plotly.py plot_steps.json --output aulas/plot.html`
-
-### Dracula plot colors
-```python
-dracula = ['#8be9fd', '#ff5555', '#f1fa8c', '#50fa7b', '#bd93f9', '#ff79c6', '#6272a4']
-```
-
-### Notebook → Slide pipeline
-1. Generate figures in notebook
-2. Export as JSON or JS constants for the standalone plot HTML
-3. Create `aulas/<plot-name>.html` with Plotly.js, `renderStep()`, and `_transitions`
-4. Load it in the slide with `<reveald3-plot file="aulas/<plot-name>.html" width="780px" height="460px"></reveald3-plot>`
-
-### Standalone Plotly figure generation (when Jupyter env is missing packages)
-- Create a Python script with the same plotting code + `write_plotly_js()` helper
-- Run directly with `python script.py` after `pip install numpy pandas plotly scikit-learn`
-- This avoids `jupyter nbconvert --execute` dependency issues and is faster for iterative plot tuning
-- Example: `notebooks/run_svm_plots.py` → outputs `images/plotly/aula13_oneclass_svm_figures.js`
-
-### Slide code outputs
-- When slides show Python output, keep a real script or notebook in `notebooks/` that generates the displayed values.
-- When slides use `pd.read_csv()`, commit the concrete CSV under the course directory, even for fictitious classroom data.
-- For `statsmodels.OLS`, create dummy variables as numeric columns, e.g. `pd.get_dummies(..., dtype=int)`, to avoid object/boolean dtype errors.
-- For `statsmodels.seasonal_decompose()`, trend values are `NaN` at series edges; cite the last valid trend date instead of implying the final date has a trend estimate.
-
-### R Scripts for plot fixes
-- `fix_plots.R`, `regenerate_plots.R` — fix/regenerate Python-level plot aesthetics
-- `fix_roc.R`, `roc_only.R` — ROC curve visualization fixes
-- Run with: `Rscript fix_plots.R`
-
-## Dataset Gotchas
-
-- **Wisconsin Breast Cancer** (`load_breast_cancer()`): 0=malignant, 1=benign. For novelty/anomaly detection, train on benign (y=1), test against malignant (y=0 — the anomaly).
-- **Class imbalance**: common in anomaly detection lessons. Document class semantics explicitly in notebook headers.
-
-## Framework Integration
-
-This directory follows the same patterns as the root Reveal.js framework:
-- All `.html` files use `mountSlideApp()` from `../slides_template/init.js`
-- Vue components from `../components/components.js` and `../slides_template/header1.js`
-- Dracula theme (`../dist/theme/dracula.css`)
-- Plugin scripts from `../plugin/`
-- 4-space indentation inside `<div class="slides">`
-- All content in Brazilian Portuguese
-
-See `../AGENTS.md` for framework-wide rules, `../docs/ECOSSISTEMA.md` for component docs, and `../.opencode/skills/create-slides/SKILL.md` for slide creation gotchas.

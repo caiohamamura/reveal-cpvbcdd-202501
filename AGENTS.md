@@ -1,181 +1,73 @@
-# AGENTS.md — Reveal.js Slide Framework
+# AGENTS.md — Reveal.js Slide Framework (IFSP Campus Capivari)
 
-This repository contains Reveal.js-based slide decks for IFSP Campus Capivari technical courses.
+Static educational presentation repository built on **Reveal.js 5.2.1** + **Vue 3 ESM** (no bundler, deployed via GitHub Pages in `.github/workflows/static.yml`).
 
-## Cold Start (No Context)
+## Repository Map
 
-1. Read `AGENTS.md` (this file)
-2. Read `docs/ECOSSISTEMA.md` for full framework documentation
-3. Read `.opencode/skills/create-slides/SKILL.md` for slide creation patterns
-
-## Repository Layout
-
-```
+```text
 reveal-cpvbcdd-202501/
-├── AGENTS.md                  # This file — AI agent instructions
-├── opencode.json              # opencode CLI configuration
-├── package.json               # Node dependencies
-├── iot/                       # IoT course slides (.html)
-├── bdd1/                      # Banco de Dados I slides (.html)
-├── bdd2/                      # Banco de Dados II slides (.html)
-├── ciencia-dados/             # Data Science slides (.html) + images/, notebooks/, aulas/
-├── dist/                      # Reveal.js core, themes, Vue.js, custom.css (built assets)
-├── plugin/                    # Reveal.js plugins (highlight, markdown, math, notes, poll, seminar, chalkboard, customcontrols, zoom, chart, search)
-├── components/                # Vue.js custom components (components.js)
-├── slides_template/           # Shared templates (header1.js, init.js)
-├── img/                       # Shared images (logo, background)
-├── docs/                      # ECOSSISTEMA.md — full framework documentation
-├── .opencode/skills/          # opencode skills (create-slides, search-images, run-notebook, reflect-and-learn)
-└── .github/workflows/         # GitHub Pages static deployment
+├── AGENTS.md                  # Repo-wide rules (this file)
+├── .agents/skills/            # Canonical modular skills (symlinked from .claude/skills & .opencode/skills)
+├── ia/                        # Inteligência Artificial — decks, images/, cadernos/, source .pptx + ia/AGENTS.md
+├── bdd1/                      # Banco de Dados I — decks
+├── bdd2/                      # Banco de Dados II — decks, planos/, generate_exams.py + bdd2/AGENTS.md
+├── ciencia-dados/             # Ciência de Dados — decks, images/, notebooks/, aulas/ + ciencia-dados/AGENTS.md
+├── iot/                       # IoT — decks + iot/AGENTS.md
+├── components/                # Shared Vue components (components.js, test-components.html)
+├── slides_template/           # Shared cover (<header1>) and Reveal+Vue initializer (init.js)
+├── dist/                      # Reveal.js core, Dracula theme, custom.css, Vue 3
+├── plugin/                    # Local Reveal plugins (highlight, math, markdown, notes, poll, seminar, chalkboard, customcontrols, zoom, chart, reveald3, leader-line)
+├── img/                       # Shared assets (fundo.png IFSP green banner, IFSP logo)
+└── docs/ECOSSISTEMA.md        # Complete component, CSS, and plugin reference
 ```
 
-## Course Development Commands
+## Skills Catalog (`.agents/skills/`)
+
+Load skills on demand rather than guessing conventions:
+
+| Skill | Use When |
+|-------|----------|
+| `slide-design` | Designing or refining slide aesthetics; defines Prof. Caio's **Illustrated Pedagogical Style** (`references/illustrated-style-guide.md`) |
+| `create-slides` | Creating or editing Reveal.js `.html` decks (boilerplate, components, `references/gotchas.md`, `references/google-slides-export.md`) |
+| `visual-assets` | Sourcing seminal paper figures, generating custom illustrations/infographics, or extracting validated web images (`scripts/extract_images.py`) |
+| `convert-pptx` | Converting `.pptx` or Google Slides decks into illustrated Reveal.js decks (`scripts/extract_pptx.py`) |
+| `validate-slides` | Running static validation (`scripts/validate_slide_deck.py`) and 960×700 overflow QA (`scripts/check_overflow.js`) |
+| `export-plots` | Exporting Plotly figures into standalone RevealD3 iframe HTML (`scripts/export_reveald3_plotly.py`) |
+| `run-notebook` | Executing `.ipynb` notebooks and extracting PNG outputs (`scripts/run_notebook.py`) |
+| `reflect-and-learn` | Capturing new gotchas, style corrections, or patterns into skills/rules after non-trivial tasks |
+
+Always read the target course's `AGENTS.md` (`ia/`, `bdd2/`, `ciencia-dados/`, `iot/`) before creating or editing slides in that course.
+
+## Visual & Pedagogical Philosophy
+
+- **Visual-first, sparse text**: Slides support a live spoken lecture. Lead with one strong visual artifact (seminal paper figure, custom illustrated diagram/infographic, real executed output, notebook plot, or progressive equation breakdown) and concise pt-BR text — never continuous paragraphs or repetitive card walls.
+- **No crude icon/CSS cartoons**: Never substitute FontAwesome icons (`fa-car-side`, `fa-plane`) + CSS boxes/blobs for real figures, photos, or custom technical illustrations.
+- **Illustrated style for conceptual/IA lessons**: Anchor milestones in real papers (`<paper-card>`), open chapters with `<section-banner>` (`img/fundo.png`), unpack architectures/formulas progressively (`.figure-stage`, `.annotate-box`, `.formula-stage`), and attach `.colab-pill` links where concepts land.
+- **Direct to students**: Write in Brazilian Portuguese (`pt-BR`) addressing students directly. Technical terms in English are fine. Never include Chinese/CJK characters, teacher meta-commentary, or internal setup/tool mentions (`micromamba`, `opencode`, etc.).
+
+## Universal Technical Rules
+
+- **Initialization**: Use `dist/theme/dracula.css` + `dist/custom.css` and `window.app = mountSlideApp();` via a regular `<script>` tag (never `type="module"`). Load local `../plugin/chalkboard/plugin.js` (never CDN).
+- **Formatting**: Use **4-space indentation** inside `<div class="slides">`. Group major topics in parent `<section>` super-sections closed with `<!-- fim Etapa N -->`. Keep cover, standalone quiz, summary, and references at top level.
+- **Vue DOM templates**: Always use **kebab-case** props (`title-size`, `start-socket`, `middle-label`, `answer-text`). Always close `<leader-line></leader-line>` explicitly.
+- **Code blocks**: Place ordinary code as raw text inside `<code-block lang="...">`; wrap in `<textarea>` only if the code contains `<` or `>`. **Never** place `<script>` inside `<code-block>`.
+- **Fragments**: Use sparingly (progressive figure/formula annotations, synced code highlighting, motivation, exercise steps, final recap). Use plain `<ul>` for definitions and reference lists. Never fragment section divider slides.
+- **Images**: Every `<img>` requires concise pt-BR `alt` text, `width` **or** `height` (not both), valid local binary >1 KB (or HTTP 200), `.figure-card` framing for light-bg diagrams, and `<p class="source">` attribution.
+- **Code comments**: Do not add unrequested comments in code files; preserve existing unrelated comments/docstrings.
+
+## Development & QA Commands
 
 ```bash
-# Package management (use opencode environment)
-micromamba create -n opencode -y -c conda-forge python=3.11 jupyter nbconvert numpy pandas plotly scipy scikit-learn
-micromamba install -n opencode -y <package>
-micromamba run -n opencode python3 script.py
+# Serve decks locally
+python3 -m http.server 8123
 
-# Serve locally (any static server)
-python3 -m http.server 8000
+# Static validation (mandatory after every deck edit)
+python3 .agents/skills/validate-slides/scripts/validate_slide_deck.py <deck.html> --check-orphans
 
-# Validate HTML files
-python3 -c "
-import glob
-from html.parser import HTMLParser
-for f in glob.glob('**/*.html', recursive=True):
-    p = HTMLParser(); p.feed(open(f).read())
-    print(f'OK: {f}')
-"
-
-# Run Jupyter notebooks
-micromamba run -n opencode jupyter nbconvert --execute --to notebook notebook.ipynb
-
-# Extract notebook images
-python3 .opencode/skills/run-notebook/extract_notebook_images.py notebook.ipynb --output-dir images/
-
-# Search for images for slides
-python3 .opencode/skills/search-images/extract_images.py URL1 URL2
-
-# Generate Dracula-themed plots
-python3 .opencode/skills/export-plots/export_plots.py notebook.ipynb --output-dir ciencia-dados/images/
+# Python / Jupyter environment
+micromamba run -n opencode python3 <script.py>
 ```
 
-## Slide Development Rules
+## Post-Task Reflection
 
-### Vue Components
-
-| Component | Purpose |
-|-----------|---------|
-| `<header1>` | Cover slide (props: `aula`, `curso`, `title`, `title-size`) |
-| `<multi-col>` | Multi-column layouts (prop: `cols`, `style="gap:15px"`) |
-| `<ls-u>` | Auto-fragmenting bullet list |
-| `<code-block>` | Code with copy button (attr: `lang`) |
-| `<highlight-box>` | Callout boxes |
-| `<copy-btn>` | Copy button for tables |
-| `<md>` | Markdown rendering |
-| `<leader-line>` | Arrow connectors (MUST use explicit close tag) |
-| `<poll-question>` | Interactive live voting |
-
-### Styling
-
-- Dracula palette: bg `#282a36`, fg `#f8f8f2`, cyan `#8be9fd`, green `#50fa7b`, pink `#ff79c6`, red `#ff5555`, yellow `#f1fa8c`, purple `#bd93f9`
-- `<h2>`: 42pt Impact, left-aligned
-- `<li>`: 22pt, left-aligned
-- Use inline `style=""` for one-off styling
-
-### Fragment Usage
-
-- Use fragments SPARINGLY — only for step-by-step concept introduction, code walkthroughs, and exercise steps
-- Use `<ls-u>` (auto-fragment) only for: motivation slides, exercise steps, summaries
-- Use plain `<ul>` for: definitions, reference lists, informational content
-- Do NOT use fragments in section header slides (e.g., slides with "Parte X" titles).
-
-### Pedagogical Style
-
-- **Schematic Content**: Avoid continuous text. Use schematic comparisons (e.g., `multi-col` layouts) and structured lists with clear points instead of long paragraphs.
-- **Direct to Students**: Write slide content addressing the students directly. Do NOT include meta-commentary directed at the teacher (e.g., "O ponto didático aqui é...") in the slides.
-
-### Content Flow (per lesson)
-
-1. Cover (`<header1>`)
-2. Review (previous lesson recap)
-3. Motivation (why topic matters)
-4. Concept sections (2-5 slides per concept)
-5. Practical exercise
-6. Summary
-
-## Important Rules
-
-- **Language**: All slide content in Brazilian Portuguese. No Chinese characters. English technical terms are fine.
-- **Student-facing instructions**: Do not mention `micromamba`, `opencode`, or internal project environment/setup details in slides, notebooks, exercises, or comments intended for students.
-- **Images**: All `<img>` must have `alt` text. Validate images (status 200, valid binary data, >1KB).
-- **Attribution**: Include source attribution for images (`Fonte: [Site] ([License])`)
-- **Super sections**: Wrap major topics in parent `<section>` elements for vertical navigation
-- **4-space indentation**: All content inside `<div class="slides">`
-- **No comments in code**: Do not add comments unless explicitly requested
-
-## Post-Task Reflection Protocol
-
-After completing any tasks (needed debugging, had new features, migrations, issues were found, user complained about something, etc.), **automatically** run the `reflect-and-learn` skill protocol:
-
-1. **Reflect** — Did you encounter gotchas, discover new patterns, or learn library-specific details?
-2. **Evaluate** — Where does this knowledge belong? (existing skill, AGENTS.md, ECOSSISTEMA.md, or new skill)
-3. **Act** — Update the relevant file(s) with concise, actionable entries
-4. **Notify** — Briefly tell the user what you learned and where you stored it
-
-**Mandatory triggers** — run this protocol immediately after ANY of the following:
-- You learned something new about the codebase, framework, or tools
-- The user complained about something you did or corrected your approach
-- You struggled and had to try multiple different ways before getting it right
-
-Do NOT wait for the user to ask. Be proactive. Load the `reflect-and-learn` skill if you need the full checklist.
-
-## Skills
-
-Five opencode skills are available:
-
-1. **create-slides** — Generate new Reveal.js slide files (load for detailed patterns and gotchas)
-2. **search-images** — Find images via web search + deterministic extraction
-3. **run-notebook** — Execute Jupyter notebooks and extract images
-4. **reflect-and-learn** — Post-task reflection protocol for capturing and persisting learned patterns
-5. **validate-slides** — Run deterministic static validation for slide decks (HTML parse, Chinese characters, local refs, image alt text)
-
-## Google Drive Access (gogcli)
-
-`gog` (from `gogcli` package) is installed at `/home/linuxbrew/.linuxbrew/opt/gogcli/bin/gog`.
-
-```bash
-GOG_KEYRING_PASSWORD=x /home/linuxbrew/.linuxbrew/opt/gogcli/bin/gog <command>
-```
-
-**Key gotchas:**
-- Binary is named `gog`, not `gogcli`
-- `/home/homebrew` does not exist; use `/home/linuxbrew/.linuxbrew/`
-- Keyring password is `x` (from `.bashrc`), but stored tokens may be corrupted — re-auth if "integrity check failed"
-- `gog search` does NOT support `--query`; use `gog ls --parent <folder-id>` to list folder contents
-- Folder names are case-sensitive in Drive
-
-**Auth flow (when tokens are corrupted):**
-```bash
-# Step 1: print auth URL
-GOG_KEYRING_PASSWORD=x gog auth add <email> --remote --step 1 --services drive
-
-# Step 2: paste redirect URL from browser
-GOG_KEYRING_PASSWORD=x gog auth add <email> --remote --step 2 --auth-url '<redirect-url>' --services drive
-```
-
-**Navigate Drive folders:**
-```bash
-# Find folder by name
-gog search "foldername" -a <email> -j
-
-# List folder contents by ID
-gog ls -a <email> -j --parent <folder-id> --max 100
-```
-
-## Reference Documentation
-
-- `docs/ECOSSISTEMA.md` — Complete framework documentation (components, plugins, CSS, architecture)
-- `.opencode/skills/create-slides/SKILL.md` — Detailed slide creation patterns and gotchas
+After debugging non-obvious issues, learning new patterns, or receiving style/approach feedback from the user, run the `reflect-and-learn` skill protocol proactively and briefly inform the user what was recorded and where.

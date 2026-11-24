@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" width="960" height="460">
+  <defs>
+    <marker id="arr-gray" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4c566a"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e6fb8"/>
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1b8a4e"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c77700"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="460" fill="#fefefe" rx="8"/>
+
+  <!-- TOP BAND: CHATBOT (1 TURNO) -->
+  <rect x="24" y="18" width="912" height="116" rx="12" fill="#f4f6fa" stroke="#cfd6e3" stroke-width="1.8"/>
+  <rect x="40" y="29" width="236" height="26" rx="13" fill="#e2e7f2"/>
+  <text x="158" y="46" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#3b4252" text-anchor="middle">CHATBOT (FLUXO LINEAR)</text>
+
+  <rect x="52" y="68" width="190" height="48" rx="8" fill="#ffffff" stroke="#8892a8" stroke-width="1.8"/>
+  <text x="147" y="97" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2430" text-anchor="middle">Entrada (Prompt)</text>
+
+  <line x1="242" y1="92" x2="342" y2="92" stroke="#4c566a" stroke-width="2.6" marker-end="url(#arr-gray)"/>
+
+  <rect x="348" y="68" width="248" height="48" rx="8" fill="#ede7fb" stroke="#7c54d4" stroke-width="2"/>
+  <text x="472" y="97" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#4b2994" text-anchor="middle">LLM (1 única passagem)</text>
+
+  <line x1="596" y1="92" x2="682" y2="92" stroke="#4c566a" stroke-width="2.6" marker-end="url(#arr-gray)"/>
+
+  <rect x="688" y="68" width="224" height="48" rx="8" fill="#ffffff" stroke="#8892a8" stroke-width="1.8"/>
+  <text x="800" y="97" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#1f2430" text-anchor="middle">Saída (Texto estático)</text>
+
+  <!-- BOTTOM BAND: LOOP AGÊNTICO -->
+  <rect x="24" y="154" width="912" height="288" rx="12" fill="#eef9f3" stroke="#75c79a" stroke-width="2"/>
+  <rect x="40" y="168" width="388" height="28" rx="14" fill="#1b8a4e"/>
+  <text x="234" y="187" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">AGENTE DE IA (LOOP DE DECISÃO E AÇÃO)</text>
+
+  <!-- Objetivo -->
+  <rect x="42" y="230" width="132" height="66" rx="8" fill="#ffffff" stroke="#1b8a4e" stroke-width="2"/>
+  <text x="108" y="258" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#145c34" text-anchor="middle">Objetivo</text>
+  <text x="108" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#4c566a" text-anchor="middle">+ Contexto</text>
+
+  <line x1="174" y1="263" x2="206" y2="263" stroke="#1b8a4e" stroke-width="2.6" marker-end="url(#arr-green)"/>
+
+  <!-- 1. Planejar -->
+  <rect x="212" y="222" width="148" height="82" rx="10" fill="#e6f0fc" stroke="#1e6fb8" stroke-width="2.2"/>
+  <text x="286" y="250" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#144b7d" text-anchor="middle">1. Planejar</text>
+  <text x="286" y="272" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" fill="#2e5984" text-anchor="middle">LLM decide qual</text>
+  <text x="286" y="290" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" fill="#2e5984" text-anchor="middle">ação executar</text>
+
+  <line x1="360" y1="263" x2="398" y2="263" stroke="#1e6fb8" stroke-width="2.6" marker-end="url(#arr-blue)"/>
+
+  <!-- 2. Chamar Ferramenta -->
+  <rect x="404" y="222" width="174" height="82" rx="10" fill="#fff5e0" stroke="#c77700" stroke-width="2.2"/>
+  <text x="491" y="250" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#8a5200" text-anchor="middle">2. Ferramenta</text>
+  <text x="491" y="272" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" fill="#7a5112" text-anchor="middle">Shell, Git, SQL,</text>
+  <text x="491" y="290" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" fill="#7a5112" text-anchor="middle">Playwright, API (MCP)</text>
+
+  <line x1="578" y1="263" x2="616" y2="263" stroke="#c77700" stroke-width="2.6" marker-end="url(#arr-amber)"/>
+
+  <!-- 3. Observar Retorno/Erro -->
+  <rect x="622" y="222" width="158" height="82" rx="10" fill="#fcebf4" stroke="#b83b84" stroke-width="2.2"/>
+  <text x="701" y="250" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" font-weight="bold" fill="#802259" text-anchor="middle">3. Observar</text>
+  <text x="701" y="272" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" fill="#78305a" text-anchor="middle">Lê saída JSON,</text>
+  <text x="701" y="290" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" fill="#78305a" text-anchor="middle">logs ou stack trace</text>
+
+  <!-- Exit -->
+  <line x1="780" y1="263" x2="812" y2="263" stroke="#1b8a4e" stroke-width="2.6" marker-end="url(#arr-green)"/>
+
+  <rect x="818" y="230" width="104" height="66" rx="8" fill="#1b8a4e"/>
+  <text x="870" y="258" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">Critério</text>
+  <text x="870" y="279" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" fill="#e6f7ee" text-anchor="middle">atingido ✓</text>
+
+  <!-- Feedback correction loop -->
+  <path d="M 701 304 L 701 384 Q 701 398 687 398 L 300 398 Q 286 398 286 384 L 286 310"
+        fill="none" stroke="#c77700" stroke-width="2.8" stroke-dasharray="7 5" marker-end="url(#arr-amber)"/>
+
+  <rect x="330" y="364" width="328" height="56" rx="8" fill="#ffffff" stroke="#c77700" stroke-width="1.8"/>
+  <text x="494" y="388" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="bold" fill="#8a5200" text-anchor="middle">4. Corrigir rota (Iterar)</text>
+  <text x="494" y="408" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.5" fill="#4c566a" text-anchor="middle">Teste falhou ou elemento ausente → novo plano</text>
+</svg>

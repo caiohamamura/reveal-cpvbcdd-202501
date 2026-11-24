@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470">
+  <defs>
+    <marker id="p-blue" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e6fb8"/>
+    </marker>
+    <marker id="p-green" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1b8a4e"/>
+    </marker>
+    <marker id="p-pink" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c23670"/>
+    </marker>
+    <marker id="p-slate" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4c566a"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="470" fill="#fefefe" rx="8"/>
+
+  <!-- COLUMN 1: GATILHO ASSÍNCRONO -->
+  <rect x="18" y="20" width="218" height="205" rx="10" fill="#eef4fc" stroke="#85b2e3" stroke-width="1.8"/>
+  <text x="127" y="45" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#144b7d" text-anchor="middle">1. EVENTO ASSÍNCRONO</text>
+
+  <rect x="34" y="62" width="186" height="52" rx="8" fill="#ffffff" stroke="#1e6fb8" stroke-width="1.6"/>
+  <text x="127" y="84" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="bold" fill="#1f2430" text-anchor="middle">Webhook / Chamado</text>
+  <text x="127" y="102" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.2" fill="#4c566a" text-anchor="middle">Jira, GitHub, ERP, Alerta</text>
+
+  <line x1="127" y1="114" x2="127" y2="146" stroke="#1e6fb8" stroke-width="2.2" marker-end="url(#p-blue)"/>
+
+  <rect x="34" y="152" width="186" height="54" rx="8" fill="#ffffff" stroke="#1e6fb8" stroke-width="1.6"/>
+  <text x="127" y="175" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" font-weight="bold" fill="#1f2430" text-anchor="middle">Fila de Mensagens</text>
+  <text x="127" y="193" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.2" fill="#4c566a" text-anchor="middle">RabbitMQ / Redis / SQS</text>
+
+  <!-- COLUMN 1 BOTTOM: MCP INTERNO & LEGADO -->
+  <rect x="18" y="246" width="218" height="204" rx="10" fill="#f3eefc" stroke="#a68ce3" stroke-width="1.8"/>
+  <text x="127" y="271" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#4b2994" text-anchor="middle">2. MCP INTERNO (LEGADO)</text>
+
+  <rect x="34" y="288" width="186" height="44" rx="7" fill="#ffffff" stroke="#7c54d4" stroke-width="1.6"/>
+  <text x="127" y="308" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.8" font-weight="bold" fill="#1f2430" text-anchor="middle">Views SQL Read-Only</text>
+  <text x="127" y="324" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#4c566a" text-anchor="middle">SELECT filtrado + limite</text>
+
+  <rect x="34" y="342" width="186" height="44" rx="7" fill="#ffffff" stroke="#7c54d4" stroke-width="1.6"/>
+  <text x="127" y="362" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.8" font-weight="bold" fill="#1f2430" text-anchor="middle">Endpoints REST / SOAP</text>
+  <text x="127" y="378" font-family="DejaVu Sans, Arial, sans-serif" font-size="11" fill="#4c566a" text-anchor="middle">Wrapper JSON-RPC seguro</text>
+
+  <rect x="34" y="396" width="186" height="40" rx="7" fill="#ffffff" stroke="#7c54d4" stroke-width="1.6"/>
+  <text x="127" y="421" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.5" font-weight="bold" fill="#4b2994" text-anchor="middle">Logs &amp; Telemetria</text>
+
+  <!-- COLUMN 2: WORKER DO AGENTE -->
+  <line x1="220" y1="179" x2="292" y2="210" stroke="#1e6fb8" stroke-width="2.4" marker-end="url(#p-blue)"/>
+  <line x1="220" y1="350" x2="292" y2="275" stroke="#4c566a" stroke-width="2.4" marker-end="url(#p-slate)" marker-start="url(#p-slate)"/>
+
+  <rect x="298" y="136" width="234" height="202" rx="12" fill="#282a36" stroke="#7c54d4" stroke-width="2.6"/>
+  <text x="415" y="170" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" font-weight="bold" fill="#8be9fd" text-anchor="middle">Worker do Agente</text>
+  <text x="415" y="194" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#f8f8f2" text-anchor="middle">LLM + Skills + Cliente MCP</text>
+
+  <rect x="316" y="212" width="198" height="34" rx="6" fill="#44475a"/>
+  <text x="415" y="234" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#f1fa8c" text-anchor="middle">Consulta logs e contexto</text>
+
+  <rect x="316" y="254" width="198" height="34" rx="6" fill="#44475a"/>
+  <text x="415" y="276" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#50fa7b" text-anchor="middle">Limite de passos &amp; custo ($)</text>
+
+  <rect x="316" y="296" width="198" height="28" rx="6" fill="#343746"/>
+  <text x="415" y="315" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.2" fill="#bd93f9" text-anchor="middle">Auditoria de cada tool call</text>
+
+  <!-- COLUMN 3: POLÍTICA DE AUTONOMIA + HITL -->
+  <!-- Branch 1: Leitura / Rascunho (Autônomo) -->
+  <path d="M 532 196 L 594 196 L 594 114 L 628 114" fill="none" stroke="#1b8a4e" stroke-width="2.8" marker-end="url(#p-green)"/>
+  <rect x="634" y="32" width="308" height="168" rx="10" fill="#e9f8ef" stroke="#1b8a4e" stroke-width="2.2"/>
+  <rect x="650" y="45" width="276" height="26" rx="13" fill="#1b8a4e"/>
+  <text x="788" y="62" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.8" font-weight="bold" fill="#ffffff" text-anchor="middle">AUTÔNOMO (LEITURA / RASCUNHO)</text>
+  <text x="656" y="100" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#18472e">✓ Diagnosticar causa raiz</text>
+  <text x="656" y="126" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#18472e">✓ Abrir rascunho de Pull Request</text>
+  <text x="656" y="152" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.5" fill="#18472e">✓ Sugerir resposta de suporte</text>
+  <text x="656" y="182" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#1b8a4e">Baixo risco • Reversível</text>
+
+  <!-- Branch 2: Escrita / Destrutiva (HITL) -->
+  <path d="M 532 276 L 594 276 L 594 348 L 628 348" fill="none" stroke="#c23670" stroke-width="2.8" marker-end="url(#p-pink)"/>
+  <rect x="634" y="226" width="308" height="224" rx="10" fill="#fdeef5" stroke="#c23670" stroke-width="2.2"/>
+  <rect x="650" y="240" width="276" height="28" rx="14" fill="#c23670"/>
+  <text x="788" y="259" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.2" font-weight="bold" fill="#ffffff" text-anchor="middle">HUMAN-IN-THE-LOOP (HITL)</text>
+
+  <rect x="650" y="282" width="276" height="52" rx="8" fill="#fff6d6" stroke="#c77700" stroke-width="1.8"/>
+  <text x="788" y="305" font-family="DejaVu Sans, Arial, sans-serif" font-size="12.4" font-weight="bold" fill="#8a5200" text-anchor="middle">⏸ Aprovação Humana Obrigatória</text>
+  <text x="788" y="324" font-family="DejaVu Sans, Arial, sans-serif" font-size="11.2" fill="#7a5112" text-anchor="middle">Slack / Painel Web / Revisão de PR</text>
+
+  <text x="656" y="362" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.2" fill="#7d1f46">✕ DELETE / UPDATE em produção</text>
+  <text x="656" y="388" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.2" fill="#7d1f46">✕ Pagamentos e faturamento</text>
+  <text x="656" y="414" font-family="DejaVu Sans, Arial, sans-serif" font-size="13.2" fill="#7d1f46">✕ Deploy e alterações de permissão</text>
+  <text x="656" y="438" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" font-weight="bold" fill="#c23670">Alto impacto • Irreversível</text>
+</svg>

@@ -300,6 +300,67 @@ void loop() {
       </section>
 
       <!-- ============================================================ -->
+      <!-- 9. section-banner (Estilo Ilustrado) -->
+      <!-- ============================================================ -->
+      <section>
+        <section-banner
+          eyebrow="Etapa 2"
+          title="O histórico até o Stable Diffusion"
+          subtitle="Dos Autoencoders (2006) à Difusão Latente (2022)">
+        </section-banner>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 10. paper-card (Full + Progressive Highlight) -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">paper-card</span>
+        <h2>Autoencoders (2006)</h2>
+        <paper-card
+          title="Reducing the Dimensionality of Data with Neural Networks"
+          authors="G. E. Hinton and R. R. Salakhutdinov"
+          venue="Science"
+          year="2006"
+          url="https://www.science.org/doi/10.1126/science.1127647">
+          <p>
+            <mark class="paper-mark fragment">High-dimensional data can be converted to low-dimensional codes by training a multilayer neural network with a small central layer to reconstruct high-dimensional input vectors.</mark>
+            Gradient descent can be used for fine-tuning the weights in such "autoencoder" networks.
+          </p>
+        </paper-card>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 11. title-with-paper + formula-stage + colab-pill -->
+      <!-- ============================================================ -->
+      <section>
+        <span class="test-label">formula-stage</span>
+        <div class="title-with-paper">
+          <h2>VAE (2013)</h2>
+          <paper-card
+            compact
+            title="Auto-Encoding Variational Bayes"
+            authors="Diederik P. Kingma, Max Welling"
+            year="2013"
+            url="https://arxiv.org/abs/1312.6114">
+          </paper-card>
+        </div>
+        <p>Força que o código latente siga aproximadamente uma distribuição normal:</p>
+        <div class="formula-stage">
+          <span>\(\mathcal{L}(\theta, \phi; \mathbf{x}) \simeq\)</span>
+          <span class="formula-term formula-term--yellow">\(\tfrac{1}{2}\sum_{j}(1 + \log \sigma_j^2 - \mu_j^2 - \sigma_j^2)\)</span>
+          <span>\(+\)</span>
+          <span class="formula-term formula-term--pink">\(\tfrac{1}{L}\sum_{l}\log p_\theta(\mathbf{x} \mid \mathbf{z}^{(l)})\)</span>
+        </div>
+        <div class="formula-captions">
+          <p class="formula-caption formula-caption--yellow fragment">Penaliza se a predição sai da distribuição normal (\(\mu=0, \sigma=1\))</p>
+          <p class="formula-caption formula-caption--pink fragment">Mede quão ruim ficou a imagem reconstruída</p>
+        </div>
+        <div style="text-align: center;">
+          <a class="colab-pill" href="https://colab.research.google.com/" target="_blank" rel="noopener">Abrir caderno prático no Colab ↗</a>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
       <!-- COMBO: vários componentes juntos -->
       <!-- ============================================================ -->
       <section>

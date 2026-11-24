@@ -1,52 +1,31 @@
-# Repository Guidelines
+# AGENTS.md — Banco de Dados II (`bdd2/`)
 
-## Project Structure & Module Organization
+Course-specific guidelines for **Banco de Dados II** decks and lab materials. Follows root `../AGENTS.md`, `create-slides`, `slide-design`, and `validate-slides`.
 
-This directory contains Banco de Dados II course materials for the shared Reveal.js slide framework.
+## Directory Layout
 
-- `*.html`: student-facing Reveal.js slide decks, one lesson/topic per file.
-- `planos/*.md`: lesson plans, practice scripts, and instructor/student guides.
-- `planos/*.sql`: SQL datasets and classroom exercises used by the decks.
-- `planos/*.png`: local diagrams and images used by lesson materials.
-- For graph-heavy visuals reused in headers or multiple slides, generate a notebook-rendered PNG/SVG under `planos/<aula>_..._assets/` and embed that asset instead of inline Mermaid. Keep the notebook next to the asset so the visual is reproducible.
-- Shared framework files live one level up: `../dist/`, `../plugin/`, `../components/`, `../slides_template/`, and `../img/`.
+- `*.html` — Student-facing Reveal.js slide decks (lowercase descriptive names with hyphens/underscores matching nearby files).
+- `planos/*.md` — Lesson plans, practice scripts, and classroom guides.
+- `planos/*.sql` — Seed data, schemas, and exercises referenced by slides.
+- `planos/<aula>_assets/` — Lesson-specific diagrams, screenshots, and notebook-rendered assets (keep BDD2-specific assets inside `bdd2/planos/`).
+- `generate_exams.py` — Deterministic exam generator (keep fixed random seed for reproducibility).
 
-Keep new BDD2-specific assets inside `bdd2/planos/` unless they are reused across courses.
+## Course-Specific Conventions
 
-## Build, Test, and Development Commands
+- **Graph-heavy visuals**: For graph/schema diagrams reused across headers or slides, prefer notebook-rendered PNG/SVG under `planos/<aula>_assets/` (keeping the generating notebook beside the asset) instead of complex inline Mermaid.
+- **Data consistency**: Whenever a slide shows a SQL, Cypher, or MongoDB query alongside a result table, include enough seed data earlier in the deck so the query actually returns the shown rows.
+- **`aula14-neo4j-grafos.html`**: Keep the author-to-post relationship in Portuguese as `Pessoa-[:PUBLICA]->Post` (do not rename to `POSTS`).
+- **MongoDB verification**: `mongodb` from conda-forge provides `mongod` but not `mongosh`; verify classroom `mongosh` commands using a separate `mongosh` installation (`npm install -g mongosh`).
+- **Python packages**: Use `micromamba` (`opencode` environment) for Python/notebook work rather than system `pip`.
 
-- `python3 -m http.server 8000` from the repository root: serves decks locally. Open `http://localhost:8000/bdd2/materialized_views.html`.
-- `python3 -c "from html.parser import HTMLParser; import glob; [HTMLParser().feed(open(f).read()) for f in glob.glob('bdd2/**/*.html', recursive=True)]"`: quick HTML parse check.
-- `git diff -- bdd2`: review only changes in this module before committing.
+## Verification & Git Workflow
 
-This is a static presentation repository; there is no project-wide build script or unit test suite for `bdd2`.
+```bash
+# Static validation
+python3 .agents/skills/validate-slides/scripts/validate_slide_deck.py bdd2/<deck>.html
 
-## Coding Style & Naming Conventions
+# Local preview (from repository root)
+python3 -m http.server 8123
+```
 
-Use 4-space indentation inside `<div class="slides">`. Write all slide content in Brazilian Portuguese; English technical terms are acceptable. Do not mention internal tooling or environment setup in student-facing materials.
-
-Prefer existing Vue components such as `<header1>`, `<multi-col>`, `<ls-u>`, `<code-block>`, `<highlight-box>`, and `<leader-line></leader-line>`. Use inline `style=""` for one-off slide adjustments and keep the Dracula palette consistent with existing decks.
-
-Name new decks with descriptive lowercase filenames, using hyphens or underscores consistently with nearby files, for example `materialized_views.html` or `jsonb-nosql.html`.
-
-For `aula14-neo4j-grafos.html`, keep the author-to-post relationship in Portuguese as `Pessoa-[:PUBLICA]->Post`; do not rename it to `POSTS`.
-
-## Testing Guidelines
-
-Before opening a pull request, run the HTML parse check and manually open changed decks through a local static server. Verify navigation, fragments, code highlighting, Vue components, images, and SQL snippets. Every `<img>` must include meaningful `alt` text and should reference valid local assets or attributed external sources.
-
-For MongoDB lesson decks, `mongodb` from conda-forge provides `mongod` but not `mongosh`. To verify exact student `mongosh` commands, use a micromamba test environment with MongoDB server plus a separately installed `mongosh` client.
-
-## Commit & Pull Request Guidelines
-
-Recent commits use short imperative summaries, for example `Consolidate Aula12 clustering deck` and `Fix K-Means demo: remove duplicate label`. Follow that style: concise, specific, and focused on the changed lesson or behavior.
-
-Pull requests should include a brief description, changed deck paths, manual verification notes, and screenshots or screen recordings when visual layout changes are significant. Link related issues or classroom requests when available.
-
-## Agent-Specific Instructions
-
-Follow the root `AGENTS.md` and `docs/ECOSSISTEMA.md` for framework conventions. Use `micromamba` for Python package work if notebooks or data scripts are involved; do not install packages with `pip`.
-
-**Always commit and push after making changes.** Do not wait for the user to ask.
-
-**Post-task reflection**: After learning something new, receiving user correction/complaint, or struggling through multiple attempts, immediately run the `reflect-and-learn` skill protocol from the root `AGENTS.md`. Do not wait to be asked.
+Verify navigation, fragments, code highlighting, SQL/Cypher/Mongo examples, and 960×700 overflow (`check_overflow.js`) before finalizing. Use short imperative commit messages scoped to the lesson/change.

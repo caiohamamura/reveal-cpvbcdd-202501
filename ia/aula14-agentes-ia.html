@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Inteligência Artificial - Aula 14 - Agentes de IA</title>
+
+  <link rel="stylesheet" href="../dist/reset.css" />
+  <link rel="stylesheet" href="../dist/reveal.css" />
+  <link rel="stylesheet" href="../dist/theme/dracula.css" />
+  <link rel="stylesheet" href="../dist/custom.css" />
+  <link rel="stylesheet" href="../dist/highlight/dracula.css" />
+  <link rel="stylesheet" href="../plugin/poll/style.css" />
+  <link rel="stylesheet" href="../plugin/customcontrols/style.css" />
+  <link rel="stylesheet" href="../plugin/chalkboard/style.css" />
+  <style>
+    .agenda-table {
+      font-size: 0.58em;
+      margin: 8px auto 6px;
+      width: 100%;
+    }
+
+    .agenda-table th {
+      background: rgba(98, 114, 164, 0.5);
+      color: #8be9fd;
+      padding: 6px 9px;
+      text-align: left;
+    }
+
+    .agenda-table td {
+      border-bottom: 1px solid rgba(98, 114, 164, 0.3);
+      padding: 6px 9px;
+      vertical-align: middle;
+    }
+
+    .agenda-table tr.break-row td {
+      background: rgba(241, 250, 140, 0.1);
+      color: #f1fa8c;
+      font-style: italic;
+    }
+
+    .cover-pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .cover-pillar {
+      background: rgba(25, 26, 33, 0.78);
+      border: 1.5px solid rgba(139, 233, 253, 0.55);
+      border-radius: 999px;
+      color: #f8f8f2;
+      font-size: 14pt;
+      font-weight: 700;
+      padding: 6px 16px;
+      white-space: nowrap;
+    }
+
+    .figure-stage > img {
+      max-height: none !important;
+      max-width: none !important;
+    }
+
+    .slide-takeaway--compact {
+      font-size: 16.5pt !important;
+      line-height: 1.28 !important;
+      margin: 8px auto 0 !important;
+    }
+
+    .tag-pill {
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 0.78em;
+      font-weight: 700;
+      padding: 2px 9px;
+    }
+
+    .tag-pill--cyan {
+      background: rgba(139, 233, 253, 0.2);
+      border: 1px solid #8be9fd;
+      color: #8be9fd;
+    }
+
+    .tag-pill--green {
+      background: rgba(80, 250, 123, 0.2);
+      border: 1px solid #50fa7b;
+      color: #50fa7b;
+    }
+
+    .tag-pill--pink {
+      background: rgba(255, 121, 198, 0.2);
+      border: 1px solid #ff79c6;
+      color: #ff79c6;
+    }
+
+    .tag-pill--yellow {
+      background: rgba(241, 250, 140, 0.2);
+      border: 1px solid #f1fa8c;
+      color: #f1fa8c;
+    }
+
+    .overlay-badge {
+      border-radius: 6px;
+      font-family: "Roboto", Arial, sans-serif;
+      font-size: 11pt;
+      font-weight: 700;
+      line-height: 1.15;
+      padding: 4px 10px;
+      pointer-events: none;
+      position: absolute;
+      white-space: nowrap;
+    }
+
+    .overlay-badge--dark {
+      background: rgba(40, 42, 54, 0.92);
+      border: 1.5px solid #8be9fd;
+      color: #f8f8f2;
+    }
+
+    .overlay-badge--pink {
+      background: rgba(255, 121, 198, 0.92);
+      color: #282a36;
+    }
+
+    .overlay-badge--green {
+      background: rgba(80, 250, 123, 0.94);
+      color: #192420;
+    }
+
+    .overlay-badge--yellow {
+      background: rgba(241, 250, 140, 0.95);
+      color: #282a36;
+    }
+
+    .compact-list li {
+      font-size: 0.68em !important;
+      line-height: 1.28 !important;
+      margin: 5px 0 !important;
+    }
+
+    .compact-code pre.code-wrapper {
+      font-size: 0.48em !important;
+      line-height: 1.32 !important;
+    }
+
+    .compact-code pre.code-wrapper code {
+      max-height: none !important;
+      padding: 10px 14px !important;
+    }
+
+    .compact-table {
+      font-size: 0.52em !important;
+      margin: 6px auto !important;
+    }
+
+    .compact-table th,
+    .compact-table td {
+      padding: 5px 7px !important;
+    }
+
+    .ref-list li {
+      font-size: 0.62em !important;
+      line-height: 1.35 !important;
+      margin: 6px 0 !important;
+    }
+
+    .ref-list a {
+      font-size: inherit !important;
+    }
+
+    .checklist-panel {
+      background: rgba(68, 71, 90, 0.65);
+      border: 1px solid rgba(139, 233, 253, 0.35);
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+
+    .checklist-panel h3 {
+      font-size: 23pt !important;
+      margin: 0 0 8px !important;
+    }
+
+    .checklist-panel p {
+      font-size: 0.64em !important;
+      line-height: 1.35 !important;
+      margin: 4px 0 !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app" class="reveal">
+    <div class="slides">
+
+      <!-- SLIDE 1: Capa -->
+      <section data-auto-animate>
+        <header1 aula="14" curso="Inteligência Artificial" title-size="27"
+                 title="Agentes de IA: Arquitetura, MCP, Skills e Automação">
+          <img src="images/aula14/capa-agentes-ia.jpg"
+               alt="Ilustração isométrica de um núcleo de agente de IA conectado a terminal, navegador, banco de dados e APIs"
+               height="235"
+               style="border-radius: 10px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);" />
+          <div class="cover-pillars">
+            <span class="cover-pillar" style="border-color: #50fa7b;">Loop Agêntico (ReAct)</span>
+            <span class="cover-pillar" style="border-color: #8be9fd;">Model Context Protocol (MCP)</span>
+            <span class="cover-pillar" style="border-color: #f1fa8c;">Agent Skills &amp; Memória RAG</span>
+            <span class="cover-pillar" style="border-color: #ff79c6;">Playwright MCP &amp; HITL</span>
+          </div>
+        </header1>
+      </section>
+
+      <!-- SLIDE 2: Roteiro da Oficina (180 min) -->
+      <section data-auto-animate>
+        <h2>Oficina Prática (180 min) — Formato Sanduíche</h2>
+        <p style="margin-bottom: 10px;">
+          Visão de Engenharia de Software: tiramos a “mágica” da frente — agentes são
+          <strong style="color: #8be9fd;">sistemas distribuídos</strong> com um motor de decisão não-determinístico.
+        </p>
+        <table class="agenda-table">
+          <thead>
+            <tr>
+              <th style="width: 24%;">Tempo</th>
+              <th style="width: 30%;">Bloco</th>
+              <th>Foco Principal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>00:00 – 00:40</code> (40 min)</td>
+              <td><span class="tag-pill tag-pill--cyan">1. Fundamentos</span></td>
+              <td>Loop agêntico, MCP, Skills e Memória (RAG vs. Contexto)</td>
+            </tr>
+            <tr>
+              <td><code>00:40 – 00:55</code> (15 min)</td>
+              <td><span class="tag-pill tag-pill--green">2. Setup</span></td>
+              <td>OpenCode no terminal, modelos gratuitos e primeiro diagnóstico local</td>
+            </tr>
+            <tr>
+              <td><code>00:55 – 01:40</code> (45 min)</td>
+              <td><span class="tag-pill tag-pill--green">3. Prática I</span></td>
+              <td>Criar uma Skill reutilizável e conectar o servidor <code>@playwright/mcp</code></td>
+            </tr>
+            <tr class="break-row">
+              <td><code>01:40 – 01:55</code> (15 min)</td>
+              <td>Intervalo</td>
+              <td>Pausa e ajustes de rede, dependências ou limites de taxa</td>
+            </tr>
+            <tr>
+              <td><code>01:55 – 02:35</code> (40 min)</td>
+              <td><span class="tag-pill tag-pill--yellow">4. Prática II</span></td>
+              <td>Playwright vs. Selenium, Accessibility Snapshots, CAPTCHAs e segurança</td>
+            </tr>
+            <tr>
+              <td><code>02:35 – 03:00</code> (25 min)</td>
+              <td><span class="tag-pill tag-pill--pink">5. Produção</span></td>
+              <td>Sistemas legados, filas/webhooks, Human-in-the-Loop, custos e auditoria</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============================================================
+         Etapa 1: Fundamentos e Arquitetura
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 1.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 1 • 00:00 – 00:40"
+            title="Fundamentos e Arquitetura"
+            subtitle="Loop agêntico, MCP, Skills e Memória (RAG vs. Contexto)">
+            <paper-card
+              compact
+              title="ReAct: Synergizing Reasoning and Acting in Language Models"
+              authors="Shunyu Yao et al. — Princeton &amp; Google Brain"
+              venue="ICLR"
+              year="2023"
+              url="https://arxiv.org/abs/2210.03629">
+            </paper-card>
+            <paper-card
+              compact
+              title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+              authors="Patrick Lewis et al. — Facebook AI Research"
+              venue="NeurIPS"
+              year="2020"
+              url="https://arxiv.org/abs/2005.11401">
+            </paper-card>
+          </section-banner>
+        </section>
+
+        <!-- Slide 1.2: Chatbot vs Loop Agêntico -->
+        <section data-auto-animate>
+          <h2>Chatbot vs. Loop Agêntico</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/loop-agentico-vs-chatbot.svg"
+                     alt="Diagrama comparando fluxo linear de chatbot com o loop iterativo de um agente de IA"
+                     height="360" />
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
+                     style="left: 2%; top: 3%; width: 96%; height: 27%;"></div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 2%; top: 33%; width: 96%; height: 64%;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
+            <strong style="color: #8be9fd;">Chatbot:</strong> uma única passagem no <em>Large Language Model</em> (LLM) — sem verificar se a resposta funciona.
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong style="color: #50fa7b;">Agente:</strong> chama ferramentas, lê erros reais e corrige a rota até atingir o critério de parada.
+          </p>
+          <p class="source">Elaboração própria — arquitetura conceitual do ciclo de execução agêntico</p>
+        </section>
+
+        <!-- Slide 1.3: Artigo seminal ReAct -->
+        <section data-auto-animate>
+          <h2>A Base Científica: ReAct (2022–2023)</h2>
+          <paper-card
+            title="ReAct: Synergizing Reasoning and Acting in Language Models"
+            authors="Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, Yuan Cao"
+            venue="ICLR"
+            year="2023"
+            url="https://arxiv.org/abs/2210.03629">
+            <p>
+              <mark class="paper-mark fragment" data-fragment-index="1">We explore the use of LLMs to generate both reasoning traces and task-specific actions in an interleaved manner</mark>,
+              allowing for greater synergy between the two: reasoning traces help the model induce, track, and update action plans as well as handle exceptions,
+              <mark class="paper-mark paper-mark--pink fragment" data-fragment-index="2">while actions allow it to interface with external sources, such as knowledge bases or environments, to gather additional information.</mark>
+            </p>
+            <p>
+              Concretely, on HotpotQA and FEVER,
+              <mark class="paper-mark fragment" data-fragment-index="3">ReAct overcomes issues of hallucination and error propagation prevalent in chain-of-thought reasoning</mark>
+              by interacting with a simple external API.
+            </p>
+          </paper-card>
+          <p class="slide-takeaway fragment" data-fragment-index="3">
+            Raciocinar (<em>Thought</em>) + Agir (<em>Act</em>) + Observar (<em>Obs</em>) é o núcleo dos agentes modernos.
+          </p>
+        </section>
+
+        <!-- Slide 1.4: ReAct Fig. 1 anotada -->
+        <section data-auto-animate>
+          <div class="title-with-paper">
+            <h2>ReAct: Agindo Contra Alucinações</h2>
+            <paper-card
+              compact
+              title="ReAct: Synergizing Reasoning and Acting"
+              authors="Yao et al."
+              venue="ICLR"
+              year="2023"
+              url="https://arxiv.org/abs/2210.03629">
+            </paper-card>
+          </div>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/paper-react-fig1.png"
+                     alt="Figura 1 do artigo ReAct comparando Standard, Chain-of-Thought, Act-Only e ReAct no benchmark HotpotQA"
+                     height="335" />
+                <div class="annotate-box annotate-box--pink fragment" data-fragment-index="1"
+                     style="left: 1%; top: 41%; width: 22.8%; height: 57%;"></div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 50%; top: 2%; width: 49%; height: 96%;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
+            <strong style="color: #ff79c6;">Sem ferramentas (CoT):</strong> raciocínio coerente na forma, mas alucina fatos (<em>Apple TV</em>).
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong style="color: #50fa7b;">Com ReAct:</strong> busca na fonte externa, detecta falha na <code>Obs 2</code> e corrige a rota até acertar.
+          </p>
+          <p class="source">Fonte: Yao et al. (2023), <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">ReAct (arXiv:2210.03629), Fig. 1</a></p>
+        </section>
+
+        <!-- Slide 1.5: MCP - O USB-C dos Agentes -->
+        <section data-auto-animate>
+          <h2>MCP: O “USB-C” dos Agentes de IA</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/mcp-usb-c-metafora.jpg"
+                     alt="Infográfico comparando conexões emaranhadas M vezes N sem padrão contra um barramento universal MCP M mais N"
+                     height="365" />
+                <div class="annotate-box annotate-box--pink fragment" data-fragment-index="1"
+                     style="left: 3%; top: 9%; width: 43%; height: 80%;"></div>
+                <div class="overlay-badge overlay-badge--pink fragment" data-fragment-index="1"
+                     style="left: 10%; top: 3%;">Sem padrão: M × N conectores</div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 52.5%; top: 9%; width: 44.5%; height: 80%;"></div>
+                <div class="overlay-badge overlay-badge--green fragment" data-fragment-index="2"
+                     style="left: 59%; top: 3%;">Com MCP: M + N (JSON-RPC)</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            O <strong>Model Context Protocol (MCP)</strong> padroniza o acesso a bancos, navegadores e APIs — escreva o servidor uma vez e conecte em OpenCode, Claude ou VS Code.
+          </p>
+          <p class="source">Fonte: ilustração conceitual baseada na especificação oficial <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">modelcontextprotocol.io</a></p>
+        </section>
+
+        <!-- Slide 1.6: MCP por baixo dos panos (JSON-RPC) -->
+        <section data-auto-animate>
+          <h2>MCP por Baixo dos Panos: JSON-RPC 2.0</h2>
+          <multi-col cols="1.05fr 1fr" style="gap: 22px; align-items: center;">
+            <div>
+              <p style="margin-bottom: 8px; font-size: 0.66em;">
+                Um servidor MCP expõe três primitivos padronizados via <code>stdio</code> (local) ou HTTP (remoto):
+              </p>
+              <ul class="compact-list">
+                <li><strong style="color: #8be9fd;">Tools (Ferramentas):</strong> funções executáveis com esquema JSON (SQL, clique no navegador).</li>
+                <li><strong style="color: #50fa7b;">Resources (Recursos):</strong> dados somente leitura expostos por URI (arquivos, esquemas, logs).</li>
+                <li><strong style="color: #f1fa8c;">Prompts:</strong> modelos de instrução reutilizáveis pelo cliente.</li>
+              </ul>
+              <div style="margin-top: 10px;">
+                <a class="colab-pill" href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">
+                  Especificação MCP ↗
+                </a>
+              </div>
+            </div>
+            <div class="compact-code">
+              <code-block lang="json" data-trim data-line-numbers="1-11|3-7|8-11">
+{
+  "jsonrpc": "2.0",
+  "id": 42,
+  "method": "tools/call",
+  "params": {
+    "name": "browser_navigate",
+    "arguments": {
+      "url": "https://books.toscrape.com"
+    }
+  }
+}
+              </code-block>
+              <p style="font-size: 0.54em; color: #b8b8c8; margin-top: 8px;">
+                Sem mágica: o cliente traduz a decisão do LLM em uma chamada <strong>JSON-RPC 2.0</strong> tipada e devolve o retorno ao loop.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 1.7: MCP vs Skills -->
+        <section data-auto-animate>
+          <h2>MCP vs. Skills: As Mãos e o Manual</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/mcp-vs-skills.jpg"
+                     alt="Infográfico comparando MCP como ferramentas conectadas à esquerda e Skills como procedimentos carregados sob demanda à direita"
+                     height="365" />
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
+                     style="left: 7%; top: 47%; width: 42%; height: 45%;"></div>
+                <div class="overlay-badge overlay-badge--dark fragment" data-fragment-index="1"
+                     style="left: 8%; top: 41.5%;">MCP = As mãos (ferramentas)</div>
+                <div class="annotate-box annotate-box--yellow fragment" data-fragment-index="2"
+                     style="left: 51%; top: 33%; width: 42%; height: 59%;"></div>
+                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="2"
+                     style="left: 53%; top: 27%;">Skills = Procedimento sob demanda</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong>Divulgação progressiva:</strong> o agente lê apenas o resumo das Skills no início e carrega o manual completo só quando a tarefa exige — economizando tokens.
+          </p>
+          <p class="source">Fonte: ilustração conceitual baseada no padrão aberto <a href="https://agentskills.io/" target="_blank" rel="noopener">agentskills.io</a></p>
+        </section>
+
+        <!-- Slide 1.8: Memória e RAG (Paper Seminal) -->
+        <section data-auto-animate>
+          <div class="title-with-paper">
+            <h2>Memória Externa: RAG (2020)</h2>
+            <paper-card
+              compact
+              title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+              authors="Patrick Lewis et al."
+              venue="NeurIPS"
+              year="2020"
+              url="https://arxiv.org/abs/2005.11401">
+            </paper-card>
+          </div>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/paper-rag-fig1.png"
+                     alt="Figura 1 do artigo RAG mostrando codificador de consulta, índice vetorial não-paramétrico e gerador paramétrico"
+                     width="880" />
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="1"
+                     style="left: 17.5%; top: 17%; width: 46.5%; height: 80%;"></div>
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="2"
+                     style="left: 63.8%; top: 17%; width: 16.5%; height: 80%;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
+            <strong style="color: #50fa7b;">Retriever (memória não-paramétrica):</strong> busca semântica vetorial nos trechos relevantes de PDFs e manuais.
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong style="color: #8be9fd;">Generator (memória paramétrica):</strong> o LLM gera a resposta fundamentada nos documentos recuperados.
+          </p>
+          <p class="source">Fonte: Lewis et al. (2020), <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener">RAG (arXiv:2005.11401), Fig. 1</a></p>
+        </section>
+
+        <!-- Slide 1.9: Contexto vs RAG vs MCP -->
+        <section data-auto-animate>
+          <h2>Quando Usar: Contexto vs. RAG vs. MCP</h2>
+          <table class="comparison-table" style="margin-top: 16px;">
+            <thead>
+              <tr>
+                <th style="width: 19%;">Mecanismo</th>
+                <th style="width: 24%;">Como funciona</th>
+                <th style="width: 22%;">Limitação</th>
+                <th>Melhor uso em sistemas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: #f1fa8c;">Janela de Contexto</strong></td>
+                <td>Tokens ativos na sessão atual do modelo</td>
+                <td>Caro, volátil e degrada com excesso de ruído</td>
+                <td>Estado imediato da tarefa, código aberto no momento</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #50fa7b;">RAG (Base Vetorial)</strong></td>
+                <td>Busca semântica por <em>embeddings</em> em trechos indexados</td>
+                <td>Não consulta estado transacional ao vivo</td>
+                <td>Milhares de PDFs, normas internas, manuais e wikis</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #8be9fd;">MCP (Ferramentas)</strong></td>
+                <td>Chamadas JSON-RPC estruturadas em tempo real</td>
+                <td>Requer contrato seguro e controle de permissões</td>
+                <td>SQL ao vivo, APIs REST/SOAP, Git, logs e estado atual</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="cyan-box" style="margin-top: 18px;">
+            <p style="margin: 0;">
+              <strong>Regra prática:</strong> RAG para <em>conhecimento documental extenso</em>; MCP para <em>dados estruturados e ações em tempo real</em>. Eles se complementam.
+            </p>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 1 -->
+
+      <!-- ============================================================
+         Etapa 2: Setup e Primeiro Contato
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 2.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 2 • 00:40 – 00:55"
+            title="Setup e Primeiro Contato"
+            subtitle="OpenCode no terminal, modelos gratuitos e contingência em laboratório">
+          </section-banner>
+        </section>
+
+        <!-- Slide 2.2: Instalação e Aquecimento OpenCode -->
+        <section data-auto-animate>
+          <h2>Aquecimento no OpenCode (15 min)</h2>
+          <multi-col cols="1.12fr 1fr" style="gap: 24px; align-items: start;">
+            <div class="compact-code">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalação e abertura no repositório base</p>
+              <code-block lang="bash" data-trim>
+# Linux / macOS / WSL
+curl -fsSL https://opencode.ai/install | bash
+
+# Ou via Node.js (cross-platform)
+npm install -g opencode-ai
+
+# Abrir o agente na pasta do projeto base
+cd projeto-base-ads
+opencode
+              </code-block>
+              <div style="margin-top: 10px;">
+                <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
+                  Documentação OpenCode ↗
+                </a>
+              </div>
+            </div>
+            <div>
+              <div class="green-box">
+                <p style="margin-top: 0;"><strong>Roteiro de Aquecimento</strong></p>
+                <ol class="compact-list">
+                  <li class="fragment">Selecione um dos <strong>modelos gratuitos nativos</strong> no OpenCode.</li>
+                  <li class="fragment">Peça ao agente para <strong>mapear a arquitetura</strong> da API e do banco SQLite.</li>
+                  <li class="fragment">Encontre o <strong>bug intencional</strong> e peça correção acompanhada de <strong>testes automatizados</strong>.</li>
+                </ol>
+              </div>
+              <p style="font-size: 0.56em; color: #b8b8c8; margin-top: 10px;">
+                Observe o loop ReAct acontecendo ao vivo: leitura de arquivos → execução de testes → erro → correção.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 2.3: Alternativas gratuitas (Plano B e C) -->
+        <section data-auto-animate>
+          <h2>Plano B e C: Contingência no Laboratório</h2>
+          <p style="margin-bottom: 6px; font-size: 0.62em;">
+            Com <em>Network Address Translation</em> (NAT), várias máquinas saem pelo mesmo IP público e podem sofrer <em>rate limit</em> simultâneo.
+          </p>
+          <table class="comparison-table compact-table">
+            <thead>
+              <tr>
+                <th style="width: 21%;">Ferramenta</th>
+                <th style="width: 14%;">Papel</th>
+                <th style="width: 34%;">Diferencial Técnico</th>
+                <th>Quando migrar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color: #50fa7b;">OpenCode</strong></td>
+                <td>Principal</td>
+                <td>Modelos gratuitos nativos, MCP e padrão <code>SKILL.md</code></td>
+                <td>Uso padrão no terminal local</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #8be9fd;">Mistral Vibe</strong></td>
+                <td>Plano B</td>
+                <td>Skills nativas (comandos <code>/</code>), terminal, VS Code e web</td>
+                <td>Falha local ou bloqueio do provedor</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #f1fa8c;">Gemini CLI</strong></td>
+                <td>Plano C</td>
+                <td>Open-source; cota gratuita por conta Google individual</td>
+                <td>Bloqueio por IP compartilhado</td>
+              </tr>
+              <tr>
+                <td><strong style="color: #ff79c6;">Cline / Roo Code</strong></td>
+                <td>IDE</td>
+                <td>Extensão VS Code com MCP + AI Studio / OpenRouter <code>:free</code></td>
+                <td>Fluxo visual no VS Code (API key)</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="yellow-box" style="margin-top: 8px; padding: 7px 12px;">
+            <p style="margin: 0; font-size: 0.56em;">
+              <strong>Infraestrutura de rede:</strong> mantenha Node.js e Chromium pré-instalados nas máquinas para evitar 30 downloads simultâneos na sala.
+            </p>
+          </div>
+        </section>
+
+      </section><!-- fim Etapa 2 -->
+
+      <!-- ============================================================
+         Etapa 3: Prática I — Skills e MCP
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 3.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 3 • 00:55 – 01:40"
+            title="Prática I: Skills e MCP"
+            subtitle="Criando um procedimento reutilizável da equipe e plugando o navegador ao agente">
+          </section-banner>
+        </section>
+
+        <!-- Slide 3.2: Criando uma Skill -->
+        <section data-auto-animate>
+          <h2>Criando uma Skill Reutilizável (20 min)</h2>
+          <multi-col cols="0.85fr 1.25fr" style="gap: 20px; align-items: start;">
+            <div>
+              <p style="color: #f1fa8c; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Estrutura no projeto</p>
+              <pre class="file-tree" style="font-size: 0.54em; padding: 10px 14px;">.opencode/
+└── skills/
+    └── code-review-turma/
+        ├── SKILL.md
+        ├── references/
+        └── scripts/</pre>
+              <div class="green-box" style="margin-top: 10px; padding: 8px 12px;">
+                <p style="margin: 0; font-size: 0.56em;">
+                  <strong>Desafio:</strong> crie a Skill de <em>Code Review</em> (ou <em>Gerador de Migrations</em>) e invoque-a para padronizar um módulo do projeto base.
+                </p>
+              </div>
+            </div>
+            <div class="compact-code">
+              <code-block lang="markdown" data-trim data-line-numbers="1-15|1-5|7-15">
+---
+name: code-review-turma
+description: >
+  Usar ao revisar código, padronizar funções
+  ou documentar módulos do projeto.
+---
+
+# Padrão de Revisão da Turma
+
+1. Verificar segredos ou senhas hardcoded.
+2. Garantir tratamento explícito de erros.
+3. Adicionar docstring em funções públicas.
+4. Validar teste unitário para o módulo.
+5. Listar riscos antes de aplicar edições.
+              </code-block>
+              <p style="font-size: 0.52em; color: #b8b8c8; margin-top: 6px;">
+                Metadados YAML são lidos no início; o corpo entra no contexto só quando a Skill é ativada.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 3.3: Plugando Playwright MCP -->
+        <section data-auto-animate>
+          <h2>Plugando o <code>@playwright/mcp</code> (25 min)</h2>
+          <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: start;">
+            <div class="compact-code">
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Arquivo <code>opencode.json</code> na raiz do projeto</p>
+              <code-block lang="json" data-trim data-line-numbers="1-10|3-8">
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "@playwright/mcp@latest"],
+      "enabled": true
+    }
+  }
+}
+              </code-block>
+              <div style="margin-top: 8px;">
+                <a class="colab-pill" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">
+                  Repositório @playwright/mcp ↗
+                </a>
+              </div>
+            </div>
+            <div>
+              <div class="green-box" style="padding: 8px 12px;">
+                <p style="margin-top: 0; font-size: 0.64em;"><strong>Desafio Prático</strong></p>
+                <ol class="compact-list">
+                  <li class="fragment">Salve <code>opencode.json</code> e reinicie o OpenCode.</li>
+                  <li class="fragment">Peça para abrir <code>books.toscrape.com</code> (ou o app local).</li>
+                  <li class="fragment">Navegue numa categoria e salve <strong>título, preço e nota</strong> em <code>livros.json</code> ou <code>livros.csv</code>.</li>
+                </ol>
+              </div>
+              <p style="font-size: 0.52em; color: #b8b8c8; margin-top: 8px;">
+                Ferramentas: <code>browser_navigate</code>, <code>browser_snapshot</code>, <code>browser_click</code> e <code>browser_type</code>.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 3 -->
+
+      <!-- ============================================================
+         Etapa 4: Prática II — Automação Web e Limites
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 4.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 4 • 01:55 – 02:35 (após intervalo)"
+            title="Prática II: Automação Web e Limites"
+            subtitle="Playwright vs. Selenium, Accessibility Snapshots, CAPTCHAs e segurança">
+            <paper-card
+              compact
+              title="Not what you've signed up for: Indirect Prompt Injection"
+              authors="Greshake, Abdelnabi, Mishra, Endres, Holz, Fritz"
+              venue="AISec / arXiv"
+              year="2023"
+              url="https://arxiv.org/abs/2302.12173">
+            </paper-card>
+          </section-banner>
+        </section>
+
+        <!-- Slide 4.2: O que o Playwright MCP envia ao LLM -->
+        <section data-auto-animate>
+          <h2>Como o Agente Enxerga a Web: Accessibility Snapshot</h2>
+          <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: center;">
+            <div style="text-align: center;">
+              <div class="figure-card">
+                <img src="images/aula14/books-toscrape-real.jpg"
+                     alt="Captura de tela real do site de testes Books to Scrape exibindo categorias e livros"
+                     width="465" />
+              </div>
+              <p class="source">Captura real: <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a></p>
+            </div>
+            <div>
+              <p style="color: #50fa7b; font-weight: 700; margin-bottom: 6px;">Saída de <code>browser_snapshot</code></p>
+              <pre class="terminal" style="font-size: 0.44em; line-height: 1.48; width: auto; box-shadow: none; margin: 0;">- link "Books to Scrape" [ref=e1]
+- link "Home" [ref=e2]
+- link "Travel" [ref=e4]
+- link "Mystery" [ref=e5]
+- heading "All products" [ref=e22]
+- link "A Light in the Attic" [ref=e25]
+- link "Tipping the Velvet" [ref=e28]
+→ browser_click(ref="e4")</pre>
+              <p style="font-size: 0.62em; margin-top: 12px;">
+                A árvore de acessibilidade entrega <strong>elementos semânticos com <code>ref</code> determinístico</strong> — sem screenshots caros nem seletores CSS frágeis.
+              </p>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 4.3: Playwright vs Selenium (Gráfico Real) -->
+        <section data-auto-animate>
+          <h2>Por que Playwright Leva Vantagem sobre Selenium</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <img src="images/aula14/tokens-navegacao-comparativo.png"
+                   alt="Gráfico de barras comparando custo em tokens de HTML bruto, screenshot de visão e Accessibility Snapshot no books.toscrape.com"
+                   height="365" />
+            </div>
+          </div>
+          <p class="slide-takeaway">
+            <strong style="color: #50fa7b;">Playwright (<code>@playwright/mcp</code>):</strong> <em>auto-waiting</em> nativo para <em>Single-Page Applications</em> (SPAs), ~16× menos tokens que DOM bruto e cliques por <code>ref</code> (vs. XPath/CSS manuais no Selenium).
+          </p>
+          <p class="source">Fonte: medição real em <a href="https://books.toscrape.com/" target="_blank" rel="noopener">books.toscrape.com</a> (51.274 caracteres de HTML vs. 95 nós semânticos)</p>
+        </section>
+
+        <!-- Slide 4.4: Limitações Reais na Web vs API Oficial -->
+        <section data-auto-animate>
+          <h2>Onde a Automação Web Trava (e Quando Usar API)</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/barreiras-web-vs-api.jpg"
+                     alt="Ilustração comparando agente de navegador bloqueado por CAPTCHA, fingerprinting e 2FA versus tráfego direto em API oficial"
+                     height="365" />
+                <div class="annotate-box annotate-box--orange fragment" data-fragment-index="1"
+                     style="left: 24%; top: 15%; width: 50%; height: 43%;"></div>
+                <div class="overlay-badge overlay-badge--yellow fragment" data-fragment-index="1"
+                     style="left: 27%; top: 7%;">CAPTCHA • Fingerprinting • Login 2FA</div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 28%; top: 58%; width: 51%; height: 22%;"></div>
+                <div class="overlay-badge overlay-badge--green fragment" data-fragment-index="2"
+                     style="left: 33%; top: 82%;">Via expressa: API oficial (REST / GraphQL)</div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway fragment" data-fragment-index="1">
+            <strong style="color: #ffb86c;">Barreiras reais:</strong> Cloudflare Turnstile, reCAPTCHA, detecção de automação e autenticação em dois fatores (2FA).
+          </p>
+          <p class="slide-takeaway fragment" data-fragment-index="2">
+            <strong style="color: #50fa7b;">Regra de ouro:</strong> agente navegando no browser <strong>não substitui uma API oficial</strong> quando ela existe.
+          </p>
+          <p class="source">Ilustração elaborada para a disciplina — arquitetura de integração web</p>
+        </section>
+
+        <!-- Slide 4.5: Risco Crítico — Indirect Prompt Injection -->
+        <section data-auto-animate>
+          <div class="title-with-paper">
+            <h2>Segurança: Indirect Prompt Injection (2023)</h2>
+            <paper-card
+              compact
+              title="Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
+              authors="Greshake et al."
+              venue="AISec"
+              year="2023"
+              url="https://arxiv.org/abs/2302.12173">
+            </paper-card>
+          </div>
+          <multi-col cols="1.05fr 1fr" style="gap: 24px; align-items: center;">
+            <div style="text-align: center;">
+              <div class="figure-card">
+                <img src="images/aula14/paper-ipi-fig1.png"
+                     alt="Figura 1 do artigo de Greshake et al. mostrando prompts maliciosos em páginas recuperadas sequestrando a saída do agente"
+                     height="345" />
+              </div>
+              <p class="source">Fonte: Greshake et al. (2023), <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">arXiv:2302.12173, Fig. 1</a></p>
+            </div>
+            <div>
+              <ul class="compact-list">
+                <li class="fragment"><strong style="color: #ff79c6;">Dados viram comandos:</strong> LLMs não separam rigidamente texto lido de instruções do sistema.</li>
+                <li class="fragment"><strong style="color: #f1fa8c;">Ataque remoto:</strong> um comentário oculto ou HTML invisível numa página pode mandar o agente exfiltrar segredos ou chamar APIs indevidas.</li>
+                <li class="fragment"><strong style="color: #50fa7b;">Mitigação:</strong> privilégio mínimo, domínio permitido (<em>allowlist</em>) e aprovação humana antes de ações sensíveis.</li>
+              </ul>
+            </div>
+          </multi-col>
+        </section>
+
+        <!-- Slide 4.6: Prática II — Teste de Estresse -->
+        <section data-auto-animate>
+          <h2>Prática II: Teste de Estresse e Contornos (20 min)</h2>
+          <div class="pink-box" style="margin-bottom: 16px;">
+            <p style="margin: 0;">
+              <strong>Experimento:</strong> peça ao agente (via <code>@playwright/mcp</code>) para acessar uma página protegida por CAPTCHA ou fluxo de login complexo e observe no terminal onde o loop agêntico trava.
+            </p>
+          </div>
+          <multi-col cols="3" style="gap: 16px;">
+            <div class="checklist-panel fragment">
+              <h3 style="color: #8be9fd !important;">1. Estado Autenticado</h3>
+              <p>Humano faz login uma única vez e salva cookies/tokens via <code>storageState</code> do Playwright para o agente reutilizar com escopo restrito.</p>
+            </div>
+            <div class="checklist-panel fragment">
+              <h3 style="color: #50fa7b !important;">2. Migrar para API</h3>
+              <p>Se o serviço oferece API oficial, encapsule-a em um servidor MCP dedicado — menor custo, maior velocidade e contrato estável.</p>
+            </div>
+            <div class="checklist-panel fragment">
+              <h3 style="color: #f1fa8c !important;">3. Pausar para Humano</h3>
+              <p>Detectou desafio CAPTCHA ou 2FA? Em vez de entrar em loop infinito queimando tokens, o agente pausa e solicita intervenção humana.</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 4 -->
+
+      <!-- ============================================================
+         Etapa 5: Integração em Sistemas Reais
+         ============================================================ -->
+      <section>
+
+        <!-- Slide 5.1: Banner -->
+        <section data-auto-animate>
+          <section-banner
+            eyebrow="Etapa 5 • 02:35 – 03:00"
+            title="Integração em Sistemas Reais"
+            subtitle="Sistemas legados, automação assíncrona, Human-in-the-Loop e produção">
+          </section-banner>
+        </section>
+
+        <!-- Slide 5.2: Arquitetura de Produção com HITL -->
+        <section data-auto-animate>
+          <h2>Plugando Agentes em Sistemas Existentes</h2>
+          <div style="text-align: center;">
+            <div class="figure-card">
+              <div class="figure-stage">
+                <img src="images/aula14/arquitetura-producao-hitl.svg"
+                     alt="Arquitetura de produção integrando webhook, fila assíncrona, MCP interno sobre sistemas legados, worker do agente e portão Human-in-the-Loop"
+                     height="335" />
+                <div class="annotate-box annotate-box--cyan fragment" data-fragment-index="1"
+                     style="left: 1.5%; top: 3.5%; width: 23.5%; height: 93%;"></div>
+                <div class="annotate-box annotate-box--green fragment" data-fragment-index="2"
+                     style="left: 65.5%; top: 6%; width: 33%; height: 37%;"></div>
+                <div class="annotate-box annotate-box--pink fragment" data-fragment-index="3"
+                     style="left: 65.5%; top: 47.5%; width: 33%; height: 49%;"></div>
+              </div>
+            </div>
+          </div>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="1">
+            <strong style="color: #8be9fd;">Assíncrono + MCP Interno:</strong> filas/webhooks disparam o agente; REST/SOAP e views SQL <em>read-only</em> viram ferramentas.
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
+            <strong style="color: #50fa7b;">Autônomo:</strong> leitura, diagnóstico de logs e rascunho de <em>Pull Request</em> (PR) ou resposta.
+          </p>
+          <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="3">
+            <strong style="color: #ff79c6;">Regra de ouro (HITL):</strong> <code>DELETE</code>, pagamentos e deploy exigem aprovação humana obrigatória.
+          </p>
+          <p class="source">Elaboração própria — arquitetura de referência para agentes corporativos</p>
+        </section>
+
+        <!-- Slide 5.3: Engenharia em Produção (Custos, Segurança, Evals) -->
+        <section data-auto-animate>
+          <h2>Checklist de Engenharia para Produção</h2>
+          <multi-col cols="2" style="gap: 18px; margin-top: 14px;">
+            <div class="checklist-panel">
+              <h3 style="color: #ff79c6 !important;">Segurança &amp; Menor Privilégio</h3>
+              <p>Exponha <strong>views SQL somente leitura</strong>, aplique <em>rate limit</em> por ferramenta e jamais confie em dados externos sem validação de esquema.</p>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #f1fa8c !important;">Controle de Custos &amp; Limites</h3>
+              <p>Defina teto de iterações (<code>max_steps</code>), <em>timeout</em> por chamada MCP e roteamento de modelos (modelo leve na triagem, avançado na decisão).</p>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #8be9fd !important;">Observabilidade &amp; Auditoria</h3>
+              <p>Registre cada <em>tool call</em>, entrada, saída, tokens e latência — você precisa conseguir reproduzir por que o agente tomou uma decisão.</p>
+            </div>
+            <div class="checklist-panel">
+              <h3 style="color: #50fa7b !important;">Avaliação Contínua (Evals)</h3>
+              <p>Trate Skills e prompts como código versionado: rode suítes de testes automatizados antes de trocar o modelo ou atualizar instruções.</p>
+            </div>
+          </multi-col>
+        </section>
+
+      </section><!-- fim Etapa 5 -->
+
+      <!-- ============================================================
+         Quiz Interativo
+         ============================================================ -->
+      <section>
+
+        <section data-auto-animate>
+          <h2>Quiz Interativo</h2>
+          <p>Conecte-se à sala e teste suas decisões arquiteturais!</p>
+        </section>
+
+        <section>
+          <poll-question
+            id="q1-rag-mcp"
+            title="Questão 1: RAG vs. MCP"
+            question="Um agente precisa consultar estoque em tempo real no PostgreSQL e responder dúvidas sobre 4.000 páginas de PDFs. Qual arquitetura escolher?"
+            answer="b"
+            answer-text="MCP expõe consultas SQL read-only em tempo real; RAG faz busca semântica nos PDFs extensos."
+            :options="[
+              { value: 'a', label: 'Colar todos os PDFs e um dump SQL na janela de contexto' },
+              { value: 'b', label: 'MCP (views SQL read-only) para estoque + RAG vetorial para PDFs' },
+              { value: 'c', label: 'Usar apenas Playwright MCP para fazer scraping do ERP interno' },
+              { value: 'd', label: 'Treinar um LLM do zero toda semana com o banco atualizado' }
+            ]">
+          </poll-question>
+        </section>
+
+        <section>
+          <poll-question
+            id="q2-hitl"
+            title="Questão 2: Autonomia e Human-in-the-Loop"
+            question="Em um fluxo assíncrono disparado ao abrir um chamado de produção, qual política respeita boas práticas de ADS?"
+            answer="c"
+            answer-text="Leitura e rascunhos podem ser autônomos; ações destrutivas ou financeiras exigem aprovação humana (HITL)."
+            :options="[
+              { value: 'a', label: 'Dar acesso de superusuário para o agente apagar registros sozinho' },
+              { value: 'b', label: 'Proibir leitura de logs e responder apenas com texto estático' },
+              { value: 'c', label: 'Consultar logs e abrir rascunho de PR; exigir aprovação para deploy/DELETE' },
+              { value: 'd', label: 'Remover limite de iterações até o agente concluir sem supervisão' }
+            ]">
+          </poll-question>
+        </section>
+
+      </section>
+
+      <!-- SLIDE FINAL: Resumo da Aula -->
+      <section data-auto-animate>
+        <h2>Resumo da Aula</h2>
+        <ls-u font-size="20">
+          <li><strong>Loop agêntico (ReAct):</strong> planejar → chamar ferramenta → observar retorno/erro → corrigir rota até o critério de parada.</li>
+          <li><strong>MCP vs. Skills:</strong> MCP conecta ferramentas e dados padronizados (JSON-RPC); Skills entregam procedimentos sob demanda sem inflar o contexto.</li>
+          <li><strong>RAG vs. MCP:</strong> RAG para buscas semânticas em grandes acervos documentais; MCP para estado estruturado em tempo real.</li>
+          <li><strong>Playwright MCP &amp; limites:</strong> <em>Accessibility Snapshots</em> economizam tokens, mas CAPTCHAs, 2FA e <em>Indirect Prompt Injection</em> exigem engenharia — nunca substitua uma API oficial.</li>
+          <li><strong>Produção segura:</strong> arquitetura orientada a filas/webhooks, MCP interno <em>read-only</em>, limites de custo e <strong>Human-in-the-Loop</strong> em ações destrutivas.</li>
+        </ls-u>
+      </section>
+
+      <!-- SLIDE FINAL: Referências -->
+      <section data-auto-animate>
+        <h2>Referências</h2>
+        <ul class="ref-list">
+          <li>Yao, S. et al. (2023). <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">ReAct: Synergizing Reasoning and Acting in Language Models</a>. ICLR 2023.</li>
+          <li>Lewis, P. et al. (2020). <a href="https://arxiv.org/abs/2005.11401" target="_blank" rel="noopener">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>. NeurIPS 2020.</li>
+          <li>Greshake, K. et al. (2023). <a href="https://arxiv.org/abs/2302.12173" target="_blank" rel="noopener">Not what you've signed up for: Indirect Prompt Injection</a>. ACM AISec 2023.</li>
+          <li>Model Context Protocol — <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">Especificação Oficial (modelcontextprotocol.io)</a>.</li>
+          <li>Agent Skills Standard — <a href="https://agentskills.io/" target="_blank" rel="noopener">Especificação Aberta de Skills (agentskills.io)</a>.</li>
+          <li>Microsoft — <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP Server (@playwright/mcp)</a> e ambiente de prática <a href="https://books.toscrape.com/" target="_blank" rel="noopener">Books to Scrape</a>.</li>
+          <li>Ferramentas práticas: <a href="https://opencode.ai/docs" target="_blank" rel="noopener">OpenCode</a>, <a href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">Mistral Vibe</a> e <a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">Gemini CLI</a>.</li>
+        </ul>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="../dist/reveal.js"></script>
+  <script src="../plugin/notes/notes.js"></script>
+  <script src="../plugin/math/math.js"></script>
+  <script src="../plugin/markdown/markdown.js"></script>
+  <script src="../plugin/highlight/highlight.js"></script>
+  <script src="../plugin/zoom/zoom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
+  <script src="../plugin/leader-line.min.js"></script>
+  <script src="../dist/vue.js"></script>
+  <script src="../slides_template/header1.js"></script>
+  <script src="../components/components.js"></script>
+  <script src="../plugin/poll/plugin.js"></script>
+  <script src="../plugin/customcontrols/plugin.js"></script>
+  <script src="../plugin/chalkboard/plugin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="../slides_template/init.js"></script>
+  <script src="../plugin/seminar/plugin.js"></script>
+
+  <script>
+    window.app = mountSlideApp();
+  </script>
+
+</body>
+</html>
