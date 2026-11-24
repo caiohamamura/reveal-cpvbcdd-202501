@@ -319,7 +319,7 @@
             <div class="checklist-panel">
               <h3 style="color: #8be9fd !important;">Ferramentas Agênticas (o “corpo”)</h3>
               <ul class="compact-list" style="margin-top: 6px;">
-                <li><strong>Terminal (CLI):</strong> OpenCode, Claude Code, Codex CLI, Gemini CLI, Mistral Vibe</li>
+                <li><strong>Terminal (CLI):</strong> Mistral Vibe, OpenCode, Claude Code, Codex CLI, Gemini CLI</li>
                 <li><strong>IDE / Editor:</strong> Cursor, Cline, Roo Code, Windsurf, Antigravity</li>
                 <li>Gerenciam sessão, permissões, <code>AGENTS.md</code>, Skills e servidores MCP</li>
               </ul>
@@ -335,7 +335,7 @@
           </multi-col>
           <div class="cyan-box" style="margin-top: 14px; padding: 8px 14px;">
             <p style="margin: 0; font-size: 0.6em;">
-              <strong>Independência na prática:</strong> você pode usar <strong>OpenCode</strong> ou <strong>Cline</strong> com Gemini, Claude, GPT ou um Qwen local — mantendo exatamente as mesmas Skills, memórias e MCPs.
+              <strong>Independência na prática:</strong> você pode usar <strong>Mistral Vibe</strong> ou <strong>OpenCode</strong> com modelos na nuvem (Mistral, Gemini, Claude, GPT) ou locais via Ollama — mantendo exatamente as mesmas Skills, memórias e MCPs.
             </p>
           </div>
         </section>
@@ -343,7 +343,7 @@
         <!-- Slide 1.6: Mapa Físico dos 5 Pilares (Complementares) -->
         <section data-auto-animate>
           <h2>Os 5 Pilares: O Que São Fisicamente (Não Competem!)</h2>
-          <table class="comparison-table compact-table" style="margin-top: 8px;">
+          <table class="comparison-table compact-table" style="margin-top: 4px; font-size: 0.78em;">
             <thead>
               <tr>
                 <th style="width: 19%;">Pilar</th>
@@ -379,8 +379,8 @@
               </tr>
             </tbody>
           </table>
-          <div class="green-box" style="margin-top: 10px; padding: 7px 12px;">
-            <p style="margin: 0; font-size: 0.56em;">
+          <div class="green-box" style="margin-top: 5px; padding: 5px 10px;">
+            <p style="margin: 0; font-size: 0.48em;">
               <strong>Camadas complementares:</strong> Contexto é a RAM da sessão; Memória (<code>.md</code> ou RAG/Grafos) persiste conhecimento; Skills trazem o <em>como fazer</em> (+ scripts); MCP conecta o agente a sistemas externos.
             </p>
           </div>
@@ -451,32 +451,32 @@
           <h2>Na Prática: Onde o RAG Vetorial Falha (e o Grafo Resolve)</h2>
           <div class="yellow-box" style="padding: 8px 14px; margin-bottom: 12px;">
             <p style="margin: 0; font-size: 0.62em;">
-              <strong>Pergunta ao agente:</strong> <em>“Quais clientes serão afetados se atualizarmos a biblioteca <code>AuthCore v2</code>?”</em>
+              <strong>Pergunta ao agente:</strong> <em>“Quais alunos serão afetados se a cantina parar de vender suco de laranja?”</em>
             </p>
           </div>
           <multi-col cols="1fr 1fr" style="gap: 18px; align-items: stretch;">
             <div class="checklist-panel">
               <h3 style="color: #ff79c6 !important;">RAG Vetorial (Similaridade)</h3>
               <ul class="compact-list" style="margin-top: 6px;">
-                <li><strong>Doc 1:</strong> <code>AuthCore v2</code> é usada pelo serviço <code>Pagamentos</code>. <span style="color: #50fa7b;">✔ recuperado</span></li>
-                <li><strong>Doc 2:</strong> <code>Pagamentos</code> alimenta o módulo <code>Checkout</code>. <span style="color: #ff79c6;">✘ distante</span></li>
-                <li><strong>Doc 3:</strong> Cliente <code>Loja Alfa</code> usa o <code>Checkout</code>. <span style="color: #ff79c6;">✘ sem termos em comum</span></li>
+                <li><strong>Doc 1:</strong> Ana compra suco de laranja na cantina. <span style="color: #50fa7b;">✔ recuperado</span></li>
+                <li><strong>Doc 2:</strong> Ana estuda no 1ºA. <span style="color: #ff79c6;">✘ distante</span></li>
+                <li><strong>Doc 3:</strong> Pedro, do 1ºA, também compra o suco. <span style="color: #ff79c6;">✘ sem termos em comum</span></li>
               </ul>
               <p style="color: #ff79c6; margin-top: 8px !important;">
-                <strong>Falha:</strong> o Doc 3 não menciona <code>AuthCore v2</code>, então fica fora do <em>top-k</em> vetorial.
+                <strong>Falha:</strong> a busca pode não ligar o produto aos colegas da mesma turma.
               </p>
             </div>
             <div class="checklist-panel fragment">
               <h3 style="color: #50fa7b !important;">Graph RAG (Múltiplos Saltos)</h3>
               <p style="margin-top: 8px !important; font-size: 0.62em !important;">
-                O agente percorre as arestas explícitas do grafo a partir de <code>AuthCore v2</code>:
+                O agente percorre as relações explícitas a partir de <code>suco de laranja</code>:
               </p>
-              <pre class="terminal" style="font-size: 0.44em; line-height: 1.55; width: auto; box-shadow: none; margin: 10px 0;">[AuthCore v2]
-   ──(usada por)──▶ [Pagamentos]
-   ──(alimenta)───▶ [Checkout]
-   ──(contratado)─▶ [Loja Alfa] ✔</pre>
+              <pre class="terminal" style="font-size: 0.44em; line-height: 1.55; width: auto; box-shadow: none; margin: 10px 0;">[suco de laranja]
+   ──(comprado por)──▶ [Ana]
+   ──(estuda na)─────▶ [1ºA]
+   ◀──(também compra)── [Pedro] ✔</pre>
               <p style="color: #50fa7b; margin-top: 6px !important;">
-                <strong>Solução:</strong> raciocínio <em>multi-hop</em> (A → B → C → D) com caminho 100% explicável.
+                <strong>Solução:</strong> seguir relações (produto → aluno → turma → colegas).
               </p>
             </div>
           </multi-col>
@@ -529,51 +529,113 @@
             </div>
           </div>
           <p class="slide-takeaway slide-takeaway--compact fragment" data-fragment-index="2">
-            O <strong>Model Context Protocol (MCP)</strong> padroniza o acesso a bancos, navegadores e APIs — escreva o servidor uma vez e conecte em OpenCode, Claude Code, Cursor ou VS Code.
+            O <strong>Model Context Protocol (MCP)</strong> padroniza o acesso a bancos, navegadores e APIs — escreva o servidor uma vez e conecte em Mistral Vibe, OpenCode, Claude Code, Cursor ou VS Code.
           </p>
           <p class="source">Fonte: ilustração conceitual baseada na especificação oficial <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">modelcontextprotocol.io</a></p>
         </section>
 
         <!-- Slide 1.10: MCP por baixo dos panos (JSON-RPC) -->
         <section data-auto-animate>
-          <h2>MCP por Baixo dos Panos: Serviço + JSON-RPC 2.0</h2>
-          <multi-col cols="1.05fr 1fr" style="gap: 22px; align-items: center;">
-            <div>
-              <p style="margin-bottom: 8px; font-size: 0.64em;">
-                É um <strong>serviço contínuo</strong> via <code>stdio</code> (local) ou TCP/HTTP (remoto) com descoberta padrão (<code>tools/list</code>) e três primitivos:
-              </p>
-              <ul class="compact-list">
-                <li><strong style="color: #8be9fd;">Tools (Ferramentas):</strong> funções executáveis com esquema JSON (SQL, clique no navegador).</li>
-                <li><strong style="color: #50fa7b;">Resources (Recursos):</strong> dados somente leitura expostos por URI (arquivos, esquemas, logs).</li>
-                <li><strong style="color: #f1fa8c;">Prompts:</strong> modelos de instrução reutilizáveis pelo cliente.</li>
-              </ul>
-              <div style="margin-top: 10px;">
-                <a class="colab-pill" href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">
-                  Especificação MCP ↗
-                </a>
-              </div>
-            </div>
-            <div class="compact-code">
-              <code-block lang="json" data-trim data-line-numbers="1-11|3-7|8-11">
-{
-  "jsonrpc": "2.0",
-  "id": 42,
-  "method": "tools/call",
-  "params": {
-    "name": "browser_navigate",
-    "arguments": {
-      "url": "https://books.toscrape.com"
-    }
-  }
-}
-              </code-block>
-              <p style="font-size: 0.54em; color: #b8b8c8; margin-top: 8px;">
-                Sem mágica: o cliente descobre os esquemas, traduz a decisão do LLM em <strong>JSON-RPC 2.0</strong> e devolve o retorno estruturado ao loop.
-              </p>
-            </div>
-          </multi-col>
-        </section>
+                        <h2>MCP por Baixo dos Panos: Visão Geral</h2>
+                        <div class="green-box" style="padding: 10px 16px; margin: 12px auto; max-width: 900px;">
+                            <ol class="tight-list" style="font-size: 0.72em; margin: 0;">
+                                <li><strong>Conectar:</strong> cliente e serviço iniciam a sessão e negociam capacidades (<code>initialize</code>).</li>
+                                <li><strong>Descobrir:</strong> cliente pede ferramentas e esquemas (<code>tools/list</code>).</li>
+                                <li><strong>Escolher:</strong> o LLM recebe os nomes, descrições e parâmetros permitidos.</li>
+                                <li><strong>Executar:</strong> cliente envia a chamada MCP com argumentos validados (<code>tools/call</code>).</li>
+                                <li><strong>Retornar:</strong> serviço responde; cliente entrega o resultado ao LLM para compor a resposta.</li>
+                            </ol>
+                        </div>
+                        <p class="slide-takeaway">MCP padroniza a conversa entre cliente e serviço; o LLM decide quando usar cada ferramenta.</p>
+                        <p class="source">
+                            <a href="https://modelcontextprotocol.io/docs/learn/architecture" target="_blank" rel="noopener">Arquitetura oficial do MCP</a>
+                        </p>
+                    </section>
+                    <section data-auto-animate>
+                        <h2>Uma chamada MCP, passo a passo</h2>
+                        <div class="figure-card" style="padding: 12px 18px; margin: 10px auto; width: 900px;background-color: #192420;">
+                            <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 0.6em;">
+                                <span class="yellow-box fragment" data-fragment-index="1">Handshake</span>
+                                <span class="cyan-box fragment" data-fragment-index="2">Descoberta</span>
+                                <span class="pink-box fragment" data-fragment-index="3">Esquema → LLM</span>
+                                <span class="green-box fragment" data-fragment-index="4">Tools/Call</span>
+                                <span class="yellow-box fragment" data-fragment-index="5">Resultado</span>
+                            </div>
+                        </div>
+                        <multi-col cols="1fr 1fr" style="gap: 14px; align-items: start;">
+                            <div style="font-size: 0.78em;">
 
+                                <div class="fragment yellow-box" data-fragment-index="1" style="display:flex;flex-direction:row;font-size:0.8em;width:400px;justify-content: space-between;">
+                                    <div><strong>LLM</strong> <code-block lang="json" class="terminal">{
+    "jsonrpc": "2.0", "id": 1,
+    "method": "initialize",
+    "params": { ... }
+    }
+                                    </code-block></div>
+                                    <div style="display:flex;flex-direction: column;align-items:end;"><strong>Servidor</strong><code-block lang="json" class="terminal">{
+  "jsonrpc": "2.0", "id": 1,
+  "result": { ... }
+}
+                                    </code-block></div>
+                                </div>
+                                <div class="fragment cyan-box" data-fragment-index="2" style="display:flex;flex-direction:row;font-size:0.8em;width:400px;justify-content: space-between;">
+                                    <div><strong>LLM</strong>
+                                    <code-block lang="json" class="terminal">{
+    "jsonrpc":"2.0",
+    "id":1,
+    "method":"tools/list"
+}
+                                    </code-block>
+                                    </div>
+                                    <div style="display:flex;flex-direction: column;align-items:end;"><strong>Servidor</strong> <code-block lang="json" class="terminal">{
+    tools: [
+        {
+            name:"browser_navigate",
+            inputSchema: {url: "string"}
+        }
+    ]
+}
+                                    </code-block></div>
+                            </div></div>
+                            <div class="compact-code" style="font-size: 0.78em;">
+                                <p class="fragment pink-box" data-fragment-index="3" style="width:420px;padding:10px">O cliente mostra o esquema ao LLM; o LLM escolhe a ferramenta e preenche <code>url</code>.</p>
+                                <div style="display:flex;width:100%;">
+                                <div class="fragment green-box" data-fragment-index="4">
+                                    <strong>LLM</strong>
+
+
+                                <code-block class="terminal" lang="json">{
+	"jsonrpc": "2.0",
+	"id": 2,
+	"method": "tools/call",
+	"params": {
+		"name": "browser_navigate",
+		"arguments": {
+			"url": "https://books.toscrape.com"
+		}
+	}
+}
+                                </code-block>
+                                </div>
+                                <div class="fragment yellow-box" data-fragment-index="5" style="display:flex;flex-direction: column;align-items:end;"><strong>Servidor</strong> <code-block class="terminal" lang="json">{
+	"jsonrpc": "2.0",
+	"id": 2,
+	"result": {
+		"content": [
+			{
+				"type": "text",
+				"text": "Página aberta"
+			}
+		]
+	}
+}
+</code-block></div>
+</div>
+                            </div>
+                        </multi-col>
+                        <p class="source">Exemplo didático de mensagens JSON-RPC; o retorno real depende da ferramenta.</p>
+                    </section>
+                </section>
       </section><!-- fim Etapa 1 -->
 
       <!-- ============================================================
@@ -586,41 +648,41 @@
           <section-banner
             eyebrow="Etapa 2"
             title="Setup e Primeiro Contato"
-            subtitle="OpenCode no terminal, modelos gratuitos e contingência em laboratório">
+            subtitle="Mistral Vibe no terminal, VS Code e web, conta gratuita e contingência em laboratório">
           </section-banner>
         </section>
 
-        <!-- Slide 2.2: Instalação e Interface Web do OpenCode -->
+        <!-- Slide 2.2: Instalação e Acesso ao Mistral Vibe -->
         <section data-auto-animate>
-          <h2>Instalação e Interface Web (<code>opencode serve</code>)</h2>
+          <h2>Instalação e Acesso ao <code>Mistral Vibe</code></h2>
           <multi-col cols="1.15fr 1fr" style="gap: 24px; align-items: start;">
             <div class="compact-code">
-              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e subir o servidor na pasta do projeto</p>
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px;">1. Instalar e iniciar na pasta do projeto</p>
               <code-block lang="bash" data-trim>
 # Linux / macOS / WSL
-curl -fsSL https://opencode.ai/install | bash
+curl -LsSf https://mistral.ai/vibe/install.sh | bash
 
-# Ou via Node.js (cross-platform)
-npm install -g @opencode/cli
+# Ou via uv (cross-platform, inclui Windows)
+winget install Mistral.Vibe
 
-# Criar pasta limpa e iniciar a interface web
+# Criar pasta limpa e iniciar o agente
 mkdir meu-projeto-agente
 cd meu-projeto-agente
-opencode serve
+vibe
               </code-block>
               <div style="margin-top: 10px;">
-                <a class="colab-pill" href="https://opencode.ai/docs" target="_blank" rel="noopener">
-                  Documentação OpenCode ↗
+                <a class="colab-pill" href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">
+                  Documentação Mistral Vibe ↗
                 </a>
               </div>
             </div>
             <div>
               <div class="checklist-panel" style="padding: 12px 15px;">
-                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que usar via Web?</h3>
+                <h3 style="color: #50fa7b !important; font-size: 20pt !important;">Por que começar pelo Vibe?</h3>
                 <ul class="tight-list" style="margin-top: 6px;">
-                  <li><strong>Mais amigável:</strong> troque de modelo, crie conversas e alterne <em>Plan/Build</em> sem decorar atalhos.</li>
-                  <li><strong>Acesso remoto:</strong> rode no seu PC ou em um servidor alugado e conecte pelo navegador com <strong>Tailscale</strong>.</li>
-                  <li><strong>Vibe Coding:</strong> peça ao próprio agente para configurar o <strong>Tailscale</strong> e devolver o endereço de acesso.</li>
+                  <li><strong>Múltiplas interfaces:</strong><code>CLI</code> para terminal, extensão do <code>VS Code</code>, app <code>Desktop</code> ou <code>Web</code>.</li>
+                  <li><strong>Acesso gratuito simples:</strong> Plano gratuito com $10 por mês!</li>
+                  <li><strong>Padrões abertos:</strong> suporta nativamente <code>AGENTS.md</code>, <code>SKILLS</code>, <code>servidores MCP</code> e provedores compatíveis.</li>
                 </ul>
               </div>
             </div>
@@ -634,8 +696,8 @@ opencode serve
             <div class="checklist-panel" style="padding: 10px 14px;">
               <h3 style="color: #8be9fd !important; font-size: 19pt !important; margin-bottom: 6px !important;">Parte 1 — Criar e Testar</h3>
               <ol class="tight-list" style="margin-top: 4px;">
-                <li>Rode <code>opencode serve</code> em uma <strong>nova pasta</strong> e abra a interface web no navegador.</li>
-                <li>Selecione um <strong>modelo gratuito nativo</strong> no seletor da interface.</li>
+                <li>Rode <code>vibe</code> em uma <strong>nova pasta</strong> (ou abra a extensão no VS Code) e conclua o login inicial.</li>
+                <li>Confirme o <strong>modelo gratuito</strong> ativo na sessão (ou ajuste nas configurações).</li>
                 <li>Peça ao agente um <strong>script em Python</strong> simples (ex.: conversor ou gerador de senhas).</li>
                 <li>Teste manualmente rodando <code>python &lt;script.py&gt;</code>.</li>
               </ol>
@@ -674,16 +736,16 @@ opencode serve
             </thead>
             <tbody>
               <tr>
-                <td><strong style="color: #50fa7b;">OpenCode</strong></td>
+                <td><strong style="color: #50fa7b;">Mistral Vibe</strong></td>
                 <td>Principal</td>
-                <td>Modelos gratuitos nativos, MCP e padrão <code>SKILL.md</code></td>
-                <td>Uso padrão no terminal local</td>
+                <td>Skills nativas (comandos <code>/</code>), MCP, terminal, VS Code e web</td>
+                <td>Uso padrão no laboratório</td>
               </tr>
               <tr>
-                <td><strong style="color: #8be9fd;">Mistral Vibe</strong></td>
+                <td><strong style="color: #8be9fd;">OpenCode</strong></td>
                 <td>Plano B</td>
-                <td>Skills nativas (comandos <code>/</code>), terminal, VS Code e web</td>
-                <td>Falha local ou bloqueio do provedor</td>
+                <td>Modelos gratuitos nativos, interface web (<code>opencode serve</code>) e MCP</td>
+                <td>Falha local ou limite da conta Mistral</td>
               </tr>
               <tr>
                 <td style="border-bottom: 1px solid;"><strong style="color: #f1fa8c;">Gemini CLI</strong></td>
@@ -718,7 +780,7 @@ opencode serve
             <div>
               <p style="color: #f1fa8c; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Estrutura no projeto</p>
               <pre class="file-tree" style="font-size: 0.52em; padding: 10px 14px;">AGENTS.md
-.opencode/
+.vibe/
 └── skills/
     └── code-review-turma/
         ├── SKILL.md
@@ -764,18 +826,14 @@ description: >
           <h2>Plugando o <code>@playwright/mcp</code></h2>
           <multi-col cols="1.12fr 1fr" style="gap: 22px; align-items: start;">
             <div class="compact-code">
-              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Arquivo <code>opencode.json</code> na raiz do projeto</p>
-              <code-block lang="json" data-trim data-line-numbers="1-10|3-8">
-{
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": true
-    }
-  }
-}
+              <p style="color: #8be9fd; font-weight: 700; margin-bottom: 6px; font-size: 0.64em;">Arquivo <code>.vibe/config.toml</code> no projeto</p>
+              <code-block lang="toml" data-trim data-line-numbers="1-6|2-6">
+# .vibe/config.toml (ou ~/.vibe/config.toml)
+[[mcp_servers]]
+name = "playwright"
+transport = "stdio"
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
               </code-block>
               <div style="margin-top: 8px;">
                 <a class="colab-pill" href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">
@@ -787,7 +845,7 @@ description: >
               <div class="green-box" style="padding: 8px 12px;">
                 <p style="margin-top: 0; font-size: 0.64em;"><strong>Desafio Prático</strong></p>
                 <ol class="compact-list">
-                  <li class="fragment">Peça ao próprio agente (via <strong>Vibe Coding</strong>) para configurar o <code>opencode.json</code> e reinicie o OpenCode.</li>
+                  <li class="fragment">Peça ao próprio agente (via <strong>Vibe Coding</strong>) para configurar o <code>.vibe/config.toml</code> (ou rode <code>vibe mcp add</code>) e reinicie o <code>vibe</code>.</li>
                   <li class="fragment">Peça para abrir <code>books.toscrape.com</code>.</li>
                   <li class="fragment">Navegue em duas categorias e salve <strong>categoria, título, preço e nota</strong> em <code>livros.csv</code>.</li>
                 </ol>
@@ -1069,7 +1127,7 @@ description: >
             </div>
             <div class="checklist-panel">
               <h3 style="color: #ff79c6 !important;">5. Planeje Forte, Execute Rápido</h3>
-              <p>Em tarefas complexas, use o modo <strong>Plan</strong> (no OpenCode, alterne com <code>TAB</code> entre <em>Plan</em> e <em>Build</em>) com raciocínio alto só para planejar; depois baixe o nível para executar o plano.</p>
+              <p>Em tarefas complexas, separe <strong>planejamento</strong> e <strong>execução</strong>: peça primeiro um plano detalhado (e use <code>Shift+Tab</code> para controlar aprovações no Mistral Vibe) com raciocínio alto; depois baixe o nível para executar.</p>
             </div>
           </multi-col>
           <div class="yellow-box" style="margin-top: 14px; padding: 10px 16px;">
@@ -1096,7 +1154,7 @@ description: >
           <div class="cyan-box" style="margin-top: 16px; padding: 10px 16px;">
             <p style="margin: 0; font-size: 0.6em;">
               <strong style="color: #8be9fd;">9. Versione a configuração no Git:</strong>
-              commite <code>AGENTS.md</code>, <code>.opencode/skills/</code> e <code>opencode.json</code> junto com o projeto para toda a equipe evoluir o agente — <strong>nunca</strong> commite chaves de API ou tokens.
+              commite <code>AGENTS.md</code>, <code>.vibe/skills/</code> e <code>.vibe/config.toml</code> junto com o projeto para toda a equipe evoluir o agente — <strong>nunca</strong> commite chaves de API ou tokens.
             </p>
           </div>
         </section>
@@ -1125,7 +1183,7 @@ description: >
           <li>Model Context Protocol — <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">Especificação Oficial (modelcontextprotocol.io)</a>.</li>
           <li>Agent Skills Standard — <a href="https://agentskills.io/" target="_blank" rel="noopener">Especificação Aberta de Skills (agentskills.io)</a>.</li>
           <li>Microsoft — <a href="https://github.com/microsoft/playwright-mcp" target="_blank" rel="noopener">Playwright MCP Server (@playwright/mcp)</a> e ambiente de prática <a href="https://books.toscrape.com/" target="_blank" rel="noopener">Books to Scrape</a>.</li>
-          <li>Ferramentas práticas: <a href="https://opencode.ai/docs" target="_blank" rel="noopener">OpenCode</a>, <a href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">Mistral Vibe</a> e <a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">Gemini CLI</a>.</li>
+          <li>Ferramentas práticas: <a href="https://github.com/mistralai/mistral-vibe" target="_blank" rel="noopener">Mistral Vibe</a>, <a href="https://opencode.ai/docs" target="_blank" rel="noopener">OpenCode</a> e <a href="https://github.com/google-gemini/gemini-cli" target="_blank" rel="noopener">Gemini CLI</a>.</li>
         </ul>
       </section>
 
